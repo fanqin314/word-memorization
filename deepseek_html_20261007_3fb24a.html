@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>space · 空间</title>
+<style>
+:root{
+  /* 深空色板 —— space = 空间 / 太空 / 余地 */
+  --void:#0B0F1E;
+  --void-2:#161B33;
+  --star:#F5EFE0;
+  --star-2:#E8DFC8;
+  --nebula:#B77BC9;
+  --nebula-soft:#2A1E3D;
+  --sol:#F4A340;
+  --sol-soft:#3B2A18;
+  --comet:#78D9E0;
+  --comet-soft:#1A3338;
+  --mars:#E85D4A;
+  --mars-soft:#3A1E1A;
+
+  --ink:#0B0F1E;
+  --paper:#F5EFE0;
+  --line:#3A4260;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--void);
+  padding:44px 16px 90px;
+  color:var(--star);
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+  font-size:16px;
+  line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(183,123,201,.18) 0, transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(120,217,224,.14) 0, transparent 42%),
+    radial-gradient(circle at 50% 50%, rgba(244,163,64,.10) 0, transparent 60%);
+}
+
+/* 颗粒噪点 */
+body::after{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:9999;
+  opacity:.32;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+}
+
+/* 全页星空 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 12%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 38%, var(--star-2) 50%, transparent 51%),
+    radial-gradient(2px 2px at 45% 8%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 62% 25%, var(--star-2) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 78% 15%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 92% 42%, var(--star-2) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 12% 68%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 34% 82%, var(--star-2) 50%, transparent 51%),
+    radial-gradient(2px 2px at 58% 72%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 74% 88%, var(--star-2) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 88% 62%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 5% 45%, var(--star-2) 50%, transparent 51%);
+  animation:twinkle 6s ease-in-out infinite;
+}
+@keyframes twinkle{
+  0%,100%{ opacity:.75; }
+  50%{ opacity:1; }
+}
+
+.page{
+  position:relative;z-index:1;
+  max-width:860px;margin:0 auto;
+  background:var(--paper);
+  color:var(--ink);
+  padding:0 0 72px;
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    12px 12px 0 var(--nebula),
+    0 20px 60px rgba(0,0,0,.7);
+  overflow:hidden;
+}
+
+/* 漂浮小行星 / 卫星 */
+.page-drifting{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.asteroid{
+  position:absolute;
+  border:2px solid var(--ink);
+  opacity:0;
+  animation:asteroidDrift linear infinite;
+}
+.asteroid.a1{left:6%;bottom:-50px;width:32px;height:32px;background:var(--sol-soft);border-radius:48% 52% 45% 55% / 50% 42% 58% 50%;animation-duration:28s;transform:rotate(15deg);}
+.asteroid.a2{left:24%;bottom:-60px;width:22px;height:22px;background:var(--comet-soft);border-radius:52% 48% 55% 45% / 45% 55% 48% 52%;animation-duration:34s;animation-delay:4s;transform:rotate(-20deg);}
+.asteroid.a3{left:78%;bottom:-70px;width:38px;height:38px;background:var(--nebula-soft);border-radius:50% 50% 45% 55% / 55% 45% 50% 50%;animation-duration:26s;animation-delay:2s;transform:rotate(30deg);}
+.asteroid.a4{left:90%;bottom:-40px;width:26px;height:26px;background:var(--mars-soft);border-radius:45% 55% 52% 48% / 50% 50% 50% 50%;animation-duration:32s;animation-delay:8s;transform:rotate(-10deg);}
+.asteroid.a5{left:52%;bottom:-80px;width:30px;height:30px;background:var(--sol-soft);border-radius:52% 48% 50% 50% / 48% 52% 48% 52%;animation-duration:36s;animation-delay:6s;transform:rotate(45deg);}
+.asteroid.a6{left:38%;bottom:-55px;width:18px;height:18px;background:var(--comet-soft);border-radius:50% 50% 45% 55% / 55% 45% 55% 45%;animation-duration:24s;animation-delay:12s;transform:rotate(-35deg);}
+
+@keyframes asteroidDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.7; }
+  90%{ opacity:.4; }
+  100%{ transform:translateY(-115vh) rotate(280deg); opacity:0; }
+}
+
+.hero,.body-wrap{position:relative;z-index:2;}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    radial-gradient(circle at 50% 100%, var(--nebula-soft) 0%, var(--void) 65%);
+  overflow:hidden;
+  color:var(--star);
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:16px;
+  background:repeating-linear-gradient(90deg,
+    var(--nebula) 0 20px,
+    transparent 20px 22px,
+    var(--sol) 22px 42px,
+    transparent 42px 44px,
+    var(--comet) 44px 64px,
+    transparent 64px 66px,
+    var(--mars) 66px 86px,
+    transparent 86px 88px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 星空层 */
+.hero-stars{
+  position:absolute;inset:0;
+  pointer-events:none;
+  z-index:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 30%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 60%, var(--star) 50%, transparent 51%),
+    radial-gradient(2px 2px at 45% 20%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 62% 70%, var(--star) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 78% 35%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 80%, var(--star) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 20% 85%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 90%, var(--star) 50%, transparent 51%),
+    radial-gradient(2px 2px at 70% 12%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 40% 45%, var(--star) 50%, transparent 51%);
+  animation:heroTwinkle 4s ease-in-out infinite;
+}
+@keyframes heroTwinkle{
+  0%,100%{ opacity:.7; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.02); }
+}
+
+/* 星座连线 */
+.hero-constellation{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+  opacity:.55;
+}
+.hero-constellation svg{width:100%;height:100%;}
+.constellation-line{
+  fill:none;
+  stroke:var(--star);
+  stroke-width:1.5;
+  stroke-dasharray:400;
+  stroke-dashoffset:400;
+  animation:constDraw 3s ease-out forwards;
+  opacity:.5;
+}
+.constellation-line.cl1{animation-delay:.3s;}
+.constellation-line.cl2{animation-delay:.8s;}
+.constellation-line.cl3{animation-delay:1.3s;}
+@keyframes constDraw{ to{ stroke-dashoffset:0; } }
+
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:100px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  filter:drop-shadow(5px 5px 0 rgba(183,123,201,.6));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterAscend 1s cubic-bezier(.34,1.56,.64,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s;
+}
+.word-anim .l1{animation-delay:.15s;color:var(--nebula);}
+.word-anim .l2{animation-delay:.30s;color:var(--sol);}
+.word-anim .l3{animation-delay:.45s;color:var(--comet);}
+.word-anim .l4{animation-delay:.60s;color:var(--mars);}
+.word-anim .l5{animation-delay:.75s;color:var(--nebula);}
+@keyframes letterAscend{
+  0%{ opacity:0; transform:translateY(40px) scale(.5) rotate(-15deg); filter:blur(8px); }
+  55%{ opacity:1; filter:blur(0); transform:translateY(-10px) scale(1.1) rotate(5deg); }
+  100%{ opacity:1; transform:translateY(0) scale(1) rotate(0); color:var(--star); }
+}
+.word-anim .letter:hover{color:var(--sol);transform:translateY(-8px) scale(1.15) rotate(-4deg);}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--sol);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--nebula);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(8deg);box-shadow:6px 6px 0 var(--nebula);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--nebula);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--sol);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--nebula);
+  opacity:0;animation:fadeUp .8s ease-out 1.15s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+}
+.ipa-anim:hover{background:var(--comet);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--star);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--nebula);display:inline-block;padding:5px 16px;border-radius:999px;
+  border:2px solid var(--ink);
+  opacity:0;animation:fadeUp .8s ease-out 1.35s forwards;
+  transform:rotate(1.2deg);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--star);background:var(--comet-soft);
+  border:2.5px solid var(--star);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--sol);
+  opacity:0;animation:fadeUp .8s ease-out 1.6s forwards;
+  transform:rotate(-1deg);
+}
+
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal-scale.visible{opacity:1;transform:scale(1);}
+
+.section{margin:0 0 56px;}
+
+.section-title{
+  display:inline-flex;align-items:center;gap:12px;
+  margin:0 0 22px;
+  padding:8px 22px 8px 12px;
+  background:var(--sol-soft);
+  color:var(--star);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:18px;font-weight:900;
+  letter-spacing:-.01em;
+  transform:rotate(-.8deg);
+}
+.section:nth-of-type(even) .section-title{
+  background:var(--nebula-soft);
+  transform:rotate(.9deg);
+}
+.section-title .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex-shrink:0;
+  background:var(--ink);color:var(--star);
+  border-radius:50%;font-size:14px;font-weight:900;
+}
+
+/* 1. 词根词族 */
+.root-family{
+  position:relative;
+  background:#FFFCF0;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 24px;
+}
+.root-line{
+  font-size:17px;line-height:2.2;margin-bottom:22px;
+  padding:18px 20px;
+  background:var(--sol-soft);
+  color:var(--star);
+  border:3px dashed var(--star);
+  border-radius:var(--radius-md);
+  text-align:center;
+}
+.root-line .affix{
+  background:var(--nebula);color:var(--star);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(-2deg);
+  border:2px solid var(--star);
+  margin:0 4px;
+}
+.root-line .stem{
+  background:var(--comet);color:var(--ink);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(1.5deg);
+  border:2px solid var(--star);
+  margin:0 4px;
+}
+.fam-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:10px;
+}
+.fam-card{
+  background:#fff;border:2.5px solid var(--ink);
+  border-radius:14px;padding:10px 12px;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.fam-card:hover{transform:translate(-2px,-2px) rotate(-1deg);}
+.fam-card .pos{
+  font-size:10px;font-weight:800;
+  background:var(--ink);color:var(--star);
+  padding:2px 7px;border-radius:999px;
+  display:inline-block;margin-bottom:5px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  letter-spacing:.08em;
+}
+.fam-card .w{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:16px;
+  color:var(--nebula);
+  line-height:1.3;
+}
+.fam-card .w .hl{color:var(--mars);}
+.fam-card .p{font-size:11px;color:#8a7d6d;margin:2px 0 4px;font-family:monospace;}
+.fam-card .m{font-size:12.5px;line-height:1.5;}
+
+/* 2. 意象卡 —— 深空 + 星野 */
+.image-card{
+  background:var(--void);
+  color:var(--star);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    7px 7px 0 var(--nebula);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 240px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 20%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 55%, var(--star) 50%, transparent 51%),
+    radial-gradient(2px 2px at 42% 15%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 58% 78%, var(--star) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 78% 35%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 82%, var(--star) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 35% 88%, var(--star) 50%, transparent 51%),
+    radial-gradient(2px 2px at 68% 12%, var(--star) 50%, transparent 51%);
+  animation:imgTwinkle 5s ease-in-out infinite;
+}
+@keyframes imgTwinkle{
+  0%,100%{ opacity:.6; }
+  50%{ opacity:1; }
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(244,163,64,.14) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+.image-card .ic-text{position:relative;z-index:1;}
+.image-card .ic-label{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;font-weight:900;letter-spacing:.18em;
+  background:var(--sol);color:var(--ink);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--star);
+  margin-bottom:16px;
+  transform:rotate(-2deg);
+}
+.image-card .ic-main{
+  font-size:22px;font-weight:800;line-height:1.6;
+  margin:0 0 14px;
+}
+.image-card .ic-main .hl{
+  background:var(--sol);color:var(--ink);
+  padding:1px 10px;border-radius:6px;
+}
+.image-card .ic-sub{
+  font-size:14.5px;opacity:.88;line-height:1.9;margin:0;
+}
+.image-card .ic-svg{
+  position:relative;z-index:1;
+  width:240px;height:220px;
+}
+.image-card .ic-svg svg{width:100%;height:100%;overflow:visible;}
+
+/* 行星 + 轨道 */
+.planet{
+  animation:planetSpin 20s linear infinite;
+  transform-origin:center;
+}
+@keyframes planetSpin{
+  to{ transform:rotate(360deg); }
+}
+.planet-orbit{
+  fill:none;
+  stroke:var(--comet);
+  stroke-width:2;
+  stroke-dasharray:6 5;
+  animation:orbitDash 8s linear infinite;
+}
+@keyframes orbitDash{
+  to{ stroke-dashoffset:-100; }
+}
+.satellite-small{
+  animation:satOrbit 10s linear infinite;
+  transform-origin:120px 100px;
+}
+@keyframes satOrbit{
+  to{ transform:rotate(360deg); }
+}
+.star-pulse{
+  animation:starPulse 2.5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes starPulse{
+  0%,100%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(1.4); opacity:.7; }
+}
+
+/* 3. 搭配 */
+.collocations{display:flex;flex-direction:column;gap:14px;}
+.collo{
+  background:#FFFCF0;border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 20px;
+  display:flex;align-items:center;gap:16px;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  position:relative;
+  overflow:hidden;
+}
+.collo::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:6px;
+  background:var(--nebula);
+  transition:width .3s;
+}
+.collo:nth-child(2)::before{background:var(--sol);}
+.collo:nth-child(3)::before{background:var(--comet);}
+.collo:nth-child(4)::before{background:var(--mars);}
+.collo:nth-child(5)::before{background:var(--nebula);}
+.collo:hover{transform:translate(-4px,-4px);box-shadow:7px 7px 0 var(--ink);}
+.collo:hover::before{width:14px;}
+.collo .pattern{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:14.5px;
+  background:var(--ink);color:var(--star);
+  padding:6px 14px;border-radius:999px;
+  white-space:nowrap;flex-shrink:0;
+  margin-left:8px;
+}
+.collo .meaning{font-size:14.5px;line-height:1.55;}
+.collo .meaning b{color:var(--nebula);font-weight:800;}
+
+/* 4. 例句 */
+.real-exs{display:flex;flex-direction:column;gap:16px;}
+.real-ex{
+  background:#FFFCF0;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:20px 24px;
+  position:relative;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  transform:rotate(.3deg);
+}
+.real-ex:nth-child(even){transform:rotate(-.5deg);}
+.real-ex:hover{transform:translate(-4px,-4px) rotate(0);box-shadow:9px 9px 0 var(--ink);}
+.real-ex::before{
+  content:"";
+  position:absolute;
+  top:-10px;left:-10px;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--nebula);
+  border:3px solid var(--ink);
+}
+.real-ex:nth-child(even)::before{background:var(--sol);}
+.real-ex:nth-child(3n)::before{background:var(--comet);}
+.real-ex .src{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;
+  background:var(--mars);color:var(--star);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--ink);
+  margin-bottom:12px;
+}
+.real-ex .en{
+  font-size:16px;line-height:1.8;margin:0 0 10px;
+  font-family:Georgia,serif;
+}
+.real-ex .en .hl{
+  background:var(--sol);color:var(--ink);
+  padding:1px 7px;border-radius:6px;
+  font-weight:800;font-style:normal;
+}
+.real-ex .cn{
+  font-size:13.5px;color:#7a6e60;line-height:1.7;
+  padding-left:16px;border-left:3px solid var(--nebula);
+}
+
+/* 5. 易错 */
+.pitfall{
+  padding:28px 30px;
+  background:var(--mars-soft);
+  color:var(--star);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    6px 6px 0 var(--nebula);
+  position:relative;overflow:hidden;
+  transform:rotate(-.5deg);
+}
+.pitfall::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:14px;
+  background-image:
+    radial-gradient(circle, var(--star) 2px, transparent 2.5px);
+  background-size:24px 14px;
+  border-bottom:3px solid var(--ink);
+}
+.pitfall-item{
+  margin-bottom:14px;font-size:15px;line-height:1.9;
+  padding:14px 18px;
+  background:#FFFCF0;
+  color:var(--ink);
+  border-left:6px solid var(--mars);
+  border-radius:0 var(--radius-md) var(--radius-md) 0;
+  transition:transform .3s;
+}
+.pitfall-item:hover{transform:translateX(8px);}
+.pitfall-item:last-child{margin-bottom:0;}
+.pitfall-item .wrong{
+  color:var(--mars);text-decoration:line-through;
+  text-decoration-thickness:2px;font-weight:700;
+}
+.pitfall-item .right{
+  color:var(--comet);font-weight:800;
+  background:var(--comet-soft);padding:1px 8px;border-radius:6px;
+  color:#0B0F1E;
+}
+.pitfall-item .tip{
+  display:inline-block;
+  background:var(--sol);color:var(--ink);
+  padding:1px 10px;border-radius:999px;
+  font-size:12px;font-weight:800;margin-right:8px;
+  border:2px solid var(--ink);
+}
+
+/* 6. 辨析表 */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+.compare-table thead{display:none;}
+.compare-table tbody tr{
+  background:#FFFCF0;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  opacity:0;transform:translateX(-20px);
+}
+.compare-table tbody tr.row-visible{opacity:1;transform:translateX(0);}
+.compare-table tbody tr:hover{transform:translate(-4px,-4px);box-shadow:7px 7px 0 var(--ink);}
+.compare-table td{
+  border-top:3px solid var(--ink);
+  border-bottom:3px solid var(--ink);
+  padding:14px 18px;vertical-align:middle;text-align:left;
+}
+.compare-table td:first-child{
+  border-left:3px solid var(--ink);
+  border-top-left-radius:18px;
+  border-bottom-left-radius:18px;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;white-space:nowrap;width:130px;
+  background:var(--nebula-soft);
+  color:var(--star);
+  font-size:16px;
+}
+.compare-table td:nth-child(2){width:180px;}
+.compare-table td:last-child{
+  border-right:3px solid var(--ink);
+  border-top-right-radius:18px;
+  border-bottom-right-radius:18px;
+}
+.compare-table .chant{
+  font-size:13px;color:var(--nebula);font-weight:700;
+  font-style:italic;line-height:1.5;
+}
+.compare-table tr.highlight{background:var(--sol-soft);}
+.compare-table tr.highlight td:first-child{
+  background:var(--sol);
+  color:var(--ink);
+  position:relative;
+}
+.compare-table tr.highlight td:first-child::after{
+  content:"★";
+  color:var(--mars);margin-left:6px;
+}
+
+/* 7. 填空 */
+.self-test .hint{
+  font-size:14px;color:var(--ink);
+  margin:0 0 22px;padding:14px 20px;
+  background:var(--sol-soft);
+  color:var(--star);
+  border:3px dashed var(--star);
+  border-radius:var(--radius-md);
+}
+.fill-item{
+  margin-bottom:16px;padding:18px 24px;
+  background:#FFFCF0;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+}
+.fill-item:hover{transform:translate(-3px,-3px) rotate(-.3deg);box-shadow:6px 6px 0 var(--ink);}
+.fill-sentence{font-size:16.5px;line-height:1.95;margin:0 0 10px;}
+.first-letter{
+  display:inline-block;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:900;color:var(--nebula);
+  font-size:19px;
+  padding-right:2px;
+}
+.blank{
+  display:inline-block;min-width:70px;
+  border-bottom:3px solid var(--ink);
+  text-align:center;font-weight:800;
+  color:transparent;cursor:pointer;
+  transition:color .3s,border-color .3s,background .3s;
+  padding:0 10px;user-select:none;
+  font-family:Georgia,serif;
+}
+.blank:hover{background:var(--sol);border-color:var(--nebula);}
+.blank.revealed{
+  color:var(--nebula);border-color:var(--nebula);
+  background:var(--sol-soft);
+  border-radius:8px 8px 0 0;
+  animation:answerPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.fill-hint{font-size:13.5px;color:var(--ink);opacity:.75;margin:0;}
+.fill-hint b{color:var(--nebula);font-weight:800;}
+
+/* 8. 造句 */
+.write-practice{
+  background:var(--comet-soft);
+  color:var(--star);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    6px 6px 0 var(--sol);
+  padding:26px 28px;
+  transform:rotate(.4deg);
+}
+.write-practice .wp-hint{
+  font-size:14px;opacity:.9;
+  margin:0 0 16px;
+}
+.write-practice textarea{
+  width:100%;min-height:110px;
+  padding:16px 18px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:16px;line-height:1.7;
+  color:var(--ink);
+  background:#FFFCF0;
+  border:3px solid var(--ink);
+  border-radius:18px;
+  box-shadow:inset 3px 3px 0 rgba(11,15,30,.08);
+  resize:vertical;
+  outline:none;
+  transition:box-shadow .2s;
+}
+.write-practice textarea:focus{
+  box-shadow:inset 3px 3px 0 rgba(11,15,30,.08), 0 0 0 5px var(--sol);
+}
+.wp-actions{
+  margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+}
+.wp-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;font-weight:800;letter-spacing:.04em;
+  padding:11px 22px;
+  background:var(--sol);color:var(--ink);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:3px 3px 0 var(--nebula);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
+}
+.wp-btn:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--nebula);}
+.wp-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--nebula);}
+.wp-btn.ghost{background:transparent;color:var(--star);}
+.wp-saved{
+  font-size:13px;color:var(--sol);font-weight:800;
+  opacity:0;transition:opacity .4s;
+}
+.wp-saved.show{opacity:1;}
+
+/* 9. 复习 */
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.review-day{
+  text-align:center;padding:20px 10px 18px;
+  background:#FFFCF0;
+  border:3px solid var(--ink);
+  border-radius:50% 50% 45% 55% / 45% 50% 50% 55%;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background .3s;
+  cursor:pointer;user-select:none;
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(20px) scale(.95);
+}
+.review-day.day-visible{
+  opacity:1;transform:translateY(0) scale(1);
+  transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1);
+}
+.review-day:hover{
+  transform:translate(-4px,-4px) rotate(-3deg);
+  box-shadow:7px 7px 0 var(--ink);
+}
+.review-day.done{background:var(--nebula);color:var(--star);}
+.review-day.done .day,
+.review-day.done .task{color:var(--star);}
+.review-day.done::after{
+  content:"✓";
+  position:absolute;top:8px;right:12px;
+  font-size:22px;font-weight:900;color:var(--sol);
+  text-shadow:1.5px 1.5px 0 var(--ink);
+}
+.review-day .day{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-size:28px;font-weight:900;margin-bottom:4px;
+  position:relative;z-index:1;
+}
+.review-day:nth-child(1) .day{color:var(--nebula);}
+.review-day:nth-child(2) .day{color:var(--sol);}
+.review-day:nth-child(3) .day{color:var(--comet);}
+.review-day:nth-child(4) .day{color:var(--mars);}
+.review-day .task{
+  font-size:12px;color:var(--ink);opacity:.75;
+  line-height:1.5;position:relative;z-index:1;
+}
+.review-tip{
+  margin-top:16px;font-size:13px;color:var(--ink);opacity:.6;
+  text-align:center;font-style:italic;
+}
+
+.progress-bar{
+  position:fixed;top:0;left:0;height:5px;width:0;
+  background:repeating-linear-gradient(90deg,
+    var(--nebula) 0 20px,
+    var(--sol) 20px 40px,
+    var(--comet) 40px 60px,
+    var(--mars) 60px 80px);
+  z-index:100;transition:width .1s linear;
+  border-bottom:2px solid var(--ink);
+}
+
+/* ============================================================
+   手机（窄屏）
+   ============================================================ */
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:60px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .page{border-radius:22px;}
+  .image-card{grid-template-columns:1fr;padding:26px 22px;}
+  .image-card .ic-svg{width:200px;height:180px;margin:0 auto;}
+  .section-title{font-size:15px;padding:6px 16px 6px 10px;}
+}
+
+/* ============================================================
+   桌面 ≥1100px
+   ============================================================ */
+@media (min-width:1100px){
+  body{padding:56px 32px 120px;}
+
+  .page{
+    max-width:1200px;
+    border-radius:36px;
+    box-shadow:
+      0 0 0 3px var(--ink),
+      14px 14px 0 var(--nebula),
+      0 24px 70px rgba(0,0,0,.7);
+  }
+
+  .hero{padding:100px 80px 80px;}
+  .hero-band{height:22px;}
+  .word-anim{font-size:132px;}
+  .speak-btn{width:56px;height:56px;font-size:26px;}
+  .ipa-anim{font-size:18px;padding:6px 22px;}
+  .pos-anim{font-size:13px;padding:6px 20px;}
+  .spell-hint{font-size:13px;padding:10px 24px;}
+
+  .body-wrap{padding:76px 80px 0;}
+  .section{margin-bottom:68px;}
+
+  .section-title{font-size:22px;gap:14px;margin-bottom:26px;padding:10px 26px 10px 14px;}
+  .section-title .num{width:38px;height:38px;font-size:16px;}
+
+  /* 词族 3 列 */
+  .fam-grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fam-card{padding:14px 16px;}
+  .fam-card .w{font-size:18px;}
+  .fam-card .m{font-size:13.5px;}
+
+  /* 意象卡 */
+  .image-card{
+    grid-template-columns:1.4fr 1fr;
+    gap:40px;
+    padding:48px 44px;
+  }
+  .image-card .ic-main{font-size:27px;line-height:1.5;}
+  .image-card .ic-sub{font-size:16px;}
+  .image-card .ic-svg{width:320px;height:280px;}
+
+  /* 搭配 2 列 */
+  .collocations{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .collo:nth-child(5){grid-column:1 / -1;}
+  .collo{padding:20px 24px;}
+  .collo .pattern{font-size:15.5px;padding:7px 16px;}
+  .collo .meaning{font-size:15px;}
+
+  /* 例句 2×2 */
+  .real-exs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .real-ex{padding:24px 28px;}
+  .real-ex .en{font-size:17px;}
+  .real-ex .cn{font-size:14.5px;}
+
+  /* 易错 */
+  .pitfall{padding:36px 40px;}
+  .pitfall-item{font-size:15.5px;padding:18px 22px;}
+
+  /* 辨析表 */
+  .compare-table{font-size:16px;border-spacing:0 14px;}
+  .compare-table td{padding:18px 24px;}
+  .compare-table td:first-child{width:160px;font-size:18px;}
+  .compare-table td:nth-child(2){width:auto;}
+  .compare-table .chant{font-size:14.5px;}
+
+  /* 填空 2 列 */
+  .self-test .fill-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .self-test .fill-item:nth-child(5){grid-column:1 / -1;margin-bottom:0;}
+  .fill-item{padding:22px 26px;margin-bottom:0;}
+  .fill-sentence{font-size:17px;}
+
+  /* 造句 */
+  .write-practice{
+    max-width:900px;
+    margin:0 auto;
+    padding:36px 40px;
+  }
+  .write-practice textarea{font-size:17px;padding:18px 22px;}
+
+  /* 复习 */
+  .review-grid{gap:24px;}
+  .review-day{padding:28px 14px 24px;}
+  .review-day .day{font-size:34px;}
+  .review-day .task{font-size:13.5px;}
+}
+
+/* ============================================================
+   超宽 ≥1500px
+   ============================================================ */
+@media (min-width:1500px){
+  .page{max-width:1400px;}
+  .hero{padding:120px 100px 96px;}
+  .word-anim{font-size:158px;}
+  .body-wrap{padding:92px 100px 0;}
+  .image-card{grid-template-columns:1.6fr 1fr;padding:56px 52px;}
+  .image-card .ic-main{font-size:30px;}
+  .image-card .ic-svg{width:380px;height:320px;}
+  .real-ex .en{font-size:18px;}
+}
+
+/* ============================================================
+   打印
+   ============================================================ */
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  body::before,body::after{display:none;}
+  .page{box-shadow:none;max-width:100%;}
+  .blank{color:var(--nebula)!important;}
+  .fill-item,.compare-table,.pitfall,.review-day{break-inside:avoid;}
+  .hero-stars,.hero-constellation,.page-drifting,.progress-bar{display:none;}
+  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
+  .compare-table tbody tr,.review-day{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-drifting" aria-hidden="true">
+    <div class="asteroid a1"></div><div class="asteroid a2"></div>
+    <div class="asteroid a3"></div><div class="asteroid a4"></div>
+    <div class="asteroid a5"></div><div class="asteroid a6"></div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+    <div class="hero-stars" aria-hidden="true"></div>
+    <div class="hero-constellation" aria-hidden="true">
+      <svg viewBox="0 0 860 320" preserveAspectRatio="none">
+        <path class="constellation-line cl1" d="M 100 80 L 220 140 L 340 90 L 460 180" />
+        <path class="constellation-line cl2" d="M 520 100 L 620 160 L 740 90 L 820 200" />
+        <path class="constellation-line cl3" d="M 180 240 L 320 220 L 460 260 L 600 230" />
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="space">
+          <span class="letter l1">s</span><span class="letter l2">p</span><span class="letter l3">a</span><span class="letter l4">c</span><span class="letter l5">e</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 space">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /speɪs/ &nbsp;·&nbsp; 美 /speɪs/</div>
+      <div class="pos-anim">n. · v.</div>
+      <div class="spell-hint">s · p · a · c · e &nbsp; 空间 · 太空 · 留白</div>
+    </div>
+  </section>
+
+  <!-- 主体 -->
+  <div class="body-wrap">
+
+    <!-- 1. 词根词族 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          拉丁语 <span class="affix">spatium</span>（距离，场地）
+          &nbsp;→&nbsp; <span class="stem">space</span>（空间）
+          &nbsp;→&nbsp; 广阔、留白、宇宙
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">spacious</div><div class="p">/ˈspeɪʃəs/</div><div class="m">宽敞的，广阔的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">spatial</div><div class="p">/ˈspeɪʃl/</div><div class="m">空间的，与空间有关的</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">spacing</div><div class="p">/ˈspeɪsɪŋ/</div><div class="m">间隔，间距</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w"><span class="hl">spacecraft</span></div><div class="p">/ˈspeɪskrɑːft/</div><div class="m">航天器，宇宙飞船</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">cyberspace</div><div class="p">/ˈsaɪbəspeɪs/</div><div class="m">网络空间</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">spaced-out</div><div class="p">/ˌspeɪst ˈaʊt/</div><div class="m">（口语）恍惚的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">space</span> = 一切事物之间<strong>空出来的位置</strong>。
+          </p>
+          <p class="ic-sub">
+            星际之间 → 太空；字句之间 → 留白；人与人之间 → 私人空间。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 240 220">
+            <!-- 中心行星 -->
+            <circle cx="120" cy="110" r="34" fill="var(--nebula)" stroke="var(--ink)" stroke-width="3"/>
+            <ellipse cx="120" cy="110" rx="34" ry="8" fill="none" stroke="var(--ink)" stroke-width="1.5" opacity=".5"/>
+            <ellipse cx="120" cy="110" rx="8" ry="34" fill="none" stroke="var(--ink)" stroke-width="1.5" opacity=".5"/>
+            <circle cx="108" cy="100" r="4" fill="var(--star)" opacity=".7"/>
+            <circle cx="130" cy="118" r="6" fill="var(--star)" opacity=".5"/>
+            <circle cx="118" cy="122" r="3" fill="var(--star)" opacity=".6"/>
+
+            <!-- 轨道环 -->
+            <ellipse class="planet-orbit" cx="120" cy="110" rx="95" ry="45"/>
+            <ellipse class="planet-orbit" cx="120" cy="110" rx="70" ry="70" style="animation-delay:-3s"/>
+
+            <!-- 卫星绕行 -->
+            <g class="satellite-small">
+              <circle cx="215" cy="110" r="7" fill="var(--sol)" stroke="var(--ink)" stroke-width="2.5"/>
+            </g>
+            <g class="satellite-small" style="animation-delay:-5s">
+              <circle cx="190" cy="110" r="5" fill="var(--comet)" stroke="var(--ink)" stroke-width="2"/>
+            </g>
+
+            <!-- 远处星星 -->
+            <circle class="star-pulse" cx="30" cy="40" r="2.5" fill="var(--star)"/>
+            <circle class="star-pulse" cx="200" cy="30" r="2" fill="var(--star)" style="animation-delay:1s"/>
+            <circle class="star-pulse" cx="210" cy="180" r="3" fill="var(--star)" style="animation-delay:2s"/>
+            <circle class="star-pulse" cx="40" cy="190" r="2" fill="var(--star)" style="animation-delay:.5s"/>
+            <circle class="star-pulse" cx="20" cy="120" r="2" fill="var(--star)" style="animation-delay:1.5s"/>
+            <circle class="star-pulse" cx="220" cy="70" r="1.5" fill="var(--star)" style="animation-delay:2.5s"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">in space</div><div class="meaning"><b>在太空中</b>（无冠词，指宇宙空间）</div></div>
+        <div class="collo"><div class="pattern">parking space</div><div class="meaning"><b>停车位</b>（可数，具体的空位）</div></div>
+        <div class="collo"><div class="pattern">personal space</div><div class="meaning"><b>私人空间</b>（人际距离）</div></div>
+        <div class="collo"><div class="pattern">breathing space</div><div class="meaning"><b>喘息机会</b>（暂缓压力的时间）</div></div>
+        <div class="collo"><div class="pattern">space out</div><div class="meaning"><b>走神</b>，心不在焉（口语动词短语）</div></div>
+      </div>
+    </section>
+
+    <!-- 4. 例句 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 阅读</div>
+          <p class="en">The International Space Station has been continuously occupied in <em class="hl">space</em> since 2000.</p>
+          <p class="cn">国际空间站自 2000 年以来一直在太空中持续驻留。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 写作</div>
+          <p class="en">Urban planners must reserve enough green <em class="hl">space</em> for residents to relax.</p>
+          <p class="cn">城市规划者必须为居民保留足够的绿色空间来放松。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">Working from home blurs the boundary between professional and personal <em class="hl">space</em>.</p>
+          <p class="cn">居家办公模糊了职业空间与私人空间的界限。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">There is no <em class="hl">space</em> for error in this experiment.</p>
+          <p class="cn">这个实验没有犯错的余地。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 易错 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">可数性</span>
+          "空间/太空" → <b>不可数</b>（√ There's not enough space.）<br>
+          "停车位/空位" → <b>可数</b>（√ I found a parking space.）
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          <span class="wrong">in the space</span> → <span class="right">in space</span><br>
+          表示"在太空中"不加 the；表示"在某个具体的空间里"才用 in the space。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>space</b> = 抽象空间/宇宙；<b>room</b> = 具体的空位/房间（不可数时表"余地"）<br>
+          例：There's no room for doubt = There's no space for doubt（后者略少用）
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>space</td><td>空间 / 太空 / 空隙</td><td class="chant">空出来的地方叫 space</td></tr>
+          <tr><td>room</td><td>空间 / 房间（偏"容量"）</td><td class="chant">够不够放用 room</td></tr>
+          <tr><td>area</td><td>区域 / 面积</td><td class="chant">有明确范围的 area</td></tr>
+          <tr><td>expanse</td><td>广阔的区域（文学）</td><td class="chant">一眼望不到边 expanse</td></tr>
+          <tr><td>void</td><td>虚空 / 空白（正式）</td><td class="chant">空无一物是 void</td></tr>
+          <tr><td>capacity</td><td>容量 / 容纳力</td><td class="chant">能装多少用 capacity</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. 填空 -->
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The tiny apartment doesn't have enough <span class="first-letter">s</span><span class="blank" onclick="this.classList.toggle('revealed')">pace</span> for a sofa.</p>
+          <p class="fill-hint">提示：表"空间"（不可数）　<b>enough space</b></p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Scientists have sent many spacecraft into <span class="first-letter">s</span><span class="blank" onclick="this.classList.toggle('revealed')">pace</span> to explore the universe.</p>
+          <p class="fill-hint">提示：<b>in space</b>，在太空中（不加 the）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">I found a parking <span class="first-letter">s</span><span class="blank" onclick="this.classList.toggle('revealed')">pace</span> right in front of the building.</p>
+          <p class="fill-hint">提示：<b>parking space</b>，停车位（可数）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">After months of hard work, she needed a breathing <span class="first-letter">s</span><span class="blank" onclick="this.classList.toggle('revealed')">pace</span>.</p>
+          <p class="fill-hint">提示：<b>breathing space</b>，喘息的机会</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He tends to <span class="first-letter">s</span><span class="blank" onclick="this.classList.toggle('revealed')">pace out</span> during long meetings.</p>
+          <p class="fill-hint">提示：<b>space out</b>，走神（口语）</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. 造句 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>space</b> 造一句自己的句子。刻意用上今天学的一个搭配（in space / parking space / personal space / breathing space）。</p>
+        <textarea id="mySentence" placeholder="例：After a busy week, I really need some breathing space to recharge."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. 复习 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script>
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+  progressBar.style.width = (scrolled * 100) + '%';
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale')
+  .forEach(el => revealObserver.observe(el));
+
+const tableObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const rows = entry.target.querySelectorAll('tbody tr');
+      rows.forEach((row, i) => setTimeout(() => row.classList.add('row-visible'), i * 120));
+      tableObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const table = document.querySelector('.compare-table');
+if(table) tableObserver.observe(table);
+
+const reviewDays = document.querySelectorAll('.review-day');
+const reviewObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      reviewDays.forEach((day, i) => setTimeout(() => day.classList.add('day-visible'), i * 130));
+      reviewObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const reviewGrid = document.querySelector('.review-grid');
+if(reviewGrid) reviewObserver.observe(reviewGrid);
+
+document.querySelectorAll('.blank').forEach(b => {
+  b.addEventListener('click', function(){
+    this.style.transform = 'scale(1.15)';
+    setTimeout(() => { this.style.transform = ''; }, 180);
+  });
+});
+
+const speakBtn = document.getElementById('speakBtn');
+speakBtn.addEventListener('click', () => {
+  if(!('speechSynthesis' in window)) { alert('当前浏览器不支持朗读'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance('space');
+  u.lang = 'en-US'; u.rate = 0.85;
+  u.onstart = () => speakBtn.classList.add('speaking');
+  u.onend = () => speakBtn.classList.remove('speaking');
+  window.speechSynthesis.speak(u);
+});
+document.getElementById('ipaBtn').addEventListener('click', () => speakBtn.click());
+
+const STORAGE_KEY = 'space_sentence';
+const mySentence = document.getElementById('mySentence');
+const savedMsg = document.getElementById('savedMsg');
+const saved = localStorage.getItem(STORAGE_KEY);
+if(saved) mySentence.value = saved;
+document.getElementById('saveBtn').addEventListener('click', () => {
+  localStorage.setItem(STORAGE_KEY, mySentence.value);
+  savedMsg.classList.add('show');
+  setTimeout(() => savedMsg.classList.remove('show'), 1800);
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  mySentence.value = '';
+  localStorage.removeItem(STORAGE_KEY);
+});
+
+const REVIEW_KEY = 'space_review';
+const reviewState = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
+reviewDays.forEach(day => {
+  const key = day.dataset.day;
+  if(reviewState[key]) day.classList.add('done');
+  day.addEventListener('click', () => {
+    day.classList.toggle('done');
+    reviewState[key] = day.classList.contains('done');
+    localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewState));
+  });
+});
+</script>
+
+</body>
+</html>

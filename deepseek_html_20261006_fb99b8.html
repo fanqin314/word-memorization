@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>weave · 织</title>
+<style>
+:root{
+  --linen:#FAF2E0;
+  --linen-2:#F2E5CA;
+  --ink:#2B2118;
+  --indigo:#1B3A5F;
+  --indigo-soft:#E4EBF5;
+  --madder:#B33A1F;
+  --madder-soft:#F7E4DC;
+  --turmeric:#E9A324;
+  --turmeric-soft:#FBEFD4;
+  --verdigris:#2A7E6B;
+  --verdigris-soft:#DDEDE7;
+  --damson:#6B2549;
+  --damson-soft:#EDDCE5;
+
+  --shadow-hard:6px 6px 0 var(--ink);
+  --shadow-hard-sm:3px 3px 0 var(--ink);
+  --radius-lg:22px;
+  --radius-md:14px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:#1A1410;
+  padding:44px 16px 90px;
+  color:var(--ink);
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+  font-size:16px;
+  line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 10% 0%, rgba(233,163,36,.18) 0, transparent 40%),
+    radial-gradient(circle at 90% 100%, rgba(42,126,107,.16) 0, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(179,58,31,.10) 0, transparent 60%);
+}
+
+body::after{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:9999;
+  opacity:.28;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+}
+
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0 22px,
+      rgba(233,163,36,.05) 22px 24px,
+      transparent 24px 46px),
+    repeating-linear-gradient(90deg,
+      transparent 0 22px,
+      rgba(27,58,95,.06) 22px 24px,
+      transparent 24px 46px);
+  background-size:46px 46px;
+  animation:globalWeave 40s linear infinite;
+}
+@keyframes globalWeave{
+  to{ background-position:46px 46px, -46px 46px; }
+}
+
+.page{
+  position:relative;z-index:1;
+  max-width:860px;margin:0 auto;
+  background:var(--linen);
+  padding:0 0 72px;
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    12px 12px 0 var(--ink),
+    0 20px 60px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+
+.page-threads{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.page-threads svg{width:100%;height:100%;}
+.page-threads .pstrand{
+  fill:none;stroke-linecap:round;
+  opacity:0;stroke-dasharray:1200;stroke-dashoffset:1200;
+}
+.page-threads .p1{stroke:var(--madder);stroke-width:1.8;animation:drawP 4s cubic-bezier(.4,.1,.2,1) .5s forwards;}
+.page-threads .p2{stroke:var(--turmeric);stroke-width:1.6;animation:drawP 4.5s cubic-bezier(.4,.1,.2,1) 1.2s forwards;}
+.page-threads .p3{stroke:var(--indigo);stroke-width:1.5;animation:drawP 4s cubic-bezier(.4,.1,.2,1) 2s forwards;}
+.page-threads .p4{stroke:var(--verdigris);stroke-width:1.4;animation:drawP 4.5s cubic-bezier(.4,.1,.2,1) 2.8s forwards;}
+@keyframes drawP{
+  0%{opacity:0;stroke-dashoffset:1200;}
+  15%{opacity:.5;}
+  100%{opacity:.32;stroke-dashoffset:0;}
+}
+
+.page-sparkles{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.sparkle{position:absolute;width:6px;height:6px;border-radius:50%;opacity:0;animation:floatUp linear infinite;}
+.sparkle.s1{left:8%;bottom:5%;background:var(--madder);animation-duration:22s;animation-delay:0s;}
+.sparkle.s2{left:18%;bottom:10%;background:var(--turmeric);animation-duration:26s;animation-delay:3s;width:5px;height:5px;}
+.sparkle.s3{left:82%;bottom:8%;background:var(--verdigris);animation-duration:24s;animation-delay:6s;width:4px;height:4px;}
+.sparkle.s4{left:90%;bottom:15%;background:var(--indigo);animation-duration:28s;animation-delay:2s;}
+.sparkle.s5{left:50%;bottom:3%;background:var(--turmeric);animation-duration:30s;animation-delay:9s;width:3px;height:3px;}
+.sparkle.s6{left:30%;bottom:12%;background:var(--madder);animation-duration:25s;animation-delay:12s;width:4px;height:4px;}
+.sparkle.s7{left:70%;bottom:6%;background:var(--verdigris);animation-duration:27s;animation-delay:5s;}
+.sparkle.s8{left:42%;bottom:18%;background:var(--indigo);animation-duration:32s;animation-delay:15s;width:3px;height:3px;}
+@keyframes floatUp{
+  0%{transform:translateY(0) scale(.6);opacity:0;}
+  10%{opacity:.55;}
+  50%{opacity:.35;}
+  90%{opacity:.15;}
+  100%{transform:translateY(-120vh) scale(1.3);opacity:0;}
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:70px 64px 56px;
+  border-bottom:3px solid var(--ink);
+  background:linear-gradient(180deg, #FFF8E8 0%, var(--linen) 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:14px;
+  background:repeating-linear-gradient(90deg,
+    var(--madder) 0 24px,
+    var(--turmeric) 24px 48px,
+    var(--indigo) 48px 72px,
+    var(--verdigris) 72px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+.hero-bg{
+  position:absolute;inset:-40px;pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg,transparent 0 12px,rgba(27,58,95,.10) 12px 13px,transparent 13px 26px),
+    repeating-linear-gradient(90deg,transparent 0 12px,rgba(179,58,31,.09) 12px 13px,transparent 13px 26px);
+  background-size:26px 26px;
+  animation:bgWeave 30s linear infinite;
+  mask-image:radial-gradient(ellipse 70% 80% at 50% 40%, #000 0%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse 70% 80% at 50% 40%, #000 0%, transparent 78%);
+}
+@keyframes bgWeave{to{background-position:26px 26px,-26px 26px;}}
+
+.ribbon-deco{position:absolute;inset:0;pointer-events:none;opacity:.85;}
+.ribbon-deco svg{width:100%;height:100%;}
+.ribbon-deco .strand{
+  fill:none;stroke-linecap:round;
+  stroke-dasharray:900;stroke-dashoffset:900;
+  animation:drawStrand 2.6s cubic-bezier(.4,.1,.2,1) forwards;
+}
+.ribbon-deco .s1{stroke:var(--madder);stroke-width:3;opacity:.35;animation-delay:.2s;}
+.ribbon-deco .s2{stroke:var(--turmeric);stroke-width:3;opacity:.4;animation-delay:.7s;}
+.ribbon-deco .s3{stroke:var(--verdigris);stroke-width:2.5;opacity:.3;animation-delay:1.2s;}
+@keyframes drawStrand{to{stroke-dashoffset:0;}}
+
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:88px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  animation:wordBreath 6s ease-in-out 2s infinite;
+  filter:drop-shadow(4px 4px 0 var(--ink));
+}
+@keyframes wordBreath{0%,100%{transform:scale(1);}50%{transform:scale(1.015);}}
+.word-anim .letter{
+  display:inline-block;opacity:0;color:var(--indigo);
+  animation:letterIn .85s cubic-bezier(.2,.7,.3,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s;
+}
+.word-anim .l1{--fx:-46px;--fy:-20px;--fr:-14deg;animation-delay:.15s;}
+.word-anim .l2{--fx:46px;--fy:20px;--fr:14deg;animation-delay:.32s;color:var(--madder);}
+.word-anim .l3{--fx:-46px;--fy:20px;--fr:-14deg;animation-delay:.49s;color:var(--turmeric);}
+.word-anim .l4{--fx:46px;--fy:-20px;--fr:14deg;animation-delay:.66s;color:var(--verdigris);}
+.word-anim .l5{--fx:-46px;--fy:20px;--fr:-14deg;animation-delay:.83s;color:var(--damson);}
+@keyframes letterIn{
+  0%{opacity:0;transform:translate(var(--fx),var(--fy)) rotate(var(--fr)) scale(.7);filter:blur(8px);}
+  55%{opacity:1;filter:blur(0);}
+  100%{opacity:1;transform:translate(0,0) rotate(0) scale(1);filter:blur(0);color:var(--ink);}
+}
+.word-anim .letter:hover{color:var(--madder);transform:translateY(-6px) scale(1.1);}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;margin-left:12px;vertical-align:middle;
+  background:var(--turmeric);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+
+.ipa-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;color:var(--ink);letter-spacing:.06em;
+  background:var(--turmeric);border:2.5px solid var(--ink);
+  display:inline-block;padding:4px 16px;border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  opacity:0;animation:fadeUp .8s ease-out 1.15s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+}
+.ipa-anim:hover{background:var(--madder);color:var(--linen);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--linen);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);display:inline-block;padding:4px 14px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.35s forwards;
+  transform:rotate(1.2deg);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:22px;padding:8px 18px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--madder);background:var(--madder-soft);
+  border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  opacity:0;animation:fadeUp .8s ease-out 1.6s forwards;
+  transform:rotate(-1deg);
+}
+
+/* ============ 主体 ============ */
+.body-wrap{padding:56px 64px 0;}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal-scale.visible{opacity:1;transform:scale(1);}
+
+.section-title{
+  display:flex;align-items:center;gap:12px;
+  margin:0 0 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:20px;font-weight:900;
+  letter-spacing:-.01em;
+}
+.section-title .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;flex-shrink:0;
+  background:var(--ink);color:var(--linen);
+  border-radius:50%;font-size:15px;font-weight:900;
+  box-shadow:2px 2px 0 var(--madder);
+}
+.section-title .txt{padding-bottom:2px;border-bottom:3px solid var(--turmeric);}
+
+.section{margin:0 0 52px;}
+
+/* 1. 词根词族 */
+.root-family{
+  background:#FFFBF0;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard);
+  padding:22px;
+  margin-bottom:20px;
+}
+.root-line{
+  font-size:17px;line-height:2.2;margin-bottom:16px;
+  padding-bottom:14px;border-bottom:2px dashed var(--ink);
+}
+.root-line .affix{
+  background:var(--madder);color:#fff;
+  padding:3px 10px;border-radius:8px;font-weight:800;
+  display:inline-block;transform:rotate(-2deg);
+  border:2px solid var(--ink);
+}
+.root-line .stem{
+  background:var(--verdigris);color:#fff;
+  padding:3px 10px;border-radius:8px;font-weight:800;
+  display:inline-block;transform:rotate(1.5deg);
+  border:2px solid var(--ink);
+}
+.fam-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:10px;
+}
+.fam-card{
+  background:#fff;border:2.5px solid var(--ink);
+  border-radius:12px;padding:10px 12px;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.fam-card:hover{transform:translate(-2px,-2px) rotate(-1deg);}
+.fam-card .pos{
+  font-size:10px;font-weight:800;
+  background:var(--ink);color:var(--linen);
+  padding:2px 7px;border-radius:999px;
+  display:inline-block;margin-bottom:5px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  letter-spacing:.08em;
+}
+.fam-card .w{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:16px;
+  color:var(--indigo);
+  line-height:1.3;
+}
+.fam-card .w .hl{color:var(--madder);}
+.fam-card .p{font-size:11px;color:#8a7d6d;margin:2px 0 4px;font-family:monospace;}
+.fam-card .m{font-size:12.5px;line-height:1.5;}
+
+/* 2. 意象卡 */
+.image-card{
+  background:var(--indigo);
+  color:var(--linen);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:32px 30px;
+  margin-bottom:20px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 180px;
+  gap:24px;
+  align-items:center;
+  transform:rotate(-.5deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.12) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+.image-card .ic-text{position:relative;z-index:1;}
+.image-card .ic-label{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;font-weight:900;letter-spacing:.18em;
+  background:var(--turmeric);color:var(--ink);
+  padding:4px 12px;border-radius:999px;
+  border:2px solid var(--ink);
+  margin-bottom:14px;
+  transform:rotate(-2deg);
+}
+.image-card .ic-main{
+  font-size:22px;font-weight:800;line-height:1.55;
+  margin:0 0 12px;
+}
+.image-card .ic-main .hl{
+  background:var(--turmeric);color:var(--ink);
+  padding:1px 8px;border-radius:6px;
+}
+.image-card .ic-sub{
+  font-size:14.5px;opacity:.85;line-height:1.85;margin:0;
+}
+.image-card .ic-svg{
+  position:relative;z-index:1;
+  width:180px;height:180px;
+}
+.image-card .ic-svg svg{width:100%;height:100%;overflow:visible;}
+.thread{stroke-linecap:round;fill:none;stroke-dasharray:400;stroke-dashoffset:400;animation:drawThread 2.5s ease-out forwards;}
+.thread.t1{stroke:var(--madder);stroke-width:3.5;animation-delay:.3s;}
+.thread.t2{stroke:var(--turmeric);stroke-width:3.5;animation-delay:.5s;}
+.thread.t3{stroke:var(--verdigris);stroke-width:3.5;animation-delay:.7s;}
+.thread.t4{stroke:#fff;stroke-width:3;opacity:.85;animation-delay:.9s;}
+.thread.t5{stroke:var(--damson);stroke-width:3.5;animation-delay:1.1s;}
+@keyframes drawThread{to{stroke-dashoffset:0;}}
+.weave-pulse{animation:pulseCore 3s ease-in-out infinite;}
+@keyframes pulseCore{0%,100%{opacity:.5;}50%{opacity:1;}}
+
+/* 3. 搭配语块 */
+.collocations{display:flex;flex-direction:column;gap:12px;}
+.collo{
+  background:#FFFBF0;border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:14px 18px;
+  display:flex;align-items:baseline;gap:14px;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+}
+.collo:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--ink);}
+.collo .pattern{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:15px;
+  background:var(--indigo);color:var(--linen);
+  padding:5px 12px;border-radius:8px;
+  white-space:nowrap;flex-shrink:0;
+  border:2px solid var(--ink);
+}
+.collo .meaning{font-size:14.5px;line-height:1.6;}
+.collo .meaning b{color:var(--madder);font-weight:800;}
+
+/* 4. 真题例句 */
+.real-exs{display:flex;flex-direction:column;gap:14px;}
+.real-ex{
+  background:#FFFBF0;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard);
+  padding:18px 22px;
+  position:relative;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  transform:rotate(.3deg);
+}
+.real-ex:nth-child(even){transform:rotate(-.4deg);}
+.real-ex:hover{transform:translate(-4px,-4px) rotate(0);box-shadow:8px 8px 0 var(--ink);}
+.real-ex .src{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;
+  background:var(--verdigris);color:var(--linen);
+  padding:3px 12px;border-radius:999px;
+  border:2px solid var(--ink);
+  margin-bottom:12px;
+}
+.real-ex .en{
+  font-size:16px;line-height:1.75;margin:0 0 8px;
+  font-family:Georgia,serif;
+}
+.real-ex .en .hl{
+  background:var(--turmeric);color:var(--ink);
+  padding:1px 6px;border-radius:5px;
+  font-weight:800;font-style:normal;
+}
+.real-ex .cn{
+  font-size:13.5px;color:#7a6e60;line-height:1.65;
+  padding-left:14px;border-left:3px solid var(--madder);
+}
+
+/* 5. 易错 */
+.pitfall{
+  padding:26px 28px;
+  background:var(--madder-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard);
+  position:relative;overflow:hidden;
+  transform:rotate(-.5deg);
+}
+.pitfall::before{
+  content:"";position:absolute;
+  top:0;left:0;right:0;height:6px;
+  background:repeating-linear-gradient(45deg,
+    var(--madder) 0 12px,
+    var(--ink) 12px 14px,
+    var(--madder) 14px 26px);
+  animation:pulseBar 3s ease-in-out infinite;
+}
+@keyframes pulseBar{0%,100%{opacity:1;}50%{opacity:.4;}}
+.pitfall-item{
+  margin-bottom:14px;font-size:15px;line-height:1.85;
+  padding:12px 16px;
+  background:#FFFBF0;
+  border-left:5px solid var(--madder);
+  border-radius:0 var(--radius-md) var(--radius-md) 0;
+  transition:transform .3s;
+}
+.pitfall-item:hover{transform:translateX(6px);}
+.pitfall-item:last-child{margin-bottom:0;}
+.pitfall-item .wrong{
+  color:var(--madder);text-decoration:line-through;
+  text-decoration-thickness:2px;font-weight:700;
+}
+.pitfall-item .right{
+  color:var(--verdigris);font-weight:800;
+  background:var(--verdigris-soft);padding:1px 6px;border-radius:6px;
+}
+.pitfall-item .tip{
+  display:inline-block;
+  background:var(--turmeric);color:var(--ink);
+  padding:1px 8px;border-radius:6px;
+  font-size:13px;font-weight:800;margin-right:6px;
+}
+
+/* 6. 辨析 */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  font-size:15px;line-height:1.7;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  box-shadow:var(--shadow-hard);
+  background:#FFFBF0;
+}
+.compare-table th,.compare-table td{
+  border-bottom:2px solid var(--ink);
+  padding:12px 14px;vertical-align:top;text-align:left;
+  transition:background .3s;
+}
+.compare-table th{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--linen);font-weight:800;
+  background:var(--ink);
+}
+.compare-table tbody tr:last-child td{border-bottom:none;}
+.compare-table td:first-child{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;white-space:nowrap;width:100px;
+  background:var(--linen-2);
+  color:var(--indigo);
+  font-size:16px;
+}
+.compare-table .chant{
+  font-size:13px;color:var(--madder);font-weight:700;
+  font-style:italic;line-height:1.5;
+}
+.compare-table tr.highlight td{background:var(--turmeric-soft);}
+.compare-table tr.highlight td:first-child{background:var(--turmeric);color:var(--ink);}
+.compare-table tr.highlight td:first-child::after{content:" ★";color:var(--madder);}
+.compare-table tbody tr{opacity:0;transform:translateX(-16px);transition:opacity .5s ease,transform .5s ease;}
+.compare-table tbody tr.row-visible{opacity:1;transform:translateX(0);}
+.compare-table tbody tr:hover td{background:var(--madder-soft);}
+.compare-table tbody tr:hover td:first-child{background:var(--madder);color:var(--linen);}
+
+/* 7. 填空 */
+.self-test .hint{
+  font-size:14px;color:var(--ink);opacity:.75;
+  margin:0 0 20px;padding:12px 16px;
+  background:var(--indigo-soft);
+  border-left:4px solid var(--indigo);
+  border-radius:0 8px 8px 0;
+}
+.fill-item{
+  margin-bottom:14px;padding:16px 22px;
+  background:#FFFBF0;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+}
+.fill-item:hover{transform:translate(-3px,-3px) rotate(-.4deg);box-shadow:6px 6px 0 var(--ink);}
+.fill-sentence{font-size:16.5px;line-height:1.9;margin:0 0 10px;}
+.first-letter{
+  display:inline-block;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:900;color:var(--madder);
+  font-size:18px;
+  padding-right:2px;
+}
+.blank{
+  display:inline-block;min-width:70px;
+  border-bottom:3px solid var(--ink);
+  text-align:center;font-weight:800;
+  color:transparent;cursor:pointer;
+  transition:color .3s,border-color .3s,background .3s;
+  padding:0 8px;user-select:none;
+  font-family:Georgia,serif;
+}
+.blank:hover{background:var(--turmeric);border-color:var(--madder);}
+.blank.revealed{
+  color:var(--madder);border-color:var(--madder);
+  background:var(--turmeric-soft);
+  border-radius:6px 6px 0 0;
+  animation:answerPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.fill-hint{font-size:13.5px;color:var(--ink);opacity:.75;margin:0;}
+.fill-hint b{color:var(--madder);font-weight:800;}
+
+/* 8. 造句 */
+.write-practice{
+  background:var(--verdigris-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard);
+  padding:24px 26px;
+  transform:rotate(.4deg);
+}
+.write-practice .wp-hint{
+  font-size:14px;color:var(--ink);opacity:.8;
+  margin:0 0 14px;
+}
+.write-practice textarea{
+  width:100%;min-height:100px;
+  padding:14px 16px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:16px;line-height:1.7;
+  color:var(--ink);
+  background:#FFFBF0;
+  border:3px solid var(--ink);
+  border-radius:12px;
+  box-shadow:inset 3px 3px 0 rgba(43,33,24,.08);
+  resize:vertical;
+  outline:none;
+  transition:box-shadow .2s;
+}
+.write-practice textarea:focus{
+  box-shadow:inset 3px 3px 0 rgba(43,33,24,.08), 0 0 0 4px var(--turmeric);
+}
+.wp-actions{
+  margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+}
+.wp-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;font-weight:800;letter-spacing:.04em;
+  padding:10px 20px;
+  background:var(--ink);color:var(--linen);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
+}
+.wp-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--madder);}
+.wp-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);}
+.wp-btn.ghost{background:transparent;color:var(--ink);}
+.wp-saved{
+  font-size:13px;color:var(--verdigris);font-weight:800;
+  opacity:0;transition:opacity .4s;
+}
+.wp-saved.show{opacity:1;}
+
+/* 9. 复习 */
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.review-day{
+  text-align:center;padding:18px 8px 16px;
+  background:#FFFBF0;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background .3s;
+  cursor:pointer;user-select:none;
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(20px) scale(.95);
+}
+.review-day.day-visible{
+  opacity:1;transform:translateY(0) scale(1);
+  transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1);
+}
+.review-day:hover{
+  transform:translate(-3px,-3px) rotate(-2deg);
+  box-shadow:6px 6px 0 var(--ink);
+}
+.review-day.done{background:var(--verdigris);color:var(--linen);}
+.review-day.done .day,
+.review-day.done .task{color:var(--linen);}
+.review-day.done::after{
+  content:"✓";position:absolute;top:6px;right:10px;
+  font-size:22px;font-weight:900;color:var(--turmeric);
+  text-shadow:1px 1px 0 var(--ink);
+}
+.review-day .day{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:26px;font-weight:900;margin-bottom:4px;
+  position:relative;z-index:1;color:var(--ink);
+}
+.review-day:nth-child(1) .day{color:var(--madder);}
+.review-day:nth-child(2) .day{color:var(--turmeric);}
+.review-day:nth-child(3) .day{color:var(--verdigris);}
+.review-day:nth-child(4) .day{color:var(--damson);}
+.review-day .task{
+  font-size:12.5px;color:var(--ink);opacity:.75;
+  line-height:1.55;position:relative;z-index:1;
+}
+.review-tip{
+  margin-top:14px;font-size:13px;color:var(--ink);opacity:.6;
+  text-align:center;font-style:italic;
+}
+
+/* 进度条 */
+.progress-bar{
+  position:fixed;top:0;left:0;height:5px;width:0;
+  background:repeating-linear-gradient(90deg,
+    var(--madder) 0 20px,
+    var(--turmeric) 20px 40px,
+    var(--indigo) 40px 60px,
+    var(--verdigris) 60px 80px);
+  z-index:100;transition:width .1s linear;
+  border-bottom:2px solid var(--ink);
+}
+
+/* ============================================================
+   响应式：平板（小屏到中屏）
+   ============================================================ */
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 24px 40px;}
+  .word-anim{font-size:56px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .compare-table td:first-child{width:auto;}
+  .page{border-radius:16px;}
+  .image-card{grid-template-columns:1fr;padding:24px 22px;}
+  .image-card .ic-svg{width:140px;height:140px;margin:0 auto;}
+  .section-title{font-size:17px;}
+}
+
+/* ============================================================
+   响应式：桌面 ≥1100px —— 页面加宽 + 双列排布
+   ============================================================ */
+@media (min-width:1100px){
+  body{padding:56px 32px 120px;}
+
+  .page{
+    max-width:1200px;
+    border-radius:28px;
+    box-shadow:
+      0 0 0 3px var(--ink),
+      14px 14px 0 var(--ink),
+      0 24px 70px rgba(0,0,0,.55);
+  }
+
+  /* HERO 加大 */
+  .hero{padding:90px 80px 76px;}
+  .hero-band{height:18px;}
+  .word-anim{font-size:124px;}
+  .speak-btn{width:52px;height:52px;font-size:24px;}
+  .ipa-anim{font-size:18px;padding:6px 20px;}
+  .pos-anim{font-size:13px;padding:6px 18px;}
+  .spell-hint{font-size:13px;padding:10px 22px;}
+
+  /* 主体加大内距 */
+  .body-wrap{padding:72px 80px 0;}
+  .section{margin-bottom:64px;}
+
+  /* 章节标题加大 */
+  .section-title{font-size:23px;gap:14px;margin-bottom:24px;}
+  .section-title .num{width:40px;height:40px;font-size:17px;}
+
+  /* --- 1. 词族：3 列 --- */
+  .fam-grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fam-card{padding:14px 16px;}
+  .fam-card .w{font-size:18px;}
+  .fam-card .m{font-size:13.5px;}
+
+  /* --- 2. 意象卡：文字区更宽，SVG 更大 --- */
+  .image-card{
+    grid-template-columns:1.4fr 1fr;
+    gap:36px;
+    padding:44px 40px;
+  }
+  .image-card .ic-main{font-size:26px;line-height:1.5;}
+  .image-card .ic-sub{font-size:16px;}
+  .image-card .ic-svg{width:220px;height:220px;}
+
+  /* --- 3. 搭配：2 列，第 5 项占满整行 --- */
+  .collocations{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  .collo:nth-child(5){grid-column:1 / -1;}
+  .collo{padding:18px 22px;}
+  .collo .pattern{font-size:16px;}
+  .collo .meaning{font-size:15px;}
+
+  /* --- 4. 例句：2×2 网格 --- */
+  .real-exs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .real-ex{padding:22px 26px;}
+  .real-ex .en{font-size:17px;}
+
+  /* --- 5. 易错：留点内边距，避免过宽 --- */
+  .pitfall{padding:32px 36px;}
+
+  /* --- 6. 辨析表：行更高 --- */
+  .compare-table{font-size:16px;}
+  .compare-table th,.compare-table td{padding:16px 20px;}
+  .compare-table td:first-child{width:130px;font-size:18px;}
+  .compare-table .chant{font-size:14.5px;}
+
+  /* --- 7. 填空：2 列，第 5 项占满 --- */
+  .self-test .fill-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  .self-test .fill-item:nth-child(5){grid-column:1 / -1;margin-bottom:0;}
+  .fill-item{padding:20px 24px;margin-bottom:0;}
+  .fill-sentence{font-size:17px;}
+
+  /* --- 8. 造句：居中 + 加宽 --- */
+  .write-practice{
+    max-width:880px;
+    margin:0 auto;
+    padding:32px 36px;
+  }
+
+  /* --- 9. 复习：间距加大 --- */
+  .review-grid{gap:22px;}
+  .review-day{padding:26px 12px 22px;}
+  .review-day .day{font-size:32px;}
+  .review-day .task{font-size:14px;}
+}
+
+/* ============================================================
+   响应式：超宽 ≥1500px —— 再放宽 + 词族一行排完
+   ============================================================ */
+@media (min-width:1500px){
+  .page{max-width:1400px;}
+
+  .hero{padding:110px 100px 90px;}
+  .word-anim{font-size:150px;}
+  .body-wrap{padding:88px 100px 0;}
+
+  /* 词族：6 列一行排完 */
+  .fam-grid{grid-template-columns:repeat(6,1fr);}
+
+  /* 意象卡：文字区更宽 */
+  .image-card{
+    grid-template-columns:1.6fr 1fr;
+    padding:52px 48px;
+  }
+  .image-card .ic-svg{width:260px;height:260px;}
+  .image-card .ic-main{font-size:30px;}
+
+  /* 搭配：5 项全部一行横排（可选）——保留 2 列更易读 */
+  /* 例句：保持 2 列 */
+}
+
+/* ============================================================
+   打印
+   ============================================================ */
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  body::before,body::after{display:none;}
+  .page{box-shadow:none;max-width:100%;}
+  .blank{color:var(--madder)!important;}
+  .fill-item,.compare-table,.pitfall,.review-day{break-inside:avoid;}
+  .hero-bg,.ribbon-deco,.page-threads,.page-sparkles,.progress-bar{display:none;}
+  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
+  .compare-table tbody tr,.review-day{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-threads" aria-hidden="true">
+    <svg viewBox="0 0 860 3200" preserveAspectRatio="none">
+      <path class="pstrand p1" d="M 900 200 C 600 500, 300 700, -40 1100" />
+      <path class="pstrand p2" d="M -40 800 C 250 750, 550 950, 900 850" />
+      <path class="pstrand p3" d="M -40 1400 C 300 1300, 500 1600, 900 1500" />
+      <path class="pstrand p4" d="M -40 2000 C 200 1950, 600 2100, 900 1980" />
+    </svg>
+  </div>
+
+  <div class="page-sparkles" aria-hidden="true">
+    <div class="sparkle s1"></div><div class="sparkle s2"></div>
+    <div class="sparkle s3"></div><div class="sparkle s4"></div>
+    <div class="sparkle s5"></div><div class="sparkle s6"></div>
+    <div class="sparkle s7"></div><div class="sparkle s8"></div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="ribbon-deco" aria-hidden="true">
+      <svg viewBox="0 0 860 320" preserveAspectRatio="none">
+        <path class="strand s1" d="M -40 110 C 200 60, 480 180, 900 90" />
+        <path class="strand s2" d="M -40 210 C 260 260, 540 120, 900 220" />
+        <path class="strand s3" d="M -40 160 C 300 140, 500 200, 900 150" />
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="weave">
+          <span class="letter l1">w</span><span class="letter l2">e</span><span class="letter l3">a</span><span class="letter l4">v</span><span class="letter l5">e</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 weave">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /wiːv/ &nbsp;·&nbsp; 美 /wiːv/</div>
+      <div class="pos-anim">v. &amp; n.</div>
+      <div class="spell-hint">w · e · a · v · e &nbsp; 交叉编织</div>
+    </div>
+  </section>
+
+  <!-- 主体 -->
+  <div class="body-wrap">
+
+    <!-- 1. 词根词族 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span class="txt">词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">weave</span> 源自古英语 <b>wefan</b>（编织）
+          &nbsp;→&nbsp; 与 <b>web</b>（网）、<b>weft</b>（纬线）同源
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">名词</div><div class="w">weaver</div><div class="p">/ˈwiːvər/</div><div class="m">织工，编织者</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">weaving</div><div class="p">/ˈwiːvɪŋ/</div><div class="m">编织，纺织（工艺）</div></div>
+          <div class="fam-card"><div class="pos">过去分词</div><div class="w"><span class="hl">woven</span></div><div class="p">/ˈwəʊvn/</div><div class="m">编织的（形容词）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">interweave</div><div class="p">/ˌɪntəˈwiːv/</div><div class="m">交织，混杂</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">web</div><div class="p">/web/</div><div class="m">网；网络</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">weft</div><div class="p">/weft/</div><div class="m">纬线</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span class="txt">意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">weave</span> = 把东西<strong>交叉着穿过去</strong>，编到一起。
+          </p>
+          <p class="ic-sub">
+            线交叉 → 织布；信息交叉 → 编故事；车交叉 → 穿行于车流。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 180 180">
+            <path class="thread t1" d="M 20 20 Q 30 90 20 160" />
+            <path class="thread t2" d="M 60 20 Q 70 90 60 160" />
+            <path class="thread t3" d="M 100 20 Q 110 90 100 160" />
+            <path class="thread t4" d="M 140 20 Q 150 90 140 160" />
+            <path class="thread t5" d="M 10 60 Q 90 50 170 60" />
+            <path class="thread t1" d="M 10 100 Q 90 110 170 100" />
+            <path class="thread t3" d="M 10 140 Q 90 130 170 140" />
+            <circle class="weave-pulse" cx="90" cy="90" r="8" fill="var(--turmeric)" stroke="var(--ink)" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span class="txt">核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">weave A from B</div><div class="meaning">用 B <b>编织</b>成 A</div></div>
+        <div class="collo"><div class="pattern">weave A into B</div><div class="meaning">把 A <b>编入 / 融入</b> B（也指把情节编入故事）</div></div>
+        <div class="collo"><div class="pattern">weave through</div><div class="meaning"><b>迂回穿行</b>于（车流、人群）</div></div>
+        <div class="collo"><div class="pattern">be woven into</div><div class="meaning">被<b>深深融入</b>（文化、社会结构）</div></div>
+        <div class="collo"><div class="pattern">weave a story / tale</div><div class="meaning"><b>编造</b>故事（注意：不能说 weave a lie）</div></div>
+      </div>
+    </section>
+
+    <!-- 4. 例句 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span class="txt">真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力 Lecture</div>
+          <p class="en">Traditional craftspeople <em class="hl">weave</em> these rugs by hand using techniques passed down for generations.</p>
+          <p class="cn">传统工匠用手工编织这些地毯，技艺代代相传。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">The author skillfully <em class="hl">weaves</em> historical facts into a compelling narrative.</p>
+          <p class="cn">作者巧妙地将历史事实编织进引人入胜的叙述中。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 四级 · 听力</div>
+          <p class="en">The motorcycle <em class="hl">wove</em> through the heavy traffic at high speed.</p>
+          <p class="cn">摩托车高速穿梭于拥挤的车流中。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 六级 · 阅读</div>
+          <p class="en">These traditions are deeply <em class="hl">woven into</em> the social fabric of the community.</p>
+          <p class="cn">这些传统深深融入了这个社区的社会结构。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 易错 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span class="txt">易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">时态</span>
+          编织义：过去式 <b>wove</b>，过去分词 <b>woven</b><br>
+          迂回义：过去式 / 过去分词都用 <b>weaved</b>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          <span class="wrong">weave a lie</span> → <span class="right">tell a lie</span><br>
+          编故事用 weave a story / tale，说谎用 tell a lie。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">同义</span>
+          <span class="wrong">weave a sweater</span> → <span class="right">knit a sweater</span><br>
+          毛衣用 knit（针编），布料才用 weave（机织）。
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span class="txt">易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <thead>
+          <tr><th>词</th><th>核心区别</th><th>口诀</th></tr>
+        </thead>
+        <tbody>
+          <tr class="highlight"><td>weave</td><td>用织机织布；交叉编织</td><td class="chant">机织成布用 weave</td></tr>
+          <tr><td>knit</td><td>用针手工编织毛衣</td><td class="chant">针编毛衣是 knit</td></tr>
+          <tr><td>braid</td><td>编辫子，编成条状</td><td class="chant">头发辫子叫 braid</td></tr>
+          <tr><td>interlace</td><td>交织，相互穿插</td><td class="chant">相互穿插 interlace</td></tr>
+          <tr><td>entwine</td><td>缠绕，盘绕在一起</td><td class="chant">绕在一起 entwine</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. 填空 -->
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span class="txt">首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">ove</span> a basket from reeds.</p>
+          <p class="fill-hint">提示：过去式，编织具体物品　<b>weave A from B</b></p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The author <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">eaves</span> historical facts into a narrative.</p>
+          <p class="fill-hint">提示：<b>weave A into B</b>，把 A 编入 B</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The motorcycle <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">ove</span> through traffic.</p>
+          <p class="fill-hint">提示：<b>weave through</b>，迂回穿行</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">These traditions are deeply <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">oven</span> into the social fabric.</p>
+          <p class="fill-hint">提示：<b>be woven into</b>，被融入</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">ove</span> a fascinating tale about her journey.</p>
+          <p class="fill-hint">提示：<b>weave a story / tale</b>，编故事</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. 造句 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span class="txt">造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>weave</b> 造一句自己的句子。刻意用上你今天学的一个搭配（weave A into B / weave through / be woven into）。</p>
+        <textarea id="mySentence" placeholder="例：My grandmother taught me how to weave a basket from bamboo strips."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. 复习 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span class="txt">复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script>
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+  progressBar.style.width = (scrolled * 100) + '%';
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale')
+  .forEach(el => revealObserver.observe(el));
+
+const tableObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const rows = entry.target.querySelectorAll('tbody tr');
+      rows.forEach((row, i) => setTimeout(() => row.classList.add('row-visible'), i * 120));
+      tableObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const table = document.querySelector('.compare-table');
+if(table) tableObserver.observe(table);
+
+const reviewDays = document.querySelectorAll('.review-day');
+const reviewObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      reviewDays.forEach((day, i) => setTimeout(() => day.classList.add('day-visible'), i * 130));
+      reviewObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const reviewGrid = document.querySelector('.review-grid');
+if(reviewGrid) reviewObserver.observe(reviewGrid);
+
+document.querySelectorAll('.blank').forEach(b => {
+  b.addEventListener('click', function(){
+    this.style.transform = 'scale(1.15)';
+    setTimeout(() => { this.style.transform = ''; }, 180);
+  });
+});
+
+const speakBtn = document.getElementById('speakBtn');
+speakBtn.addEventListener('click', () => {
+  if(!('speechSynthesis' in window)) { alert('当前浏览器不支持朗读'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance('weave');
+  u.lang = 'en-US'; u.rate = 0.85;
+  u.onstart = () => speakBtn.classList.add('speaking');
+  u.onend = () => speakBtn.classList.remove('speaking');
+  window.speechSynthesis.speak(u);
+});
+document.getElementById('ipaBtn').addEventListener('click', () => speakBtn.click());
+
+const STORAGE_KEY = 'weave_sentence';
+const mySentence = document.getElementById('mySentence');
+const savedMsg = document.getElementById('savedMsg');
+const saved = localStorage.getItem(STORAGE_KEY);
+if(saved) mySentence.value = saved;
+document.getElementById('saveBtn').addEventListener('click', () => {
+  localStorage.setItem(STORAGE_KEY, mySentence.value);
+  savedMsg.classList.add('show');
+  setTimeout(() => savedMsg.classList.remove('show'), 1800);
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  mySentence.value = '';
+  localStorage.removeItem(STORAGE_KEY);
+});
+
+const REVIEW_KEY = 'weave_review';
+const reviewState = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
+reviewDays.forEach(day => {
+  const key = day.dataset.day;
+  if(reviewState[key]) day.classList.add('done');
+  day.addEventListener('click', () => {
+    day.classList.toggle('done');
+    reviewState[key] = day.classList.contains('done');
+    localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewState));
+  });
+});
+</script>
+
+</body>
+</html>

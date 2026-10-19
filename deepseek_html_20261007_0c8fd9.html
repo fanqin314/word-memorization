@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>annual · 年度的</title>
+<style>
+:root{
+  /* 四季色板 —— annual = 每年 / 一年一度 / 年轮的 */
+  --paper:#FAF4E6;
+  --paper-2:#EFE6CE;
+  --ink:#26301C;
+  --spring:#7CB342;
+  --spring-soft:#E3F1D4;
+  --summer:#F5B93F;
+  --summer-soft:#FCEBC8;
+  --autumn:#D9551E;
+  --autumn-soft:#F7DCCB;
+  --winter:#5B8FC9;
+  --winter-soft:#DCE8F5;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:#151A10;
+  padding:44px 16px 90px;
+  color:var(--ink);
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+  font-size:16px;
+  line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 12% 12%, rgba(124,179,66,.24) 0, transparent 42%),
+    radial-gradient(circle at 88% 88%, rgba(245,185,63,.22) 0, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(217,85,30,.14) 0, transparent 60%);
+}
+
+body::after{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:9999;
+  opacity:.28;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+}
+
+/* 全页：年轮同心圆纹理 */
+body::before{
+  content:"";
+  position:fixed;
+  top:50%;left:50%;
+  width:200vmax;height:200vmax;
+  transform:translate(-50%,-50%);
+  pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle, transparent 6%, rgba(124,179,66,.07) 6.5%, transparent 7%),
+    radial-gradient(circle, transparent 12%, rgba(245,185,63,.07) 12.5%, transparent 13%),
+    radial-gradient(circle, transparent 18%, rgba(217,85,30,.06) 18.5%, transparent 19%),
+    radial-gradient(circle, transparent 24%, rgba(91,143,201,.06) 24.5%, transparent 25%),
+    radial-gradient(circle, transparent 30%, rgba(124,179,66,.05) 30.5%, transparent 31%),
+    radial-gradient(circle, transparent 36%, rgba(245,185,63,.05) 36.5%, transparent 37%),
+    radial-gradient(circle, transparent 42%, rgba(217,85,30,.04) 42.5%, transparent 43%);
+  animation:treeRingPulse 14s ease-in-out infinite;
+}
+@keyframes treeRingPulse{
+  0%,100%{ transform:translate(-50%,-50%) scale(1); opacity:.85; }
+  50%{ transform:translate(-50%,-50%) scale(1.04); opacity:1; }
+}
+
+.page{
+  position:relative;z-index:1;
+  max-width:860px;margin:0 auto;
+  background:var(--paper);
+  padding:0 0 72px;
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    12px 12px 0 var(--autumn),
+    0 20px 60px rgba(0,0,0,.7);
+  overflow:hidden;
+}
+
+/* 漂浮的树叶 / 花瓣 */
+.page-leaves{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.leaf{
+  position:absolute;
+  opacity:0;
+  animation:leafDrift linear infinite;
+}
+.leaf.sprout{
+  width:20px;height:20px;
+  background:var(--spring);
+  border-radius:0 100% 0 100%;
+  border:2px solid var(--ink);
+}
+.leaf.flower{
+  width:22px;height:22px;
+  background:var(--summer);
+  border-radius:50%;
+  border:2px solid var(--ink);
+  position:relative;
+}
+.leaf.flower::before{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border-radius:50%;
+  background:var(--autumn);
+}
+.leaf.maple{
+  width:22px;height:22px;
+  background:var(--autumn);
+  border-radius:50% 0 50% 0;
+  border:2px solid var(--ink);
+}
+.leaf.snow{
+  width:20px;height:20px;
+  background:var(--winter);
+  border-radius:50%;
+  border:2px solid var(--ink);
+}
+
+.leaf.f1{ left:6%; bottom:-40px; animation-duration:28s; }
+.leaf.f2{ left:22%; bottom:-55px; animation-duration:34s; animation-delay:4s; }
+.leaf.f3{ left:78%; bottom:-45px; animation-duration:30s; animation-delay:2s; }
+.leaf.f4{ left:90%; bottom:-30px; animation-duration:32s; animation-delay:8s; }
+.leaf.f5{ left:52%; bottom:-70px; animation-duration:26s; animation-delay:6s; }
+.leaf.f6{ left:38%; bottom:-50px; animation-duration:36s; animation-delay:12s; }
+.leaf.f7{ left:64%; bottom:-60px; animation-duration:24s; animation-delay:10s; }
+
+@keyframes leafDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.75; }
+  50%{ transform:translateY(-50vh) rotate(220deg) translateX(20px); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) rotate(440deg) translateX(0); opacity:0; }
+}
+
+.hero,.body-wrap{position:relative;z-index:2;}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    linear-gradient(180deg,
+      #FBF6EA 0%,
+      #F7F0DC 50%,
+      #FAF4E6 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--spring) 0 22px,
+    transparent 22px 24px,
+    var(--summer) 24px 46px,
+    transparent 46px 48px,
+    var(--autumn) 48px 70px,
+    transparent 70px 72px,
+    var(--winter) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+
+/* HERO 四季轮盘 */
+.hero-wheel{
+  position:absolute;
+  top:50%;left:50%;
+  width:520px;height:520px;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  z-index:0;
+  opacity:.9;
+}
+.hero-wheel svg{ width:100%; height:100%; }
+.wheel-spin{
+  transform-origin:260px 260px;
+  animation:wheelRotate 60s linear infinite;
+}
+@keyframes wheelRotate{
+  to{ transform:rotate(360deg); }
+}
+
+/* HERO 中央太阳光晕 */
+.hero-sun{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:220px;height:220px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.28;
+}
+.hero-sun .halo{
+  animation:sunPulse 3.5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes sunPulse{
+  0%,100%{ opacity:.6; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.15); }
+}
+
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:92px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  filter:drop-shadow(5px 5px 0 var(--autumn));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterBloom 1.15s cubic-bezier(.34,1.56,.64,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s;
+}
+/* 每个字母像从地面长出来一样冒出来 */
+.word-anim .l1{ animation-delay:.15s; color:var(--spring); }
+.word-anim .l2{ animation-delay:.28s; color:var(--summer); }
+.word-anim .l3{ animation-delay:.41s; color:var(--autumn); }
+.word-anim .l4{ animation-delay:.54s; color:var(--winter); }
+.word-anim .l5{ animation-delay:.67s; color:var(--spring); }
+.word-anim .l6{ animation-delay:.80s; color:var(--summer); }
+@keyframes letterBloom{
+  0%{
+    opacity:0;
+    transform:translateY(40px) scale(.3) rotate(-20deg);
+    filter:blur(10px);
+  }
+  60%{
+    opacity:1;
+    filter:blur(0);
+    transform:translateY(-8px) scale(1.15) rotate(6deg);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1) rotate(0);
+    color:var(--ink);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--autumn);
+  transform:translateY(-10px) scale(1.15) rotate(-6deg);
+  filter:drop-shadow(0 0 12px var(--autumn));
+}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--summer);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--autumn);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--autumn);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--autumn);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--summer);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--autumn);
+  opacity:0;animation:fadeUp .8s ease-out 1.15s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+}
+.ipa-anim:hover{background:var(--autumn);color:var(--paper);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.35s forwards;
+  transform:rotate(1.2deg);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--spring-soft);
+  border:2.5px solid var(--ink);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--spring);
+  opacity:0;animation:fadeUp .8s ease-out 1.6s forwards;
+  transform:rotate(-1deg);
+}
+
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal-scale.visible{opacity:1;transform:scale(1);}
+
+.section{margin:0 0 56px;}
+
+.section-title{
+  display:inline-flex;align-items:center;gap:12px;
+  margin:0 0 22px;
+  padding:8px 22px 8px 12px;
+  background:var(--spring-soft);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:18px;font-weight:900;
+  letter-spacing:-.01em;
+  transform:rotate(-.8deg);
+}
+.section:nth-of-type(even) .section-title{
+  background:var(--summer-soft);
+  transform:rotate(.9deg);
+}
+.section:nth-of-type(3n) .section-title{
+  background:var(--autumn-soft);
+  transform:rotate(-.6deg);
+}
+.section-title .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex-shrink:0;
+  background:var(--ink);color:var(--paper);
+  border-radius:50%;font-size:14px;font-weight:900;
+}
+
+.root-family{
+  position:relative;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 24px;
+}
+.root-line{
+  font-size:17px;line-height:2.2;margin-bottom:22px;
+  padding:18px 20px;
+  background:var(--spring-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+  text-align:center;
+}
+.root-line .affix{
+  background:var(--autumn);color:var(--paper);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(-2deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.root-line .stem{
+  background:var(--spring);color:var(--paper);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(1.5deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.fam-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:10px;
+}
+.fam-card{
+  background:#fff;border:2.5px solid var(--ink);
+  border-radius:14px;padding:10px 12px;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.fam-card:hover{transform:translate(-2px,-2px) rotate(-1deg);}
+.fam-card .pos{
+  font-size:10px;font-weight:800;
+  background:var(--ink);color:var(--paper);
+  padding:2px 7px;border-radius:999px;
+  display:inline-block;margin-bottom:5px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  letter-spacing:.08em;
+}
+.fam-card .w{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:16px;
+  color:var(--autumn);
+  line-height:1.3;
+}
+.fam-card .w .hl{color:var(--spring);}
+.fam-card .p{font-size:11px;color:#8a7d6d;margin:2px 0 4px;font-family:monospace;}
+.fam-card .m{font-size:12.5px;line-height:1.5;}
+
+/* 意象卡 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(245,185,63,.18) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+.image-card .ic-text{position:relative;z-index:1;}
+.image-card .ic-label{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;font-weight:900;letter-spacing:.18em;
+  background:var(--summer);color:var(--ink);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--paper);
+  margin-bottom:16px;
+  transform:rotate(-2deg);
+}
+.image-card .ic-main{
+  font-size:22px;font-weight:800;line-height:1.6;
+  margin:0 0 14px;
+}
+.image-card .ic-main .hl{
+  background:var(--summer);color:var(--ink);
+  padding:1px 10px;border-radius:6px;
+}
+.image-card .ic-sub{
+  font-size:14.5px;opacity:.9;line-height:1.9;margin:0;
+}
+.image-card .ic-svg{
+  position:relative;z-index:1;
+  width:340px;height:280px;
+}
+.image-card .ic-svg svg{width:100%;height:100%;overflow:visible;}
+
+/* ========== annual SVG 动画 ========== */
+
+/* 外圈四季轮盘持续旋转 */
+.season-wheel{
+  transform-origin:170px 140px;
+  animation:seasonSpin 40s linear infinite;
+}
+@keyframes seasonSpin{
+  to{ transform:rotate(360deg); }
+}
+
+/* 树的年轮（缓慢脉动） */
+.tree-rings{
+  transform-origin:170px 140px;
+  animation:ringGrow 6s ease-in-out infinite;
+}
+@keyframes ringGrow{
+  0%,100%{ opacity:.5; transform:scale(1); }
+  50%{ opacity:.85; transform:scale(1.05); }
+}
+
+/* 树干中心 */
+.tree-core{
+  animation:corePulse 4s ease-in-out infinite;
+  transform-origin:170px 140px;
+}
+@keyframes corePulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.08); }
+}
+
+/* 四季轮盘上的装饰小图标持续旋转（与wheel同步) */
+.season-icon{
+  transform-origin:170px 140px;
+  animation:iconCounterSpin 40s linear infinite;
+}
+@keyframes iconCounterSpin{
+  to{ transform:rotate(-360deg); }
+}
+
+/* 飘落的树叶 */
+.an-leaf{
+  animation:leafFall 4s ease-in infinite;
+}
+.an-leaf.l2{ animation-delay:.8s; }
+.an-leaf.l3{ animation-delay:1.6s; }
+.an-leaf.l4{ animation-delay:2.4s; }
+.an-leaf.l5{ animation-delay:3.2s; }
+@keyframes leafFall{
+  0%{ opacity:0; transform:translateY(-40px) rotate(0); }
+  15%{ opacity:1; }
+  85%{ opacity:.7; }
+  100%{ opacity:0; transform:translateY(200px) rotate(360deg); }
+}
+
+/* 太阳光晕呼吸 */
+.an-sun{
+  animation:sunBreath 4s ease-in-out infinite;
+  transform-origin:170px 140px;
+}
+@keyframes sunBreath{
+  0%,100%{ opacity:.6; transform:scale(.95); }
+  50%{ opacity:1; transform:scale(1.1); }
+}
+
+/* ========== 结束 annual SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+.collo{
+  background:#FFFCF5;border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 20px;
+  display:flex;align-items:center;gap:16px;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  position:relative;
+  overflow:hidden;
+}
+.collo::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:6px;
+  background:var(--spring);
+  transition:width .3s;
+}
+.collo:nth-child(2)::before{background:var(--summer);}
+.collo:nth-child(3)::before{background:var(--autumn);}
+.collo:nth-child(4)::before{background:var(--winter);}
+.collo:nth-child(5)::before{background:var(--spring);}
+.collo:hover{transform:translate(-4px,-4px);box-shadow:7px 7px 0 var(--ink);}
+.collo:hover::before{width:14px;}
+.collo .pattern{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:14.5px;
+  background:var(--ink);color:var(--paper);
+  padding:6px 14px;border-radius:999px;
+  white-space:nowrap;flex-shrink:0;
+  margin-left:8px;
+}
+.collo .meaning{font-size:14.5px;line-height:1.55;}
+.collo .meaning b{color:var(--autumn);font-weight:800;}
+
+.real-exs{display:flex;flex-direction:column;gap:16px;}
+.real-ex{
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:20px 24px;
+  position:relative;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  transform:rotate(.3deg);
+}
+.real-ex:nth-child(even){transform:rotate(-.5deg);}
+.real-ex:hover{transform:translate(-4px,-4px) rotate(0);box-shadow:9px 9px 0 var(--ink);}
+.real-ex::before{
+  content:"";
+  position:absolute;
+  top:-10px;left:-10px;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--spring);
+  border:3px solid var(--ink);
+}
+.real-ex:nth-child(even)::before{background:var(--summer);}
+.real-ex:nth-child(3n)::before{background:var(--autumn);}
+.real-ex:nth-child(4n)::before{background:var(--winter);}
+.real-ex .src{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;
+  background:var(--autumn);color:var(--paper);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--ink);
+  margin-bottom:12px;
+}
+.real-ex .en{
+  font-size:16px;line-height:1.8;margin:0 0 10px;
+  font-family:Georgia,serif;
+}
+.real-ex .en .hl{
+  background:var(--summer);color:var(--ink);
+  padding:1px 7px;border-radius:6px;
+  font-weight:800;font-style:normal;
+}
+.real-ex .cn{
+  font-size:13.5px;color:#7a6e60;line-height:1.7;
+  padding-left:16px;border-left:3px solid var(--autumn);
+}
+
+.pitfall{
+  padding:28px 30px;
+  background:var(--autumn-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  position:relative;overflow:hidden;
+  transform:rotate(-.5deg);
+}
+.pitfall::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:12px;
+  background-image:
+    radial-gradient(circle, var(--autumn) 3px, transparent 3.5px);
+  background-size:20px 12px;
+  border-bottom:3px solid var(--ink);
+}
+.pitfall-item{
+  margin-bottom:14px;font-size:15px;line-height:1.9;
+  padding:14px 18px;
+  background:#FFFCF5;
+  border-left:6px solid var(--autumn);
+  border-radius:0 var(--radius-md) var(--radius-md) 0;
+  transition:transform .3s;
+}
+.pitfall-item:hover{transform:translateX(8px);}
+.pitfall-item:last-child{margin-bottom:0;}
+.pitfall-item .wrong{
+  color:var(--autumn);text-decoration:line-through;
+  text-decoration-thickness:2px;font-weight:700;
+}
+.pitfall-item .right{
+  color:var(--spring);font-weight:800;
+  background:var(--spring-soft);padding:1px 8px;border-radius:6px;
+}
+.pitfall-item .tip{
+  display:inline-block;
+  background:var(--summer);color:var(--ink);
+  padding:1px 10px;border-radius:999px;
+  font-size:12px;font-weight:800;margin-right:8px;
+  border:2px solid var(--ink);
+}
+
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+.compare-table thead{display:none;}
+.compare-table tbody tr{
+  background:#FFFCF5;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  opacity:0;transform:translateX(-20px);
+}
+.compare-table tbody tr.row-visible{opacity:1;transform:translateX(0);}
+.compare-table tbody tr:hover{transform:translate(-4px,-4px);box-shadow:7px 7px 0 var(--ink);}
+.compare-table td{
+  border-top:3px solid var(--ink);
+  border-bottom:3px solid var(--ink);
+  padding:14px 18px;vertical-align:middle;text-align:left;
+}
+.compare-table td:first-child{
+  border-left:3px solid var(--ink);
+  border-top-left-radius:18px;
+  border-bottom-left-radius:18px;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;white-space:nowrap;width:130px;
+  background:var(--spring-soft);
+  color:var(--ink);
+  font-size:16px;
+}
+.compare-table td:nth-child(2){width:180px;}
+.compare-table td:last-child{
+  border-right:3px solid var(--ink);
+  border-top-right-radius:18px;
+  border-bottom-right-radius:18px;
+}
+.compare-table .chant{
+  font-size:13px;color:var(--autumn);font-weight:700;
+  font-style:italic;line-height:1.5;
+}
+.compare-table tr.highlight{background:var(--summer-soft);}
+.compare-table tr.highlight td:first-child{
+  background:var(--summer);
+  position:relative;
+}
+.compare-table tr.highlight td:first-child::after{
+  content:"★";
+  color:var(--autumn);margin-left:6px;
+}
+
+.self-test .hint{
+  font-size:14px;color:var(--ink);
+  margin:0 0 22px;padding:14px 20px;
+  background:var(--summer-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+}
+.fill-item{
+  margin-bottom:16px;padding:18px 24px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+}
+.fill-item:hover{transform:translate(-3px,-3px) rotate(-.3deg);box-shadow:6px 6px 0 var(--ink);}
+.fill-sentence{font-size:16.5px;line-height:1.95;margin:0 0 10px;}
+.first-letter{
+  display:inline-block;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:900;color:var(--autumn);
+  font-size:19px;
+  padding-right:2px;
+}
+.blank{
+  display:inline-block;min-width:70px;
+  border-bottom:3px solid var(--ink);
+  text-align:center;font-weight:800;
+  color:transparent;cursor:pointer;
+  transition:color .3s,border-color .3s,background .3s;
+  padding:0 10px;user-select:none;
+  font-family:Georgia,serif;
+}
+.blank:hover{background:var(--summer);border-color:var(--autumn);}
+.blank.revealed{
+  color:var(--autumn);border-color:var(--autumn);
+  background:var(--summer-soft);
+  border-radius:8px 8px 0 0;
+  animation:answerPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.fill-hint{font-size:13.5px;color:var(--ink);opacity:.75;margin:0;}
+.fill-hint b{color:var(--autumn);font-weight:800;}
+
+.write-practice{
+  background:var(--winter-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 28px;
+  transform:rotate(.4deg);
+}
+.write-practice .wp-hint{
+  font-size:14px;color:var(--ink);opacity:.85;
+  margin:0 0 16px;
+}
+.write-practice textarea{
+  width:100%;min-height:110px;
+  padding:16px 18px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:16px;line-height:1.7;
+  color:var(--ink);
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:18px;
+  box-shadow:inset 3px 3px 0 rgba(38,48,28,.08);
+  resize:vertical;
+  outline:none;
+  transition:box-shadow .2s;
+}
+.write-practice textarea:focus{
+  box-shadow:inset 3px 3px 0 rgba(38,48,28,.08), 0 0 0 5px var(--summer);
+}
+.wp-actions{
+  margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+}
+.wp-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;font-weight:800;letter-spacing:.04em;
+  padding:11px 22px;
+  background:var(--ink);color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
+}
+.wp-btn:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--autumn);}
+.wp-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);}
+.wp-btn.ghost{background:transparent;color:var(--ink);}
+.wp-saved{
+  font-size:13px;color:var(--spring);font-weight:800;
+  opacity:0;transition:opacity .4s;
+}
+.wp-saved.show{opacity:1;}
+
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.review-day{
+  text-align:center;padding:20px 10px 18px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:50% 50% 45% 55% / 48% 50% 50% 52%;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background .3s;
+  cursor:pointer;user-select:none;
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(20px) scale(.95);
+}
+.review-day.day-visible{
+  opacity:1;transform:translateY(0) scale(1);
+  transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1);
+}
+.review-day:hover{
+  transform:translate(-4px,-4px) rotate(-3deg);
+  box-shadow:7px 7px 0 var(--ink);
+}
+.review-day.done{background:var(--spring);color:var(--paper);}
+.review-day.done .day,
+.review-day.done .task{color:var(--paper);}
+.review-day.done::after{
+  content:"🌱";
+  position:absolute;top:8px;right:12px;
+  font-size:18px;font-weight:900;
+}
+.review-day .day{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-size:28px;font-weight:900;margin-bottom:4px;
+  position:relative;z-index:1;
+}
+.review-day:nth-child(1) .day{color:var(--spring);}
+.review-day:nth-child(2) .day{color:var(--summer);}
+.review-day:nth-child(3) .day{color:var(--autumn);}
+.review-day:nth-child(4) .day{color:var(--winter);}
+.review-day .task{
+  font-size:12px;color:var(--ink);opacity:.75;
+  line-height:1.5;position:relative;z-index:1;
+}
+.review-tip{
+  margin-top:16px;font-size:13px;color:var(--ink);opacity:.6;
+  text-align:center;font-style:italic;
+}
+
+.progress-bar{
+  position:fixed;top:0;left:0;height:5px;width:0;
+  background:repeating-linear-gradient(90deg,
+    var(--spring) 0 20px,
+    var(--summer) 20px 40px,
+    var(--autumn) 40px 60px,
+    var(--winter) 60px 80px);
+  z-index:100;transition:width .1s linear;
+  border-bottom:2px solid var(--ink);
+}
+
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:56px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .page{border-radius:22px;}
+  .image-card{grid-template-columns:1fr;padding:26px 22px;}
+  .image-card .ic-svg{width:280px;height:220px;margin:0 auto;}
+  .section-title{font-size:15px;padding:6px 16px 6px 10px;}
+  .hero-wheel{ width:400px; height:400px; }
+}
+
+@media (min-width:1100px){
+  body{padding:56px 32px 120px;}
+  .page{
+    max-width:1200px;
+    border-radius:36px;
+    box-shadow:
+      0 0 0 3px var(--ink),
+      14px 14px 0 var(--autumn),
+      0 24px 70px rgba(0,0,0,.7);
+  }
+  .hero{padding:100px 80px 80px;}
+  .hero-band{height:24px;}
+  .word-anim{font-size:132px;}
+  .speak-btn{width:56px;height:56px;font-size:26px;}
+  .ipa-anim{font-size:18px;padding:6px 22px;}
+  .pos-anim{font-size:13px;padding:6px 20px;}
+  .spell-hint{font-size:13px;padding:10px 24px;}
+  .body-wrap{padding:76px 80px 0;}
+  .section{margin-bottom:68px;}
+  .section-title{font-size:22px;gap:14px;margin-bottom:26px;padding:10px 26px 10px 14px;}
+  .section-title .num{width:38px;height:38px;font-size:16px;}
+  .fam-grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fam-card{padding:14px 16px;}
+  .fam-card .w{font-size:18px;}
+  .fam-card .m{font-size:13.5px;}
+  .image-card{
+    grid-template-columns:1.3fr 1fr;
+    gap:40px;
+    padding:48px 44px;
+  }
+  .image-card .ic-main{font-size:27px;line-height:1.5;}
+  .image-card .ic-sub{font-size:16px;}
+  .image-card .ic-svg{width:420px;height:340px;}
+  .collocations{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .collo:nth-child(5){grid-column:1 / -1;}
+  .collo{padding:20px 24px;}
+  .collo .pattern{font-size:15.5px;padding:7px 16px;}
+  .collo .meaning{font-size:15px;}
+  .real-exs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .real-ex{padding:24px 28px;}
+  .real-ex .en{font-size:17px;}
+  .real-ex .cn{font-size:14.5px;}
+  .pitfall{padding:36px 40px;}
+  .pitfall-item{font-size:15.5px;padding:18px 22px;}
+  .compare-table{font-size:16px;border-spacing:0 14px;}
+  .compare-table td{padding:18px 24px;}
+  .compare-table td:first-child{width:160px;font-size:18px;}
+  .compare-table td:nth-child(2){width:auto;}
+  .compare-table .chant{font-size:14.5px;}
+  .self-test .fill-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .self-test .fill-item:nth-child(5){grid-column:1 / -1;margin-bottom:0;}
+  .fill-item{padding:22px 26px;margin-bottom:0;}
+  .fill-sentence{font-size:17px;}
+  .write-practice{
+    max-width:900px;
+    margin:0 auto;
+    padding:36px 40px;
+  }
+  .write-practice textarea{font-size:17px;padding:18px 22px;}
+  .review-grid{gap:24px;}
+  .review-day{padding:28px 14px 24px;}
+  .review-day .day{font-size:34px;}
+  .review-day .task{font-size:13.5px;}
+}
+
+@media (min-width:1500px){
+  .page{max-width:1400px;}
+  .hero{padding:120px 100px 96px;}
+  .word-anim{font-size:158px;}
+  .body-wrap{padding:92px 100px 0;}
+  .image-card{grid-template-columns:1.5fr 1fr;padding:56px 52px;}
+  .image-card .ic-main{font-size:30px;}
+  .image-card .ic-svg{width:480px;height:380px;}
+  .real-ex .en{font-size:18px;}
+}
+
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  body::before,body::after{display:none;}
+  .page{box-shadow:none;max-width:100%;}
+  .blank{color:var(--autumn)!important;}
+  .fill-item,.compare-table,.pitfall,.review-day{break-inside:avoid;}
+  .hero-wheel,.hero-sun,.page-leaves,.progress-bar{display:none;}
+  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
+  .compare-table tbody tr,.review-day{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-leaves" aria-hidden="true">
+    <div class="leaf sprout f1"></div>
+    <div class="leaf flower f2"></div>
+    <div class="leaf maple f3"></div>
+    <div class="leaf snow f4"></div>
+    <div class="leaf sprout f5"></div>
+    <div class="leaf flower f6"></div>
+    <div class="leaf maple f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <!-- 四季轮盘 -->
+    <div class="hero-wheel" aria-hidden="true">
+      <svg viewBox="0 0 520 520">
+        <g class="wheel-spin">
+          <!-- 外圈虚线圆 -->
+          <circle cx="260" cy="260" r="240" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 8" opacity=".35"/>
+
+          <!-- 四个扇形（四季） -->
+          <!-- 春：右上 -->
+          <path d="M 260 260 L 260 20 A 240 240 0 0 1 500 260 Z"
+                fill="var(--spring)" opacity=".25" stroke="var(--ink)" stroke-width="2"/>
+          <!-- 夏：右下 -->
+          <path d="M 260 260 L 500 260 A 240 240 0 0 1 260 500 Z"
+                fill="var(--summer)" opacity=".30" stroke="var(--ink)" stroke-width="2"/>
+          <!-- 秋：左下 -->
+          <path d="M 260 260 L 260 500 A 240 240 0 0 1 20 260 Z"
+                fill="var(--autumn)" opacity=".25" stroke="var(--ink)" stroke-width="2"/>
+          <!-- 冬：左上 -->
+          <path d="M 260 260 L 20 260 A 240 240 0 0 1 260 20 Z"
+                fill="var(--winter)" opacity=".25" stroke="var(--ink)" stroke-width="2"/>
+
+          <!-- 四季分界点 -->
+          <circle cx="260" cy="20"  r="8" fill="var(--spring)" stroke="var(--ink)" stroke-width="2.5"/>
+          <circle cx="500" cy="260" r="8" fill="var(--summer)" stroke="var(--ink)" stroke-width="2.5"/>
+          <circle cx="260" cy="500" r="8" fill="var(--autumn)" stroke="var(--ink)" stroke-width="2.5"/>
+          <circle cx="20"  cy="260" r="8" fill="var(--winter)" stroke="var(--ink)" stroke-width="2.5"/>
+
+          <!-- 内圈（年轮） -->
+          <circle cx="260" cy="260" r="180" fill="none" stroke="var(--ink)" stroke-width="1.5" opacity=".3"/>
+          <circle cx="260" cy="260" r="140" fill="none" stroke="var(--ink)" stroke-width="1.5" opacity=".3"/>
+          <circle cx="260" cy="260" r="100" fill="none" stroke="var(--ink)" stroke-width="1.5" opacity=".35"/>
+          <circle cx="260" cy="260" r="60"  fill="none" stroke="var(--ink)" stroke-width="1.5" opacity=".4"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="annual">
+          <span class="letter l1">a</span><span class="letter l2">n</span><span class="letter l3">n</span><span class="letter l4">u</span><span class="letter l5">a</span><span class="letter l6">l</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 annual">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˈænjuəl/ &nbsp;·&nbsp; 美 /ˈænjuəl/</div>
+      <div class="pos-anim">adj. · n.</div>
+      <div class="spell-hint">an · nu · al &nbsp; 每年的 · 年度的 · 一年生</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          拉丁语 <span class="stem">ann</span>（年）
+          + <span class="affix">-ual</span>（形容词后缀）
+          &nbsp;→&nbsp; "一年一次的" → <b>每年的 · 年度的</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">副词</div><div class="w"><span class="hl">annually</span></div><div class="p">/ˈænjuəli/</div><div class="m">每年一次地</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">anniversary</div><div class="p">/ˌænɪˈvɜːsəri/</div><div class="m">周年纪念日</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">annals</div><div class="p">/ˈænlz/</div><div class="m">编年史，年鉴</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">biennial</div><div class="p">/baɪˈeniəl/</div><div class="m">两年一次的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">triennial</div><div class="p">/traɪˈeniəl/</div><div class="m">三年一次的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">perennial</div><div class="p">/pəˈreniəl/</div><div class="m">多年生的；终年的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">annual</span> = 一棵树，<strong>一年长出一圈年轮</strong>。
+          </p>
+          <p class="ic-sub">
+            地球绕太阳转一圈 → 一年过去；树长一圈 → 一岁；春→夏→秋→冬 → 一年四季。<br>
+            每年发生的 → annual event；每年出版的 → annual report。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 340 280">
+            <defs>
+              <radialGradient id="anSunGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#F5B93F" stop-opacity=".6"/>
+                <stop offset="60%" stop-color="#F5B93F" stop-opacity=".15"/>
+                <stop offset="100%" stop-color="#F5B93F" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- 太阳光晕 -->
+            <circle class="an-sun" cx="170" cy="140" r="105" fill="url(#anSunGlow)"/>
+
+            <!-- 四季轮盘（持续旋转） -->
+            <g class="season-wheel">
+              <!-- 外圈虚线 -->
+              <circle cx="170" cy="140" r="100" fill="none"
+                      stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 7" opacity=".4"/>
+
+              <!-- 春夏秋冬四个扇形 -->
+              <path d="M 170 140 L 170 40 A 100 100 0 0 1 270 140 Z"
+                    fill="var(--spring)" opacity=".35" stroke="var(--ink)" stroke-width="2"/>
+              <path d="M 170 140 L 270 140 A 100 100 0 0 1 170 240 Z"
+                    fill="var(--summer)" opacity=".35" stroke="var(--ink)" stroke-width="2"/>
+              <path d="M 170 140 L 170 240 A 100 100 0 0 1 70 140 Z"
+                    fill="var(--autumn)" opacity=".35" stroke="var(--ink)" stroke-width="2"/>
+              <path d="M 170 140 L 70 140 A 100 100 0 0 1 170 40 Z"
+                    fill="var(--winter)" opacity=".35" stroke="var(--ink)" stroke-width="2"/>
+
+              <!-- 四季分界点 -->
+              <circle cx="170" cy="40"  r="6" fill="var(--spring)" stroke="var(--ink)" stroke-width="2.5"/>
+              <circle cx="270" cy="140" r="6" fill="var(--summer)" stroke="var(--ink)" stroke-width="2.5"/>
+              <circle cx="170" cy="240" r="6" fill="var(--autumn)" stroke="var(--ink)" stroke-width="2.5"/>
+              <circle cx="70"  cy="140" r="6" fill="var(--winter)" stroke="var(--ink)" stroke-width="2.5"/>
+            </g>
+
+            <!-- 中心树干+年轮 -->
+            <g class="tree-rings">
+              <circle cx="170" cy="140" r="70" fill="none"
+                      stroke="var(--ink)" stroke-width="2.5" opacity=".55"/>
+              <circle cx="170" cy="140" r="55" fill="none"
+                      stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+              <circle cx="170" cy="140" r="40" fill="none"
+                      stroke="var(--ink)" stroke-width="2" opacity=".7"/>
+              <circle cx="170" cy="140" r="25" fill="none"
+                      stroke="var(--ink)" stroke-width="2" opacity=".8"/>
+            </g>
+
+            <!-- 树干核心 -->
+            <circle class="tree-core" cx="170" cy="140" r="14"
+                    fill="var(--autumn)" stroke="var(--ink)" stroke-width="3"/>
+            <circle cx="170" cy="140" r="5"
+                    fill="var(--summer)" stroke="var(--ink)" stroke-width="1.5"/>
+
+            <!-- 飘落的树叶（四季代表） -->
+            <ellipse class="an-leaf l1" cx="80" cy="60" rx="7" ry="11"
+                     fill="var(--spring)" stroke="var(--ink)" stroke-width="1.5"/>
+            <ellipse class="an-leaf l2" cx="250" cy="70" rx="7" ry="11"
+                     fill="var(--summer)" stroke="var(--ink)" stroke-width="1.5"/>
+            <ellipse class="an-leaf l3" cx="100" cy="200" rx="7" ry="11"
+                     fill="var(--autumn)" stroke="var(--ink)" stroke-width="1.5"/>
+            <ellipse class="an-leaf l4" cx="240" cy="210" rx="7" ry="11"
+                     fill="var(--winter)" stroke="var(--ink)" stroke-width="1.5"/>
+            <ellipse class="an-leaf l5" cx="170" cy="30" rx="7" ry="11"
+                     fill="var(--spring)" stroke="var(--ink)" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">annual report</div><div class="meaning"><b>年度报告</b>（公司/机构）</div></div>
+        <div class="collo"><div class="pattern">annual meeting</div><div class="meaning"><b>年会</b>，年度会议</div></div>
+        <div class="collo"><div class="pattern">annual income / salary</div><div class="meaning"><b>年收入</b> / <b>年薪</b></div></div>
+        <div class="collo"><div class="pattern">annual leave</div><div class="meaning"><b>年假</b>（员工的年度休假）</div></div>
+        <div class="collo"><div class="pattern">annual event / festival</div><div class="meaning"><b>一年一度的</b>活动 / 节日</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力 Lecture</div>
+          <p class="en">The company's <em class="hl">annual</em> sales have increased by 15% over the past three years.</p>
+          <p class="cn">过去三年，该公司的年销售额增长了 15%。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">The government publishes an <em class="hl">annual</em> report on environmental protection.</p>
+          <p class="cn">政府发布年度环境保护报告。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">The conference is held <em class="hl">annually</em> in different cities around the world.</p>
+          <p class="cn">该会议每年在全球不同城市举行。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 听力</div>
+          <p class="en">Employees are entitled to 15 days of <em class="hl">annual</em> leave per year.</p>
+          <p class="cn">员工每年享有 15 天年假。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>annual</b>（形容词）vs <b>annually</b>（副词）<br>
+          <span class="wrong">held annual</span> → <span class="right">held annually</span>（每年举办）<br>
+          <span class="wrong">annual meeting</span> <span class="right">✓</span>（年度会议）
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>annual</b>（每年的）vs <b>anniversary</b>（周年纪念日）<br>
+          <span class="wrong">wedding annual</span> → <span class="right">wedding anniversary</span>（结婚纪念日）
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>annual</b>（一年一次的）vs <b>perennial</b>（多年生的，终年的）<br>
+          一年生植物 = <b>annual</b>；多年生植物 = <b>perennial</b>。
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>annual</td><td>每年的，一年一次的</td><td class="chant">一年一次 annual</td></tr>
+          <tr><td>annually</td><td>每年一次地（副词）</td><td class="chant">修饰动词用 annually</td></tr>
+          <tr><td>biennial</td><td>两年一次的</td><td class="chant">两年一次 biennial</td></tr>
+          <tr><td>triennial</td><td>三年一次的</td><td class="chant">三年一次 triennial</td></tr>
+          <tr><td>perennial</td><td>多年生的，终年的</td><td class="chant">常年不断 perennial</td></tr>
+          <tr><td>monthly</td><td>每月的</td><td class="chant">一个月一次 monthly</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The company's <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">nnual</span> report shows a 20% increase in profit.</p>
+          <p class="fill-hint">提示：<b>annual report</b>，年度报告</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The festival is held <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">nnually</span> in the spring.</p>
+          <p class="fill-hint">提示：修饰动词 held → 用副词 <b>annually</b></p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Her <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">nnual</span> salary is around $80,000.</p>
+          <p class="fill-hint">提示：<b>annual salary</b>，年薪</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Employees get 15 days of <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">nnual</span> leave every year.</p>
+          <p class="fill-hint">提示：<b>annual leave</b>，年假</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">We celebrate our wedding <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">nniversary</span> every October.</p>
+          <p class="fill-hint">⚠️ 陷阱：这里要名词"纪念日" <b>anniversary</b>，不是 annual！</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>annual</b> 造一句自己的句子。刻意用上今天学的一个搭配（annual report / annual salary / annual event）。</p>
+        <textarea id="mySentence" placeholder="例：Our school holds an annual sports meeting in October."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script>
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+  progressBar.style.width = (scrolled * 100) + '%';
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale')
+  .forEach(el => revealObserver.observe(el));
+
+const tableObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const rows = entry.target.querySelectorAll('tbody tr');
+      rows.forEach((row, i) => setTimeout(() => row.classList.add('row-visible'), i * 120));
+      tableObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const table = document.querySelector('.compare-table');
+if(table) tableObserver.observe(table);
+
+const reviewDays = document.querySelectorAll('.review-day');
+const reviewObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      reviewDays.forEach((day, i) => setTimeout(() => day.classList.add('day-visible'), i * 130));
+      reviewObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const reviewGrid = document.querySelector('.review-grid');
+if(reviewGrid) reviewObserver.observe(reviewGrid);
+
+document.querySelectorAll('.blank').forEach(b => {
+  b.addEventListener('click', function(){
+    this.style.transform = 'scale(1.15)';
+    setTimeout(() => { this.style.transform = ''; }, 180);
+  });
+});
+
+const speakBtn = document.getElementById('speakBtn');
+speakBtn.addEventListener('click', () => {
+  if(!('speechSynthesis' in window)) { alert('当前浏览器不支持朗读'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance('annual');
+  u.lang = 'en-US'; u.rate = 0.85;
+  u.onstart = () => speakBtn.classList.add('speaking');
+  u.onend = () => speakBtn.classList.remove('speaking');
+  window.speechSynthesis.speak(u);
+});
+document.getElementById('ipaBtn').addEventListener('click', () => speakBtn.click());
+
+const STORAGE_KEY = 'annual_sentence';
+const mySentence = document.getElementById('mySentence');
+const savedMsg = document.getElementById('savedMsg');
+const saved = localStorage.getItem(STORAGE_KEY);
+if(saved) mySentence.value = saved;
+document.getElementById('saveBtn').addEventListener('click', () => {
+  localStorage.setItem(STORAGE_KEY, mySentence.value);
+  savedMsg.classList.add('show');
+  setTimeout(() => savedMsg.classList.remove('show'), 1800);
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  mySentence.value = '';
+  localStorage.removeItem(STORAGE_KEY);
+});
+
+const REVIEW_KEY = 'annual_review';
+const reviewState = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
+reviewDays.forEach(day => {
+  const key = day.dataset.day;
+  if(reviewState[key]) day.classList.add('done');
+  day.addEventListener('click', () => {
+    day.classList.toggle('done');
+    reviewState[key] = day.classList.contains('done');
+    localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewState));
+  });
+});
+</script>
+
+</body>
+</html>
