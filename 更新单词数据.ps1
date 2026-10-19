@@ -2,7 +2,8 @@
 <#
   更新单词数据.ps1
   ------------------------------------------------------------------
-  作用：扫描本目录下所有 deepseek_html_*.html 单词卡，自动解析出
+  作用：扫描本目录下所有 *.html 单词卡（下载得到的 deepseek_html_*
+        会自动改名成 <单词>.html），自动解析出
         · 单词元数据：单词 / 释义 / 音标 / 词性 / 词根 / 词根拆解 / 意象描述
         · 意象卡 SVG
         · 意象卡动画 CSS（取自卡片 <style>，作用域限定到 .di-art[data-art="单词"]）
@@ -273,7 +274,7 @@ function Parse-Card([string]$path){
 }
 
 # ---------- 主流程 ----------
-$files = Get-ChildItem -Path $dir -Filter 'deepseek_html_*.html' -File | Sort-Object Name
+$files = Get-ChildItem -Path $dir -Filter '*.html' -File | Where-Object { $_.Name -ne 'index.html' } | Sort-Object Name
 $words = New-Object System.Collections.ArrayList
 $art = [ordered]@{}
 $artCss = [ordered]@{}
@@ -285,6 +286,17 @@ foreach($f in $files){
   if($null -eq $c){ Write-Host ("跳过（未取到单词）: " + $f.Name) -ForegroundColor Yellow; continue }
   if($seen.ContainsKey($c.word)){ Write-Host ("重复单词，跳过: " + $f.Name) -ForegroundColor Yellow; continue }
   $seen[$c.word] = $true
+  # 下载得到的文件名多为 deepseek_html_*，自动改名为 <单词>.html，让仓库文件名可读
+  $newName = $c.word + '.html'
+  if($f.Name -ne $newName -and $f.Name -match '^deepseek_html_'){
+    $dst = Join-Path $dir $newName
+    if(-not (Test-Path -LiteralPath $dst)){
+      try { Rename-Item -LiteralPath $f.FullName -NewName $newName; $c['file'] = $newName; Write-Host ("已改名: " + $f.Name + " -> " + $newName) -ForegroundColor Cyan }
+      catch { Write-Host ("改名失败: " + $f.Name) -ForegroundColor Yellow }
+    } else {
+      Write-Host ("目标名已存在，保留原文件名: " + $f.Name) -ForegroundColor Yellow
+    }
+  }
   $svg = $c.svg; $css = $c.css; $m = $c.mst
   $c.Remove('svg') | Out-Null
   $c.Remove('css') | Out-Null
