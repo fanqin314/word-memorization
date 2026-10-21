@@ -321,3 +321,22 @@ $js = "/* 本文件由「更新单词数据.ps1 / .bat」自动生成，请勿�
 
 Write-Host ""
 Write-Host ("完成：共 " + $words.Count + " 张卡片 -> " + $outFile) -ForegroundColor Green
+
+# ---------- 同步到 GitHub（让线上站点自动更新） ----------
+$prevEap = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+git -C $dir rev-parse --is-inside-work-tree 2>$null | Out-Null
+if($LASTEXITCODE -eq 0){
+  git -C $dir add -A 2>$null | Out-Null
+  git -C $dir diff --cached --quiet 2>$null
+  if($LASTEXITCODE -ne 0){
+    Write-Host "正在提交并推送到 GitHub ..." -ForegroundColor Cyan
+    git -C $dir commit -m "update: sync word cards" --no-verify 2>$null | Out-Null
+    git -C $dir push origin main
+    if($LASTEXITCODE -eq 0){ Write-Host "已推送，GitHub Pages 稍后会自动更新" -ForegroundColor Green }
+    else { Write-Host "推送失败：请检查网络或 Git 凭据" -ForegroundColor Yellow }
+  } else {
+    Write-Host "数据没有变化，无需推送" -ForegroundColor DarkGray
+  }
+}
+$ErrorActionPreference = $prevEap
