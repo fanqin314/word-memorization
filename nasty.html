@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nasty · 令人厌恶的</title>
+<style>
+:root{
+  /* 腐烂色板 —— nasty = 恶心 / 恶劣 / 下流 / 肮脏 */
+  --paper:#F0EADB;
+  --paper-2:#E2DAC6;
+  --ink:#1A1A0E;
+  --toxic:#7CB518;
+  --toxic-soft:#DCE8C2;
+  --mud:#6B4423;
+  --mud-soft:#E0D0BE;
+  --bruise:#4A1942;
+  --bruise-soft:#E0CEDD;
+  --dirty:#C4A000;
+  --dirty-soft:#F0E5B8;
+  --rust:#A53F19;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:#0E1006;
+  padding:44px 16px 90px;
+  color:var(--ink);
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+  font-size:16px;
+  line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 12% 12%, rgba(124,181,24,.26) 0, transparent 42%),
+    radial-gradient(circle at 88% 88%, rgba(107,68,35,.30) 0, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(74,25,66,.18) 0, transparent 60%);
+}
+
+body::after{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:9999;
+  opacity:.35;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.8'/%3E%3C/svg%3E");
+}
+
+/* 全页：污渍/霉斑纹理 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 15% 25%, rgba(124,181,24,.14) 0 30px, transparent 31px),
+    radial-gradient(circle at 22% 30%, rgba(124,181,24,.10) 0 20px, transparent 21px),
+    radial-gradient(circle at 82% 18%, rgba(74,25,66,.12) 0 40px, transparent 41px),
+    radial-gradient(circle at 78% 22%, rgba(74,25,66,.08) 0 25px, transparent 26px),
+    radial-gradient(circle at 68% 78%, rgba(107,68,35,.12) 0 35px, transparent 36px),
+    radial-gradient(circle at 20% 85%, rgba(196,160,0,.10) 0 25px, transparent 26px),
+    radial-gradient(circle at 35% 55%, rgba(165,63,25,.09) 0 22px, transparent 23px);
+  animation:stainPulse 12s ease-in-out infinite alternate;
+}
+@keyframes stainPulse{
+  0%{ opacity:.7; }
+  100%{ opacity:1; }
+}
+
+.page{
+  position:relative;z-index:1;
+  max-width:860px;margin:0 auto;
+  background:var(--paper);
+  padding:0 0 72px;
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    12px 12px 0 var(--toxic),
+    -4px 4px 0 var(--bruise),
+    0 20px 60px rgba(0,0,0,.8);
+  overflow:hidden;
+}
+
+/* 漂浮的污渍/黏液滴 */
+.page-drips{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.drip{
+  position:absolute;
+  opacity:0;
+  animation:dripDrift linear infinite;
+}
+.drip.slime{
+  width:18px;height:24px;
+  background:var(--toxic);
+  border:2px solid var(--ink);
+  border-radius:50% 50% 60% 40% / 30% 30% 70% 70%;
+  filter:drop-shadow(2px 2px 0 var(--ink));
+}
+.drip.mud{
+  width:22px;height:22px;
+  background:var(--mud);
+  border:2px solid var(--ink);
+  border-radius:40% 60% 55% 45% / 50% 45% 55% 50%;
+  filter:drop-shadow(2px 2px 0 var(--ink));
+}
+.drip.mold{
+  width:24px;height:24px;
+  background:var(--bruise);
+  border:2px solid var(--ink);
+  border-radius:50%;
+  filter:drop-shadow(2px 2px 0 var(--ink));
+  position:relative;
+}
+.drip.mold::after{
+  content:"";
+  position:absolute;
+  inset:4px;
+  border-radius:50%;
+  background:var(--dirty);
+  opacity:.6;
+}
+.drip.fly{
+  width:22px;height:22px;
+  color:var(--ink);
+  font-size:22px;
+  line-height:22px;
+  text-align:center;
+}
+.drip.fly::before{
+  content:"✕";
+}
+
+.drip.f1{ left:6%; bottom:-40px; animation-duration:26s; }
+.drip.f2{ left:22%; bottom:-55px; animation-duration:34s; animation-delay:4s; }
+.drip.f3{ left:78%; bottom:-45px; animation-duration:30s; animation-delay:2s; }
+.drip.f4{ left:90%; bottom:-30px; animation-duration:32s; animation-delay:8s; }
+.drip.f5{ left:52%; bottom:-70px; animation-duration:26s; animation-delay:6s; }
+.drip.f6{ left:38%; bottom:-50px; animation-duration:36s; animation-delay:12s; }
+.drip.f7{ left:64%; bottom:-60px; animation-duration:24s; animation-delay:10s; }
+
+@keyframes dripDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.8; }
+  50%{ transform:translateY(-50vh) rotate(180deg) scale(.8); }
+  90%{ opacity:.4; }
+  100%{ transform:translateY(-118vh) rotate(360deg) scale(1.2); opacity:0; }
+}
+
+.hero,.body-wrap{position:relative;z-index:2;}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    linear-gradient(180deg,
+      #E8E2CC 0%,
+      #F0EADB 50%,
+      #E0D8BE 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--toxic) 0 22px,
+    transparent 22px 24px,
+    var(--bruise) 24px 46px,
+    transparent 46px 48px,
+    var(--dirty) 48px 70px,
+    transparent 70px 72px,
+    var(--mud) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+
+.hero-drip-bg{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.drip-svg{width:100%;height:100%;}
+.hero-drip-path{
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:600;
+  stroke-dashoffset:600;
+  animation:dripDraw 3s ease-out forwards;
+}
+.hero-drip-path.dp1{ stroke:var(--toxic); stroke-width:2.5; animation-delay:.2s; opacity:.6; }
+.hero-drip-path.dp2{ stroke:var(--mud); stroke-width:2.5; animation-delay:.5s; opacity:.55; }
+.hero-drip-path.dp3{ stroke:var(--bruise); stroke-width:2; animation-delay:.9s; opacity:.6; }
+@keyframes dripDraw{ to{ stroke-dashoffset:0; } }
+
+.hero-slime{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:280px;height:280px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.35;
+}
+.hero-slime svg{width:100%;height:100%;}
+.slime-blob{
+  animation:slimeWobble 4s ease-in-out infinite;
+  transform-origin:140px 140px;
+}
+@keyframes slimeWobble{
+  0%,100%{ transform:scale(1) rotate(0); }
+  25%{ transform:scale(1.08,0.94) rotate(5deg); }
+  50%{ transform:scale(0.95,1.06) rotate(-5deg); }
+  75%{ transform:scale(1.04,0.97) rotate(3deg); }
+}
+.slime-bubble{
+  animation:bubbleRise 2s ease-in infinite;
+}
+.slime-bubble.b2{ animation-delay:.6s; }
+.slime-bubble.b3{ animation-delay:1.2s; }
+@keyframes bubbleRise{
+  0%{ opacity:0; transform:translateY(0) scale(.5); }
+  20%{ opacity:.85; }
+  100%{ opacity:0; transform:translateY(-50px) scale(1.1); }
+}
+
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:96px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  filter:drop-shadow(4px 6px 0 var(--toxic)) drop-shadow(-3px 3px 0 var(--bruise));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterDrip 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s;
+}
+.word-anim .l1{ animation-delay:.15s; color:var(--toxic); --dy:-60px; }
+.word-anim .l2{ animation-delay:.30s; color:var(--mud); --dy:-80px; }
+.word-anim .l3{ animation-delay:.45s; color:var(--bruise); --dy:-70px; }
+.word-anim .l4{ animation-delay:.60s; color:var(--dirty); --dy:-90px; }
+.word-anim .l5{ animation-delay:.75s; color:var(--toxic); --dy:-75px; }
+@keyframes letterDrip{
+  0%{
+    opacity:0;
+    transform:translateY(var(--dy)) scaleY(1.8) scaleX(.6);
+    filter:blur(8px);
+  }
+  60%{
+    opacity:1;
+    filter:blur(0);
+    transform:translateY(8px) scaleY(.85) scaleX(1.15);
+  }
+  80%{
+    transform:translateY(-3px) scaleY(1.08) scaleX(.95);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scaleY(1) scaleX(1);
+    color:var(--ink);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--toxic);
+  transform:translateY(-4px) scale(1.12) rotate(-4deg);
+  filter:drop-shadow(0 0 12px var(--toxic));
+}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--toxic);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--bruise);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.15s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--bruise);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--bruise);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--paper);letter-spacing:.06em;
+  background:var(--bruise);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--toxic);
+  opacity:0;animation:fadeUp .8s ease-out 1.2s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--mud);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.4s forwards;
+  transform:rotate(1.2deg);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--toxic-soft);
+  border:2.5px solid var(--ink);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--toxic);
+  opacity:0;animation:fadeUp .8s ease-out 1.65s forwards;
+  transform:rotate(-1deg);
+}
+
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal-scale.visible{opacity:1;transform:scale(1);}
+
+.section{margin:0 0 56px;}
+
+.section-title{
+  display:inline-flex;align-items:center;gap:12px;
+  margin:0 0 22px;
+  padding:8px 22px 8px 12px;
+  background:var(--toxic-soft);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:18px;font-weight:900;
+  letter-spacing:-.01em;
+  transform:rotate(-.8deg);
+}
+.section:nth-of-type(even) .section-title{
+  background:var(--bruise-soft);
+  transform:rotate(.9deg);
+}
+.section:nth-of-type(3n) .section-title{
+  background:var(--mud-soft);
+}
+.section-title .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex-shrink:0;
+  background:var(--ink);color:var(--paper);
+  border-radius:50%;font-size:14px;font-weight:900;
+}
+
+.root-family{
+  position:relative;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 24px;
+}
+.root-line{
+  font-size:17px;line-height:2.2;margin-bottom:22px;
+  padding:18px 20px;
+  background:var(--toxic-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+  text-align:center;
+}
+.root-line .affix{
+  background:var(--mud);color:var(--paper);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(-2deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.root-line .stem{
+  background:var(--toxic);color:var(--ink);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(1.5deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.fam-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:10px;
+}
+.fam-card{
+  background:#fff;border:2.5px solid var(--ink);
+  border-radius:14px;padding:10px 12px;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.fam-card:hover{transform:translate(-2px,-2px) rotate(-1deg);}
+.fam-card .pos{
+  font-size:10px;font-weight:800;
+  background:var(--ink);color:var(--paper);
+  padding:2px 7px;border-radius:999px;
+  display:inline-block;margin-bottom:5px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  letter-spacing:.08em;
+}
+.fam-card .w{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:16px;
+  color:var(--mud);
+  line-height:1.3;
+}
+.fam-card .w .hl{color:var(--toxic);}
+.fam-card .p{font-size:11px;color:#8a7d6d;margin:2px 0 4px;font-family:monospace;}
+.fam-card .m{font-size:12.5px;line-height:1.5;}
+
+/* 意象卡 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(124,181,24,.18) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+.image-card .ic-text{position:relative;z-index:1;}
+.image-card .ic-label{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;font-weight:900;letter-spacing:.18em;
+  background:var(--toxic);color:var(--ink);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--paper);
+  margin-bottom:16px;
+  transform:rotate(-2deg);
+}
+.image-card .ic-main{
+  font-size:22px;font-weight:800;line-height:1.6;
+  margin:0 0 14px;
+}
+.image-card .ic-main .hl{
+  background:var(--toxic);color:var(--ink);
+  padding:1px 10px;border-radius:6px;
+}
+.image-card .ic-sub{
+  font-size:14.5px;opacity:.9;line-height:1.9;margin:0;
+}
+.image-card .ic-svg{
+  position:relative;z-index:1;
+  width:340px;height:260px;
+}
+.image-card .ic-svg svg{width:100%;height:100%;overflow:visible;}
+
+/* ========== nasty SVG 动画 ========== */
+
+.nst-blob{
+  transform-origin:170px 130px;
+  animation:blobMorph 5s ease-in-out infinite;
+}
+@keyframes blobMorph{
+  0%,100%{ transform:scale(1) rotate(0); }
+  25%{ transform:scale(1.06,0.96) rotate(3deg); }
+  50%{ transform:scale(0.94,1.06) rotate(-3deg); }
+  75%{ transform:scale(1.03,0.98) rotate(2deg); }
+}
+
+.nst-drip{
+  animation:dripFall 3s ease-in infinite;
+  transform-origin:center;
+}
+.nst-drip.d2{ animation-delay:1s; }
+.nst-drip.d3{ animation-delay:2s; }
+@keyframes dripFall{
+  0%{ opacity:0; transform:translateY(0) scale(.6); }
+  20%{ opacity:1; }
+  100%{ opacity:0; transform:translateY(60px) scale(.7,1.5); }
+}
+
+.nst-bubble{
+  animation:bubblePop 2.2s ease-out infinite;
+  transform-origin:center;
+}
+.nst-bubble.b2{ animation-delay:.7s; }
+.nst-bubble.b3{ animation-delay:1.4s; }
+@keyframes bubblePop{
+  0%{ opacity:0; transform:scale(.3); }
+  30%{ opacity:1; transform:scale(1); }
+  100%{ opacity:0; transform:scale(1.4); }
+}
+
+.nst-gas{
+  animation:gasRise 4s ease-out infinite;
+  transform-origin:center;
+}
+.nst-gas.g2{ animation-delay:1.3s; }
+.nst-gas.g3{ animation-delay:2.6s; }
+@keyframes gasRise{
+  0%{ opacity:0; transform:translateY(0) scale(.5); }
+  20%{ opacity:.7; }
+  100%{ opacity:0; transform:translateY(-60px) scale(1.3); }
+}
+
+.nst-fly{
+  animation:flyOrbit 8s linear infinite;
+  transform-origin:170px 130px;
+}
+@keyframes flyOrbit{
+  to{ transform:rotate(360deg); }
+}
+
+.nst-skull{
+  animation:skullPulse 2s ease-in-out infinite;
+  transform-origin:170px 130px;
+}
+@keyframes skullPulse{
+  0%,100%{ opacity:.7; }
+  50%{ opacity:1; }
+}
+
+/* ========== 结束 nasty SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+.collo{
+  background:#FFFCF5;border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 20px;
+  display:flex;align-items:center;gap:16px;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  position:relative;
+  overflow:hidden;
+}
+.collo::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:6px;
+  background:var(--toxic);
+  transition:width .3s;
+}
+.collo:nth-child(2)::before{background:var(--mud);}
+.collo:nth-child(3)::before{background:var(--bruise);}
+.collo:nth-child(4)::before{background:var(--dirty);}
+.collo:nth-child(5)::before{background:var(--rust);}
+.collo:hover{transform:translate(-4px,-4px);box-shadow:7px 7px 0 var(--ink);}
+.collo:hover::before{width:14px;}
+.collo .pattern{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:14.5px;
+  background:var(--ink);color:var(--paper);
+  padding:6px 14px;border-radius:999px;
+  white-space:nowrap;flex-shrink:0;
+  margin-left:8px;
+}
+.collo .meaning{font-size:14.5px;line-height:1.55;}
+.collo .meaning b{color:var(--rust);font-weight:800;}
+
+.real-exs{display:flex;flex-direction:column;gap:16px;}
+.real-ex{
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:20px 24px;
+  position:relative;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  transform:rotate(.3deg);
+}
+.real-ex:nth-child(even){transform:rotate(-.5deg);}
+.real-ex:hover{transform:translate(-4px,-4px) rotate(0);box-shadow:9px 9px 0 var(--ink);}
+.real-ex::before{
+  content:"";
+  position:absolute;
+  top:-10px;left:-10px;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--toxic);
+  border:3px solid var(--ink);
+}
+.real-ex:nth-child(even)::before{background:var(--mud);}
+.real-ex:nth-child(3n)::before{background:var(--bruise);}
+.real-ex .src{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;
+  background:var(--rust);color:var(--paper);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--ink);
+  margin-bottom:12px;
+}
+.real-ex .en{
+  font-size:16px;line-height:1.8;margin:0 0 10px;
+  font-family:Georgia,serif;
+}
+.real-ex .en .hl{
+  background:var(--toxic);color:var(--ink);
+  padding:1px 7px;border-radius:6px;
+  font-weight:800;font-style:normal;
+}
+.real-ex .cn{
+  font-size:13.5px;color:#7a6e60;line-height:1.7;
+  padding-left:16px;border-left:3px solid var(--mud);
+}
+
+.pitfall{
+  padding:28px 30px;
+  background:var(--bruise-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  position:relative;overflow:hidden;
+  transform:rotate(-.5deg);
+}
+.pitfall::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:12px;
+  background-image:
+    radial-gradient(circle, var(--bruise) 3px, transparent 3.5px);
+  background-size:20px 12px;
+  border-bottom:3px solid var(--ink);
+}
+.pitfall-item{
+  margin-bottom:14px;font-size:15px;line-height:1.9;
+  padding:14px 18px;
+  background:#FFFCF5;
+  border-left:6px solid var(--bruise);
+  border-radius:0 var(--radius-md) var(--radius-md) 0;
+  transition:transform .3s;
+}
+.pitfall-item:hover{transform:translateX(8px);}
+.pitfall-item:last-child{margin-bottom:0;}
+.pitfall-item .wrong{
+  color:var(--rust);text-decoration:line-through;
+  text-decoration-thickness:2px;font-weight:700;
+}
+.pitfall-item .right{
+  color:var(--toxic);font-weight:800;
+  background:var(--toxic-soft);padding:1px 8px;border-radius:6px;
+}
+.pitfall-item .tip{
+  display:inline-block;
+  background:var(--dirty);color:var(--ink);
+  padding:1px 10px;border-radius:999px;
+  font-size:12px;font-weight:800;margin-right:8px;
+  border:2px solid var(--ink);
+}
+
+/* ============================================================
+   辨析表格 —— 用 filter:drop-shadow 让阴影跟随圆角
+   ============================================================ */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+.compare-table thead{display:none;}
+.compare-table tbody tr{
+  background:transparent;
+  filter:drop-shadow(4px 4px 0 var(--ink));
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .3s cubic-bezier(.34,1.56,.64,1);
+  opacity:0;transform:translateX(-20px);
+}
+.compare-table tbody tr.row-visible{opacity:1;transform:translateX(0);}
+.compare-table tbody tr:hover{transform:translate(-4px,-4px);filter:drop-shadow(7px 7px 0 var(--ink));}
+
+.compare-table td{
+  border-top:3px solid var(--ink);
+  border-bottom:3px solid var(--ink);
+  padding:14px 18px;vertical-align:middle;text-align:left;
+  background:#FFFCF5;
+}
+.compare-table td:first-child{
+  border-left:3px solid var(--ink);
+  border-top-left-radius:18px;
+  border-bottom-left-radius:18px;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;white-space:nowrap;width:140px;
+  background:var(--toxic-soft);
+  color:var(--ink);
+  font-size:16px;
+}
+.compare-table td:nth-child(2){width:180px;}
+.compare-table td:last-child{
+  border-right:3px solid var(--ink);
+  border-top-right-radius:18px;
+  border-bottom-right-radius:18px;
+}
+.compare-table .chant{
+  font-size:13px;color:var(--rust);font-weight:700;
+  font-style:italic;line-height:1.5;
+}
+
+/* 高亮行：所有 td 都换成黄色背景，保持圆角轮廓 */
+.compare-table tr.highlight td{
+  background:var(--dirty-soft);
+}
+.compare-table tr.highlight td:first-child{
+  background:var(--dirty);
+  position:relative;
+}
+.compare-table tr.highlight td:first-child::after{
+  content:"★";
+  color:var(--rust);margin-left:6px;
+}
+
+.self-test .hint{
+  font-size:14px;color:var(--ink);
+  margin:0 0 22px;padding:14px 20px;
+  background:var(--toxic-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+}
+.fill-item{
+  margin-bottom:16px;padding:18px 24px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+}
+.fill-item:hover{transform:translate(-3px,-3px) rotate(-.3deg);box-shadow:6px 6px 0 var(--ink);}
+.fill-sentence{font-size:16.5px;line-height:1.95;margin:0 0 10px;}
+.first-letter{
+  display:inline-block;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:900;color:var(--mud);
+  font-size:19px;
+  padding-right:2px;
+}
+.blank{
+  display:inline-block;min-width:70px;
+  border-bottom:3px solid var(--ink);
+  text-align:center;font-weight:800;
+  color:transparent;cursor:pointer;
+  transition:color .3s,border-color .3s,background .3s;
+  padding:0 10px;user-select:none;
+  font-family:Georgia,serif;
+}
+.blank:hover{background:var(--dirty);border-color:var(--mud);}
+.blank.revealed{
+  color:var(--rust);border-color:var(--rust);
+  background:var(--dirty-soft);
+  border-radius:8px 8px 0 0;
+  animation:answerPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.fill-hint{font-size:13.5px;color:var(--ink);opacity:.75;margin:0;}
+.fill-hint b{color:var(--rust);font-weight:800;}
+
+.write-practice{
+  background:var(--mud-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 28px;
+  transform:rotate(.4deg);
+}
+.write-practice .wp-hint{
+  font-size:14px;color:var(--ink);opacity:.85;
+  margin:0 0 16px;
+}
+.write-practice textarea{
+  width:100%;min-height:110px;
+  padding:16px 18px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:16px;line-height:1.7;
+  color:var(--ink);
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:18px;
+  box-shadow:inset 3px 3px 0 rgba(26,26,14,.08);
+  resize:vertical;
+  outline:none;
+  transition:box-shadow .2s;
+}
+.write-practice textarea:focus{
+  box-shadow:inset 3px 3px 0 rgba(26,26,14,.08), 0 0 0 5px var(--dirty);
+}
+.wp-actions{
+  margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+}
+.wp-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;font-weight:800;letter-spacing:.04em;
+  padding:11px 22px;
+  background:var(--ink);color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
+}
+.wp-btn:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--toxic);}
+.wp-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);}
+.wp-btn.ghost{background:transparent;color:var(--ink);}
+.wp-saved{
+  font-size:13px;color:var(--toxic);font-weight:800;
+  opacity:0;transition:opacity .4s;
+}
+.wp-saved.show{opacity:1;}
+
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.review-day{
+  text-align:center;padding:20px 10px 18px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:50% 50% 45% 55% / 48% 50% 50% 52%;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background .3s;
+  cursor:pointer;user-select:none;
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(20px) scale(.95);
+}
+.review-day.day-visible{
+  opacity:1;transform:translateY(0) scale(1);
+  transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1);
+}
+.review-day:hover{
+  transform:translate(-4px,-4px) rotate(-3deg);
+  box-shadow:7px 7px 0 var(--ink);
+}
+.review-day.done{background:var(--toxic);color:var(--ink);}
+.review-day.done .day,
+.review-day.done .task{color:var(--ink);}
+.review-day.done::after{
+  content:"☠";
+  position:absolute;top:8px;right:12px;
+  font-size:20px;font-weight:900;color:var(--ink);
+}
+.review-day .day{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-size:28px;font-weight:900;margin-bottom:4px;
+  position:relative;z-index:1;
+}
+.review-day:nth-child(1) .day{color:var(--toxic);}
+.review-day:nth-child(2) .day{color:var(--mud);}
+.review-day:nth-child(3) .day{color:var(--bruise);}
+.review-day:nth-child(4) .day{color:var(--rust);}
+.review-day .task{
+  font-size:12px;color:var(--ink);opacity:.75;
+  line-height:1.5;position:relative;z-index:1;
+}
+.review-tip{
+  margin-top:16px;font-size:13px;color:var(--ink);opacity:.6;
+  text-align:center;font-style:italic;
+}
+
+.progress-bar{
+  position:fixed;top:0;left:0;height:5px;width:0;
+  background:repeating-linear-gradient(90deg,
+    var(--toxic) 0 20px,
+    var(--mud) 20px 40px,
+    var(--bruise) 40px 60px,
+    var(--rust) 60px 80px);
+  z-index:100;transition:width .1s linear;
+  border-bottom:2px solid var(--ink);
+}
+
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:56px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .page{border-radius:22px;}
+  .image-card{grid-template-columns:1fr;padding:26px 22px;}
+  .image-card .ic-svg{width:280px;height:220px;margin:0 auto;}
+  .section-title{font-size:15px;padding:6px 16px 6px 10px;}
+}
+
+@media (min-width:1100px){
+  body{padding:56px 32px 120px;}
+  .page{
+    max-width:1200px;
+    border-radius:36px;
+    box-shadow:
+      0 0 0 3px var(--ink),
+      14px 14px 0 var(--toxic),
+      -6px 6px 0 var(--bruise),
+      0 24px 70px rgba(0,0,0,.7);
+  }
+  .hero{padding:100px 80px 80px;}
+  .hero-band{height:24px;}
+  .word-anim{font-size:132px;}
+  .speak-btn{width:56px;height:56px;font-size:26px;}
+  .ipa-anim{font-size:18px;padding:6px 22px;}
+  .pos-anim{font-size:13px;padding:6px 20px;}
+  .spell-hint{font-size:13px;padding:10px 24px;}
+  .body-wrap{padding:76px 80px 0;}
+  .section{margin-bottom:68px;}
+  .section-title{font-size:22px;gap:14px;margin-bottom:26px;padding:10px 26px 10px 14px;}
+  .section-title .num{width:38px;height:38px;font-size:16px;}
+  .fam-grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fam-card{padding:14px 16px;}
+  .fam-card .w{font-size:18px;}
+  .fam-card .m{font-size:13.5px;}
+  .image-card{
+    grid-template-columns:1.3fr 1fr;
+    gap:40px;
+    padding:48px 44px;
+  }
+  .image-card .ic-main{font-size:27px;line-height:1.5;}
+  .image-card .ic-sub{font-size:16px;}
+  .image-card .ic-svg{width:420px;height:320px;}
+  .collocations{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .collo:nth-child(5){grid-column:1 / -1;}
+  .collo{padding:20px 24px;}
+  .collo .pattern{font-size:15.5px;padding:7px 16px;}
+  .collo .meaning{font-size:15px;}
+  .real-exs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .real-ex{padding:24px 28px;}
+  .real-ex .en{font-size:17px;}
+  .real-ex .cn{font-size:14.5px;}
+  .pitfall{padding:36px 40px;}
+  .pitfall-item{font-size:15.5px;padding:18px 22px;}
+  .compare-table{font-size:16px;border-spacing:0 14px;}
+  .compare-table td{padding:18px 24px;}
+  .compare-table td:first-child{width:160px;font-size:18px;}
+  .compare-table td:nth-child(2){width:auto;}
+  .compare-table .chant{font-size:14.5px;}
+  .self-test .fill-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .self-test .fill-item:nth-child(5){grid-column:1 / -1;margin-bottom:0;}
+  .fill-item{padding:22px 26px;margin-bottom:0;}
+  .fill-sentence{font-size:17px;}
+  .write-practice{
+    max-width:900px;
+    margin:0 auto;
+    padding:36px 40px;
+  }
+  .write-practice textarea{font-size:17px;padding:18px 22px;}
+  .review-grid{gap:24px;}
+  .review-day{padding:28px 14px 24px;}
+  .review-day .day{font-size:34px;}
+  .review-day .task{font-size:13.5px;}
+}
+
+@media (min-width:1500px){
+  .page{max-width:1400px;}
+  .hero{padding:120px 100px 96px;}
+  .word-anim{font-size:158px;}
+  .body-wrap{padding:92px 100px 0;}
+  .image-card{grid-template-columns:1.5fr 1fr;padding:56px 52px;}
+  .image-card .ic-main{font-size:30px;}
+  .image-card .ic-svg{width:460px;height:360px;}
+  .real-ex .en{font-size:18px;}
+}
+
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  body::before,body::after{display:none;}
+  .page{box-shadow:none;max-width:100%;}
+  .blank{color:var(--rust)!important;}
+  .fill-item,.compare-table,.pitfall,.review-day{break-inside:avoid;}
+  .hero-drip-bg,.hero-slime,.page-drips,.progress-bar{display:none;}
+  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
+  .compare-table tbody tr,.review-day{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-drips" aria-hidden="true">
+    <div class="drip slime f1"></div>
+    <div class="drip mud f2"></div>
+    <div class="drip mold f3"></div>
+    <div class="drip fly f4"></div>
+    <div class="drip slime f5"></div>
+    <div class="drip mud f6"></div>
+    <div class="drip mold f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-drip-bg" aria-hidden="true">
+      <svg class="drip-svg" viewBox="0 0 860 320" preserveAspectRatio="none">
+        <path class="hero-drip-path dp1" d="M 100 20 Q 110 60 100 100 Q 90 140 100 180" />
+        <path class="hero-drip-path dp1" d="M 200 20 Q 190 70 200 120 Q 210 160 200 200" />
+        <path class="hero-drip-path dp2" d="M 660 20 Q 670 70 660 130 Q 650 170 660 220" />
+        <path class="hero-drip-path dp2" d="M 760 20 Q 750 60 760 110 Q 770 150 760 190" />
+        <path class="hero-drip-path dp3" d="M 430 10 Q 440 50 430 80 Q 420 120 430 150" />
+      </svg>
+    </div>
+
+    <div class="hero-slime" aria-hidden="true">
+      <svg viewBox="0 0 280 280">
+        <g class="slime-blob">
+          <path d="M 140 40 Q 200 60 210 120 Q 220 180 170 210 Q 120 230 80 200 Q 50 160 60 110 Q 70 60 140 40 Z"
+                fill="var(--toxic)" stroke="var(--ink)" stroke-width="3" opacity=".8"/>
+          <circle cx="120" cy="120" r="8" fill="var(--mud)" opacity=".6"/>
+          <circle cx="170" cy="160" r="6" fill="var(--bruise)" opacity=".5"/>
+          <circle cx="100" cy="170" r="5" fill="var(--dirty)" opacity=".6"/>
+          <circle cx="120" cy="115" r="10" fill="var(--ink)"/>
+          <circle cx="165" cy="115" r="10" fill="var(--ink)"/>
+          <path d="M 138 135 L 142 145 L 148 135 Z" fill="var(--ink)"/>
+        </g>
+        <circle class="slime-bubble" cx="140" cy="180" r="6" fill="var(--dirty)" stroke="var(--ink)" stroke-width="1.5"/>
+        <circle class="slime-bubble b2" cx="110" cy="170" r="4" fill="var(--mud)" stroke="var(--ink)" stroke-width="1.5"/>
+        <circle class="slime-bubble b3" cx="170" cy="185" r="5" fill="var(--toxic)" stroke="var(--ink)" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="nasty">
+          <span class="letter l1">n</span><span class="letter l2">a</span><span class="letter l3">s</span><span class="letter l4">t</span><span class="letter l5">y</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 nasty">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˈnɑːsti/ &nbsp;·&nbsp; 美 /ˈnæsti/</div>
+      <div class="pos-anim">adj.</div>
+      <div class="spell-hint">nas · ty &nbsp; 令人厌恶 · 恶劣 · 恶毒</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词源 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          中古英语 <span class="stem">nast</span>（肮脏的，卑劣的）
+          + <span class="affix">-y</span>（形容词后缀）
+          &nbsp;→&nbsp; "像脏东西一样" → <b>恶心的 · 恶劣的</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">副词</div><div class="w"><span class="hl">nastily</span></div><div class="p">/ˈnɑːstɪli/</div><div class="m">恶劣地，恶意地</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">nastiness</div><div class="p">/ˈnɑːstinəs/</div><div class="m">肮脏，恶劣</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">nastier</div><div class="p">/ˈnɑːstiər/</div><div class="m">更恶劣的（比较级）</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">nastiest</div><div class="p">/ˈnɑːstiɪst/</div><div class="m">最恶劣的（最高级）</div></div>
+          <div class="fam-card"><div class="pos">同源</div><div class="w">dirty</div><div class="p">/ˈdɜːrti/</div><div class="m">肮脏的（近义词）</div></div>
+          <div class="fam-card"><div class="pos">同源</div><div class="w">mean</div><div class="p">/miːn/</div><div class="m">刻薄的，小气的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">nasty</span> = 一团冒着绿气、滴着黏液的<strong>腐烂怪东西</strong>。
+          </p>
+          <p class="ic-sub">
+            气味难闻 → nasty smell；行为恶劣 → nasty behavior；言语下流 → nasty language；伤口严重 → nasty wound。<br>
+            所有含义共用一种感觉：<b>"令人下意识皱眉"</b>。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 340 260">
+            <defs>
+              <radialGradient id="nstGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#7CB518" stop-opacity=".6"/>
+                <stop offset="60%" stop-color="#4A1942" stop-opacity=".3"/>
+                <stop offset="100%" stop-color="#6B4423" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <circle class="nst-skull" cx="170" cy="130" r="100" fill="url(#nstGlow)"/>
+
+            <circle class="nst-gas" cx="140" cy="90" r="10" fill="var(--toxic)" opacity=".35"/>
+            <circle class="nst-gas g2" cx="180" cy="80" r="8" fill="var(--toxic)" opacity=".35"/>
+            <circle class="nst-gas g3" cx="160" cy="95" r="6" fill="var(--toxic)" opacity=".35"/>
+
+            <g class="nst-blob">
+              <path d="M 170 60 Q 230 70 245 130 Q 250 190 200 215 Q 150 235 110 210 Q 70 180 80 130 Q 90 70 170 60 Z"
+                    fill="var(--toxic)" stroke="var(--ink)" stroke-width="3.5"/>
+              <circle cx="130" cy="120" r="10" fill="var(--mud)" opacity=".6"/>
+              <circle cx="200" cy="160" r="8" fill="var(--bruise)" opacity=".5"/>
+              <circle cx="160" cy="190" r="6" fill="var(--dirty)" opacity=".6"/>
+              <circle cx="215" cy="120" r="5" fill="var(--mud)" opacity=".55"/>
+              <circle cx="140" cy="115" r="12" fill="var(--ink)"/>
+              <circle cx="200" cy="115" r="12" fill="var(--ink)"/>
+              <circle cx="143" cy="112" r="3" fill="var(--paper)" opacity=".7"/>
+              <circle cx="203" cy="112" r="3" fill="var(--paper)" opacity=".7"/>
+              <path d="M 162 145 L 168 158 L 174 145 Z" fill="var(--ink)"/>
+              <rect x="140" y="165" width="8" height="14" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
+              <rect x="152" y="165" width="8" height="16" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
+              <rect x="164" y="165" width="8" height="14" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
+              <rect x="176" y="165" width="8" height="16" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
+              <rect x="188" y="165" width="8" height="14" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
+            </g>
+
+            <ellipse class="nst-drip" cx="120" cy="230" rx="5" ry="8" fill="var(--toxic)" stroke="var(--ink)" stroke-width="1.5"/>
+            <ellipse class="nst-drip d2" cx="170" cy="235" rx="5" ry="8" fill="var(--toxic)" stroke="var(--ink)" stroke-width="1.5"/>
+            <ellipse class="nst-drip d3" cx="220" cy="230" rx="5" ry="8" fill="var(--toxic)" stroke="var(--ink)" stroke-width="1.5"/>
+
+            <circle class="nst-bubble" cx="130" cy="135" r="7" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5" opacity=".7"/>
+            <circle class="nst-bubble b2" cx="185" cy="170" r="5" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5" opacity=".7"/>
+            <circle class="nst-bubble b3" cx="210" cy="145" r="4" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5" opacity=".7"/>
+
+            <g class="nst-fly">
+              <ellipse cx="170" cy="30" rx="6" ry="4" fill="var(--ink)"/>
+              <ellipse cx="164" cy="28" rx="4" ry="2" fill="var(--bruise)" opacity=".7"/>
+              <ellipse cx="176" cy="28" rx="4" ry="2" fill="var(--bruise)" opacity=".7"/>
+            </g>
+            <g class="nst-fly" style="animation-delay:-4s">
+              <ellipse cx="170" cy="230" rx="5" ry="3" fill="var(--ink)"/>
+              <ellipse cx="165" cy="228" rx="3" ry="1.5" fill="var(--bruise)" opacity=".7"/>
+              <ellipse cx="175" cy="228" rx="3" ry="1.5" fill="var(--bruise)" opacity=".7"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">nasty smell / taste</div><div class="meaning"><b>难闻的</b>气味 / <b>恶心的</b>味道</div></div>
+        <div class="collo"><div class="pattern">nasty surprise</div><div class="meaning">令人不快的<b>意外</b></div></div>
+        <div class="collo"><div class="pattern">nasty habit</div><div class="meaning"><b>坏习惯</b>，恶习</div></div>
+        <div class="collo"><div class="pattern">nasty wound / cut</div><div class="meaning"><b>严重的</b>伤口 / 割伤</div></div>
+        <div class="collo"><div class="pattern">a nasty piece of work</div><div class="meaning">（英式）<b>讨厌鬼</b>，难对付的人</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力</div>
+          <p class="en">The student had a <em class="hl">nasty</em> cold and could not attend the class discussion.</p>
+          <p class="cn">这个学生得了重感冒，无法参加课堂讨论。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">The factory was shut down after a <em class="hl">nasty</em> chemical spill.</p>
+          <p class="cn">一家化工厂发生严重化学品泄漏后被关闭。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">Online debates can sometimes turn into <em class="hl">nasty</em> personal attacks.</p>
+          <p class="cn">线上争论有时会演变成恶毒的人身攻击。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">We were caught in <em class="hl">nasty</em> weather on the mountain.</p>
+          <p class="cn">我们在山上遭遇了恶劣天气。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">多义</span>
+          nasty 含义取决于<b>搭配对象</b>：<br>
+          nasty smell（难闻的）/ nasty behavior（恶劣的）/ nasty wound（严重的）/ nasty weather（恶劣的）
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>nasty</b> 可指人也可指事，偏口语化；<b>severe</b> 只指程度严重，无负面情绪；<b>disgusting</b> 强调生理厌恶感
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">比较级</span>
+          规则变形：<b>nasty → nastier → nastiest</b>（不变形为 nasty + er）<br>
+          <span class="wrong">more nasty</span> → <span class="right">nastier</span>（更常用）
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>nasty</td>
+            <td>令人厌恶的（口语，多面）</td>
+            <td class="chant">不舒服皱眉 nasty</td>
+          </tr>
+          <tr>
+            <td>disgusting</td>
+            <td>恶心的（生理层面）</td>
+            <td class="chant">想吐恶心 disgusting</td>
+          </tr>
+          <tr>
+            <td>mean</td>
+            <td>刻薄的（针对人）</td>
+            <td class="chant">对人刻薄是 mean</td>
+          </tr>
+          <tr>
+            <td>vicious</td>
+            <td>恶毒的（有伤害意图）</td>
+            <td class="chant">怀恶意是 vicious</td>
+          </tr>
+          <tr>
+            <td>severe</td>
+            <td>严重的（程度，不评价）</td>
+            <td class="chant">客观严重 severe</td>
+          </tr>
+          <tr>
+            <td>awful</td>
+            <td>糟糕的（程度泛泛）</td>
+            <td class="chant">泛泛糟糕 awful</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">There was a <span class="first-letter">n</span><span class="blank" onclick="this.classList.toggle('revealed')">asty</span> smell coming from the fridge.</p>
+          <p class="fill-hint">提示：<b>a nasty smell</b>，难闻的气味</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She suffered a <span class="first-letter">n</span><span class="blank" onclick="this.classList.toggle('revealed')">asty</span> fall on the ice and broke her arm.</p>
+          <p class="fill-hint">提示：<b>a nasty fall</b>，严重的一跤</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He has a <span class="first-letter">n</span><span class="blank" onclick="this.classList.toggle('revealed')">asty</span> habit of biting his nails.</p>
+          <p class="fill-hint">提示：<b>a nasty habit</b>，坏习惯</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The team faced <span class="first-letter">n</span><span class="blank" onclick="this.classList.toggle('revealed')">asty</span> weather conditions on the mountain.</p>
+          <p class="fill-hint">提示：<b>nasty weather</b>，恶劣天气</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">This is the <span class="first-letter">n</span><span class="blank" onclick="this.classList.toggle('revealed')">astiest</span> medicine I've ever tasted.</p>
+          <p class="fill-hint">⚠️ 陷阱：这里要最高级 <b>nastiest</b>（最恶心的）</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>nasty</b> 造一句自己的句子。刻意用上今天学的一个搭配（nasty smell / nasty surprise / nasty habit）。</p>
+        <textarea id="mySentence" placeholder="例：There was a nasty surprise waiting for us when we opened the package."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script>
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+  progressBar.style.width = (scrolled * 100) + '%';
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale')
+  .forEach(el => revealObserver.observe(el));
+
+const tableObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const rows = entry.target.querySelectorAll('tbody tr');
+      rows.forEach((row, i) => setTimeout(() => row.classList.add('row-visible'), i * 120));
+      tableObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const table = document.querySelector('.compare-table');
+if(table) tableObserver.observe(table);
+
+const reviewDays = document.querySelectorAll('.review-day');
+const reviewObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      reviewDays.forEach((day, i) => setTimeout(() => day.classList.add('day-visible'), i * 130));
+      reviewObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const reviewGrid = document.querySelector('.review-grid');
+if(reviewGrid) reviewObserver.observe(reviewGrid);
+
+document.querySelectorAll('.blank').forEach(b => {
+  b.addEventListener('click', function(){
+    this.style.transform = 'scale(1.15)';
+    setTimeout(() => { this.style.transform = ''; }, 180);
+  });
+});
+
+const speakBtn = document.getElementById('speakBtn');
+speakBtn.addEventListener('click', () => {
+  if(!('speechSynthesis' in window)) { alert('当前浏览器不支持朗读'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance('nasty');
+  u.lang = 'en-US'; u.rate = 0.85;
+  u.onstart = () => speakBtn.classList.add('speaking');
+  u.onend = () => speakBtn.classList.remove('speaking');
+  window.speechSynthesis.speak(u);
+});
+document.getElementById('ipaBtn').addEventListener('click', () => speakBtn.click());
+
+const STORAGE_KEY = 'nasty_sentence';
+const mySentence = document.getElementById('mySentence');
+const savedMsg = document.getElementById('savedMsg');
+const saved = localStorage.getItem(STORAGE_KEY);
+if(saved) mySentence.value = saved;
+document.getElementById('saveBtn').addEventListener('click', () => {
+  localStorage.setItem(STORAGE_KEY, mySentence.value);
+  savedMsg.classList.add('show');
+  setTimeout(() => savedMsg.classList.remove('show'), 1800);
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  mySentence.value = '';
+  localStorage.removeItem(STORAGE_KEY);
+});
+
+const REVIEW_KEY = 'nasty_review';
+const reviewState = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
+reviewDays.forEach(day => {
+  const key = day.dataset.day;
+  if(reviewState[key]) day.classList.add('done');
+  day.addEventListener('click', () => {
+    day.classList.toggle('done');
+    reviewState[key] = day.classList.contains('done');
+    localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewState));
+  });
+});
+</script>
+
+</body>
+</html>
