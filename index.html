@@ -1997,6 +1997,7 @@ body::after{
 
     <button class="icon-btn" type="button" id="uploadBtn" title="上传本地单词卡到 GitHub" aria-label="上传本地单词卡到 GitHub">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 18.5a4 4 0 0 1-.3-8 5.5 5.5 0 0 1 10.7-1.2A3.8 3.8 0 0 1 17.8 18.5"></path><path d="M12 21v-8.5"></path><path d="M8.9 15.2 12 12l3.1 3.2"></path></svg>
+      <span class="badge" id="uploadBadge" hidden="">0</span>
     </button>
     <input type="file" id="uploadInput" accept=".html,text/html" multiple hidden="">
   </section>
@@ -3219,9 +3220,114 @@ async function ghPutFile(path, content, token){
   return res.json();
 }
 
-async function uploadCards(files){
-  const token = ghToken();
-  if(!token){ toast('请先填入 GitHub Token'); return; }
+/* ---- 目录句柄：授权一次后自动扫描待上传卡片（Chrome / Edge 支持） ---- */
+const FS_DB = 'vocab_fs', FS_STORE = 'handles', FS_KEY = 'cardsDir';
+const uploadedWords = new Set();
+let cardsDir = null;
+let pendingCards = [];
+
+function idbOpen(){
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(FS_DB, 1);
+    req.onupgradeneeded = () => { if(!req.result.objectStoreNames.contains(FS_STORE)) req.result.createObjectStore(FS_STORE); };
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+async function idbGet(key){
+  try{
+    const db = await idbOpen();
+    return await new Promise((res, rej) => {
+      const r = db.transaction(FS_STORE, 'readonly').objectStore(FS_STORE).get(key);
+      r.onsuccess = () => res(r.result || null);
+      r.onerror = () => rej(r.error);
+    });
+  }catch(e){ return null; }
+}
+async function idbSet(key, val){
+  try{
+    const db = await idbOpen();
+    await new Promise((res, rej) => {
+      const tx = db.transaction(FS_STORE, 'readwrite');
+      tx.objectStore(FS_STORE).put(val, key);
+      tx.oncomplete = res;
+      tx.onerror = () => rej(tx.error);
+    });
+  }catch(e){}
+}
+
+function setUploadBadge(n){
+  const b = document.getElementById('uploadBadge');
+  if(!b) return;
+  b.textContent = n > 99 ? '99+' : String(n);
+  b.hidden = n <= 0;
+}
+
+/* 扫描已授权文件夹：找出还没进词库的卡片，更新红点 */
+async function scanCardsDir(){
+  if(!cardsDir){ setUploadBadge(0); return; }
+  let perm = 'prompt';
+  try{ perm = await cardsDir.queryPermission({ mode:'readwrite' }); }catch(e){}
+  if(perm !== 'granted'){ setUploadBadge(0); return; }
+  const known = new Set(WORDS.map(w => w.word));
+  const found = [];
+  try{
+    for await(const [name, h] of cardsDir.entries()){
+      if(h.kind !== 'file' || !/\.html$/i.test(name)) continue;
+      if(/^(index|words-data)\.html$/i.test(name)) continue;
+      let text = '';
+      try{ text = await (await h.getFile()).text(); }catch(e){ continue; }
+      const word = wordFromCard(text);
+      if(!word || known.has(word) || uploadedWords.has(word)) continue;
+      found.push({ word, name, text });
+    }
+  }catch(e){}
+  pendingCards = found;
+  setUploadBadge(found.length);
+}
+
+async function ensureDirPermission(){
+  if(!cardsDir) return false;
+  try{
+    let perm = await cardsDir.queryPermission({ mode:'readwrite' });
+    if(perm === 'granted') return true;
+    perm = await cardsDir.requestPermission({ mode:'readwrite' });
+    return perm === 'granted';
+  }catch(e){ return false; }
+}
+
+async function uploadPending(){
+  if(!pendingCards.length){ toast('没有需要上传的新单词'); return; }
+  let token = ghToken();
+  if(!token){ token = await askGhToken(); if(!token) return; }
+  let ok = 0, skipped = 0, failed = 0;
+  for(const it of pendingCards.slice()){
+    try{
+      await ghPutFile(it.word + '.html', it.text, token);
+      uploadedWords.add(it.word); ok++;
+    }catch(e){
+      if(e.status === 422){ uploadedWords.add(it.word); skipped++; continue; } // 仓库里已存在
+      if(e.status === 401 || e.status === 403){
+        toast('Token 无效或没有写权限');
+        try{ localStorage.removeItem(GH_TOKEN_KEY); }catch(err){}
+        break;
+      }
+      failed++;
+    }
+  }
+  await scanCardsDir();
+  const parts = [];
+  if(ok) parts.push('已上传 ' + ok + ' 个');
+  if(skipped) parts.push(skipped + ' 个已存在');
+  if(failed) parts.push(failed + ' 个失败');
+  toast(parts.join('，') || '没有可上传的卡片');
+  if(ok) setTimeout(() => toast('约 1 分钟后刷新页面即可看到新单词'), 2200);
+}
+
+/* 兜底：浏览器不支持目录授权时，手动选文件上传 */
+async function uploadFilesManually(files){
+  let token = ghToken();
+  if(!token){ token = await askGhToken(); if(!token) return; }
   const known = new Set(WORDS.map(w => w.word));
   let ok = 0, skipped = 0, failed = 0;
   for(const f of files){
@@ -3230,10 +3336,9 @@ async function uploadCards(files){
     const word = wordFromCard(html);
     if(!word){ failed++; continue; }
     if(known.has(word)){ skipped++; continue; }
-    try{
-      await ghPutFile(word + '.html', html, token);
-      known.add(word); ok++;
-    }catch(e){
+    try{ await ghPutFile(word + '.html', html, token); known.add(word); ok++; }
+    catch(e){
+      if(e.status === 422){ skipped++; continue; }
       if(e.status === 401 || e.status === 403){
         toast('Token 无效或没有写权限');
         try{ localStorage.removeItem(GH_TOKEN_KEY); }catch(err){}
@@ -3247,21 +3352,49 @@ async function uploadCards(files){
   if(skipped) parts.push(skipped + ' 个已存在');
   if(failed) parts.push(failed + ' 个失败');
   toast(parts.join('，') || '没有可上传的卡片');
-  if(ok) setTimeout(() => toast('约 1 分钟后刷新页面即可看到新单词'), 2200);
 }
 
 document.getElementById('uploadBtn').addEventListener('click', async () => {
-  if(!ghToken()){
-    const t = await askGhToken();
-    if(!t) return;
+  // 已授权过文件夹：直接上传待处理的卡片，无需再选文件
+  if(cardsDir && await ensureDirPermission()){
+    await scanCardsDir();
+    if(pendingCards.length) await uploadPending();
+    else toast('没有需要上传的新单词');
+    return;
   }
+  if(window.showDirectoryPicker){
+    try{
+      cardsDir = await window.showDirectoryPicker({ mode:'readwrite' });
+      await idbSet(FS_KEY, cardsDir);
+      await scanCardsDir();
+      if(pendingCards.length) await uploadPending();
+      else toast('这个文件夹里没有新单词卡');
+      return;
+    }catch(e){
+      if(e && e.name === 'AbortError') return;
+    }
+  }
+  if(!ghToken()){ const t = await askGhToken(); if(!t) return; }
   uploadInput.value = '';
   uploadInput.click();
 });
+
 uploadInput.addEventListener('change', () => {
   const files = Array.from(uploadInput.files || []);
-  if(files.length) uploadCards(files);
+  if(files.length) uploadFilesManually(files);
 });
+
+/* 启动：恢复上次授权的文件夹并自动统计待上传数量 */
+(async function initCardsDir(){
+  const h = await idbGet(FS_KEY);
+  if(!h) return;
+  cardsDir = h;
+  await scanCardsDir();
+})();
+
+/* 回到页面时自动重扫：新下载的卡片会直接冒红点 */
+window.addEventListener('focus', () => { if(cardsDir) scanCardsDir(); });
+document.addEventListener('visibilitychange', () => { if(!document.hidden && cardsDir) scanCardsDir(); });
 
 const DAILY_REPS = 3;
 let dailyPos = 0, dailyLen = 0, dailyTimer = null;
