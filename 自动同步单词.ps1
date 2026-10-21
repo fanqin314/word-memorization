@@ -222,8 +222,14 @@ function Invoke-Sync {
       return
     }
 
-    $genOut = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $script:dir '更新单词数据.ps1') -NoSync 2>&1)
-    $genCode = $LASTEXITCODE
+    # 已持有 WordCardsGen，告知子进程跳过加锁，避免自锁
+    $env:WORDCARDS_LOCK_HELD = '1'
+    try{
+      $genOut = @(& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $script:dir '更新单词数据.ps1') -NoSync 2>&1)
+      $genCode = $LASTEXITCODE
+    } finally {
+      Remove-Item Env:WORDCARDS_LOCK_HELD -ErrorAction SilentlyContinue
+    }
     Write-OutputLines '生成器: ' $genOut
     if($genCode -ne 0){
       Write-SyncLog ('生成失败（退出码 ' + $genCode + '），60 秒后重试')

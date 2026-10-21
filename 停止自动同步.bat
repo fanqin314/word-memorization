@@ -12,8 +12,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "$p = $env:SYNC_PID; if($
 rem 2) 兜底：按命令行匹配「自动同步单词.ps1」结束残留进程（排除自己）
 powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'powershell.exe' -and $_.ProcessId -ne $PID -and $_.CommandLine -like '*自动同步单词.ps1*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }"
 
-rem 3) 删除启动文件夹里的快捷方式
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$p = Join-Path ([Environment]::GetFolderPath('Startup')) '单词自动同步.lnk'; if(Test-Path -LiteralPath $p){ Remove-Item -LiteralPath $p -Force -ErrorAction SilentlyContinue }"
+rem 3) 移除开机自启（Run 项 + 旧版启动文件夹快捷方式）
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'WordCardsAutoSync' -Force -ErrorAction SilentlyContinue; $p = Join-Path ([Environment]::GetFolderPath('Startup')) '单词自动同步.lnk'; if(Test-Path -LiteralPath $p){ Remove-Item -LiteralPath $p -Force -ErrorAction SilentlyContinue }"
 
 del /f /q "%~dp0.sync.pid" >nul 2>nul
 

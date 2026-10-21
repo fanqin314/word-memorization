@@ -16,6 +16,22 @@ $dir = $PSScriptRoot
 if(-not $dir){ $dir = Split-Path -Parent $MyInvocation.MyCommand.Definition }
 $outFile = Join-Path $dir 'words-data.js'
 
+# 与常驻监听进程串行：手动双击时若监听正在生成，则等待；监听调用本脚本时
+# 会设置 WORDCARDS_LOCK_HELD=1（它已持有同一把锁），此处跳过避免自锁。
+# 互斥体随进程退出自动释放，无需显式 ReleaseMutex。
+if($env:WORDCARDS_LOCK_HELD -ne '1'){
+  try{
+    $genLock = New-Object System.Threading.Mutex($false, 'WordCardsGen')
+    $gotLock = $false
+    try{ $gotLock = $genLock.WaitOne(60000) }
+    catch [System.Threading.AbandonedMutexException] { $gotLock = $true }
+    if(-not $gotLock){
+      Write-Host '另一个同步任务正在运行，请稍后再试。' -ForegroundColor Yellow
+      exit 0
+    }
+  } catch { }
+}
+
 # ---------- 小工具 ----------
 function Strip-Tags([string]$s){
   if([string]::IsNullOrEmpty($s)){ return '' }
