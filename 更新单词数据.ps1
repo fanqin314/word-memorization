@@ -318,7 +318,31 @@ $payload = [ordered]@{
 }
 $json = $payload | ConvertTo-Json -Depth 20
 $js = "/* 本文件由「更新单词数据.ps1 / .bat」自动生成，请勿手工编辑。 */`nwindow.WORDS_DATA = " + $json + ";`n"
-[System.IO.File]::WriteAllText($outFile, $js, (New-Object System.Text.UTF8Encoding($false)))
+
+# 归一化：把 generated 时间戳替换成空值，用于比较「除时间戳外」的内容
+function Get-Normalized-Js([string]$text){
+  $m = [regex]::Match($text, '"generated"\s*:\s*"[^"]*"')
+  if($m.Success){ return $text.Remove($m.Index, $m.Length).Insert($m.Index, '"generated":""') }
+  return $text
+}
+# 新内容与旧文件除 generated 时间戳外完全相同，则跳过写入（不刷新时间戳，
+# 避免监听进程重复触发时产生无意义的提交）；否则照旧写 UTF-8（无 BOM）
+$shouldWrite = $true
+if(Test-Path -LiteralPath $outFile){
+  try{
+    $oldJs = [System.IO.File]::ReadAllText($outFile, [System.Text.Encoding]::UTF8)
+    $oldCmp = Get-Normalized-Js $oldJs
+    $newCmp = Get-Normalized-Js $js
+    if([string]::Equals($oldCmp, $newCmp, [System.StringComparison]::Ordinal)){ $shouldWrite = $false }
+  } catch {
+    $shouldWrite = $true
+  }
+}
+if($shouldWrite){
+  [System.IO.File]::WriteAllText($outFile, $js, (New-Object System.Text.UTF8Encoding($false)))
+} else {
+  Write-Host "数据无变化，跳过写入 words-data.js（保留旧时间戳）" -ForegroundColor DarkGray
+}
 
 Write-Host ""
 Write-Host ("完成：共 " + $words.Count + " 张卡片 -> " + $outFile) -ForegroundColor Green

@@ -1,3 +1,4 @@
 ﻿
 .sync-state
 .sync.log
+.sync.pid
