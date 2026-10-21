@@ -706,6 +706,50 @@ body.swipe-on{overflow:hidden;}
   padding:0 0 calc(env(safe-area-inset-bottom) + var(--sp-3));
 }
 
+/* ============ 手写画板 ============ */
+.draw-stage{
+  position:fixed;inset:0;z-index:250;display:none;flex-direction:column;
+  background:var(--paper);
+}
+.draw-stage.open{display:flex;}
+.draw-top{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);
+  padding:calc(env(safe-area-inset-top) + var(--sp-3)) var(--sp-4) var(--sp-2);
+}
+.draw-word{
+  font-family:var(--font-sans);font-size:var(--fs-lg);font-weight:800;
+  color:var(--accent);letter-spacing:-.01em;flex:1;text-align:center;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0 var(--sp-2);
+}
+#drawCanvas{
+  flex:1 1 auto;width:100%;min-height:0;touch-action:none;
+  background:var(--paper);display:block;
+}
+.draw-tools{
+  display:flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  padding:var(--sp-2) var(--sp-3) calc(env(safe-area-inset-bottom) + var(--sp-3));
+  background:var(--card);border-top:1px solid var(--line);
+}
+.draw-group{display:flex;align-items:center;gap:var(--sp-2);}
+.draw-color{
+  appearance:none;cursor:pointer;width:30px;height:30px;border-radius:50%;
+  border:2px solid var(--line);padding:0;
+  transition:transform .14s cubic-bezier(.2,.9,.3,1.3), border-color .16s ease, box-shadow .16s ease;
+}
+.draw-color.on{border-color:var(--accent);transform:scale(1.12);box-shadow:0 0 0 3px var(--accent-soft);}
+.draw-size{
+  appearance:none;cursor:pointer;width:40px;height:40px;border-radius:50%;
+  border:1px solid var(--line);background:var(--btn-face);box-shadow:var(--btn-inset);
+  display:grid;place-items:center;padding:0;
+  transition:transform .14s cubic-bezier(.2,.9,.3,1.3), border-color .16s ease, box-shadow .16s ease;
+}
+.draw-size span{display:block;border-radius:50%;background:var(--ink);}
+.draw-size[data-size="2.5"] span{width:6px;height:6px;}
+.draw-size[data-size="5"] span{width:11px;height:11px;}
+.draw-size[data-size="9"] span{width:17px;height:17px;}
+.draw-size.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft), var(--btn-inset);transform:scale(1.06);}
+.draw-tools .divider{height:30px;}
+
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
 
 /* ===== 意象卡 SVG：动画与配色（自各单词卡片提取，统一收在 .di-art 作用域内） ===== */
@@ -2572,6 +2616,9 @@ body.swipe-on{overflow:hidden;}
       <button class="icon-btn" type="button" id="swipeMst" title="掌握度：未学（点击切换）" aria-label="切换掌握度">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="8.2"></circle></svg>
       </button>
+      <button class="icon-btn" type="button" id="swipeDraw" title="手写练习" aria-label="手写练习">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l3.5-1 11-11-2.5-2.5-11 11z"></path><path d="M14 6l2.5 2.5"></path></svg>
+      </button>
     </div>
   </div>
   <div class="swipe-body" id="swipeBody">
@@ -2585,6 +2632,37 @@ body.swipe-on{overflow:hidden;}
     </article>
   </div>
   <div class="swipe-hint">← 左右滑动切换 →</div>
+</div>
+
+<!-- 手写画板 -->
+<div class="draw-stage" id="drawStage" aria-hidden="true">
+  <div class="draw-top">
+    <button class="icon-btn" type="button" id="drawClose" title="完成" aria-label="完成">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>
+    </button>
+    <span class="draw-word" id="drawWord"></span>
+    <button class="icon-btn" type="button" id="drawClear" title="清空" aria-label="清空">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0v12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7"></path></svg>
+    </button>
+  </div>
+  <canvas id="drawCanvas"></canvas>
+  <div class="draw-tools">
+    <div class="draw-group">
+      <button class="draw-color on" type="button" data-color="#232029" style="background:#232029" title="黑色" aria-label="黑色"></button>
+      <button class="draw-color" type="button" data-color="#5B4CC4" style="background:#5B4CC4" title="靛紫" aria-label="靛紫"></button>
+      <button class="draw-color" type="button" data-color="#C0392B" style="background:#C0392B" title="红色" aria-label="红色"></button>
+    </div>
+    <div class="divider"></div>
+    <div class="draw-group">
+      <button class="draw-size on" type="button" data-size="2.5" title="细" aria-label="细"><span></span></button>
+      <button class="draw-size" type="button" data-size="5" title="中" aria-label="中"><span></span></button>
+      <button class="draw-size" type="button" data-size="9" title="粗" aria-label="粗"><span></span></button>
+    </div>
+    <div class="divider"></div>
+    <button class="icon-btn" type="button" id="drawEraser" title="橡皮擦" aria-label="橡皮擦">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3l5 5-9 9H7v-5z"></path><path d="M11 8l5 5"></path><path d="M7 17h10"></path></svg>
+    </button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -3640,6 +3718,162 @@ document.addEventListener('keydown', (e) => {
   if(e.key === 'ArrowRight'){ e.preventDefault(); swipeGo(1); }
   else if(e.key === 'ArrowLeft'){ e.preventDefault(); swipeGo(-1); }
   else if(e.key === 'Escape'){ swipeCloseMode(); }
+});
+
+/* ============================================================
+   手写画板：全屏画布，按单词保存笔画到 localStorage
+   ============================================================ */
+const drawStage = document.getElementById('drawStage');
+const drawCanvas = document.getElementById('drawCanvas');
+const drawWordEl = document.getElementById('drawWord');
+const drawCtx = drawCanvas.getContext('2d');
+let drawWord = null;
+let drawStrokes = [];        // [{points:[{x,y}], color, size, mode}]
+let drawCurrent = null;      // 当前正在绘制的笔画
+let drawColor = '#232029';
+let drawSize = 2.5;
+let drawMode = 'pen';        // 'pen' | 'eraser'
+let drawDPR = 1;
+
+function drawResize(){
+  const r = drawCanvas.getBoundingClientRect();
+  drawDPR = window.devicePixelRatio || 1;
+  drawCanvas.width = Math.max(1, Math.floor(r.width * drawDPR));
+  drawCanvas.height = Math.max(1, Math.floor(r.height * drawDPR));
+  drawCtx.setTransform(1, 0, 0, 1, 0, 0);
+  drawCtx.scale(drawDPR, drawDPR);
+  drawRedraw();
+}
+
+function drawStroke(s){
+  if(!s.points || !s.points.length) return;
+  drawCtx.lineCap = 'round';
+  drawCtx.lineJoin = 'round';
+  const isEraser = s.mode === 'eraser';
+  drawCtx.strokeStyle = isEraser ? 'rgba(0,0,0,1)' : s.color;
+  drawCtx.lineWidth = isEraser ? s.size * 3 : s.size;
+  drawCtx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
+  const pts = s.points;
+  drawCtx.beginPath();
+  drawCtx.moveTo(pts[0].x, pts[0].y);
+  for(let i = 1; i < pts.length; i++){
+    const p0 = pts[i - 1], p1 = pts[i];
+    const mx = (p0.x + p1.x) / 2, my = (p0.y + p1.y) / 2;
+    drawCtx.quadraticCurveTo(p0.x, p0.y, mx, my);
+  }
+  drawCtx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+  drawCtx.stroke();
+}
+
+function drawRedraw(){
+  drawCtx.save();
+  drawCtx.setTransform(1, 0, 0, 1, 0, 0);
+  drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+  drawCtx.restore();
+  for(const s of drawStrokes) drawStroke(s);
+  drawCtx.globalCompositeOperation = 'source-over';
+}
+
+function drawOpen(word){
+  drawWord = word;
+  drawWordEl.textContent = word;
+  const saved = store.doodles && store.doodles[word];
+  drawStrokes = saved && saved.strokes ? JSON.parse(JSON.stringify(saved.strokes)) : [];
+  drawStage.classList.add('open');
+  drawStage.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('swipe-on');
+  requestAnimationFrame(() => { drawResize(); });
+}
+
+function drawClose(){
+  if(drawWord){
+    if(!store.doodles) store.doodles = {};
+    if(drawStrokes.length){
+      store.doodles[drawWord] = { strokes: drawStrokes, updated: Date.now() };
+    }else{
+      delete store.doodles[drawWord];
+    }
+    save();
+  }
+  drawStage.classList.remove('open');
+  drawStage.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('swipe-on');
+  drawWord = null;
+}
+
+function drawPoint(e){
+  const r = drawCanvas.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+
+drawCanvas.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  drawCurrent = { points: [drawPoint(e)], color: drawColor, size: drawSize, mode: drawMode };
+  drawStrokes.push(drawCurrent);
+  try{ drawCanvas.setPointerCapture(e.pointerId); }catch(err){}
+});
+
+drawCanvas.addEventListener('pointermove', (e) => {
+  if(!drawCurrent) return;
+  e.preventDefault();
+  drawCurrent.points.push(drawPoint(e));
+  const pts = drawCurrent.points;
+  if(pts.length < 2) return;
+  drawCtx.lineCap = 'round';
+  drawCtx.lineJoin = 'round';
+  const isEraser = drawMode === 'eraser';
+  drawCtx.strokeStyle = isEraser ? 'rgba(0,0,0,1)' : drawColor;
+  drawCtx.lineWidth = isEraser ? drawSize * 3 : drawSize;
+  drawCtx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
+  const p0 = pts[pts.length - 2], p1 = pts[pts.length - 1];
+  const mx = (p0.x + p1.x) / 2, my = (p0.y + p1.y) / 2;
+  drawCtx.beginPath();
+  drawCtx.moveTo(p0.x, p0.y);
+  drawCtx.quadraticCurveTo(p0.x, p0.y, mx, my);
+  drawCtx.stroke();
+});
+
+function drawEnd(e){
+  if(!drawCurrent) return;
+  drawCurrent = null;
+  drawCtx.globalCompositeOperation = 'source-over';
+}
+drawCanvas.addEventListener('pointerup', drawEnd);
+drawCanvas.addEventListener('pointercancel', drawEnd);
+
+document.querySelectorAll('.draw-color').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.draw-color').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    drawColor = btn.dataset.color;
+    drawMode = 'pen';
+    document.getElementById('drawEraser').classList.remove('on');
+  });
+});
+document.querySelectorAll('.draw-size').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.draw-size').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    drawSize = parseFloat(btn.dataset.size);
+  });
+});
+document.getElementById('drawEraser').addEventListener('click', () => {
+  drawMode = drawMode === 'eraser' ? 'pen' : 'eraser';
+  document.getElementById('drawEraser').classList.toggle('on', drawMode === 'eraser');
+});
+document.getElementById('drawClear').addEventListener('click', () => {
+  drawStrokes = [];
+  drawRedraw();
+  toast('已清空');
+});
+document.getElementById('drawClose').addEventListener('click', drawClose);
+document.getElementById('swipeDraw').addEventListener('click', () => {
+  const w = swipeList[swipeIdx];
+  if(!w) return;
+  drawOpen(w.word);
+});
+window.addEventListener('resize', () => {
+  if(drawStage.classList.contains('open')) drawResize();
 });
 
 const DAILY_REPS = 3;
