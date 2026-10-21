@@ -10,6 +10,7 @@
         汇总生成同目录下的 words-data.js，供 index.html 自动加载。
   用法：双击「更新单词数据.bat」即可；每次放进新卡片后跑一次。
 #>
+param([switch]$NoSync)
 $ErrorActionPreference = 'Stop'
 $dir = $PSScriptRoot
 if(-not $dir){ $dir = Split-Path -Parent $MyInvocation.MyCommand.Definition }
@@ -323,6 +324,7 @@ Write-Host ""
 Write-Host ("完成：共 " + $words.Count + " 张卡片 -> " + $outFile) -ForegroundColor Green
 
 # ---------- 同步到 GitHub（让线上站点自动更新） ----------
+if(-not $NoSync){
 $prevEap = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
 git -C $dir rev-parse --is-inside-work-tree 2>$null | Out-Null
@@ -340,3 +342,4 @@ if($LASTEXITCODE -eq 0){
   }
 }
 $ErrorActionPreference = $prevEap
+}
