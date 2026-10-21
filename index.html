@@ -628,12 +628,84 @@ body::after{
   .nav-item{flex:1 1 auto;}
 }
 @media (max-width:640px){
-  body{padding:20px 12px 80px;}
+  body{padding:14px 12px calc(72px + env(safe-area-inset-bottom));}
   .brand h1{font-size:var(--fs-lg);}
-  .grid,.grid.compact{grid-template-columns:1fr;gap:var(--sp-3);}
-  .drawer{width:100vw;border-left:0;}
+
+  /* 工具栏：搜索独占一行，按钮自动换行，不再横向滚动 */
+  .toolbar{flex-wrap:wrap;overflow:visible;padding:var(--sp-2);gap:var(--sp-2);}
+  .toolbar .divider{display:none;}
+  .toolbar .search{flex:1 1 100%;min-width:0;}
+  .toolbar .seg{gap:var(--sp-1);}
   .seg-label{display:none;}
+  .toolbar .icon-btn{width:42px;height:42px;}
+  .toolbar .icon-btn svg{width:17px;height:17px;}
+
+  /* 今日推荐：压缩高度，少占首屏 */
+  .daily{padding:var(--sp-3);}
+  .daily-roll{height:236px;}
+
+  /* 卡片：单列 + 紧凑内边距，一屏能多看几张 */
+  .grid,.grid.compact{grid-template-columns:1fr;gap:var(--sp-2);}
+  .card{padding:var(--sp-3) var(--sp-3) var(--sp-2);gap:var(--sp-1);}
+  .card-head{padding-top:0;padding-right:128px;}
+  .card-word{font-size:var(--fs-base);}
+  .card-ipa,.card-gloss{font-size:var(--fs-sm);}
+  .card-foot{font-size:var(--fs-micro);}
+
+  /* 触摸设备上操作按钮常显且加大 */
+  .card-actions{gap:6px;}
+  .icon-btn.sm,.grid.compact .icon-btn.sm{width:38px;height:38px;}
+  .icon-btn.sm svg,.grid.compact .icon-btn.sm svg{width:16px;height:16px;}
+
+  .drawer{width:100vw;border-left:0;}
+  .modal{width:100%;padding:var(--sp-3);}
+  .modal textarea{min-height:120px;}
 }
+/* ============ 滑动学习模式（左右拖动切换单词卡） ============ */
+.swipe-stage{
+  position:fixed;inset:0;z-index:240;display:none;flex-direction:column;
+  background:radial-gradient(120% 70% at 50% 0%, #fff 0%, var(--paper) 55%, var(--paper-2) 100%);
+  overscroll-behavior:contain;
+}
+.swipe-stage.open{display:flex;}
+body.swipe-on{overflow:hidden;}
+.swipe-top{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);
+  padding:calc(env(safe-area-inset-top) + var(--sp-3)) var(--sp-4) var(--sp-2);
+}
+.swipe-progress{font-family:var(--font-sans);font-size:var(--fs-sm);font-weight:800;color:var(--muted);letter-spacing:.06em;}
+.swipe-tools{display:flex;gap:var(--sp-1);}
+.swipe-body{
+  flex:1 1 auto;min-height:0;position:relative;display:grid;place-items:center;
+  padding:0 var(--sp-4) var(--sp-2);touch-action:pan-y;
+}
+.swipe-card{
+  position:absolute;inset:0;margin:auto;width:100%;max-width:420px;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--sp-3);padding:var(--sp-4) 0;box-sizing:border-box;
+  transition:transform .26s cubic-bezier(.2,.85,.3,1.1), opacity .2s ease;
+  will-change:transform;
+}
+.swipe-art{width:min(260px,62vw);}
+.swipe-art .di-art{box-shadow:0 24px 50px -34px rgba(0,0,0,.6);}
+.swipe-word{
+  margin:0;font-family:var(--font-sans);font-size:clamp(28px,9vw,42px);font-weight:800;
+  letter-spacing:-.02em;line-height:1.1;color:var(--ink);text-align:center;word-break:break-word;
+}
+.swipe-ipa{font-family:var(--font-sans);font-size:var(--fs-sm);font-weight:700;color:var(--muted);text-align:center;}
+.swipe-gloss{margin:0;font-family:var(--font-sans);font-size:var(--fs-lg);font-weight:700;color:var(--ink-2);text-align:center;line-height:var(--lh);}
+.swipe-morph{margin:0;font-size:var(--fs-sm);font-weight:600;color:var(--muted);text-align:center;line-height:var(--lh);max-width:34em;}
+.swipe-open{
+  appearance:none;cursor:pointer;font-family:var(--font-sans);font-size:var(--fs-sm);font-weight:700;
+  color:var(--accent);background:var(--accent-soft);border:1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+  border-radius:var(--r-pill);padding:var(--sp-2) var(--sp-4);
+}
+.swipe-open:active{transform:translateY(1px);}
+.swipe-hint{
+  text-align:center;font-size:var(--fs-micro);font-weight:800;letter-spacing:.14em;color:var(--muted);
+  padding:0 0 calc(env(safe-area-inset-bottom) + var(--sp-3));
+}
+
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
 
 /* ===== 意象卡 SVG：动画与配色（自各单词卡片提取，统一收在 .di-art 作用域内） ===== */
@@ -1999,6 +2071,9 @@ body::after{
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 18.5a4 4 0 0 1-.3-8 5.5 5.5 0 0 1 10.7-1.2A3.8 3.8 0 0 1 17.8 18.5"></path><path d="M12 21v-8.5"></path><path d="M8.9 15.2 12 12l3.1 3.2"></path></svg>
       <span class="badge" id="uploadBadge" hidden="">0</span>
     </button>
+    <button class="icon-btn" type="button" id="swipeBtn" title="滑动学习：左右切换单词卡" aria-label="滑动学习">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="4.5" width="9" height="15" rx="2"></rect><path d="M4 8.5v7M20 8.5v7"></path></svg>
+    </button>
     <input type="file" id="uploadInput" accept=".html,text/html" multiple hidden="">
   </section>
 
@@ -2483,6 +2558,35 @@ body::after{
   </div>
 </div>
 
+<!-- 滑动学习模式 -->
+<div class="swipe-stage" id="swipeStage" aria-hidden="true">
+  <div class="swipe-top">
+    <button class="icon-btn" type="button" id="swipeClose" title="退出滑动学习" aria-label="退出滑动学习">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </button>
+    <span class="swipe-progress" id="swipeProgress">1 / 1</span>
+    <div class="swipe-tools">
+      <button class="icon-btn" type="button" id="swipeFav" title="收藏" aria-label="收藏">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M12 3.4l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.8 6.7 19.6l1.1-5.9L3.5 9.6l5.9-.8z"></path></svg>
+      </button>
+      <button class="icon-btn" type="button" id="swipeMst" title="掌握度：未学（点击切换）" aria-label="切换掌握度">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="8.2"></circle></svg>
+      </button>
+    </div>
+  </div>
+  <div class="swipe-body" id="swipeBody">
+    <article class="swipe-card" id="swipeCard">
+      <div class="swipe-art" id="swipeArt"></div>
+      <h2 class="swipe-word" id="swipeWord"></h2>
+      <div class="swipe-ipa" id="swipeIpa"></div>
+      <p class="swipe-gloss" id="swipeGloss"></p>
+      <p class="swipe-morph" id="swipeMorph"></p>
+      <button class="swipe-open" type="button" id="swipeOpen">查看完整卡片</button>
+    </article>
+  </div>
+  <div class="swipe-hint">← 左右滑动切换 →</div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="words-data.js"></script>
@@ -2589,7 +2693,7 @@ function cycleMastery(word){
   return { level:r.mastery, auto:r.pin === null };
 }
 
-const state = { q:'', sort:'az', layout:'comfort', root:'all', mastery:'all', chipsCollapsed:false };
+const state = { q:'', sort:'az', layout:'comfort', root:'all', mastery:'all', chipsCollapsed: window.matchMedia('(max-width:640px)').matches };
 const isGroup = () => state.layout === 'group';
 
 /* ============================================================
@@ -3395,6 +3499,148 @@ uploadInput.addEventListener('change', () => {
 /* 回到页面时自动重扫：新下载的卡片会直接冒红点 */
 window.addEventListener('focus', () => { if(cardsDir) scanCardsDir(); });
 document.addEventListener('visibilitychange', () => { if(!document.hidden && cardsDir) scanCardsDir(); });
+
+/* ============================================================
+   滑动学习模式：全屏卡片，左右拖动 / 方向键切换
+   ============================================================ */
+const swipeStage = document.getElementById('swipeStage');
+const swipeCardEl = document.getElementById('swipeCard');
+const swipeBodyEl = document.getElementById('swipeBody');
+let swipeList = [], swipeIdx = 0, swipeCounted = new Set();
+let swipeDragging = false, swipeStartX = 0, swipeDX = 0;
+
+function swipeSyncActions(){
+  const w = swipeList[swipeIdx];
+  if(!w) return;
+  const r = rec(w.word);
+  const fav = document.getElementById('swipeFav');
+  favoriteIcon(fav, r.fav);
+  fav.classList.toggle('on', !!r.fav);
+  const mst = document.getElementById('swipeMst');
+  mst.classList.toggle('on', r.mastery > 0);
+  mst.title = '掌握度：' + (r.mastery === 2 ? '已掌握' : r.mastery === 1 ? '学习中' : '未学') + '（点击切换）';
+}
+
+function swipeShow(){
+  const w = swipeList[swipeIdx];
+  if(!w) return;
+  document.getElementById('swipeProgress').textContent = (swipeIdx + 1) + ' / ' + swipeList.length;
+  document.getElementById('swipeArt').innerHTML = ART[w.word]
+    ? `<div class="di-art" data-art="${w.word}">${inlineArt(ART[w.word], 'sw')}</div>` : '';
+  document.getElementById('swipeWord').textContent = w.word;
+  document.getElementById('swipeIpa').textContent = [w.ipa, w.pos].filter(Boolean).join(' · ');
+  document.getElementById('swipeGloss').textContent = w.gloss || '';
+  document.getElementById('swipeMorph').textContent = w.morph || '';
+  swipeSyncActions();
+  // 每张卡在本次学习里只记一次打开，避免来回滑动刷高掌握度
+  if(!swipeCounted.has(w.word)){
+    swipeCounted.add(w.word);
+    const r = rec(w.word);
+    r.opens += 1;
+    r.lastOpened = Date.now();
+    r.mastery = resolveMastery(r);
+    save();
+  }
+}
+
+function swipeGo(dir){
+  const next = swipeIdx + dir;
+  if(next < 0 || next >= swipeList.length){ swipeCardEl.style.transform = 'translateX(0)'; return; }
+  swipeCardEl.style.transition = '';
+  swipeCardEl.style.transform = `translateX(${dir > 0 ? -46 : 46}%)`;
+  swipeCardEl.style.opacity = '0';
+  setTimeout(() => {
+    swipeIdx = next;
+    swipeShow();
+    const from = dir > 0 ? '46%' : '-46%';
+    swipeCardEl.style.transition = 'none';
+    swipeCardEl.style.transform = `translateX(${from})`;
+    requestAnimationFrame(() => {
+      swipeCardEl.style.transition = '';
+      swipeCardEl.style.transform = 'translateX(0)';
+      swipeCardEl.style.opacity = '1';
+    });
+  }, 170);
+}
+
+function swipeOpenMode(){
+  const list = visibleWords();
+  if(!list.length){ toast('没有可学习的单词卡'); return; }
+  swipeList = list;
+  swipeIdx = 0;
+  swipeCounted = new Set();
+  swipeStage.classList.add('open');
+  swipeStage.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('swipe-on');
+  swipeCardEl.style.transition = 'none';
+  swipeCardEl.style.transform = 'translateX(0)';
+  swipeCardEl.style.opacity = '1';
+  swipeShow();
+  requestAnimationFrame(() => { swipeCardEl.style.transition = ''; });
+}
+
+function swipeCloseMode(){
+  swipeStage.classList.remove('open');
+  swipeStage.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('swipe-on');
+  render(false);
+}
+
+document.getElementById('swipeBtn').addEventListener('click', swipeOpenMode);
+document.getElementById('swipeClose').addEventListener('click', swipeCloseMode);
+
+document.getElementById('swipeFav').addEventListener('click', () => {
+  const w = swipeList[swipeIdx]; if(!w) return;
+  const r = rec(w.word);
+  r.fav = !r.fav; save();
+  swipeSyncActions(); render(false);
+  toast(r.fav ? `已收藏 ${w.word}` : `已取消收藏 ${w.word}`);
+});
+document.getElementById('swipeMst').addEventListener('click', () => {
+  const w = swipeList[swipeIdx]; if(!w) return;
+  const { level, auto } = cycleMastery(w.word);
+  swipeSyncActions(); render(false);
+  toast(`${w.word} · ${auto ? '自动' : level === 2 ? '已掌握' : level === 1 ? '学习中' : '未学'}`);
+});
+document.getElementById('swipeOpen').addEventListener('click', () => {
+  const w = swipeList[swipeIdx]; if(!w) return;
+  swipeCloseMode();
+  openDrawer(w.word);
+});
+
+swipeBodyEl.addEventListener('pointerdown', (e) => {
+  if(e.target.closest('button')) return;
+  swipeDragging = true; swipeStartX = e.clientX; swipeDX = 0;
+  swipeCardEl.style.transition = 'none';
+  try{ swipeBodyEl.setPointerCapture(e.pointerId); }catch(err){}
+});
+swipeBodyEl.addEventListener('pointermove', (e) => {
+  if(!swipeDragging) return;
+  swipeDX = e.clientX - swipeStartX;
+  swipeCardEl.style.transform = `translateX(${swipeDX * 0.6}px)`;
+});
+function swipeEndDrag(){
+  if(!swipeDragging) return;
+  swipeDragging = false;
+  if(Math.abs(swipeDX) > 60){
+    const dir = swipeDX < 0 ? 1 : -1;
+    swipeDX = 0;
+    swipeGo(dir);
+  }else{
+    swipeDX = 0;
+    swipeCardEl.style.transition = '';
+    swipeCardEl.style.transform = 'translateX(0)';
+  }
+}
+swipeBodyEl.addEventListener('pointerup', swipeEndDrag);
+swipeBodyEl.addEventListener('pointercancel', swipeEndDrag);
+
+document.addEventListener('keydown', (e) => {
+  if(!swipeStage.classList.contains('open')) return;
+  if(e.key === 'ArrowRight'){ e.preventDefault(); swipeGo(1); }
+  else if(e.key === 'ArrowLeft'){ e.preventDefault(); swipeGo(-1); }
+  else if(e.key === 'Escape'){ swipeCloseMode(); }
+});
 
 const DAILY_REPS = 3;
 let dailyPos = 0, dailyLen = 0, dailyTimer = null;
