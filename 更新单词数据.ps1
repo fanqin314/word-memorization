@@ -291,7 +291,7 @@ function Parse-Card([string]$path){
 }
 
 # ---------- 主流程 ----------
-$files = Get-ChildItem -Path $dir -Filter '*.html' -File | Where-Object { $_.Name -ne 'index.html' } | Sort-Object Name
+$files = Get-ChildItem -Path $dir -Filter '*.html' -File | Where-Object { $_.Name -ne 'index.html' -and $_.Name -notmatch '^_' } | Sort-Object Name
 $words = New-Object System.Collections.ArrayList
 $art = [ordered]@{}
 $artCss = [ordered]@{}
