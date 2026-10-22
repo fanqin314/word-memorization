@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>formation · 形成 · 编队 · 地层</title>
+<style>
+:root{
+  /* 砂石地层色板 —— formation = 形成 / 构成 / 编队 / 地层 */
+  --paper:#F4EFE3;
+  --paper-2:#E5DDC9;
+  --ink:#1E1B16;
+  --slate:#4A5A6A;
+  --slate-soft:#DCE2E8;
+  --ochre:#C08A2E;
+  --ochre-soft:#F6E7C5;
+  --moss:#6E7F4E;
+  --moss-soft:#E3EAD3;
+  --rust:#A84E32;
+  --rust-soft:#F1DAD2;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:#12100B;
+  padding:44px 16px 90px;
+  color:var(--ink);
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+  font-size:16px;
+  line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(192,138,46,.20) 0, transparent 42%),
+    radial-gradient(circle at 85% 85%, rgba(74,90,106,.20) 0, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(110,127,78,.12) 0, transparent 60%);
+}
+
+body::after{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:9999;
+  opacity:.28;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+}
+
+/* 全页：地层沉积水平纹底 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0 56px,
+      rgba(192,138,46,.05) 56px 58px,
+      transparent 58px 112px),
+    repeating-linear-gradient(0deg,
+      transparent 0 156px,
+      rgba(74,90,106,.045) 156px 157px,
+      transparent 157px 312px);
+  animation:sedimentDrift 28s linear infinite;
+}
+@keyframes sedimentDrift{
+  to{ background-position:0 -112px, 0 -312px; }
+}
+
+.page{
+  position:relative;z-index:1;
+  max-width:860px;margin:0 auto;
+  background:var(--paper);
+  padding:0 0 72px;
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    12px 12px 0 var(--slate),
+    -4px 4px 0 var(--ochre),
+    0 20px 60px rgba(0,0,0,.85);
+  overflow:hidden;
+}
+
+/* 漂浮碎片 */
+.page-floats{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.fl{
+  position:absolute;
+  opacity:0;
+  animation:flDrift linear infinite;
+}
+.fl.pebble{
+  width:13px;height:10px;
+  background:var(--slate);
+  border:2px solid var(--ink);
+  border-radius:52% 48% 45% 55% / 55% 45% 50% 50%;
+}
+.fl.pebble.ochre{ background:var(--ochre); }
+.fl.pebble.moss{ background:var(--moss); }
+.fl.dash{
+  width:18px;height:4px;
+  background:var(--rust);
+  border:1.5px solid var(--ink);
+  border-radius:2px;
+}
+.fl.dash.ochre{ background:var(--ochre); }
+.fl.dot{
+  width:9px;height:9px;
+  border-radius:50%;
+  background:var(--ochre);
+  border:2px solid var(--ink);
+}
+
+.fl.f1{ left:6%; bottom:-40px; animation-duration:24s; }
+.fl.f2{ left:22%; bottom:-55px; animation-duration:30s; animation-delay:3s; }
+.fl.f3{ left:78%; bottom:-45px; animation-duration:26s; animation-delay:1.5s; }
+.fl.f4{ left:90%; bottom:-30px; animation-duration:28s; animation-delay:6s; }
+.fl.f5{ left:52%; bottom:-70px; animation-duration:22s; animation-delay:4.5s; }
+.fl.f6{ left:38%; bottom:-50px; animation-duration:32s; animation-delay:9s; }
+.fl.f7{ left:64%; bottom:-60px; animation-duration:20s; animation-delay:7.5s; }
+
+@keyframes flDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.85; }
+  50%{ transform:translateY(-50vh) rotate(180deg); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) rotate(360deg); opacity:0; }
+}
+
+.hero,.body-wrap{position:relative;z-index:2;}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    linear-gradient(180deg,
+      #F6EDD6 0%,
+      #EFE1C2 45%,
+      #E2D0AC 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--slate) 0 22px,
+    transparent 22px 24px,
+    var(--ochre) 24px 46px,
+    transparent 46px 48px,
+    var(--moss) 48px 70px,
+    transparent 70px 72px,
+    var(--rust) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+
+/* HERO 网格 */
+.hero-grid{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.5;
+}
+.hero-grid svg{width:100%;height:100%;}
+.hg-line{ stroke:var(--slate); stroke-width:1; opacity:.14; }
+
+/* HERO 中央光晕 */
+.hero-glow{
+  position:absolute;
+  top:42%;left:50%;
+  transform:translate(-50%,-50%);
+  width:520px;height:520px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.55;
+}
+.hero-glow svg{width:100%;height:100%;}
+.glow-pulse{
+  animation:heroGlowPulse 4.5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes heroGlowPulse{
+  0%,100%{ opacity:.5; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.08); }
+}
+
+/* HERO 右侧：V 字雁阵 */
+.hero-flock{
+  position:absolute;
+  right:30px;
+  top:50%;
+  transform:translateY(-50%);
+  width:210px;
+  height:220px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.4;
+}
+.hero-flock svg{width:100%;height:100%;}
+.hf-arm{
+  fill:none;
+  stroke:var(--ochre);
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-dasharray:340;
+  stroke-dashoffset:340;
+  animation:hfDraw 3s ease-out forwards;
+}
+.hf-arm.a2{ animation-delay:.4s; }
+@keyframes hfDraw{ to{ stroke-dashoffset:0; } }
+.hf-bird{
+  fill:var(--slate);
+  stroke:var(--ink);
+  stroke-width:1.5;
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:birdBob 3.2s ease-in-out infinite;
+}
+.hf-bird.b2{ animation-delay:.25s; }
+.hf-bird.b3{ animation-delay:.5s; }
+.hf-bird.b4{ animation-delay:.15s; }
+.hf-bird.b5{ animation-delay:.4s; }
+.hf-bird.b6{ animation-delay:.65s; }
+.hf-bird.b7{ animation-delay:.9s; }
+@keyframes birdBob{
+  0%,100%{ transform:translateY(0) scale(1); fill:var(--slate); }
+  50%{ transform:translateY(-3px) scale(1.12); fill:var(--ochre); }
+}
+
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:92px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  color:var(--ink);
+  filter:drop-shadow(6px 6px 0 var(--slate)) drop-shadow(0 0 22px rgba(192,138,46,.28));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterLand 1.15s cubic-bezier(.4,1.4,.6,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1), color .25s;
+}
+/* 每个字母像沙粒一样，从上下两个方向落位，逐渐"成型" */
+.word-anim .l1{ animation-delay:.08s; color:var(--slate); --dx:-34px; --dy:-56px; }
+.word-anim .l2{ animation-delay:.16s; color:var(--ink);   --dx:28px;  --dy:60px; }
+.word-anim .l3{ animation-delay:.24s; color:var(--ochre); --dx:-30px; --dy:56px; }
+.word-anim .l4{ animation-delay:.32s; color:var(--ink);   --dx:34px;  --dy:-58px; }
+.word-anim .l5{ animation-delay:.40s; color:var(--moss);  --dx:-36px; --dy:-52px; }
+.word-anim .l6{ animation-delay:.48s; color:var(--ink);   --dx:30px;  --dy:58px; }
+.word-anim .l7{ animation-delay:.56s; color:var(--rust);  --dx:-28px; --dy:54px; }
+.word-anim .l8{ animation-delay:.64s; color:var(--ink);   --dx:32px;  --dy:-56px; }
+.word-anim .l9{ animation-delay:.72s; color:var(--ochre); --dx:-30px; --dy:52px; }
+@keyframes letterLand{
+  0%{
+    opacity:0;
+    transform:translate(var(--dx), var(--dy)) scale(.5) rotate(-14deg);
+    filter:blur(9px);
+  }
+  55%{
+    opacity:1;
+    filter:blur(0);
+    transform:translate(calc(var(--dx) * -.08), calc(var(--dy) * -.08)) scale(1.16) rotate(5deg);
+  }
+  80%{
+    transform:translate(2px, -2px) scale(.97) rotate(-1deg);
+  }
+  100%{
+    opacity:1;
+    transform:translate(0,0) scale(1) rotate(0);
+    color:var(--ink);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--ochre);
+  transform:translateY(-8px) scale(1.12);
+  filter:drop-shadow(0 0 14px var(--ochre));
+}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--ochre);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--slate);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--slate);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--slate);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--ochre-soft);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--slate);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--slate-soft);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  transform:rotate(1.2deg);
+  border:2px solid var(--ink);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--moss-soft);
+  border:2.5px solid var(--ink);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--moss);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  transform:rotate(-1deg);
+}
+
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal-scale.visible{opacity:1;transform:scale(1);}
+
+.section{margin:0 0 56px;}
+
+.section-title{
+  display:inline-flex;align-items:center;gap:12px;
+  margin:0 0 22px;
+  padding:8px 22px 8px 12px;
+  background:var(--ochre-soft);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:18px;font-weight:900;
+  letter-spacing:-.01em;
+  transform:rotate(-.8deg);
+}
+.section:nth-of-type(even) .section-title{
+  background:var(--slate-soft);
+  transform:rotate(.9deg);
+}
+.section:nth-of-type(3n) .section-title{
+  background:var(--moss-soft);
+  transform:rotate(-.6deg);
+}
+.section-title .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex-shrink:0;
+  background:var(--ink);color:var(--paper);
+  border-radius:50%;font-size:14px;font-weight:900;
+}
+
+/* 1. 词根 · 词族 */
+.root-family{
+  position:relative;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 24px;
+}
+.root-line{
+  font-size:17px;line-height:2.2;margin-bottom:22px;
+  padding:18px 20px;
+  background:var(--ochre-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+  text-align:center;
+}
+.root-line .affix{
+  background:var(--slate);color:var(--paper);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(-2deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.root-line .stem{
+  background:var(--ochre);color:var(--ink);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(1.5deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.fam-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:10px;
+}
+.fam-card{
+  background:#fff;border:2.5px solid var(--ink);
+  border-radius:14px;padding:10px 12px;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.fam-card:hover{transform:translate(-2px,-2px) rotate(-1deg);}
+.fam-card .pos{
+  font-size:10px;font-weight:800;
+  background:var(--ink);color:var(--paper);
+  padding:2px 7px;border-radius:999px;
+  display:inline-block;margin-bottom:5px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  letter-spacing:.08em;
+}
+.fam-card .w{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:16px;
+  color:var(--slate);
+  line-height:1.3;
+}
+.fam-card .w .hl{color:var(--rust);}
+.fam-card .p{font-size:11px;color:#8a7d6d;margin:2px 0 4px;font-family:monospace;}
+.fam-card .m{font-size:12.5px;line-height:1.5;}
+
+/* 2. 意象卡 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(192,138,46,.18) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 6s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+.image-card .ic-text{position:relative;z-index:1;}
+.image-card .ic-label{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;font-weight:900;letter-spacing:.18em;
+  background:var(--ochre);color:var(--ink);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--paper);
+  margin-bottom:16px;
+  transform:rotate(-2deg);
+}
+.image-card .ic-main{
+  font-size:22px;font-weight:800;line-height:1.6;
+  margin:0 0 14px;
+}
+.image-card .ic-main .hl{
+  background:var(--ochre);color:var(--ink);
+  padding:1px 10px;
+  border-radius:6px;
+}
+.image-card .ic-sub{
+  font-size:14.5px;opacity:.9;line-height:1.9;margin:0;
+}
+.image-card .ic-svg{
+  position:relative;z-index:1;
+  width:380px;height:300px;
+}
+.image-card .ic-svg svg{width:100%;height:100%;overflow:visible;}
+
+/* ========== formation SVG 动画 ==========
+   散落的个体 → 依次飞入 → 排成 V 字编队 → 又散开
+   底部三层波浪线是「地层」的第二重含义
+   ========================================== */
+
+.fm-grid{
+  animation:fmGridBreath 5s ease-in-out infinite;
+}
+@keyframes fmGridBreath{
+  0%,100%{ opacity:.14; }
+  50%{ opacity:.34; }
+}
+
+/* V 字队形连线：入列完成后才浮出 */
+.fm-wing{
+  fill:none;
+  stroke:var(--ochre);
+  stroke-width:1.6;
+  stroke-dasharray:5 7;
+  stroke-linecap:round;
+  opacity:0;
+  animation:wingShow 5s ease-in-out infinite;
+}
+.fm-wing.w2{ animation-delay:.1s; }
+@keyframes wingShow{
+  0%, 30%{ opacity:0; stroke-dashoffset:0; }
+  48%, 84%{ opacity:.75; stroke-dashoffset:-36; }
+  96%, 100%{ opacity:0; stroke-dashoffset:-48; }
+}
+
+/* 编队点：从散乱偏移 → 归位 */
+.fm-dot{
+  stroke:var(--ink);
+  stroke-width:1.5;
+  animation:fmFly 5s cubic-bezier(.4,1.3,.6,1) infinite;
+}
+.fm-dot.d1{ animation-delay:0s;    --dx:34px;  --dy:64px; }
+.fm-dot.d2{ animation-delay:.12s;  --dx:-58px; --dy:-32px; }
+.fm-dot.d3{ animation-delay:.24s;  --dx:66px;  --dy:38px; }
+.fm-dot.d4{ animation-delay:.36s;  --dx:42px;  --dy:-52px; }
+.fm-dot.d5{ animation-delay:.48s;  --dx:-52px; --dy:70px; }
+.fm-dot.d6{ animation-delay:.60s;  --dx:-32px; --dy:32px; }
+.fm-dot.d7{ animation-delay:.72s;  --dx:52px;  --dy:-24px; }
+
+@keyframes fmFly{
+  0%, 12%{
+    transform:translate(var(--dx), var(--dy));
+    fill:#8A97A6;
+  }
+  45%, 85%{
+    transform:translate(0, 0);
+    fill:var(--ochre);
+  }
+  96%, 100%{
+    transform:translate(var(--dx), var(--dy));
+    fill:#8A97A6;
+  }
+}
+
+/* 顶部公式文字 */
+.fm-caption{
+  animation:fmCaptionFade 5s ease-in-out infinite;
+}
+@keyframes fmCaptionFade{
+  0%, 22%{ opacity:0; }
+  46%, 84%{ opacity:1; }
+  96%, 100%{ opacity:0; }
+}
+
+/* 底部地层：三层波浪，缓慢流动 */
+.fm-stratum{
+  fill:none;
+  stroke-width:2.4;
+  stroke-linecap:round;
+  stroke-dasharray:9 6;
+  animation:stratumFlow 6s linear infinite;
+}
+.fm-stratum.s1{ stroke:var(--rust);  opacity:.55; animation-delay:0s; }
+.fm-stratum.s2{ stroke:var(--moss);  opacity:.55; animation-delay:-2s; }
+.fm-stratum.s3{ stroke:var(--slate); opacity:.55; animation-delay:-4s; }
+@keyframes stratumFlow{
+  to{ stroke-dashoffset:-60; }
+}
+
+/* 地层之间的细纹 */
+.fm-fine{
+  stroke:var(--paper);
+  stroke-width:1;
+  opacity:.22;
+}
+
+/* 底部标注 */
+.fm-note{
+  animation:fmNoteFade 5s ease-in-out infinite;
+}
+@keyframes fmNoteFade{
+  0%, 30%{ opacity:0; }
+  52%, 84%{ opacity:.6; }
+  96%, 100%{ opacity:0; }
+}
+
+/* ========== 结束 formation SVG 动画 ========== */
+
+/* 3. 搭配 */
+.collocations{display:flex;flex-direction:column;gap:14px;}
+.collo{
+  background:#FFFCF5;border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 20px;
+  display:flex;align-items:center;gap:16px;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  position:relative;
+  overflow:hidden;
+}
+.collo::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:6px;
+  background:var(--ochre);
+  transition:width .3s;
+}
+.collo:nth-child(2)::before{background:var(--slate);}
+.collo:nth-child(3)::before{background:var(--moss);}
+.collo:nth-child(4)::before{background:var(--rust);}
+.collo:nth-child(5)::before{background:var(--ochre);}
+.collo:hover{transform:translate(-4px,-4px);box-shadow:7px 7px 0 var(--ink);}
+.collo:hover::before{width:14px;}
+.collo .pattern{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:14.5px;
+  background:var(--ink);color:var(--paper);
+  padding:6px 14px;border-radius:999px;
+  white-space:nowrap;flex-shrink:0;
+  margin-left:8px;
+}
+.collo .meaning{font-size:14.5px;line-height:1.55;}
+.collo .meaning b{color:var(--slate);font-weight:800;}
+
+/* 4. 例句 */
+.real-exs{display:flex;flex-direction:column;gap:16px;}
+.real-ex{
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:20px 24px;
+  position:relative;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  transform:rotate(.3deg);
+}
+.real-ex:nth-child(even){transform:rotate(-.5deg);}
+.real-ex:hover{transform:translate(-4px,-4px) rotate(0);box-shadow:9px 9px 0 var(--ink);}
+.real-ex::before{
+  content:"";
+  position:absolute;
+  top:-10px;left:-10px;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--ochre);
+  border:3px solid var(--ink);
+}
+.real-ex:nth-child(even)::before{background:var(--slate);}
+.real-ex:nth-child(3n)::before{background:var(--moss);}
+.real-ex .src{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;
+  background:var(--rust);color:var(--paper);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--ink);
+  margin-bottom:12px;
+}
+.real-ex .en{
+  font-size:16px;line-height:1.8;margin:0 0 10px;
+  font-family:Georgia,serif;
+}
+.real-ex .en .hl{
+  background:var(--ochre);color:var(--ink);
+  padding:1px 7px;border-radius:6px;
+  font-weight:800;font-style:normal;
+}
+.real-ex .cn{
+  font-size:13.5px;color:#7a6e60;line-height:1.7;
+  padding-left:16px;border-left:3px solid var(--slate);
+}
+.real-ex .tip{
+  font-size:12.5px;color:var(--slate);margin-top:8px;
+  padding-left:16px;font-weight:700;
+}
+
+/* 5. 易错提醒 */
+.pitfall{
+  padding:28px 30px;
+  background:var(--rust-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  position:relative;overflow:hidden;
+  transform:rotate(-.5deg);
+}
+.pitfall::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:12px;
+  background-image:
+    radial-gradient(circle, var(--rust) 3px, transparent 3.5px);
+  background-size:20px 12px;
+  border-bottom:3px solid var(--ink);
+}
+.pitfall-item{
+  margin-bottom:14px;font-size:15px;line-height:1.9;
+  padding:14px 18px;
+  background:#FFFCF5;
+  border-left:6px solid var(--rust);
+  border-radius:0 var(--radius-md) var(--radius-md) 0;
+  transition:transform .3s;
+}
+.pitfall-item:hover{transform:translateX(8px);}
+.pitfall-item:last-child{margin-bottom:0;}
+.pitfall-item .wrong{
+  color:var(--rust);text-decoration:line-through;
+  text-decoration-thickness:2px;font-weight:700;
+}
+.pitfall-item .right{
+  color:var(--ink);font-weight:800;
+  background:var(--ochre-soft);padding:1px 8px;border-radius:6px;
+}
+.pitfall-item .tip{
+  display:inline-block;
+  background:var(--ochre);color:var(--ink);
+  padding:1px 10px;border-radius:999px;
+  font-size:12px;font-weight:800;margin-right:8px;
+  border:2px solid var(--ink);
+}
+
+/* 6. 辨析表 */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+.compare-table thead{display:none;}
+.compare-table tbody tr{
+  background:transparent;
+  filter:drop-shadow(4px 4px 0 var(--ink));
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .3s cubic-bezier(.34,1.56,.64,1);
+  opacity:0;transform:translateX(-20px);
+}
+.compare-table tbody tr.row-visible{opacity:1;transform:translateX(0);}
+.compare-table tbody tr:hover{transform:translate(-4px,-4px);filter:drop-shadow(7px 7px 0 var(--ink));}
+.compare-table td{
+  border-top:3px solid var(--ink);
+  border-bottom:3px solid var(--ink);
+  padding:14px 18px;vertical-align:middle;text-align:left;
+  background:#FFFCF5;
+}
+.compare-table td:first-child{
+  border-left:3px solid var(--ink);
+  border-top-left-radius:18px;
+  border-bottom-left-radius:18px;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;white-space:nowrap;width:150px;
+  background:var(--ochre-soft);
+  color:var(--ink);
+  font-size:16px;
+}
+.compare-table td:nth-child(2){width:180px;}
+.compare-table td:last-child{
+  border-right:3px solid var(--ink);
+  border-top-right-radius:18px;
+  border-bottom-right-radius:18px;
+}
+.compare-table .chant{
+  font-size:13px;color:var(--rust);font-weight:700;
+  font-style:italic;line-height:1.5;
+}
+.compare-table tr.highlight td{
+  background:var(--moss-soft);
+}
+.compare-table tr.highlight td:first-child{
+  background:var(--moss);
+  position:relative;
+}
+.compare-table tr.highlight td:first-child::after{
+  content:"★";
+  color:var(--rust);margin-left:6px;
+}
+
+/* 7. 填空 */
+.self-test .hint{
+  font-size:14px;color:var(--ink);
+  margin:0 0 22px;padding:14px 20px;
+  background:var(--ochre-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+}
+.fill-item{
+  margin-bottom:16px;padding:18px 24px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+}
+.fill-item:hover{transform:translate(-3px,-3px) rotate(-.3deg);box-shadow:6px 6px 0 var(--ink);}
+.fill-sentence{font-size:16.5px;line-height:1.95;margin:0 0 10px;}
+.first-letter{
+  display:inline-block;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:900;color:var(--slate);
+  font-size:19px;
+  padding-right:2px;
+}
+.blank{
+  display:inline-block;min-width:70px;
+  border-bottom:3px solid var(--ink);
+  text-align:center;font-weight:800;
+  color:transparent;cursor:pointer;
+  transition:color .3s,border-color .3s,background .3s;
+  padding:0 10px;user-select:none;
+  font-family:Georgia,serif;
+}
+.blank:hover{background:var(--ochre-soft);border-color:var(--slate);}
+.blank.revealed{
+  color:var(--slate);border-color:var(--slate);
+  background:var(--ochre-soft);
+  border-radius:8px 8px 0 0;
+  animation:answerPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.fill-hint{font-size:13.5px;color:var(--ink);opacity:.75;margin:0;}
+.fill-hint b{color:var(--slate);font-weight:800;}
+
+/* 8. 造句 */
+.write-practice{
+  background:var(--moss-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 28px;
+  transform:rotate(.4deg);
+}
+.write-practice .wp-hint{
+  font-size:14px;color:var(--ink);opacity:.85;
+  margin:0 0 16px;
+}
+.write-practice textarea{
+  width:100%;min-height:110px;
+  padding:16px 18px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:16px;line-height:1.7;
+  color:var(--ink);
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:18px;
+  box-shadow:inset 3px 3px 0 rgba(30,27,22,.08);
+  resize:vertical;
+  outline:none;
+  transition:box-shadow .2s;
+}
+.write-practice textarea:focus{
+  box-shadow:inset 3px 3px 0 rgba(30,27,22,.08), 0 0 0 5px var(--ochre);
+}
+.wp-actions{
+  margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+}
+.wp-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;font-weight:800;letter-spacing:.04em;
+  padding:11px 22px;
+  background:var(--ink);color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
+}
+.wp-btn:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--ochre);}
+.wp-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);}
+.wp-btn.ghost{background:transparent;color:var(--ink);}
+.wp-saved{
+  font-size:13px;color:var(--slate);font-weight:800;
+  opacity:0;transition:opacity .4s;
+}
+.wp-saved.show{opacity:1;}
+
+/* 9. 复习 */
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.review-day{
+  text-align:center;padding:20px 10px 18px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:50% 50% 45% 55% / 48% 50% 50% 52%;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background .3s;
+  cursor:pointer;user-select:none;
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(20px) scale(.95);
+}
+.review-day.day-visible{
+  opacity:1;transform:translateY(0) scale(1);
+  transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1);
+}
+.review-day:hover{
+  transform:translate(-4px,-4px) rotate(-3deg);
+  box-shadow:7px 7px 0 var(--ink);
+}
+.review-day.done{background:var(--slate);color:var(--paper);}
+.review-day.done .day,
+.review-day.done .task{color:var(--paper);}
+.review-day.done::after{
+  content:"✓";
+  position:absolute;top:8px;right:12px;
+  font-size:20px;font-weight:900;color:var(--ochre);
+  text-shadow:1.5px 1.5px 0 var(--ink);
+}
+.review-day .day{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-size:28px;font-weight:900;margin-bottom:4px;
+  position:relative;z-index:1;
+}
+.review-day:nth-child(1) .day{color:var(--slate);}
+.review-day:nth-child(2) .day{color:var(--ochre);}
+.review-day:nth-child(3) .day{color:var(--moss);}
+.review-day:nth-child(4) .day{color:var(--rust);}
+.review-day .task{
+  font-size:12px;color:var(--ink);opacity:.75;
+  line-height:1.5;position:relative;z-index:1;
+}
+.review-tip{
+  margin-top:16px;font-size:13px;color:var(--ink);opacity:.6;
+  text-align:center;font-style:italic;
+}
+
+.progress-bar{
+  position:fixed;top:0;left:0;height:5px;width:0;
+  background:repeating-linear-gradient(90deg,
+    var(--slate) 0 20px,
+    var(--ochre) 20px 40px,
+    var(--moss) 40px 60px,
+    var(--rust) 60px 80px);
+  z-index:100;transition:width .1s linear;
+  border-bottom:2px solid var(--ink);
+}
+
+/* ============================================================
+   响应式：四档
+   ============================================================ */
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:46px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .page{border-radius:22px;}
+  .image-card{grid-template-columns:1fr;padding:26px 22px;}
+  .image-card .ic-svg{width:290px;height:230px;margin:0 auto;}
+  .section-title{font-size:15px;padding:6px 16px 6px 10px;}
+  .hero-flock{display:none;}
+  .hero-grid{opacity:.3;}
+}
+
+@media (min-width:1100px){
+  body{padding:56px 32px 120px;}
+  .page{
+    max-width:1200px;
+    border-radius:36px;
+    box-shadow:
+      0 0 0 3px var(--ink),
+      14px 14px 0 var(--slate),
+      -6px 6px 0 var(--ochre),
+      0 24px 70px rgba(0,0,0,.85);
+  }
+  .hero{padding:100px 80px 80px;}
+  .hero-band{height:24px;}
+  .word-anim{font-size:124px;}
+  .speak-btn{width:56px;height:56px;font-size:26px;}
+  .ipa-anim{font-size:18px;padding:6px 22px;}
+  .pos-anim{font-size:13px;padding:6px 20px;}
+  .spell-hint{font-size:13px;padding:10px 24px;}
+  .body-wrap{padding:76px 80px 0;}
+  .section{margin-bottom:68px;}
+  .section-title{font-size:22px;gap:14px;margin-bottom:26px;padding:10px 26px 10px 14px;}
+  .section-title .num{width:38px;height:38px;font-size:16px;}
+  .fam-grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fam-card{padding:14px 16px;}
+  .fam-card .w{font-size:18px;}
+  .fam-card .m{font-size:13.5px;}
+  .image-card{
+    grid-template-columns:1.3fr 1fr;
+    gap:40px;
+    padding:48px 44px;
+  }
+  .image-card .ic-main{font-size:27px;line-height:1.5;}
+  .image-card .ic-sub{font-size:16px;}
+  .image-card .ic-svg{width:500px;height:400px;}
+  .collocations{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .collo:nth-child(5){grid-column:1 / -1;}
+  .collo{padding:20px 24px;}
+  .collo .pattern{font-size:15.5px;padding:7px 16px;}
+  .collo .meaning{font-size:15px;}
+  .real-exs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .real-ex{padding:24px 28px;}
+  .real-ex .en{font-size:17px;}
+  .real-ex .cn{font-size:14.5px;}
+  .pitfall{padding:36px 40px;}
+  .pitfall-item{font-size:15.5px;padding:18px 22px;}
+  .compare-table{font-size:16px;border-spacing:0 14px;}
+  .compare-table td{padding:18px 24px;}
+  .compare-table td:first-child{width:170px;font-size:18px;}
+  .compare-table td:nth-child(2){width:auto;}
+  .compare-table .chant{font-size:14.5px;}
+  .self-test .fill-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .self-test .fill-item:nth-child(5){grid-column:1 / -1;margin-bottom:0;}
+  .fill-item{padding:22px 26px;margin-bottom:0;}
+  .fill-sentence{font-size:17px;}
+  .write-practice{
+    max-width:900px;
+    margin:0 auto;
+    padding:36px 40px;
+  }
+  .write-practice textarea{font-size:17px;padding:18px 22px;}
+  .review-grid{gap:24px;}
+  .review-day{padding:28px 14px 24px;}
+  .review-day .day{font-size:34px;}
+  .review-day .task{font-size:13.5px;}
+}
+
+@media (min-width:1500px){
+  .page{max-width:1400px;}
+  .hero{padding:120px 100px 96px;}
+  .word-anim{font-size:150px;}
+  .body-wrap{padding:92px 100px 0;}
+  .image-card{grid-template-columns:1.5fr 1fr;padding:56px 52px;}
+  .image-card .ic-main{font-size:30px;}
+  .image-card .ic-svg{width:540px;height:440px;}
+  .real-ex .en{font-size:18px;}
+}
+
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  body::before,body::after{display:none;}
+  .page{box-shadow:none;max-width:100%;}
+  .blank{color:var(--slate)!important;}
+  .fill-item,.compare-table,.pitfall,.review-day{break-inside:avoid;}
+  .hero-grid,.hero-glow,.hero-flock,.page-floats,.progress-bar{display:none;}
+  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
+  .compare-table tbody tr,.review-day{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-floats" aria-hidden="true">
+    <div class="fl pebble f1"></div>
+    <div class="fl dash f2"></div>
+    <div class="fl dot f3"></div>
+    <div class="fl pebble ochre f4"></div>
+    <div class="fl dash ochre f5"></div>
+    <div class="fl pebble moss f6"></div>
+    <div class="fl dot f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-grid" aria-hidden="true">
+      <svg viewBox="0 0 860 320" preserveAspectRatio="none">
+        <g class="hg-line" fill="none">
+          <line x1="0" y1="64" x2="860" y2="64"/>
+          <line x1="0" y1="128" x2="860" y2="128"/>
+          <line x1="0" y1="192" x2="860" y2="192"/>
+          <line x1="0" y1="256" x2="860" y2="256"/>
+          <line x1="143" y1="0" x2="143" y2="320"/>
+          <line x1="286" y1="0" x2="286" y2="320"/>
+          <line x1="429" y1="0" x2="429" y2="320"/>
+          <line x1="572" y1="0" x2="572" y2="320"/>
+          <line x1="715" y1="0" x2="715" y2="320"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-glow" aria-hidden="true">
+      <svg viewBox="0 0 520 520">
+        <defs>
+          <radialGradient id="heroGlowGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#C08A2E" stop-opacity=".34"/>
+            <stop offset="55%" stop-color="#4A5A6A" stop-opacity=".16"/>
+            <stop offset="100%" stop-color="#4A5A6A" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle class="glow-pulse" cx="260" cy="260" r="240" fill="url(#heroGlowGrad)"/>
+      </svg>
+    </div>
+
+    <!-- 雁阵 V 字编队 -->
+    <div class="hero-flock" aria-hidden="true">
+      <svg viewBox="0 0 210 220">
+        <path class="hf-arm" d="M 105 34 L 22 132"/>
+        <path class="hf-arm a2" d="M 105 34 L 188 132"/>
+        <path class="hf-bird b1" d="M 97 26 Q 105 20 113 26 Q 109 22 105 24 Q 101 22 97 26 Z"/>
+        <path class="hf-bird b2" d="M 62 66 Q 70 60 78 66 Q 74 62 70 64 Q 66 62 62 66 Z"/>
+        <path class="hf-bird b3" d="M 40 94 Q 48 88 56 94 Q 52 90 48 92 Q 44 90 40 94 Z"/>
+        <path class="hf-bird b4" d="M 148 66 Q 156 60 164 66 Q 160 62 156 64 Q 152 62 148 66 Z"/>
+        <path class="hf-bird b5" d="M 170 94 Q 178 88 186 94 Q 182 90 178 92 Q 174 90 170 94 Z"/>
+        <path class="hf-bird b6" d="M 84 100 Q 92 94 100 100 Q 96 96 92 98 Q 88 96 84 100 Z"/>
+        <path class="hf-bird b7" d="M 126 100 Q 134 94 142 100 Q 138 96 134 98 Q 130 96 126 100 Z"/>
+        <line x1="20" y1="150" x2="190" y2="150" stroke="#C08A2E" stroke-width="1.5" stroke-dasharray="4 6" opacity=".6"/>
+        <line x1="20" y1="168" x2="190" y2="168" stroke="#6E7F4E" stroke-width="1.5" stroke-dasharray="4 6" opacity=".6"/>
+        <line x1="20" y1="186" x2="190" y2="186" stroke="#A84E32" stroke-width="1.5" stroke-dasharray="4 6" opacity=".6"/>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="formation">
+          <span class="letter l1">f</span><span class="letter l2">o</span><span class="letter l3">r</span><span class="letter l4">m</span><span class="letter l5">a</span><span class="letter l6">t</span><span class="letter l7">i</span><span class="letter l8">o</span><span class="letter l9">n</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 formation">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /fɔːˈmeɪʃn/ &nbsp;·&nbsp; 美 /fɔːrˈmeɪʃn/</div>
+      <div class="pos-anim">n.</div>
+      <div class="spell-hint">form · ation &nbsp; 形成 · 构成 · 编队 · 地层</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1. 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">form</span>（形式，形状 · 拉丁语 forma）
+          + <span class="affix">-ation</span>（名词后缀）
+          &nbsp;→&nbsp; "被赋予形式的过程" → <b>形成 · 构成 · 编队 · 地层</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">名词</div><div class="w"><span class="hl">formation</span></div><div class="p">/fɔːˈmeɪʃn/</div><div class="m">形成，构成；编队</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">form</div><div class="p">/fɔːm/</div><div class="m">形成，构成，组成</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">formative</div><div class="p">/ˈfɔːmətɪv/</div><div class="m">形成性的，造型的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">formless</div><div class="p">/ˈfɔːmləs/</div><div class="m">无形状的，无定形的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">formal</div><div class="p">/ˈfɔːml/</div><div class="m">正式的，形式上的</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">format</div><div class="p">/ˈfɔːmæt/</div><div class="m">格式，版式</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">transform</div><div class="p">/trænsˈfɔːm/</div><div class="m">转变，使变形</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">information</div><div class="p">/ˌɪnfəˈmeɪʃn/</div><div class="m">信息，情报</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">formation</span> = 散乱的个体<strong>依次飞入、排成 V 字编队</strong>；地表之下，岩层也正<strong>一层层沉积</strong>。
+          </p>
+          <p class="ic-sub">
+            名词 → 形成的过程：习惯的形成、政府的组建；<br>
+            名词 → 队形编队：鸟儿排成 V 字、士兵列队；<br>
+            名词 → 地质地层：岩层、地貌构造。<br>
+            核心：<b>"从零散无序，到有形的组合"</b>。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 380 300">
+            <defs>
+              <linearGradient id="fmSkyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#4A5A6A" stop-opacity=".18"/>
+                <stop offset="100%" stop-color="#4A5A6A" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+
+            <!-- 天空底 -->
+            <rect x="0" y="0" width="380" height="210" fill="url(#fmSkyGrad)"/>
+
+            <!-- 网格 -->
+            <g class="fm-grid" stroke="#F4EFE3" stroke-width="0.7">
+              <line x1="20" y1="56" x2="360" y2="56"/>
+              <line x1="20" y1="106" x2="360" y2="106"/>
+              <line x1="20" y1="156" x2="360" y2="156"/>
+              <line x1="95" y1="20" x2="95" y2="200"/>
+              <line x1="190" y1="20" x2="190" y2="200"/>
+              <line x1="285" y1="20" x2="285" y2="200"/>
+            </g>
+
+            <!-- 顶部公式 -->
+            <g class="fm-caption">
+              <text x="190" y="26" text-anchor="middle"
+                    font-family="Helvetica, Arial" font-size="10" font-weight="900"
+                    letter-spacing="3" fill="#C08A2E">FORM + ATION</text>
+            </g>
+
+            <!-- V 字队形连线 -->
+            <path class="fm-wing" d="M 190 60 L 70 180"/>
+            <path class="fm-wing w2" d="M 190 60 L 310 180"/>
+
+            <!-- 编队圆点：散乱 → 归位 -->
+            <circle class="fm-dot d1" cx="190" cy="60"  r="8"  fill="#8A97A6"/>
+            <circle class="fm-dot d2" cx="150" cy="100" r="7"  fill="#8A97A6"/>
+            <circle class="fm-dot d3" cx="230" cy="100" r="7"  fill="#8A97A6"/>
+            <circle class="fm-dot d4" cx="110" cy="140" r="6.5" fill="#8A97A6"/>
+            <circle class="fm-dot d5" cx="270" cy="140" r="6.5" fill="#8A97A6"/>
+            <circle class="fm-dot d6" cx="70"  cy="180" r="6"  fill="#8A97A6"/>
+            <circle class="fm-dot d7" cx="310" cy="180" r="6"  fill="#8A97A6"/>
+
+            <!-- 地层：三层波浪 -->
+            <line class="fm-fine" x1="20" y1="216" x2="360" y2="216"/>
+            <line class="fm-fine" x1="20" y1="244" x2="360" y2="244"/>
+            <line class="fm-fine" x1="20" y1="272" x2="360" y2="272"/>
+
+            <path class="fm-stratum s1"
+                  d="M 20 218 Q 60 210 100 218 T 180 218 T 260 218 T 360 218"/>
+            <path class="fm-stratum s2"
+                  d="M 20 246 Q 60 238 100 246 T 180 246 T 260 246 T 360 246"/>
+            <path class="fm-stratum s3"
+                  d="M 20 274 Q 60 266 100 274 T 180 274 T 260 274 T 360 274"/>
+
+            <!-- 底部标注 -->
+            <g class="fm-note">
+              <text x="190" y="294" text-anchor="middle"
+                    font-family="Helvetica, Arial" font-size="9" font-weight="800"
+                    letter-spacing="2.5" fill="#C08A2E">IN FORMATION</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo">
+          <div class="pattern">in formation</div>
+          <div class="meaning"><b>排成队形</b>（副词性短语，常配 fly / march / move）</div>
+        </div>
+        <div class="collo">
+          <div class="pattern">the formation of + 抽象名词</div>
+          <div class="meaning">……的<b>形成 / 组建</b>（habits / a government / a team）</div>
+        </div>
+        <div class="collo">
+          <div class="pattern">geological / rock formation</div>
+          <div class="meaning"><b>地质构造 / 岩层</b>（学术、雅思阅读高频）</div>
+        </div>
+        <div class="collo">
+          <div class="pattern">formation process</div>
+          <div class="meaning"><b>形成过程</b>（科普、教育语境）</div>
+        </div>
+        <div class="collo">
+          <div class="pattern">a formation of + 数词 + 名词</div>
+          <div class="meaning">一组<b>……的编队</b>（a formation of jets）</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 四级 · 阅读（改编）</div>
+          <p class="en">The <em class="hl">formation</em> of good study habits in childhood can benefit students for the rest of their lives.</p>
+          <p class="cn">童年时期良好学习习惯的形成，能让学生终身受益。</p>
+          <p class="tip">🎯 考点：the formation of + 抽象名词，"形成"义；注意 formation 作不可数名词。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 六级 · 完形（改编）</div>
+          <p class="en">The <em class="hl">formation</em> of the new government was delayed by weeks of political negotiations.</p>
+          <p class="cn">新政府的组建因数周的政治谈判而推迟。</p>
+          <p class="tip">🎯 考点：formation 表"组建、组成"（组织/机构），与 establishment 近义。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 雅思 · 阅读（改编）</div>
+          <p class="en">Geologists study rock <em class="hl">formations</em> to understand the history of the Earth's crust.</p>
+          <p class="cn">地质学家研究岩层构造，以了解地壳的历史。</p>
+          <p class="tip">🎯 考点：rock formations = 岩层，可数复数；雅思地理/地质类阅读高频词。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">托福 · 听力（改编）</div>
+          <p class="en">Migrating birds fly <em class="hl">in formation</em> to save energy on long journeys.</p>
+          <p class="cn">迁徙的鸟排成队形飞行，以在长途旅程中节省体力。</p>
+          <p class="tip">🎯 考点：in formation 固定搭配（"排成队形"）；fly / march / move + in formation。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">词性</span>
+          <b>form</b>（名词/动词：形式，形成）vs <b>formation</b>（名词：形成的过程）<br>
+          <span class="wrong">This is a formation of government.</span> → <span class="right">This is a form of government.</span>（"一种政体"用 form）<br>
+          <span class="right">The formation of the government took weeks.</span>（"组建的过程"用 formation）
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          "排成队形"要用介词 <b>in</b>，不用 on / at<br>
+          <span class="wrong">The soldiers marched on formation.</span> → <span class="right">The soldiers marched in formation.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">冠词</span>
+          <b>formation</b> 泛指"形成"通常<b>不可数</b>，不加 a；但指"一种特定构造"时可数<br>
+          <span class="wrong">a formation of habits</span> → <span class="right">the formation of habits</span><br>
+          <span class="right">a rock formation</span>（一处岩层构造，可数）
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          <b>formation</b> = form + ation（不是 formtion / formationn）<br>
+          注意中间没有 e：<span class="wrong">formetion</span> → <span class="right">formation</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>formation</td>
+            <td>形成的过程 / 编队 / 地层</td>
+            <td class="chant">强调"形成"这一过程</td>
+          </tr>
+          <tr>
+            <td>form</td>
+            <td>形式，样子（抽象的"形"）</td>
+            <td class="chant">一种形式叫 a form</td>
+          </tr>
+          <tr>
+            <td>structure</td>
+            <td>结构（内部各部分的组合）</td>
+            <td class="chant">内部构造 structure</td>
+          </tr>
+          <tr>
+            <td>composition</td>
+            <td>成分，构成（由什么组成）</td>
+            <td class="chant">由什么组成 composition</td>
+          </tr>
+          <tr>
+            <td>organization</td>
+            <td>组织，机构（有人的实体）</td>
+            <td class="chant">实体机构 organization</td>
+          </tr>
+          <tr>
+            <td>arrangement</td>
+            <td>安排，排列（人为布置）</td>
+            <td class="chant">人为布置 arrangement</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. 填空自测 -->
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">ormation</span> of good habits takes time and patience.</p>
+          <p class="fill-hint">提示：<b>the formation of</b> + 抽象名词，"……的形成"</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The wild geese flew <span class="first-letter">i</span><span class="blank" onclick="this.classList.toggle('revealed')">n</span> <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">ormation</span> across the lake.</p>
+          <p class="fill-hint">提示：<b>in formation</b>，排成队形（固定搭配）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Geologists have mapped several unusual rock <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">ormations</span> in the desert.</p>
+          <p class="fill-hint">提示：<b>rock formations</b>，岩层构造（可数复数）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">⚠️ 陷阱题：Democracy is only one <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">orm</span> of government.</p>
+          <p class="fill-hint">提示："一种政体形式"要用 <b>form</b>（形式），不是 formation</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">⚠️ 陷阱题：The committee was <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">ormed</span> in 1950.</p>
+          <p class="fill-hint">提示：这里要动词被动 <b>was formed</b>（被组建），不是名词</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>formation</b> 造一句自己的句子。刻意用上今天学的一个搭配（in formation / the formation of / rock formation）。</p>
+        <textarea id="mySentence" placeholder="例：The formation of a strong team depends on trust, not just talent."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script>
+/* ===== 滚动进度条 ===== */
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+  progressBar.style.width = (scrolled * 100) + '%';
+});
+
+/* ===== 滚动渐现 ===== */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale')
+  .forEach(el => revealObserver.observe(el));
+
+/* ===== 辨析表逐行入场 ===== */
+const tableObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const rows = entry.target.querySelectorAll('tbody tr');
+      rows.forEach((row, i) => setTimeout(() => row.classList.add('row-visible'), i * 120));
+      tableObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const table = document.querySelector('.compare-table');
+if(table) tableObserver.observe(table);
+
+/* ===== 复习打卡入场 ===== */
+const reviewDays = document.querySelectorAll('.review-day');
+const reviewObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      reviewDays.forEach((day, i) => setTimeout(() => day.classList.add('day-visible'), i * 130));
+      reviewObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const reviewGrid = document.querySelector('.review-grid');
+if(reviewGrid) reviewObserver.observe(reviewGrid);
+
+/* ===== 填空自测 ===== */
+document.querySelectorAll('.blank').forEach(b => {
+  b.addEventListener('click', function(){
+    this.style.transform = 'scale(1.15)';
+    setTimeout(() => { this.style.transform = ''; }, 180);
+  });
+});
+
+/* ===== 发音 ===== */
+const speakBtn = document.getElementById('speakBtn');
+speakBtn.addEventListener('click', () => {
+  if(!('speechSynthesis' in window)) { alert('当前浏览器不支持朗读'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance('formation');
+  u.lang = 'en-US';
+  u.rate = 0.85;
+  u.onstart = () => speakBtn.classList.add('speaking');
+  u.onend = () => speakBtn.classList.remove('speaking');
+  window.speechSynthesis.speak(u);
+});
+document.getElementById('ipaBtn').addEventListener('click', () => speakBtn.click());
+
+/* ===== 造句保存 ===== */
+const STORAGE_KEY = 'formation_sentence';
+const mySentence = document.getElementById('mySentence');
+const savedMsg = document.getElementById('savedMsg');
+const saved = localStorage.getItem(STORAGE_KEY);
+if(saved) mySentence.value = saved;
+document.getElementById('saveBtn').addEventListener('click', () => {
+  localStorage.setItem(STORAGE_KEY, mySentence.value);
+  savedMsg.classList.add('show');
+  setTimeout(() => savedMsg.classList.remove('show'), 1800);
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  mySentence.value = '';
+  localStorage.removeItem(STORAGE_KEY);
+});
+
+/* ===== 复习打卡 ===== */
+const REVIEW_KEY = 'formation_review';
+const reviewState = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
+reviewDays.forEach(day => {
+  const key = day.dataset.day;
+  if(reviewState[key]) day.classList.add('done');
+  day.addEventListener('click', () => {
+    day.classList.toggle('done');
+    reviewState[key] = day.classList.contains('done');
+    localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewState));
+  });
+});
+</script>
+
+</body>
+</html>
