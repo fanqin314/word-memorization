@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>conform · 遵守 · 符合 · 使一致</title>
+
+<style>
+/* ==========================================================================
+   公共样式（对应 card-base.css）：
+   版式、卡片外观、表格、打卡、填空、响应式、打印
+   ========================================================================== */
+
+/* ---------- 基础重置 ---------- */
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:Georgia,"Songti SC","Times New Roman",serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ---------- 滚动进度条 ---------- */
+.progress-bar{
+  position:fixed;top:0;left:0;height:5px;width:0;
+  background:var(--cb-accent);
+  border-right:3px solid var(--ink);
+  z-index:999;
+  transition:width .1s linear;
+}
+
+/* ---------- 页面容器 ---------- */
+.page{
+  position:relative;
+  max-width:960px;
+  margin:0 auto;
+  padding:0 0 70px;
+  z-index:1;
+}
+
+/* ---------- 正文容器 ---------- */
+.body-wrap{
+  padding:0 44px;
+}
+
+/* ---------- section ---------- */
+.section{margin:64px 0;}
+.section-title{
+  display:flex;align-items:center;gap:12px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:21px;font-weight:900;
+  color:var(--ink);
+  margin-bottom:24px;
+  letter-spacing:.01em;
+}
+.section-title .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;
+  background:var(--cb-accent);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:10px;
+  box-shadow:4px 4px 0 var(--ink);
+  font-size:15px;
+  transform:rotate(-3deg);
+}
+
+/* ---------- 词根 · 词族 ---------- */
+.root-family{display:block;}
+.root-line{
+  font-size:16px;
+  line-height:1.9;
+  background:var(--paper-2);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 20px;
+  margin-bottom:22px;
+}
+.affix{
+  display:inline-block;
+  background:var(--cb-3);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:7px;
+  padding:0 8px;
+  font-weight:800;
+  font-family:Georgia,serif;
+}
+.stem{
+  display:inline-block;
+  background:var(--cb-accent);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:7px;
+  padding:0 8px;
+  font-weight:800;
+  font-family:Georgia,serif;
+}
+.fam-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.fam-card{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:16px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:13px 14px 15px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  transform:rotate(.6deg);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.fam-card:nth-child(2n){transform:rotate(-.7deg);}
+.fam-card:nth-child(3n){transform:rotate(.3deg);}
+.fam-card:hover{
+  transform:translate(-2px,-2px) rotate(0);
+  box-shadow:6px 6px 0 var(--ink);
+}
+.fam-card .pos{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--cb-accent);
+}
+.fam-card .w{
+  font-family:Georgia,serif;
+  font-size:16px;
+  font-weight:800;
+  color:var(--ink);
+  word-break:break-word;
+}
+.fam-card .p{
+  font-family:Georgia,serif;
+  font-size:11.5px;
+  color:var(--deep);
+  opacity:.7;
+  word-break:break-word;
+}
+.fam-card .m{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:12.5px;
+  line-height:1.55;
+  color:var(--deep);
+}
+
+/* ---------- 意象卡 ---------- */
+.image-card{
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  gap:24px;
+  align-items:center;
+  background:var(--paper-2);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px;
+  transform:rotate(.4deg);
+}
+.ic-text{display:block;}
+.ic-label{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--paper);
+  background:var(--deep);
+  border:2px solid var(--ink);
+  border-radius:999px;
+  padding:3px 12px;
+  margin-bottom:12px;
+}
+.ic-main{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:17px;
+  line-height:1.85;
+  color:var(--ink);
+  margin-bottom:10px;
+}
+.hl{
+  display:inline-block;
+  background:var(--cb-accent);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:6px;
+  padding:0 7px;
+  font-weight:800;
+  transform:rotate(-1.5deg);
+}
+.ic-sub{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14px;
+  line-height:1.8;
+  color:var(--deep);
+  opacity:.9;
+}
+.ic-svg{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:8px;
+  transform:rotate(1deg);
+}
+.ic-svg svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+/* ---------- 核心搭配 ---------- */
+.collocations{
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+}
+.collo{
+  display:flex;
+  gap:16px;
+  align-items:baseline;
+  flex-wrap:wrap;
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:14px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:13px 18px;
+  transition:transform .15s ease;
+}
+.collo:nth-child(odd){transform:rotate(-.3deg);}
+.collo:nth-child(even){transform:rotate(.3deg);}
+.collo:hover{transform:translate(-2px,-2px) rotate(0);}
+.pattern{
+  font-family:Georgia,serif;
+  font-size:15.5px;
+  font-weight:800;
+  color:var(--cb-accent);
+}
+.meaning{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14px;
+  color:var(--deep);
+}
+
+/* ---------- 真题例句 ---------- */
+.real-exs{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.real-ex{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-left-width:11px;
+  border-radius:14px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:14px 18px;
+}
+.real-ex .src{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;
+  font-weight:900;
+  letter-spacing:.08em;
+  background:var(--cb-3);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:7px;
+  padding:2px 9px;
+  margin-bottom:8px;
+}
+.real-ex .en{
+  font-family:Georgia,serif;
+  font-size:15px;
+  line-height:1.7;
+  color:var(--ink);
+  margin-bottom:4px;
+}
+.real-ex .cn{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:13px;
+  line-height:1.65;
+  color:var(--deep);
+  opacity:.85;
+}
+.real-ex .hl{font-style:normal;}
+
+/* ---------- 易错提醒 ---------- */
+.pitfall{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.pitfall-item{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:16px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:14px 18px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14.5px;
+  line-height:1.85;
+}
+.pitfall-item .tip{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  background:var(--cb-2);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:7px;
+  padding:2px 9px;
+  margin-right:8px;
+  margin-bottom:6px;
+}
+.wrong{
+  font-family:Georgia,serif;
+  font-weight:800;
+  color:var(--cb-accent);
+  text-decoration:line-through;
+  text-decoration-thickness:2px;
+}
+.right{
+  font-family:Georgia,serif;
+  font-weight:800;
+  color:var(--cb-3);
+}
+
+/* ---------- 易混辨析表 ---------- */
+.compare-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  box-shadow:var(--shadow-hard-sm);
+  font-size:14px;
+}
+.compare-table tr.highlight{background:var(--cb-accent-soft);}
+.compare-table td{
+  padding:12px 14px;
+  border-top:2.5px solid var(--ink);
+  font-family:Georgia,"Songti SC",serif;
+  color:var(--deep);
+  line-height:1.6;
+  vertical-align:top;
+}
+.compare-table tr:first-child td{border-top:none;}
+.compare-table td:first-child{
+  font-family:Georgia,serif;
+  font-weight:800;
+  font-size:15px;
+  color:var(--cb-accent);
+  white-space:nowrap;
+}
+.compare-table td.chant{
+  font-style:italic;
+  color:var(--ink);
+}
+
+/* ---------- 首字母填空 ---------- */
+.hint{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:13.5px;
+  color:var(--deep);
+  opacity:.85;
+  margin-bottom:16px;
+  line-height:1.7;
+}
+.hint b{color:var(--cb-accent);}
+.fill-list{
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+}
+.fill-item{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:14px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:14px 18px;
+}
+.fill-sentence{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:15.5px;
+  line-height:2;
+  color:var(--ink);
+}
+.first-letter{
+  color:var(--cb-accent);
+  font-weight:900;
+  font-family:Georgia,serif;
+}
+.blank{
+  border-bottom:3px solid var(--ink);
+  color:transparent;
+  cursor:pointer;
+  padding:0 3px;
+  user-select:none;
+  transition:color .22s ease, background .22s ease;
+  border-radius:3px 3px 0 0;
+  font-family:Georgia,serif;
+  font-weight:700;
+}
+.blank.revealed{
+  color:var(--ink);
+  background:var(--cb-accent-soft);
+}
+.fill-hint{
+  margin-top:8px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;
+  color:var(--deep);
+  opacity:.8;
+}
+.fill-hint b{
+  color:var(--cb-accent);
+  font-family:Georgia,serif;
+}
+
+/* ---------- 造句练习 ---------- */
+.write-practice{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:20px;
+}
+.wp-hint{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14px;
+  line-height:1.75;
+  color:var(--deep);
+  margin-bottom:12px;
+}
+.wp-hint b{color:var(--cb-accent);}
+.write-practice textarea{
+  width:100%;
+  min-height:110px;
+  border:2.5px solid var(--ink);
+  border-radius:14px;
+  background:var(--paper-2);
+  padding:14px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14.5px;
+  line-height:1.75;
+  color:var(--ink);
+  resize:vertical;
+  outline:none;
+  transition:background .2s ease;
+}
+.write-practice textarea:focus{background:#FBF6EC;}
+.wp-actions{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.wp-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.04em;
+  background:var(--cb-accent);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:12px;
+  padding:7px 18px;
+  cursor:pointer;
+  box-shadow:4px 4px 0 var(--ink);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.wp-btn:active{
+  transform:translate(4px,4px);
+  box-shadow:none;
+}
+.wp-btn.ghost{
+  background:var(--paper-2);
+  color:var(--ink);
+}
+.wp-saved{
+  display:none;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;
+  font-weight:900;
+  color:var(--cb-3);
+  letter-spacing:.06em;
+}
+.wp-saved.show{display:inline-block;}
+
+/* ---------- 复习打卡 ---------- */
+.review-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.review-day{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:18px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 10px 14px;
+  text-align:center;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .15s ease, background .15s ease;
+}
+.review-day:hover{
+  transform:translate(-2px,-2px);
+  box-shadow:6px 6px 0 var(--ink);
+}
+.review-day .day{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:20px;
+  font-weight:900;
+  color:var(--cb-accent);
+  letter-spacing:.02em;
+  margin-bottom:4px;
+}
+.review-day .task{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;
+  line-height:1.55;
+  color:var(--deep);
+  opacity:.85;
+}
+.review-day.done{
+  background:var(--cb-3);
+  transform:rotate(-2deg);
+}
+.review-day.done .day,
+.review-day.done .task{
+  color:var(--paper);
+  opacity:1;
+}
+.review-tip{
+  margin-top:16px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:12.5px;
+  color:var(--deep);
+  opacity:.7;
+  text-align:center;
+}
+
+/* ---------- 入场动画 ---------- */
+.reveal{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1);
+}
+.reveal.in{opacity:1;transform:none;}
+.reveal-scale{
+  opacity:0;
+  transform:scale(.94);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1);
+}
+.reveal-scale.in{opacity:1;transform:none;}
+.reveal-left{
+  opacity:0;
+  transform:translateX(-30px);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1);
+}
+.reveal-left.in{opacity:1;transform:none;}
+
+/* ---------- 响应式（公共部分） ---------- */
+@media (max-width:640px){
+  .body-wrap{padding:0 18px;}
+  .section{margin:44px 0;}
+  .section-title{font-size:17px;}
+  .section-title .num{width:28px;height:28px;font-size:13px;}
+  .fam-grid{grid-template-columns:repeat(2,1fr);}
+  .image-card{grid-template-columns:1fr;gap:18px;padding:18px;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .collocations .collo{padding:11px 14px;gap:8px;}
+  .pattern{font-size:14px;}
+  .compare-table{font-size:12.5px;}
+  .compare-table td{padding:10px 10px;}
+}
+
+@media (min-width:1100px){
+  .page{max-width:1040px;}
+  .fam-grid{grid-template-columns:repeat(4,1fr);gap:16px;}
+  .body-wrap{padding:0 56px;}
+}
+
+/* ---------- 打印 ---------- */
+@media print{
+  body{background:#fff;padding:0;}
+  .progress-bar{display:none!important;}
+  .reveal,.reveal-scale,.reveal-left{opacity:1!important;transform:none!important;}
+  .hero,.fam-card,.image-card,.collo,.real-ex,.pitfall-item,
+  .compare-table,.fill-item,.write-practice,.review-day{
+    box-shadow:none!important;
+  }
+  .fam-card,.image-card,.collo{transform:none!important;}
+  .section{page-break-inside:avoid;}
+  .write-practice textarea{min-height:80px;}
+}
+
+/* ==========================================================================
+   卡片专属样式：
+   配色变量 / 全页底纹 / hero 区 / 大字 / 朗读按钮 / 意象卡 SVG 动画
+   ========================================================================== */
+
+/* ---------- 配色变量 ----------
+   --cb-accent 必须排在 --ink 之前（首页"学习中"卡面取它作为强调色）。
+   本卡主题色：陶土色，饱和度约 43% */
+:root{
+  --paper:#F6F1E7;
+  --paper-2:#E8DFCE;
+  --cb-accent:#B8734E;
+  --cb-accent-soft:#F0DDCB;
+  --cb-2:#7E8E9B;
+  --cb-2-soft:#E2E8EC;
+  --cb-3:#7A8B5C;
+  --cb-3-soft:#E6EBDC;
+  --ink:#24201B;
+  --deep:#3A2E22;
+  --cb-deep:#3A2E22;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+
+/* ---------- 全页装饰底纹 ---------- */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0 48px,
+      rgba(184,115,78,.05) 48px 49px,
+      transparent 49px 96px);
+  animation:bgDrift 18s linear infinite;
+}
+@keyframes bgDrift{ to{ background-position:0 96px; } }
+
+/* ---------- hero 区 ---------- */
+.hero{
+  background:linear-gradient(180deg,#F4E3D4 0%,#EDD3BE 45%,#E2C2A6 100%);
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  overflow:hidden;
+}
+.hero-band{
+  background:repeating-linear-gradient(90deg,
+    var(--cb-accent) 0 22px, transparent 22px 24px,
+    var(--cb-2) 24px 46px, transparent 46px 48px,
+    var(--cb-3) 48px 70px, transparent 70px 72px);
+  position:absolute;top:0;left:0;right:0;height:18px;
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+/* ---------- 大字：逐字压印入场 ---------- */
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:102px;font-weight:900;line-height:1.05;letter-spacing:-.02em;
+  color:var(--ink);
+  filter:drop-shadow(6px 6px 0 var(--cb-accent));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterStamp 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+}
+.word-anim .l1{animation-delay:.10s;color:var(--cb-accent);}
+.word-anim .l2{animation-delay:.26s;color:var(--ink);}
+.word-anim .l3{animation-delay:.42s;color:var(--cb-2);}
+.word-anim .l4{animation-delay:.58s;}
+.word-anim .l5{animation-delay:.74s;}
+.word-anim .l6{animation-delay:.90s;}
+.word-anim .l7{animation-delay:1.06s;}
+@keyframes letterStamp{
+  0%{opacity:0;transform:translateY(-46px) scale(1.5) rotate(-8deg);filter:blur(8px);}
+  55%{opacity:1;filter:blur(0);transform:translateY(4px) scale(.94) rotate(1deg);}
+  80%{transform:translateY(-2px) scale(1.03);}
+  100%{opacity:1;transform:translateY(0) scale(1);color:var(--ink);}
+}
+.word-anim .letter:hover{
+  color:var(--cb-accent);
+  transform:translateY(-8px) scale(1.12);
+  filter:drop-shadow(0 0 14px var(--cb-accent));
+}
+
+/* ---------- 朗读按钮 ---------- */
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--cb-accent);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--cb-3);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--cb-3);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+
+/* ---------- 音标 / 词性 / 拼写提示 ---------- */
+.ipa-anim{
+  margin-top:20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;font-weight:700;color:var(--ink);letter-spacing:.06em;
+  background:var(--cb-2-soft);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-accent);
+  cursor:pointer;transform:rotate(-1.5deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.35s forwards;
+}
+.pos-anim{
+  margin-top:14px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--deep);display:inline-block;padding:5px 16px;border-radius:999px;
+  border:2px solid var(--ink);transform:rotate(1.2deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--cb-3-soft);
+  border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-1deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.55s forwards;
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px);}100%{opacity:1;transform:translateY(0);}}
+
+/* ---------- 意象卡专属动画（前缀 cf-） ---------- */
+/* 模子外框：描边逐段绘制 */
+.cf-frame{
+  stroke-dasharray:640;
+  stroke-dashoffset:640;
+  animation:cfFrameDraw 4.5s ease-in-out infinite;
+}
+@keyframes cfFrameDraw{
+  0%{stroke-dashoffset:640;opacity:.35;}
+  35%,72%{stroke-dashoffset:0;opacity:1;}
+  100%{stroke-dashoffset:0;opacity:.35;}
+}
+
+/* 模子内虚线：流动 */
+.cf-inner{
+  animation:cfInnerFlow 3s linear infinite;
+}
+@keyframes cfInnerFlow{
+  to{stroke-dashoffset:-26;}
+}
+
+/* 泥团：下压落位 + 圆角→直角（圆变方） */
+.cf-dough{
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:cfDoughSettle 4.5s cubic-bezier(.34,1.56,.64,1) infinite,
+            cfDoughRx 4.5s ease-in-out infinite;
+}
+@keyframes cfDoughSettle{
+  0%,6%{transform:translateY(-42px);}
+  34%,72%{transform:translateY(0);}
+  88%,100%{transform:translateY(-42px);}
+}
+@keyframes cfDoughRx{
+  0%,12%{rx:42px;}
+  46%,74%{rx:10px;}
+  92%,100%{rx:42px;}
+}
+
+/* 高光：闪烁 */
+.cf-shine{
+  animation:cfShine 2.4s ease-in-out infinite;
+}
+@keyframes cfShine{
+  0%,100%{opacity:.2;}
+  50%{opacity:.95;}
+}
+
+/* 颗粒：飘落 */
+.cf-grain{
+  opacity:0;
+  animation:cfGrainFall 3.6s ease-in infinite;
+}
+.cf-grain.g2{animation-delay:.9s;}
+.cf-grain.g3{animation-delay:1.8s;}
+@keyframes cfGrainFall{
+  0%{opacity:0;transform:translateY(-14px) scale(.6);}
+  15%{opacity:1;transform:translateY(0) scale(1);}
+  72%{opacity:1;transform:translateY(44px) scale(1);}
+  100%{opacity:0;transform:translateY(56px) scale(.6);}
+}
+
+/* 标注虚线：流动 */
+.cf-arrow{
+  animation:cfArrowFlow 2.6s linear infinite;
+}
+@keyframes cfArrowFlow{
+  to{stroke-dashoffset:-18;}
+}
+
+/* ---------- 响应式（hero 专属） ---------- */
+@media (max-width:640px){
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:56px;}
+}
+@media (min-width:1100px){
+  .hero{padding:100px 80px 80px;}
+  .hero-band{height:24px;}
+  .word-anim{font-size:140px;}
+}
+</style>
+</head>
+
+<body data-word="conform">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="conform">
+          <span class="letter l1">c</span><span class="letter l2">o</span><span class="letter l3">n</span><span class="letter l4">f</span><span class="letter l5">o</span><span class="letter l6">r</span><span class="letter l7">m</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn">英 /kənˈfɔːm/ &nbsp;·&nbsp; 美 /kənˈfɔːrm/</div>
+      <div class="pos-anim">v.</div>
+      <div class="spell-hint">conform &nbsp; 遵守 · 符合 · 使一致</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">con-</span>（拉丁语 <i>con-</i>，共同、一起）+ <span class="stem">form</span>（拉丁语 <i>forma</i>，形状、模子）&nbsp;→&nbsp; "使形状共同" → <b>遵守；符合；使一致</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">n.</div><div class="w">conformity</div><div class="p">/kənˈfɔːməti/</div><div class="m">遵守，符合；一致性</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">conformist</div><div class="p">/kənˈfɔːmɪst/</div><div class="m">遵奉者，循规蹈矩的人</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">nonconformist</div><div class="p">/ˌnɒnkənˈfɔːmɪst/</div><div class="m">不遵奉者；不随大流的人</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">conformance</div><div class="p">/kənˈfɔːməns/</div><div class="m">（对标准、规范的）符合性</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">conformable</div><div class="p">/kənˈfɔːməbl/</div><div class="m">顺从的；相似的，一致的</div></div>
+          <div class="fam-card"><div class="pos">n. / v.</div><div class="w">form</div><div class="p">/fɔːm/</div><div class="m">形状；表格；形成</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">formal</div><div class="p">/ˈfɔːml/</div><div class="m">正式的；形式上的</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">formation</div><div class="p">/fɔːˈmeɪʃn/</div><div class="m">形成；构造；编队</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">conform</span> = 一团圆泥被压进方模子，照着模子的形状改变自己。</p>
+          <p class="ic-sub">模子是什么形，泥就变成什么形 —— 这叫"照模子来"。<br>规则、习俗就是模子，人去贴合它，就是 conform to。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 360 280">
+            <!-- 地面阴影 -->
+            <ellipse cx="180" cy="238" rx="92" ry="9" fill="var(--cb-accent-soft)" opacity=".55"/>
+
+            <!-- 模子外框 -->
+            <rect class="cf-frame" x="100" y="72" width="160" height="148" rx="14"
+                  fill="none" stroke="var(--ink)" stroke-width="3.5"/>
+
+            <!-- 模子内虚线 -->
+            <rect class="cf-inner" x="116" y="88" width="128" height="116" rx="8"
+                  fill="none" stroke="var(--cb-accent)" stroke-width="2" stroke-dasharray="7 6"/>
+
+            <!-- 泥团：圆角 → 直角 -->
+            <rect class="cf-dough" x="128" y="108" width="104" height="84" rx="42"
+                  fill="var(--cb-accent)" stroke="var(--ink)" stroke-width="3"/>
+
+            <!-- 高光 -->
+            <ellipse class="cf-shine" cx="160" cy="130" rx="16" ry="9"
+                     fill="var(--paper)" opacity=".7"/>
+
+            <!-- 颗粒飘落 -->
+            <circle class="cf-grain g1" cx="118" cy="62" r="3.5" fill="var(--cb-3)"/>
+            <circle class="cf-grain g2" cx="180" cy="50" r="3" fill="var(--cb-2)"/>
+            <circle class="cf-grain g3" cx="242" cy="64" r="3.5" fill="var(--cb-3)"/>
+
+            <!-- 标注：模子 -->
+            <path class="cf-arrow" d="M270 146 L298 146" stroke="var(--ink)" stroke-width="2"
+                  stroke-dasharray="5 4" fill="none"/>
+            <text x="304" y="150" font-family="Georgia,serif" font-size="13" fill="var(--deep)">模子</text>
+
+            <!-- 标注：泥团 -->
+            <path class="cf-arrow" d="M92 130 L64 130" stroke="var(--ink)" stroke-width="2"
+                  stroke-dasharray="5 4" fill="none"/>
+            <text x="22" y="134" font-family="Georgia,serif" font-size="13" fill="var(--deep)">泥团</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">conform to the rules</div><div class="meaning">遵守规则（rules 是模子，你去贴合它）</div></div>
+        <div class="collo"><div class="pattern">conform with the standard</div><div class="meaning">与标准相符（两者各自独立地达成一致）</div></div>
+        <div class="collo"><div class="pattern">conform to expectations</div><div class="meaning">符合预期</div></div>
+        <div class="collo"><div class="pattern">conform to the norm</div><div class="meaning">顺应常规、随大流</div></div>
+        <div class="collo"><div class="pattern">force sb to conform</div><div class="meaning">迫使某人顺从</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2022 考研英语 · 阅读</div>
+          <p class="en">All new buildings must <em class="hl">conform</em> to strict safety standards.</p>
+          <p class="cn">所有新建筑都必须符合严格的安全标准。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 CET-6 · 翻译</div>
+          <p class="en">Students are expected to <em class="hl">conform</em> to the school's dress code.</p>
+          <p class="cn">学生应当遵守学校的着装规定。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2023 雅思写作</div>
+          <p class="en">His behaviour does not <em class="hl">conform</em> with what he promised.</p>
+          <p class="cn">他的行为与他所承诺的并不相符。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 高考英语 · 阅读</div>
+          <p class="en">She refused to <em class="hl">conform</em> to the traditional role expected of women.</p>
+          <p class="cn">她拒绝顺从人们所期望的女性传统角色。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          conform 表示"遵守、符合"时是<b>不及物动词</b>，不能直接跟宾语。<br>
+          <span class="wrong">conform the rules</span> → <span class="right">conform to the rules</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">介词</span>
+          "遵守规则"用 <b>to</b>，"客观相符"用 <b>with</b>。<br>
+          <span class="wrong">All staff must conform with the safety rules.</span> → <span class="right">All staff must conform to the safety rules.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          conform（有 form=形状 → 符合）与 confirm（有 firm=牢固 → 确认）拼写易混。<br>
+          <span class="wrong">Please conform your booking by email.</span> → <span class="right">Please confirm your booking by email.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>conform</td>
+            <td>遵守；符合；使一致（贴合模子去改变自己）</td>
+            <td class="chant">照模子改形，守规矩</td>
+          </tr>
+          <tr>
+            <td>confirm</td>
+            <td>确认；证实</td>
+            <td class="chant">把事实夯实，确认无误</td>
+          </tr>
+          <tr>
+            <td>comply</td>
+            <td>遵从，服从</td>
+            <td class="chant">只跟 with，听指令</td>
+          </tr>
+          <tr>
+            <td>abide</td>
+            <td>遵守；忍受</td>
+            <td class="chant">只跟 by，法律与承诺</td>
+          </tr>
+          <tr>
+            <td>observe</td>
+            <td>遵守；观察到</td>
+            <td class="chant">及物，直接跟规则</td>
+          </tr>
+          <tr>
+            <td>coincide</td>
+            <td>一致；同时发生</td>
+            <td class="chant">纯客观吻合，无服从</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">All new products must <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onform</span> to the safety standards.</p>
+          <p class="fill-hint">提示：<b>conform to</b>，遵守安全标准。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He refused to <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onform</span> to the pressure of his peers.</p>
+          <p class="fill-hint">提示：<b>conform to</b>，顺从同伴压力。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Her actions do not <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onform</span> with her words.</p>
+          <p class="fill-hint">提示：<b>conform with</b>，与……相符。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The new design <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onforms</span> to the local style.</p>
+          <p class="fill-hint">提示：<b>conform to</b>，符合当地风格。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Everyone must <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onform</span> to the rules of the examination.</p>
+          <p class="fill-hint">提示：<b>conform to</b>，遵守考试规则。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>conform</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="Every new policy must conform to ..."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>朗读 + 看意象卡</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>做首字母填空</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>默写 8 个同根词</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>用 conform 造句</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script>
+(function () {
+  'use strict';
+
+  var word = document.body.dataset.word || '';
+
+  /* ---------- 滚动进度条 ---------- */
+  var bar = document.getElementById('progressBar');
+  function updateBar() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+    if (bar) bar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateBar, { passive: true });
+  window.addEventListener('resize', updateBar);
+  updateBar();
+
+  /* ---------- 入场动画 ---------- */
+  var reveals = document.querySelectorAll('.reveal, .reveal-scale, .reveal-left');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ---------- 朗读 ---------- */
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US';
+      u.rate = 0.9;
+      u.pitch = 1;
+      window.speechSynthesis.speak(u);
+    } catch (e) { /* 静默失败 */ }
+  }
+
+  var speakBtn = document.getElementById('speakBtn');
+  if (speakBtn) {
+    speakBtn.addEventListener('click', function () {
+      speak(word);
+      speakBtn.classList.add('speaking');
+      setTimeout(function () { speakBtn.classList.remove('speaking'); }, 800);
+    });
+  }
+
+  var ipaBtn = document.getElementById('ipaBtn');
+  if (ipaBtn) {
+    ipaBtn.addEventListener('click', function () { speak(word); });
+  }
+
+  /* ---------- 造句练习保存 ---------- */
+  var KEY_W = 'cb_write_' + word;
+  var ta = document.getElementById('mySentence');
+  var saveBtn = document.getElementById('saveBtn');
+  var clearBtn = document.getElementById('clearBtn');
+  var savedMsg = document.getElementById('savedMsg');
+
+  if (ta) {
+    try {
+      var saved = localStorage.getItem(KEY_W);
+      if (saved) ta.value = saved;
+    } catch (e) { /* 忽略 */ }
+  }
+
+  if (saveBtn && ta) {
+    saveBtn.addEventListener('click', function () {
+      try {
+        localStorage.setItem(KEY_W, ta.value);
+        if (savedMsg) {
+          savedMsg.classList.add('show');
+          setTimeout(function () { savedMsg.classList.remove('show'); }, 1600);
+        }
+      } catch (e) { /* 忽略 */ }
+    });
+  }
+
+  if (clearBtn && ta) {
+    clearBtn.addEventListener('click', function () {
+      ta.value = '';
+      try { localStorage.removeItem(KEY_W); } catch (e) { /* 忽略 */ }
+    });
+  }
+
+  /* ---------- 复习打卡持久化 ---------- */
+  var KEY_R = 'cb_review_' + word;
+  var grid = document.getElementById('reviewGrid');
+  var state = {};
+  try {
+    state = JSON.parse(localStorage.getItem(KEY_R) || '{}');
+  } catch (e) { state = {}; }
+
+  if (grid) {
+    var days = grid.querySelectorAll('.review-day');
+    days.forEach(function (dayEl) {
+      var id = dayEl.getAttribute('data-day');
+      if (state[id]) dayEl.classList.add('done');
+      dayEl.addEventListener('click', function () {
+        dayEl.classList.toggle('done');
+        state[id] = dayEl.classList.contains('done');
+        try { localStorage.setItem(KEY_R, JSON.stringify(state)); } catch (e) { /* 忽略 */ }
+      });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
