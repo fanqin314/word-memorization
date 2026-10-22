@@ -403,36 +403,36 @@ body::before{
 .image-card .ic-svg svg{width:100%;height:100%;overflow:visible;}
 
 /* 意象卡 SVG 动画 —— 企鹅徽章 + 五个一模一样的领结 */
-.ring-chain{
+.bow-ring{
   fill:none;
   stroke-linecap:round;
 }
-.ring-chain.rc1{
+.bow-ring.br1{
   stroke:var(--gold);
   stroke-width:5;
-  animation:chainPulse 3s ease-in-out infinite;
+  animation:bowPulse 3s ease-in-out infinite;
 }
-.ring-chain.rc2{
+.bow-ring.br2{
   stroke:var(--crimson);
   stroke-width:5;
-  animation:chainPulse 3s ease-in-out infinite .4s;
+  animation:bowPulse 3s ease-in-out infinite .4s;
 }
-.ring-chain.rc3{
+.bow-ring.br3{
   stroke:var(--olive);
   stroke-width:5;
-  animation:chainPulse 3s ease-in-out infinite .8s;
+  animation:bowPulse 3s ease-in-out infinite .8s;
 }
-.ring-chain.rc4{
+.bow-ring.br4{
   stroke:var(--slate);
   stroke-width:5;
-  animation:chainPulse 3s ease-in-out infinite 1.2s;
+  animation:bowPulse 3s ease-in-out infinite 1.2s;
 }
-.ring-chain.rc5{
+.bow-ring.br5{
   stroke:var(--navy);
   stroke-width:5;
-  animation:chainPulse 3s ease-in-out infinite 1.6s;
+  animation:bowPulse 3s ease-in-out infinite 1.6s;
 }
-@keyframes chainPulse{
+@keyframes bowPulse{
   0%,100%{ opacity:.35; }
   50%{ opacity:1; }
 }
@@ -1030,11 +1030,11 @@ body::before{
             </defs>
             <!-- 五个一模一样的领结：全场统一着装 -->
             <g opacity=".95">
-              <circle class="ring-chain rc1" cx="170" cy="46"  r="20"/>
-              <circle class="ring-chain rc2" cx="269" cy="118" r="20"/>
-              <circle class="ring-chain rc3" cx="231" cy="234" r="20"/>
-              <circle class="ring-chain rc4" cx="109" cy="234" r="20"/>
-              <circle class="ring-chain rc5" cx="71"  cy="118" r="20"/>
+              <circle class="bow-ring br1" cx="170" cy="46"  r="20"/>
+              <circle class="bow-ring br2" cx="269" cy="118" r="20"/>
+              <circle class="bow-ring br3" cx="231" cy="234" r="20"/>
+              <circle class="bow-ring br4" cx="109" cy="234" r="20"/>
+              <circle class="bow-ring br5" cx="71"  cy="118" r="20"/>
             </g>
             <g class="mini-bow">
               <path d="M 170 38 L 162 33 L 162 45 Z" fill="var(--gold)"/>

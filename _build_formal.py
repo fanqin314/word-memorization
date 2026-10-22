@@ -800,5 +800,11 @@ HTML = (u'<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n<meta charset="UTF-8">\n
         u'<title>formal · 正式的</title>\n<style>' + css + u'</style>\n</head>\n<body>\n'
         + BODY + u'\n</body>\n</html>\n')
 
+# ---------- 收尾：主题类名去 union 残留 ----------
+for a, b in (('ring-chain', 'bow-ring'), ('chainPulse', 'bowPulse')):
+    HTML = HTML.replace(a, b)
+for i in range(1, 6):
+    HTML = HTML.replace('rc%d' % i, 'br%d' % i)
+
 io.open(OUT, 'w', encoding='utf-8').write(HTML)
 print('written:', OUT, len(HTML), 'chars')
