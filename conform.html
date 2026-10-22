@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>conform · 遵从 · 符合 · 顺应</title>
+<link rel="stylesheet" href="card-base.css">
+<style>
+/* ==========================================================================
+   conform 专属样式：配色 / hero / 意象卡动画
+   ========================================================================== */
+:root{
+  /* 统一色板 —— conform = 遵从 / 符合 / 顺应 */
+  --paper:#F4F2EA;
+  --paper-2:#E4E0D2;
+  --cb-accent:#5C6E8A;        /* 雾蓝：模具与标准 */
+  --cb-accent-soft:#DFE5EE;
+  --cb-2:#B08A6A;             /* 暖褐：被压合的个体 */
+  --cb-2-soft:#F0E4D6;
+  --cb-3:#7C8B6E;             /* 橄榄：通过校验 */
+  --cb-3-soft:#E4EADF;
+  --ink:#1E2229;
+  --deep:#2C3542;
+  --cb-deep:#2C3542;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+
+/* ---------- 全页底纹：校准方格 ---------- */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0 40px,
+      rgba(92,110,138,.055) 40px 41px,
+      transparent 41px 80px),
+    repeating-linear-gradient(90deg,
+      transparent 0 40px,
+      rgba(92,110,138,.045) 40px 41px,
+      transparent 41px 80px);
+  animation:bgCalibrate 16s linear infinite;
+}
+@keyframes bgCalibrate{
+  to{ background-position:0 80px, 80px 0; }
+}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:linear-gradient(180deg,#E7EBF2 0%,#D8DFEA 48%,#C9D2E0 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--cb-accent) 0 22px, transparent 22px 24px,
+    var(--cb-2) 24px 46px, transparent 46px 48px,
+    var(--cb-3) 48px 70px, transparent 70px 72px,
+    var(--cb-accent) 72px 94px, transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+
+/* hero 中央光晕 */
+.hero-glow{
+  position:absolute;top:44%;left:50%;
+  transform:translate(-50%,-50%);
+  width:460px;height:460px;
+  pointer-events:none;z-index:0;opacity:.55;
+}
+.hero-glow svg{width:100%;height:100%;}
+.glow-pulse{
+  animation:heroGlowPulse 4.5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes heroGlowPulse{
+  0%,100%{ opacity:.5; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.1); }
+}
+
+/* 右侧装饰：三个异形被同一个框套住 */
+.hero-mold{
+  position:absolute;right:38px;top:50%;
+  transform:translateY(-50%);
+  width:180px;height:220px;
+  pointer-events:none;z-index:0;opacity:.42;
+}
+.hero-mold svg{width:100%;height:100%;}
+.hm-box{
+  fill:none;stroke:var(--cb-accent);stroke-width:4;
+  stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:680;stroke-dashoffset:680;
+  animation:hmDraw 3s ease-out forwards;
+}
+@keyframes hmDraw{ to{ stroke-dashoffset:0; } }
+.hm-shape{
+  fill:none;stroke:var(--cb-2);stroke-width:3;
+  animation:hmBreathe 3.4s ease-in-out infinite;
+  transform-box:fill-box;transform-origin:center;
+}
+.hm-shape.s2{ animation-delay:1.1s; stroke:var(--cb-3); }
+.hm-shape.s3{ animation-delay:2.2s; }
+@keyframes hmBreathe{
+  0%,100%{ opacity:.4; transform:scale(1) rotate(0); }
+  50%{ opacity:1; transform:scale(1.08) rotate(6deg); }
+}
+
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:98px;font-weight:900;line-height:1.05;letter-spacing:-.02em;
+  color:var(--ink);
+  filter:drop-shadow(6px 6px 0 var(--cb-accent)) drop-shadow(0 0 18px rgba(92,110,138,.28));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterStamp 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
+  animation-delay:calc(.08s + var(--i, 0) * .11s);
+  will-change:transform,opacity;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+}
+.word-anim .letter:nth-child(1),
+.word-anim .letter:nth-child(7){ color:var(--cb-accent); }
+@keyframes letterStamp{
+  0%{ opacity:0; transform:translateY(-46px) scale(1.5) rotate(-8deg); filter:blur(8px); }
+  55%{ opacity:1; filter:blur(0); transform:translateY(4px) scale(.94) rotate(1deg); }
+  80%{ transform:translateY(-2px) scale(1.03); }
+  100%{ opacity:1; transform:translateY(0) scale(1); color:var(--ink); }
+}
+.word-anim .letter:nth-child(1):hover,
+.word-anim .letter:nth-child(7):hover{ color:var(--cb-accent); }
+.word-anim .letter:hover{
+  transform:translateY(-8px) scale(1.12);
+  filter:drop-shadow(0 0 14px var(--cb-accent));
+}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--cb-accent);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--cb-3);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{ transform:translate(-2px,-2px) rotate(12deg); box-shadow:6px 6px 0 var(--cb-3); }
+.speak-btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 var(--cb-3); }
+.speak-btn.speaking{ animation:speakPulse .6s ease-in-out infinite; }
+@keyframes speakPulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.15) rotate(-6deg);} }
+
+.ipa-anim{
+  margin-top:20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;font-weight:700;color:var(--ink);letter-spacing:.06em;
+  background:var(--cb-accent-soft);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-2);
+  cursor:pointer;transform:rotate(-1.5deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+}
+.ipa-anim:hover{ background:var(--cb-2-soft); }
+.pos-anim{
+  margin-top:14px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--deep);display:inline-block;padding:5px 16px;border-radius:999px;
+  border:2px solid var(--ink);transform:rotate(1.2deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--cb-3-soft);
+  border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-1deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+}
+@keyframes fadeUp{
+  0%{ opacity:0; transform:translateY(8px); }
+  100%{ opacity:1; transform:translateY(0); }
+}
+
+/* ---------- 意象卡专属动画（cf- 前缀） ---------- */
+
+/* 校准网格呼吸 */
+.cf-grid{ animation:cfGrid 5s ease-in-out infinite; }
+@keyframes cfGrid{ 0%,100%{opacity:.2;} 50%{opacity:.42;} }
+
+/* 模具框：描边逐步画出 */
+.cf-mold{
+  fill:none;stroke:var(--cb-accent);stroke-width:3.5;
+  stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:660;stroke-dashoffset:660;
+  animation:cfMoldDraw 4.2s ease-in-out infinite;
+}
+@keyframes cfMoldDraw{
+  0%{ stroke-dashoffset:660; opacity:.35; }
+  30%,74%{ stroke-dashoffset:0; opacity:1; }
+  100%{ stroke-dashoffset:0; opacity:.35; }
+}
+
+/* 压印杆：周期下压 */
+.cf-press{
+  animation:cfPress 4.2s cubic-bezier(.5,0,.5,1) infinite;
+  transform-box:fill-box;transform-origin:center bottom;
+}
+@keyframes cfPress{
+  0%,14%{ transform:translateY(0); }
+  26%,38%{ transform:translateY(26px); }
+  52%,100%{ transform:translateY(0); }
+}
+
+/* 三个异形：依次飞入模具并被"压正"成统一方块 */
+.cf-a{
+  transform-box:fill-box;transform-origin:center;
+  animation:cfFitA 4.2s cubic-bezier(.34,1.56,.64,1) infinite;
+}
+@keyframes cfFitA{
+  0%,12%{ transform:translate(0,0) rotate(20deg) scale(.92); opacity:.9; }
+  40%,70%{ transform:translate(150px,28px) rotate(0) scale(1.22); opacity:1; }
+  86%,100%{ transform:translate(0,0) rotate(20deg) scale(.92); opacity:0; }
+}
+.cf-b{
+  transform-box:fill-box;transform-origin:center;
+  animation:cfFitB 4.2s cubic-bezier(.34,1.56,.64,1) infinite;
+  animation-delay:.34s;
+}
+@keyframes cfFitB{
+  0%,12%{ transform:translate(0,0) rotate(-14deg) scale(1); opacity:.9; }
+  40%,70%{ transform:translate(148px,-44px) rotate(0) scale(1.12); opacity:1; }
+  86%,100%{ transform:translate(0,0) rotate(-14deg) scale(1); opacity:0; }
+}
+.cf-c{
+  transform-box:fill-box;transform-origin:center;
+  animation:cfFitC 4.2s cubic-bezier(.34,1.56,.64,1) infinite;
+  animation-delay:.68s;
+}
+@keyframes cfFitC{
+  0%,12%{ transform:translate(0,0) rotate(9deg) scale(.95); opacity:.9; }
+  40%,70%{ transform:translate(142px,-86px) rotate(0) scale(1.18); opacity:1; }
+  86%,100%{ transform:translate(0,0) rotate(9deg) scale(.95); opacity:0; }
+}
+
+/* 模具内统一后的校验对勾 */
+.cf-check{
+  animation:cfCheckGlow 2.1s ease-in-out infinite;
+  transform-box:fill-box;transform-origin:center;
+}
+@keyframes cfCheckGlow{
+  0%,100%{ opacity:.3; transform:scale(.88) rotate(0); }
+  50%{ opacity:1; transform:scale(1.14) rotate(6deg); }
+}
+
+/* 尺寸标注虚线流动 */
+.cf-measure{
+  fill:none;stroke:var(--cb-2);stroke-width:1.6;
+  stroke-dasharray:5 7;
+  animation:cfMeasure 2s linear infinite;
+}
+@keyframes cfMeasure{ to{ stroke-dashoffset:-48; } }
+
+/* 底部基线流动 */
+.cf-baseline{
+  stroke-dasharray:6 8;
+  animation:cfBase 2s linear infinite;
+}
+@keyframes cfBase{ to{ stroke-dashoffset:-28; } }
+
+/* 标注文字淡入淡出 */
+.cf-caption{ animation:cfCaption 4.2s ease-in-out infinite; }
+@keyframes cfCaption{
+  0%,16%{ opacity:0; }
+  42%,74%{ opacity:1; }
+  100%{ opacity:0; }
+}
+
+@media (max-width:640px){
+  .hero{ padding:50px 22px 40px; }
+  .word-anim{ font-size:50px; }
+  .hero-mold{ display:none; }
+  .hero-glow{ opacity:.35; }
+}
+@media (min-width:1100px){
+  .hero{ padding:100px 80px 80px; }
+  .hero-band{ height:24px; }
+  .word-anim{ font-size:132px; }
+}
+</style>
+</head>
+
+<body data-word="conform">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-glow" aria-hidden="true">
+      <svg viewBox="0 0 500 500">
+        <defs>
+          <radialGradient id="cfHeroGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#5C6E8A" stop-opacity=".42"/>
+            <stop offset="60%" stop-color="#B08A6A" stop-opacity=".16"/>
+            <stop offset="100%" stop-color="#5C6E8A" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle class="glow-pulse" cx="250" cy="250" r="225" fill="url(#cfHeroGlow)"/>
+      </svg>
+    </div>
+
+    <div class="hero-mold" aria-hidden="true">
+      <svg viewBox="0 0 180 220">
+        <rect class="hm-box" x="20" y="26" width="140" height="168" rx="10"/>
+        <circle class="hm-shape" cx="60" cy="76" r="20"/>
+        <rect class="hm-shape s2" x="94" y="96" width="40" height="40" rx="5"/>
+        <polygon class="hm-shape s3" points="66,176 106,176 86,142"/>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="conform">
+          <span class="letter" style="--i:0">c</span><span class="letter" style="--i:1">o</span><span class="letter" style="--i:2">n</span><span class="letter" style="--i:3">f</span><span class="letter" style="--i:4">o</span><span class="letter" style="--i:5">r</span><span class="letter" style="--i:6">m</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 conform">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn">英 /kənˈfɔːm/ &nbsp;·&nbsp; 美 /kənˈfɔːrm/</div>
+      <div class="pos-anim">v.</div>
+      <div class="spell-hint">conform &nbsp; 遵从 · 符合 · 顺应</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">con-</span>（共同、一起）+ <span class="stem">form</span>（形状、模子）
+          &nbsp;→&nbsp; "与模子<b>同形</b>" → <b>遵从 · 符合</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">名词</div><div class="w">conformity</div><div class="p">/kənˈfɔːməti/</div><div class="m">遵从，一致</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">conformist</div><div class="p">/kənˈfɔːmɪst/</div><div class="m">墨守成规者</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">formation</div><div class="p">/fɔːˈmeɪʃn/</div><div class="m">形成，构成</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">formal</div><div class="p">/ˈfɔːml/</div><div class="m">正式的，形式上的</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">format</div><div class="p">/ˈfɔːmæt/</div><div class="m">格式，版式</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">reform</div><div class="p">/rɪˈfɔːm/</div><div class="m">改革，改良</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">transform</div><div class="p">/trænsˈfɔːm/</div><div class="m">使变形，转变</div></div>
+          <div class="fam-card"><div class="pos">名词·形容词</div><div class="w">uniform</div><div class="p">/ˈjuːnɪfɔːm/</div><div class="m">制服；统一的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">conform</span> = 形状各异的个体，被同一个<strong>模子</strong>压成一样。
+          </p>
+          <p class="ic-sub">
+            圆、方、三角 → 全部塞进同一个框 → 出来都成了同一个形状。<br>
+            <b>conform to the rules</b>：把自己"压"进规则这个模子；<br>
+            <b>conform with the facts</b>：与事实"同形"，即相互一致。<br>
+            核心：<b>"和模子保持一致"</b>——不是变好，是变<b>一样</b>。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 360 280">
+            <!-- 校准网格 -->
+            <g class="cf-grid" stroke="var(--paper)" stroke-width="0.6">
+              <line x1="20" y1="60" x2="340" y2="60"/>
+              <line x1="20" y1="110" x2="340" y2="110"/>
+              <line x1="20" y1="160" x2="340" y2="160"/>
+              <line x1="20" y1="210" x2="340" y2="210"/>
+              <line x1="60" y1="30" x2="60" y2="250"/>
+              <line x1="160" y1="30" x2="160" y2="250"/>
+              <line x1="260" y1="30" x2="260" y2="250"/>
+            </g>
+
+            <!-- 工作台基线 -->
+            <line class="cf-baseline" x1="20" y1="246" x2="340" y2="246"
+                  stroke="var(--paper)" stroke-width="2" opacity=".5"/>
+
+            <!-- 模具框 -->
+            <rect class="cf-mold" x="146" y="62" width="164" height="158" rx="14"
+                  fill="var(--cb-accent-soft)" fill-opacity=".28"/>
+
+            <!-- 压印杆 -->
+            <g class="cf-press">
+              <rect x="198" y="8" width="60" height="20" rx="5"
+                    fill="var(--cb-3)" stroke="var(--ink)" stroke-width="2.5"/>
+              <line x1="228" y1="28" x2="228" y2="54"
+                    stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+            </g>
+
+            <!-- 三个异形：圆、方、三角 -->
+            <g class="cf-a">
+              <rect x="42" y="88" width="64" height="64" rx="8"
+                    fill="var(--cb-2-soft)" stroke="var(--ink)" stroke-width="2.6"/>
+              <text x="74" y="130" text-anchor="middle" font-family="Georgia"
+                    font-size="20" font-weight="900" fill="var(--ink)">方</text>
+            </g>
+            <g class="cf-b">
+              <ellipse cx="76" cy="190" rx="36" ry="26"
+                       fill="var(--cb-2-soft)" stroke="var(--ink)" stroke-width="2.6"/>
+              <text x="76" y="198" text-anchor="middle" font-family="Georgia"
+                    font-size="18" font-weight="900" fill="var(--ink)">圆</text>
+            </g>
+            <g class="cf-c">
+              <polygon points="58,242 102,242 80,204"
+                       fill="var(--cb-2-soft)" stroke="var(--ink)" stroke-width="2.6"/>
+              <text x="80" y="236" text-anchor="middle" font-family="Georgia"
+                    font-size="15" font-weight="900" fill="var(--ink)">△</text>
+            </g>
+
+            <!-- 模具内统一后的校验对勾 -->
+            <g class="cf-check">
+              <path d="M 196 146 L 216 168 L 262 112"
+                    fill="none" stroke="var(--cb-3)" stroke-width="6"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+
+            <!-- 尺寸标注 -->
+            <path class="cf-measure" d="M 146 54 L 310 54"/>
+            <path class="cf-measure" d="M 316 68 L 316 214"/>
+
+            <!-- 标注文字 -->
+            <text class="cf-caption" x="228" y="44" text-anchor="middle"
+                  font-family="Helvetica, Arial" font-size="11" font-weight="800"
+                  letter-spacing="2" fill="var(--paper)">STANDARD</text>
+            <text class="cf-caption" x="62" y="212" text-anchor="middle"
+                  font-family="Helvetica, Arial" font-size="10" font-weight="800"
+                  letter-spacing="1.5" fill="var(--paper)">VARIOUS</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">conform to</div><div class="meaning"><b>遵从</b>（规则、标准、习俗）</div></div>
+        <div class="collo"><div class="pattern">conform with</div><div class="meaning">与……<b>一致</b>，相符合</div></div>
+        <div class="collo"><div class="pattern">conform to the norm</div><div class="meaning">符合<b>常规</b>，随大流</div></div>
+        <div class="collo"><div class="pattern">in conformity with</div><div class="meaning"><b>依照</b>，与……保持一致</div></div>
+        <div class="collo"><div class="pattern">conform to expectations</div><div class="meaning">符合<b>预期</b></div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2022 考研 · 阅读</div>
+          <p class="en">All products must <em class="hl">conform to</em> strict safety standards before they go on sale.</p>
+          <p class="cn">所有产品在上市前都必须符合严格的安全标准。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">Teenagers often feel pressure to <em class="hl">conform</em> to the expectations of their peers.</p>
+          <p class="cn">青少年常常感到要顺应同龄人期望的压力。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 雅思 · 写作</div>
+          <p class="en">The building was designed to <em class="hl">conform with</em> local planning regulations.</p>
+          <p class="cn">这栋建筑的设计与当地规划法规相符。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 四级 · 完形</div>
+          <p class="en">Those who refuse to <em class="hl">conform</em> may be seen as troublemakers.</p>
+          <p class="cn">那些拒绝随大流的人可能被视为麻烦制造者。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          <b>conform</b>（遵从）vs <b>confirm</b>（确认）—— 只差一个字母，都是高频词。<br>
+          <span class="wrong">Please conform your booking.</span> → <span class="right">Please confirm your booking.</span><br>
+          记：<b>confirm</b> 里有 <b>i</b>（"确定"的 i），<b>conform</b> 是 form（模子）。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词性</span>
+          <b>conform</b> 是<b>不及物动词</b>，必须带介词。<br>
+          <span class="wrong">conform the rules</span> → <span class="right">conform to the rules</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">介词</span>
+          <b>conform to</b> = 遵从（对标准、规则，单向）；<b>conform with</b> = 与……一致（两者相符）。<br>
+          考试中 <span class="right">conform to</span> 更常见；名词形式固定为 <span class="right">in conformity with</span>。
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>conform (to)</td>
+            <td>遵从标准、规范、习俗（被动顺应）</td>
+            <td class="chant">把自己压进模子</td>
+          </tr>
+          <tr>
+            <td>obey</td>
+            <td>服从命令、人（有明确的发令者）</td>
+            <td class="chant">听人指挥用 obey</td>
+          </tr>
+          <tr>
+            <td>comply (with)</td>
+            <td>依从规定（正式、法律语域）</td>
+            <td class="chant">照章办事 comply</td>
+          </tr>
+          <tr>
+            <td>adapt</td>
+            <td>主动调整自己去适应环境</td>
+            <td class="chant">改变自己叫 adapt</td>
+          </tr>
+          <tr>
+            <td>adjust</td>
+            <td>小幅调整、校准</td>
+            <td class="chant">微调校准是 adjust</td>
+          </tr>
+          <tr>
+            <td>submit</td>
+            <td>屈服、让步（放弃抵抗）</td>
+            <td class="chant">低头认输用 submit</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">All new employees are required to <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onform</span> to the company's dress code.</p>
+          <p class="fill-hint">提示：<b>conform to</b>，遵从（动词原形）</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The design <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onforms</span> with international safety standards.</p>
+          <p class="fill-hint">提示：<b>conform with</b>，与……一致（第三人称单数）</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Children often feel pressure to <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onform</span> to the behaviour of their classmates.</p>
+          <p class="fill-hint">提示：<b>conform to</b>，顺应他人行为</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">His account of the accident does not <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onform</span> with the evidence.</p>
+          <p class="fill-hint">⚠️ 陷阱：<b>conform with</b> 表"两者相符"，不是 to</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">In <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onformity</span> with the regulations, all records must be kept for five years.</p>
+          <p class="fill-hint">提示：<b>in conformity with</b>，依照（名词形式）</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>conform</b> 造一句自己的句子，刻意用上 <b>conform to</b> 或 <b>conform with</b>。</p>
+        <textarea id="mySentence" placeholder="例：New buildings in this area must conform to strict environmental standards."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="card-base.js"></script>
+
+</body>
+</html>
