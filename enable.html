@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>enable · 使能够</title>
+<style>
+:root{
+  /* 解锁色板 —— enable = 使能够 / 使成为可能 / 启用 */
+  --paper:#F0EDE3;
+  --paper-2:#DED9CA;
+  --ink:#0A0F1A;
+  --deep:#1A2744;
+  --deep-soft:#D5DCEA;
+  --lock:#6B7A99;
+  --lock-soft:#DEE4EE;
+  --copper:#C8853D;
+  --copper-soft:#F5E5D0;
+  --keyhole:#F5C042;
+  --keyhole-soft:#FCEFC8;
+  --light:#FFF8E8;
+  --glow:#FFB627;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:#050912;
+  padding:44px 16px 90px;
+  color:var(--ink);
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+  font-size:16px;
+  line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 50% 18%, rgba(245,192,66,.20) 0, transparent 45%),
+    radial-gradient(circle at 15% 85%, rgba(200,133,61,.14) 0, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(107,122,153,.16) 0, transparent 40%);
+}
+
+body::after{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:9999;
+  opacity:.28;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+}
+
+/* 全页：钥匙孔形状的光斑背景 */
+body::before{
+  content:"";
+  position:fixed;
+  top:30%;left:50%;
+  transform:translate(-50%,-50%);
+  width:90vmin;height:90vmin;
+  pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 50% 35%, rgba(245,192,66,.08) 0 12%, transparent 12.5%),
+    radial-gradient(circle at 50% 35%, rgba(245,192,66,.06) 0 22%, transparent 22.5%),
+    radial-gradient(circle at 50% 35%, rgba(245,192,66,.04) 0 32%, transparent 32.5%),
+    radial-gradient(circle at 50% 35%, rgba(245,192,66,.025) 0 42%, transparent 42.5%);
+  animation:keyholeBreath 10s ease-in-out infinite;
+}
+@keyframes keyholeBreath{
+  0%,100%{ opacity:.7; transform:translate(-50%,-50%) scale(1); }
+  50%{ opacity:1; transform:translate(-50%,-50%) scale(1.05); }
+}
+
+.page{
+  position:relative;z-index:1;
+  max-width:860px;margin:0 auto;
+  background:var(--paper);
+  padding:0 0 72px;
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    12px 12px 0 var(--copper),
+    -4px 4px 0 var(--keyhole),
+    0 20px 60px rgba(0,0,0,.85);
+  overflow:hidden;
+}
+
+/* 漂浮的钥匙 / 锁碎片 / 光点 */
+.page-floats{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.fl{
+  position:absolute;
+  opacity:0;
+  animation:flDrift linear infinite;
+}
+/* 光点 */
+.fl.spark{
+  width:10px;height:10px;
+  border-radius:50%;
+  box-shadow:0 0 10px currentColor;
+}
+.fl.spark.gold{ background:var(--keyhole); color:var(--keyhole); }
+.fl.spark.copper{ background:var(--copper); color:var(--copper); }
+.fl.spark.light{ background:var(--light); color:var(--light); }
+/* 钥匙小碎片 */
+.fl.keyshard{
+  width:16px;height:4px;
+  background:var(--copper);
+  border:1.5px solid var(--ink);
+  border-radius:2px;
+}
+.fl.keyshard::after{
+  content:"";
+  position:absolute;
+  right:-4px;top:-3px;
+  width:6px;height:6px;
+  background:var(--copper);
+  border:1.5px solid var(--ink);
+  border-radius:50%;
+}
+/* 钥匙孔符号 */
+.fl.keyhole{
+  width:14px;height:18px;
+  background:var(--keyhole);
+  border:1.5px solid var(--ink);
+  border-radius:50% 50% 30% 30%;
+  position:relative;
+  clip-path:polygon(50% 0%, 90% 30%, 80% 100%, 20% 100%, 10% 30%);
+}
+/* 星芒 */
+.fl.star{
+  width:16px;height:16px;
+  color:var(--light);
+  font-size:16px;
+  line-height:16px;
+  text-align:center;
+  text-shadow:0 0 8px var(--glow);
+}
+.fl.star::before{ content:"✦"; }
+
+.fl.f1{ left:6%; bottom:-40px; animation-duration:24s; }
+.fl.f2{ left:22%; bottom:-55px; animation-duration:30s; animation-delay:3s; }
+.fl.f3{ left:78%; bottom:-45px; animation-duration:26s; animation-delay:1.5s; }
+.fl.f4{ left:90%; bottom:-30px; animation-duration:28s; animation-delay:6s; }
+.fl.f5{ left:52%; bottom:-70px; animation-duration:22s; animation-delay:4.5s; }
+.fl.f6{ left:38%; bottom:-50px; animation-duration:32s; animation-delay:9s; }
+.fl.f7{ left:64%; bottom:-60px; animation-duration:20s; animation-delay:7.5s; }
+
+@keyframes flDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.85; }
+  50%{ transform:translateY(-50vh) rotate(180deg); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) rotate(360deg); opacity:0; }
+}
+
+.hero,.body-wrap{position:relative;z-index:2;}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    radial-gradient(ellipse at 50% 45%, #243654 0%, #1A2744 45%, #0A1220 100%);
+  overflow:hidden;
+  color:var(--light);
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--copper) 0 22px,
+    transparent 22px 24px,
+    var(--keyhole) 24px 46px,
+    transparent 46px 48px,
+    var(--lock) 48px 70px,
+    transparent 70px 72px,
+    var(--light) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+
+/* HERO 大钥匙孔光晕（背景主视觉） */
+.hero-keyhole{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:520px;height:520px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.85;
+}
+.hero-keyhole svg{ width:100%; height:100%; }
+.keyhole-shape{
+  animation:keyholePulse 4s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes keyholePulse{
+  0%,100%{ opacity:.7; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.04); }
+}
+.keyhole-ring{
+  fill:none;
+  stroke:var(--keyhole);
+  stroke-width:1.5;
+  stroke-dasharray:4 8;
+  transform-origin:260px 180px;
+  animation:keyholeRingSpin 30s linear infinite;
+}
+@keyframes keyholeRingSpin{
+  to{ transform:rotate(360deg); }
+}
+
+/* HERO 外围散落小光点 */
+.hero-sparks{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
+.h-spark{
+  position:absolute;
+  width:5px;height:5px;
+  border-radius:50%;
+  background:var(--light);
+  box-shadow:0 0 10px var(--glow);
+  animation:heroSparkFloat 6s ease-in-out infinite;
+}
+.h-spark.hs1{ top:18%; left:16%; animation-delay:0s; }
+.h-spark.hs2{ top:30%; right:14%; animation-delay:.8s; }
+.h-spark.hs3{ bottom:25%; left:10%; animation-delay:1.6s; }
+.h-spark.hs4{ top:12%; right:28%; animation-delay:2.4s; }
+.h-spark.hs5{ bottom:18%; right:20%; animation-delay:3.2s; }
+.h-spark.hs6{ top:55%; left:8%; animation-delay:4s; }
+@keyframes heroSparkFloat{
+  0%,100%{ opacity:0; transform:translateY(0) scale(.5); }
+  50%{ opacity:1; transform:translateY(-16px) scale(1.2); }
+}
+
+/* HERO 侧边钥匙图标 */
+.hero-key-deco{
+  position:absolute;
+  right:30px;
+  top:50%;
+  transform:translateY(-50%) rotate(-15deg);
+  width:120px;
+  height:120px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.28;
+  animation:keySideFloat 8s ease-in-out infinite;
+}
+.hero-key-deco svg{ width:100%; height:100%; }
+@keyframes keySideFloat{
+  0%,100%{ transform:translateY(-50%) rotate(-15deg); }
+  50%{ transform:translateY(calc(-50% - 12px)) rotate(-8deg); }
+}
+
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:110px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  color:var(--light);
+  filter:drop-shadow(5px 5px 0 var(--copper)) drop-shadow(0 0 24px rgba(245,192,66,.4));
+  perspective:600px;
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  transform-style:preserve-3d;
+  animation:letterUnlock 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1), color .25s;
+}
+/* 每个字母像门一样从侧向"打开" */
+.word-anim .l1{ animation-delay:.10s; color:var(--copper); }
+.word-anim .l2{ animation-delay:.22s; color:var(--light); }
+.word-anim .l3{ animation-delay:.34s; color:var(--keyhole); }
+.word-anim .l4{ animation-delay:.46s; color:var(--light); }
+.word-anim .l5{ animation-delay:.58s; color:var(--copper); }
+.word-anim .l6{ animation-delay:.70s; color:var(--light); }
+@keyframes letterUnlock{
+  0%{
+    opacity:0;
+    transform:rotateY(-90deg) scale(.6);
+    filter:blur(10px);
+  }
+  50%{
+    opacity:1;
+    filter:blur(0);
+    transform:rotateY(15deg) scale(1.15);
+  }
+  75%{
+    transform:rotateY(-6deg) scale(.98);
+  }
+  100%{
+    opacity:1;
+    transform:rotateY(0) scale(1);
+    color:var(--light);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--keyhole);
+  transform:rotateY(15deg) scale(1.15);
+  filter:drop-shadow(0 0 20px var(--keyhole));
+}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--keyhole);border:3px solid var(--light);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--copper);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--copper);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--copper);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--keyhole);border:2.5px solid var(--light);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--copper);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--copper);color:var(--light);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--light);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--copper);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  transform:rotate(1.2deg);
+  border:2px solid var(--ink);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--light);background:rgba(26,39,68,.85);
+  border:2.5px solid var(--light);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--keyhole);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  transform:rotate(-1deg);
+}
+
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal-scale.visible{opacity:1;transform:scale(1);}
+
+.section{margin:0 0 56px;}
+
+.section-title{
+  display:inline-flex;align-items:center;gap:12px;
+  margin:0 0 22px;
+  padding:8px 22px 8px 12px;
+  background:var(--keyhole-soft);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:18px;font-weight:900;
+  letter-spacing:-.01em;
+  transform:rotate(-.8deg);
+}
+.section:nth-of-type(even) .section-title{
+  background:var(--copper-soft);
+  transform:rotate(.9deg);
+}
+.section:nth-of-type(3n) .section-title{
+  background:var(--lock-soft);
+  transform:rotate(-.6deg);
+}
+.section-title .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex-shrink:0;
+  background:var(--ink);color:var(--paper);
+  border-radius:50%;font-size:14px;font-weight:900;
+}
+
+.root-family{
+  position:relative;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 24px;
+}
+.root-line{
+  font-size:17px;line-height:2.2;margin-bottom:22px;
+  padding:18px 20px;
+  background:var(--keyhole-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+  text-align:center;
+}
+.root-line .affix{
+  background:var(--deep);color:var(--paper);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(-2deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.root-line .stem{
+  background:var(--copper);color:var(--light);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(1.5deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.fam-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:10px;
+}
+.fam-card{
+  background:#fff;border:2.5px solid var(--ink);
+  border-radius:14px;padding:10px 12px;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.fam-card:hover{transform:translate(-2px,-2px) rotate(-1deg);}
+.fam-card .pos{
+  font-size:10px;font-weight:800;
+  background:var(--ink);color:var(--paper);
+  padding:2px 7px;border-radius:999px;
+  display:inline-block;margin-bottom:5px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  letter-spacing:.08em;
+}
+.fam-card .w{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:16px;
+  color:var(--deep);
+  line-height:1.3;
+}
+.fam-card .w .hl{color:var(--copper);}
+.fam-card .p{font-size:11px;color:#8a7d6d;margin:2px 0 4px;font-family:monospace;}
+.fam-card .m{font-size:12.5px;line-height:1.5;}
+
+/* 意象卡 */
+.image-card{
+  background:var(--deep);
+  color:var(--light);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(245,192,66,.15) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 6s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+.image-card .ic-text{position:relative;z-index:1;}
+.image-card .ic-label{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;font-weight:900;letter-spacing:.18em;
+  background:var(--keyhole);color:var(--ink);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--light);
+  margin-bottom:16px;
+  transform:rotate(-2deg);
+}
+.image-card .ic-main{
+  font-size:22px;font-weight:800;line-height:1.6;
+  margin:0 0 14px;
+}
+.image-card .ic-main .hl{
+  background:var(--keyhole);color:var(--ink);
+  padding:1px 10px;
+  border-radius:6px;
+}
+.image-card .ic-sub{
+  font-size:14.5px;opacity:.9;line-height:1.9;margin:0;
+}
+.image-card .ic-svg{
+  position:relative;z-index:1;
+  width:380px;height:300px;
+}
+.image-card .ic-svg svg{width:100%;height:100%;overflow:visible;}
+
+/* ========== enable SVG 动画 —— 钥匙插入 → 转动 → 锁扣弹开 → 光涌出 ========== */
+
+/* 锁体轻微浮动 */
+.en-lock{
+  animation:lockFloat 6s ease-in-out infinite;
+  transform-origin:200px 200px;
+}
+@keyframes lockFloat{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-3px); }
+}
+
+/* 锁扣：在钥匙转动后向上弹开 */
+.en-shackle{
+  transform-origin:200px 130px;
+  animation:shackleSpring 6s cubic-bezier(.4,1.6,.6,1) infinite;
+}
+@keyframes shackleSpring{
+  0%, 35%{ transform:translateY(0) rotate(0); }
+  45%{ transform:translateY(-28px) rotate(-8deg); }
+  55%, 80%{ transform:translateY(-28px) rotate(-8deg); }
+  90%, 100%{ transform:translateY(0) rotate(0); }
+}
+
+/* 钥匙：从左侧滑入 → 转到 90° → 停留 → 复位 */
+.en-key{
+  transform-origin:165px 210px;
+  animation:keyInsertTurn 6s cubic-bezier(.4,.05,.55,.95) infinite;
+}
+@keyframes keyInsertTurn{
+  0%, 5%{ transform:translateX(-110px) rotate(0); opacity:0; }
+  10%{ opacity:1; }
+  20%{ transform:translateX(0) rotate(0); opacity:1; }
+  35%{ transform:translateX(0) rotate(-90deg); opacity:1; }
+  75%{ transform:translateX(0) rotate(-90deg); opacity:1; }
+  85%{ transform:translateX(0) rotate(0); opacity:1; }
+  92%, 100%{ transform:translateX(-110px) rotate(0); opacity:0; }
+}
+
+/* 钥匙转动时的金色光晕（锁孔周围） */
+.en-key-glow{
+  transform-origin:200px 210px;
+  animation:keyGlow 6s ease-out infinite;
+}
+@keyframes keyGlow{
+  0%, 25%{ opacity:0; transform:scale(.6); }
+  40%{ opacity:1; transform:scale(1.1); }
+  60%{ opacity:.8; transform:scale(1.3); }
+  85%, 100%{ opacity:0; transform:scale(.6); }
+}
+
+/* 光爆发（锁扣弹开后，从锁孔炸出光） */
+.en-light-burst{
+  transform-origin:200px 210px;
+  animation:lightBurst 6s ease-out infinite;
+}
+@keyframes lightBurst{
+  0%, 40%{ opacity:0; transform:scale(.3); }
+  50%{ opacity:1; transform:scale(1); }
+  70%{ opacity:.85; transform:scale(1.4); }
+  88%, 100%{ opacity:0; transform:scale(.3); }
+}
+
+/* 放射光线（光爆发时从中心射出） */
+.en-ray{
+  stroke:var(--keyhole);
+  stroke-width:2.5;
+  stroke-linecap:round;
+  opacity:0;
+  transform-origin:200px 210px;
+  animation:rayOut 6s ease-out infinite;
+}
+.en-ray.r2{ animation-delay:.05s; }
+.en-ray.r3{ animation-delay:.1s; }
+.en-ray.r4{ animation-delay:.15s; }
+.en-ray.r5{ animation-delay:.2s; }
+.en-ray.r6{ animation-delay:.25s; }
+@keyframes rayOut{
+  0%, 42%{ opacity:0; stroke-dashoffset:0; }
+  50%{ opacity:1; stroke-dashoffset:0; }
+  70%{ opacity:.85; stroke-dashoffset:-40; }
+  85%, 100%{ opacity:0; stroke-dashoffset:-60; }
+}
+
+/* UNLOCKED 文字浮现 */
+.en-text{
+  animation:unlockTextFade 6s ease-in-out infinite;
+}
+@keyframes unlockTextFade{
+  0%, 50%{ opacity:0; transform:translateY(6px); }
+  65%, 85%{ opacity:1; transform:translateY(0); }
+  95%, 100%{ opacity:0; transform:translateY(-6px); }
+}
+
+/* 从锁孔冒出的光点（持续上升） */
+.en-emit{
+  animation:emitRise 4s ease-out infinite;
+}
+.en-emit.e2{ animation-delay:1s; }
+.en-emit.e3{ animation-delay:2s; }
+.en-emit.e4{ animation-delay:3s; }
+@keyframes emitRise{
+  0%{ opacity:0; transform:translate(0, 0) scale(.5); }
+  20%{ opacity:.9; }
+  100%{ opacity:0; transform:translate(0, -70px) scale(1); }
+}
+
+/* ========== 结束 enable SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+.collo{
+  background:#FFFCF5;border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 20px;
+  display:flex;align-items:center;gap:16px;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  position:relative;
+  overflow:hidden;
+}
+.collo::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:6px;
+  background:var(--copper);
+  transition:width .3s;
+}
+.collo:nth-child(2)::before{background:var(--keyhole);}
+.collo:nth-child(3)::before{background:var(--deep);}
+.collo:nth-child(4)::before{background:var(--lock);}
+.collo:nth-child(5)::before{background:var(--copper);}
+.collo:hover{transform:translate(-4px,-4px);box-shadow:7px 7px 0 var(--ink);}
+.collo:hover::before{width:14px;}
+.collo .pattern{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:14.5px;
+  background:var(--ink);color:var(--paper);
+  padding:6px 14px;border-radius:999px;
+  white-space:nowrap;flex-shrink:0;
+  margin-left:8px;
+}
+.collo .meaning{font-size:14.5px;line-height:1.55;}
+.collo .meaning b{color:var(--copper);font-weight:800;}
+
+.real-exs{display:flex;flex-direction:column;gap:16px;}
+.real-ex{
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:20px 24px;
+  position:relative;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  transform:rotate(.3deg);
+}
+.real-ex:nth-child(even){transform:rotate(-.5deg);}
+.real-ex:hover{transform:translate(-4px,-4px) rotate(0);box-shadow:9px 9px 0 var(--ink);}
+.real-ex::before{
+  content:"";
+  position:absolute;
+  top:-10px;left:-10px;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--copper);
+  border:3px solid var(--ink);
+}
+.real-ex:nth-child(even)::before{background:var(--keyhole);}
+.real-ex:nth-child(3n)::before{background:var(--deep);}
+.real-ex .src{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;
+  background:var(--deep);color:var(--paper);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--ink);
+  margin-bottom:12px;
+}
+.real-ex .en{
+  font-size:16px;line-height:1.8;margin:0 0 10px;
+  font-family:Georgia,serif;
+}
+.real-ex .en .hl{
+  background:var(--keyhole);color:var(--ink);
+  padding:1px 7px;border-radius:6px;
+  font-weight:800;font-style:normal;
+}
+.real-ex .cn{
+  font-size:13.5px;color:#7a6e60;line-height:1.7;
+  padding-left:16px;border-left:3px solid var(--copper);
+}
+
+.pitfall{
+  padding:28px 30px;
+  background:var(--lock-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  position:relative;overflow:hidden;
+  transform:rotate(-.5deg);
+}
+.pitfall::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:12px;
+  background-image:
+    radial-gradient(circle, var(--lock) 3px, transparent 3.5px);
+  background-size:20px 12px;
+  border-bottom:3px solid var(--ink);
+}
+.pitfall-item{
+  margin-bottom:14px;font-size:15px;line-height:1.9;
+  padding:14px 18px;
+  background:#FFFCF5;
+  border-left:6px solid var(--lock);
+  border-radius:0 var(--radius-md) var(--radius-md) 0;
+  transition:transform .3s;
+}
+.pitfall-item:hover{transform:translateX(8px);}
+.pitfall-item:last-child{margin-bottom:0;}
+.pitfall-item .wrong{
+  color:var(--copper);text-decoration:line-through;
+  text-decoration-thickness:2px;font-weight:700;
+}
+.pitfall-item .right{
+  color:var(--ink);font-weight:800;
+  background:var(--keyhole-soft);padding:1px 8px;border-radius:6px;
+}
+.pitfall-item .tip{
+  display:inline-block;
+  background:var(--keyhole);color:var(--ink);
+  padding:1px 10px;border-radius:999px;
+  font-size:12px;font-weight:800;margin-right:8px;
+  border:2px solid var(--ink);
+}
+
+/* 辨析表 drop-shadow */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+.compare-table thead{display:none;}
+.compare-table tbody tr{
+  background:transparent;
+  filter:drop-shadow(4px 4px 0 var(--ink));
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .3s cubic-bezier(.34,1.56,.64,1);
+  opacity:0;transform:translateX(-20px);
+}
+.compare-table tbody tr.row-visible{opacity:1;transform:translateX(0);}
+.compare-table tbody tr:hover{transform:translate(-4px,-4px);filter:drop-shadow(7px 7px 0 var(--ink));}
+.compare-table td{
+  border-top:3px solid var(--ink);
+  border-bottom:3px solid var(--ink);
+  padding:14px 18px;vertical-align:middle;text-align:left;
+  background:#FFFCF5;
+}
+.compare-table td:first-child{
+  border-left:3px solid var(--ink);
+  border-top-left-radius:18px;
+  border-bottom-left-radius:18px;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;white-space:nowrap;width:150px;
+  background:var(--keyhole-soft);
+  color:var(--ink);
+  font-size:16px;
+}
+.compare-table td:nth-child(2){width:180px;}
+.compare-table td:last-child{
+  border-right:3px solid var(--ink);
+  border-top-right-radius:18px;
+  border-bottom-right-radius:18px;
+}
+.compare-table .chant{
+  font-size:13px;color:var(--copper);font-weight:700;
+  font-style:italic;line-height:1.5;
+}
+.compare-table tr.highlight td{
+  background:var(--keyhole-soft);
+}
+.compare-table tr.highlight td:first-child{
+  background:var(--keyhole);
+  position:relative;
+}
+.compare-table tr.highlight td:first-child::after{
+  content:"★";
+  color:var(--copper);margin-left:6px;
+}
+
+.self-test .hint{
+  font-size:14px;color:var(--ink);
+  margin:0 0 22px;padding:14px 20px;
+  background:var(--keyhole-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+}
+.fill-item{
+  margin-bottom:16px;padding:18px 24px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+}
+.fill-item:hover{transform:translate(-3px,-3px) rotate(-.3deg);box-shadow:6px 6px 0 var(--ink);}
+.fill-sentence{font-size:16.5px;line-height:1.95;margin:0 0 10px;}
+.first-letter{
+  display:inline-block;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:900;color:var(--copper);
+  font-size:19px;
+  padding-right:2px;
+}
+.blank{
+  display:inline-block;min-width:70px;
+  border-bottom:3px solid var(--ink);
+  text-align:center;font-weight:800;
+  color:transparent;cursor:pointer;
+  transition:color .3s,border-color .3s,background .3s;
+  padding:0 10px;user-select:none;
+  font-family:Georgia,serif;
+}
+.blank:hover{background:var(--keyhole);border-color:var(--copper);}
+.blank.revealed{
+  color:var(--deep);border-color:var(--copper);
+  background:var(--keyhole-soft);
+  border-radius:8px 8px 0 0;
+  animation:answerPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.fill-hint{font-size:13.5px;color:var(--ink);opacity:.75;margin:0;}
+.fill-hint b{color:var(--copper);font-weight:800;}
+
+.write-practice{
+  background:var(--copper-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 28px;
+  transform:rotate(.4deg);
+}
+.write-practice .wp-hint{
+  font-size:14px;color:var(--ink);opacity:.85;
+  margin:0 0 16px;
+}
+.write-practice textarea{
+  width:100%;min-height:110px;
+  padding:16px 18px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:16px;line-height:1.7;
+  color:var(--ink);
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:18px;
+  box-shadow:inset 3px 3px 0 rgba(10,15,26,.08);
+  resize:vertical;
+  outline:none;
+  transition:box-shadow .2s;
+}
+.write-practice textarea:focus{
+  box-shadow:inset 3px 3px 0 rgba(10,15,26,.08), 0 0 0 5px var(--keyhole);
+}
+.wp-actions{
+  margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+}
+.wp-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;font-weight:800;letter-spacing:.04em;
+  padding:11px 22px;
+  background:var(--ink);color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
+}
+.wp-btn:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--copper);}
+.wp-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);}
+.wp-btn.ghost{background:transparent;color:var(--ink);}
+.wp-saved{
+  font-size:13px;color:var(--copper);font-weight:800;
+  opacity:0;transition:opacity .4s;
+}
+.wp-saved.show{opacity:1;}
+
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.review-day{
+  text-align:center;padding:20px 10px 18px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:50% 50% 45% 55% / 48% 50% 50% 52%;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background .3s;
+  cursor:pointer;user-select:none;
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(20px) scale(.95);
+}
+.review-day.day-visible{
+  opacity:1;transform:translateY(0) scale(1);
+  transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1);
+}
+.review-day:hover{
+  transform:translate(-4px,-4px) rotate(-3deg);
+  box-shadow:7px 7px 0 var(--ink);
+}
+.review-day.done{background:var(--deep);color:var(--light);}
+.review-day.done .day,
+.review-day.done .task{color:var(--light);}
+.review-day.done::after{
+  content:"🔓";
+  position:absolute;top:4px;right:10px;
+  font-size:18px;
+}
+.review-day .day{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-size:28px;font-weight:900;margin-bottom:4px;
+  position:relative;z-index:1;
+}
+.review-day:nth-child(1) .day{color:var(--copper);}
+.review-day:nth-child(2) .day{color:var(--keyhole);}
+.review-day:nth-child(3) .day{color:var(--lock);}
+.review-day:nth-child(4) .day{color:var(--deep);}
+.review-day .task{
+  font-size:12px;color:var(--ink);opacity:.75;
+  line-height:1.5;position:relative;z-index:1;
+}
+.review-tip{
+  margin-top:16px;font-size:13px;color:var(--ink);opacity:.6;
+  text-align:center;font-style:italic;
+}
+
+.progress-bar{
+  position:fixed;top:0;left:0;height:5px;width:0;
+  background:repeating-linear-gradient(90deg,
+    var(--copper) 0 20px,
+    var(--keyhole) 20px 40px,
+    var(--lock) 40px 60px,
+    var(--deep) 60px 80px);
+  z-index:100;transition:width .1s linear;
+  border-bottom:2px solid var(--ink);
+}
+
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:56px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .page{border-radius:22px;}
+  .image-card{grid-template-columns:1fr;padding:26px 22px;}
+  .image-card .ic-svg{width:290px;height:230px;margin:0 auto;}
+  .section-title{font-size:15px;padding:6px 16px 6px 10px;}
+  .hero-keyhole{ width:380px; height:380px; }
+  .hero-key-deco{ display:none; }
+}
+
+@media (min-width:1100px){
+  body{padding:56px 32px 120px;}
+  .page{
+    max-width:1200px;
+    border-radius:36px;
+    box-shadow:
+      0 0 0 3px var(--ink),
+      14px 14px 0 var(--copper),
+      -6px 6px 0 var(--keyhole),
+      0 24px 70px rgba(0,0,0,.85);
+  }
+  .hero{padding:100px 80px 80px;}
+  .hero-band{height:24px;}
+  .word-anim{font-size:150px;}
+  .speak-btn{width:56px;height:56px;font-size:26px;}
+  .ipa-anim{font-size:18px;padding:6px 22px;}
+  .pos-anim{font-size:13px;padding:6px 20px;}
+  .spell-hint{font-size:13px;padding:10px 24px;}
+  .body-wrap{padding:76px 80px 0;}
+  .section{margin-bottom:68px;}
+  .section-title{font-size:22px;gap:14px;margin-bottom:26px;padding:10px 26px 10px 14px;}
+  .section-title .num{width:38px;height:38px;font-size:16px;}
+  .fam-grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fam-card{padding:14px 16px;}
+  .fam-card .w{font-size:18px;}
+  .fam-card .m{font-size:13.5px;}
+  .image-card{
+    grid-template-columns:1.3fr 1fr;
+    gap:40px;
+    padding:48px 44px;
+  }
+  .image-card .ic-main{font-size:27px;line-height:1.5;}
+  .image-card .ic-sub{font-size:16px;}
+  .image-card .ic-svg{width:500px;height:400px;}
+  .collocations{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .collo:nth-child(5){grid-column:1 / -1;}
+  .collo{padding:20px 24px;}
+  .collo .pattern{font-size:15.5px;padding:7px 16px;}
+  .collo .meaning{font-size:15px;}
+  .real-exs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .real-ex{padding:24px 28px;}
+  .real-ex .en{font-size:17px;}
+  .real-ex .cn{font-size:14.5px;}
+  .pitfall{padding:36px 40px;}
+  .pitfall-item{font-size:15.5px;padding:18px 22px;}
+  .compare-table{font-size:16px;border-spacing:0 14px;}
+  .compare-table td{padding:18px 24px;}
+  .compare-table td:first-child{width:170px;font-size:18px;}
+  .compare-table td:nth-child(2){width:auto;}
+  .compare-table .chant{font-size:14.5px;}
+  .self-test .fill-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .self-test .fill-item:nth-child(5){grid-column:1 / -1;margin-bottom:0;}
+  .fill-item{padding:22px 26px;margin-bottom:0;}
+  .fill-sentence{font-size:17px;}
+  .write-practice{
+    max-width:900px;
+    margin:0 auto;
+    padding:36px 40px;
+  }
+  .write-practice textarea{font-size:17px;padding:18px 22px;}
+  .review-grid{gap:24px;}
+  .review-day{padding:28px 14px 24px;}
+  .review-day .day{font-size:34px;}
+  .review-day .task{font-size:13.5px;}
+}
+
+@media (min-width:1500px){
+  .page{max-width:1400px;}
+  .hero{padding:120px 100px 96px;}
+  .word-anim{font-size:176px;}
+  .body-wrap{padding:92px 100px 0;}
+  .image-card{grid-template-columns:1.5fr 1fr;padding:56px 52px;}
+  .image-card .ic-main{font-size:30px;}
+  .image-card .ic-svg{width:520px;height:420px;}
+  .real-ex .en{font-size:18px;}
+}
+
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  body::before,body::after{display:none;}
+  .page{box-shadow:none;max-width:100%;}
+  .blank{color:var(--copper)!important;}
+  .fill-item,.compare-table,.pitfall,.review-day{break-inside:avoid;}
+  .hero-keyhole,.hero-sparks,.hero-key-deco,.page-floats,.progress-bar{display:none;}
+  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
+  .compare-table tbody tr,.review-day{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-floats" aria-hidden="true">
+    <div class="fl spark gold f1"></div>
+    <div class="fl keyshard f2"></div>
+    <div class="fl keyhole f3"></div>
+    <div class="fl star f4"></div>
+    <div class="fl spark copper f5"></div>
+    <div class="fl keyshard f6"></div>
+    <div class="fl star f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-keyhole" aria-hidden="true">
+      <svg viewBox="0 0 520 520">
+        <defs>
+          <radialGradient id="keyholeGlow" cx="50%" cy="35%" r="55%">
+            <stop offset="0%" stop-color="#FFE8A8" stop-opacity=".85"/>
+            <stop offset="40%" stop-color="#F5C042" stop-opacity=".4"/>
+            <stop offset="100%" stop-color="#F5C042" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- 钥匙孔形状（光晕） -->
+        <g class="keyhole-shape">
+          <circle cx="260" cy="180" r="72" fill="url(#keyholeGlow)"/>
+          <polygon points="228,220 292,220 322,400 198,400" fill="url(#keyholeGlow)"/>
+        </g>
+        <!-- 钥匙孔轮廓（虚线缓慢旋转） -->
+        <g class="keyhole-ring">
+          <circle cx="260" cy="180" r="90" fill="none" stroke="var(--keyhole)" stroke-width="1.5" stroke-dasharray="4 8" opacity=".6"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-sparks" aria-hidden="true">
+      <span class="h-spark hs1"></span>
+      <span class="h-spark hs2"></span>
+      <span class="h-spark hs3"></span>
+      <span class="h-spark hs4"></span>
+      <span class="h-spark hs5"></span>
+      <span class="h-spark hs6"></span>
+    </div>
+
+    <div class="hero-key-deco" aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <circle cx="30" cy="60" r="22" fill="none" stroke="var(--copper)" stroke-width="6"/>
+        <circle cx="30" cy="60" r="10" fill="none" stroke="var(--copper)" stroke-width="4"/>
+        <line x1="52" y1="60" x2="100" y2="60" stroke="var(--copper)" stroke-width="6"/>
+        <rect x="85" y="60" width="6" height="14" fill="var(--copper)"/>
+        <rect x="95" y="60" width="6" height="10" fill="var(--copper)"/>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="enable">
+          <span class="letter l1">e</span><span class="letter l2">n</span><span class="letter l3">a</span><span class="letter l4">b</span><span class="letter l5">l</span><span class="letter l6">e</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 enable">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ɪˈneɪbl/ &nbsp;·&nbsp; 美 /ɪˈneɪbl/</div>
+      <div class="pos-anim">v.</div>
+      <div class="spell-hint">en · able &nbsp; 使能够 · 使成为可能 · 启用</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词源 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">en-</span>（使）+ <span class="stem">able</span>（能够的）
+          &nbsp;→&nbsp; "使……能够" → <b>使能够 · 使成为可能 · 启用</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">形容词</div><div class="w"><span class="hl">able</span></div><div class="p">/ˈeɪbl/</div><div class="m">能够的，有能力的</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">ability</div><div class="p">/əˈbɪləti/</div><div class="m">能力，才能</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">disable</div><div class="p">/dɪsˈeɪbl/</div><div class="m">使失去能力，禁用</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">disabled</div><div class="p">/dɪsˈeɪbld/</div><div class="m">残疾的；禁用的</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">enable</div><div class="p">/ɪˈneɪbl/</div><div class="m">使能够（本词）</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">enabled</div><div class="p">/ɪˈneɪbld/</div><div class="m">启用的，使能的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">enable</span> = 一把钥匙<strong>插进锁孔、转动、锁扣弹开</strong>——门打开了，光涌出来。
+          </p>
+          <p class="ic-sub">
+            技术 enable 新功能 → 使新功能成为可能；<br>
+            资金 enable 项目启动 → 让项目"可以开始"；<br>
+            好的政策 enable 发展 → 给发展创造条件。<br>
+            核心：<b>"把原本不可能的事变可能"</b>——不是锦上添花，而是"打开一扇原本打不开的门"。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 380 300">
+            <defs>
+              <radialGradient id="enBurstGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFE8A8" stop-opacity="1"/>
+                <stop offset="40%" stop-color="#F5C042" stop-opacity=".6"/>
+                <stop offset="100%" stop-color="#F5C042" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="enLockGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2A3A5E"/>
+                <stop offset="100%" stop-color="#1A2744"/>
+              </linearGradient>
+            </defs>
+
+            <!-- 背景光晕（从锁孔中心发出，一直存在） -->
+            <circle cx="200" cy="210" r="110" fill="url(#enBurstGrad)" opacity=".18"/>
+
+            <!-- 主锁体 -->
+            <g class="en-lock">
+              <!-- 锁体阴影 -->
+              <rect x="150" y="175" width="100" height="80" rx="10"
+                    fill="rgba(10,15,26,.35)" transform="translate(4 4)"/>
+              <!-- 锁体 -->
+              <rect x="150" y="175" width="100" height="80" rx="10"
+                    fill="url(#enLockGrad)" stroke="var(--ink)" stroke-width="3"/>
+              <!-- 锁体高光 -->
+              <rect x="160" y="185" width="40" height="6" rx="3"
+                    fill="var(--light)" opacity=".15"/>
+
+              <!-- 锁扣（U 型，会被弹开） -->
+              <path class="en-shackle"
+                    d="M 170 175 L 170 130 Q 170 105 200 105 Q 230 105 230 130 L 230 175"
+                    fill="none" stroke="var(--lock)" stroke-width="10" stroke-linecap="round"/>
+              <!-- 锁扣高光 -->
+              <path d="M 170 130 Q 170 105 200 105 Q 230 105 230 130"
+                    fill="none" stroke="var(--light)" stroke-width="2" opacity=".3" stroke-linecap="round"/>
+
+              <!-- 锁孔（金） -->
+              <circle cx="200" cy="205" r="12" fill="var(--keyhole)" stroke="var(--ink)" stroke-width="2"/>
+              <path d="M 194 210 L 206 210 L 208 232 L 192 232 Z"
+                    fill="var(--keyhole)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+
+              <!-- 钥匙转动时光晕 -->
+              <circle class="en-key-glow" cx="200" cy="210" r="30"
+                      fill="none" stroke="var(--keyhole)" stroke-width="3" opacity="0"/>
+            </g>
+
+            <!-- 光爆发（从锁孔炸出） -->
+            <g class="en-light-burst">
+              <circle cx="200" cy="210" r="70" fill="url(#enBurstGrad)"/>
+              <circle cx="200" cy="210" r="20" fill="var(--light)"/>
+            </g>
+
+            <!-- 放射光线（六条从锁孔射出） -->
+            <line class="en-ray" x1="200" y1="210" x2="200" y2="130" stroke-dasharray="10 6"/>
+            <line class="en-ray r2" x1="200" y1="210" x2="270" y2="155" stroke-dasharray="10 6"/>
+            <line class="en-ray r3" x1="200" y1="210" x2="280" y2="230" stroke-dasharray="10 6"/>
+            <line class="en-ray r4" x1="200" y1="210" x2="120" y2="230" stroke-dasharray="10 6"/>
+            <line class="en-ray r5" x1="200" y1="210" x2="130" y2="155" stroke-dasharray="10 6"/>
+            <line class="en-ray r6" x1="200" y1="210" x2="200" y2="270" stroke-dasharray="10 6"/>
+
+            <!-- 钥匙（滑入 → 转动 → 退出） -->
+            <g class="en-key">
+              <!-- 钥匙柄（环） -->
+              <circle cx="60" cy="210" r="16" fill="var(--copper)" stroke="var(--ink)" stroke-width="2.5"/>
+              <circle cx="60" cy="210" r="7" fill="var(--deep)" stroke="var(--ink)" stroke-width="1.5"/>
+              <!-- 钥匙杆 -->
+              <rect x="72" y="206" width="90" height="8" fill="var(--copper)" stroke="var(--ink)" stroke-width="2"/>
+              <!-- 钥匙齿 -->
+              <rect x="142" y="212" width="8" height="10" fill="var(--copper)" stroke="var(--ink)" stroke-width="1.5"/>
+              <rect x="152" y="212" width="6" height="8" fill="var(--copper)" stroke="var(--ink)" stroke-width="1.5"/>
+            </g>
+
+            <!-- 从锁孔冒出的上升光点 -->
+            <circle class="en-emit" cx="200" cy="210" r="3" fill="var(--keyhole)"/>
+            <circle class="en-emit e2" cx="200" cy="210" r="2.5" fill="var(--light)"/>
+            <circle class="en-emit e3" cx="200" cy="210" r="2" fill="var(--copper)"/>
+            <circle class="en-emit e4" cx="200" cy="210" r="2.5" fill="var(--keyhole)"/>
+
+            <!-- UNLOCKED 文字（弹开后浮现） -->
+            <g class="en-text">
+              <text x="200" y="290" text-anchor="middle"
+                    font-family="Helvetica" font-size="12" font-weight="900"
+                    fill="var(--keyhole)" letter-spacing="3">UNLOCKED</text>
+              <line x1="150" y1="296" x2="250" y2="296"
+                    stroke="var(--keyhole)" stroke-width="1.5" opacity=".7"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">enable sb to do sth</div><div class="meaning"><b>使某人能够</b>做某事（最常用）</div></div>
+        <div class="collo"><div class="pattern">enable sth</div><div class="meaning"><b>使某事成为可能</b> / 启用某功能</div></div>
+        <div class="collo"><div class="pattern">be enabled by</div><div class="meaning"><b>依靠</b>……才能实现</div></div>
+        <div class="collo"><div class="pattern">enable access to</div><div class="meaning"><b>使能够访问/接触</b></div></div>
+        <div class="collo"><div class="pattern">enabling technology</div><div class="meaning"><b>使能技术</b>（支撑其他技术的基础）</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 阅读</div>
+          <p class="en">The Internet <em class="hl">enables</em> people to communicate instantly across the globe.</p>
+          <p class="cn">互联网使人们能够在全球范围内即时交流。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 写作</div>
+          <p class="en">Digital technology <em class="hl">enables</em> students to access educational resources anywhere.</p>
+          <p class="cn">数字技术使学生能够在任何地方获取教育资源。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">The new policy <em class="hl">enables</em> small businesses to compete more fairly.</p>
+          <p class="cn">新政策使小企业能够更公平地竞争。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">This funding will <em class="hl">enable</em> us to complete the research on time.</p>
+          <p class="cn">这笔资金将使我们能够按时完成研究。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          <b>enable sb to do sth</b>（使某人能做某事）—— 必带 <b>to do</b>，不带不定式是错的<br>
+          <span class="wrong">enable him do it</span> → <span class="right">enable him to do it</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>enable</b>（使能/使可能）vs <b>disable</b>（使不能/禁用）<br>
+          二者<strong>意思完全相反</strong>，但拼写只差一个字母！<br>
+          <span class="wrong">反义词写成 enable</span> → <span class="right">disable（禁用）</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          <b>enable</b> e-n-a-b-l-e（不是 <b>ennable</b> / <b>enabel</b>）
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>enable</td>
+            <td>使能够 / 使成为可能</td>
+            <td class="chant">开门让事情能做</td>
+          </tr>
+          <tr>
+            <td>disable</td>
+            <td>使不能 / 禁用（enable 反义）</td>
+            <td class="chant">和 enable 正相反</td>
+          </tr>
+          <tr>
+            <td>allow</td>
+            <td>允许（给许可）</td>
+            <td class="chant">开口允许用 allow</td>
+          </tr>
+          <tr>
+            <td>permit</td>
+            <td>许可（更正式）</td>
+            <td class="chant">正式许可 permit</td>
+          </tr>
+          <tr>
+            <td>make possible</td>
+            <td>使成为可能（短语）</td>
+            <td class="chant">短语对应 enable</td>
+          </tr>
+          <tr>
+            <td>facilitate</td>
+            <td>促进 / 使便利</td>
+            <td class="chant">减少麻烦 facilitate</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The scholarship <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">nabled</span> her to study abroad.</p>
+          <p class="fill-hint">提示：<b>enable sb to do</b>，使某人能做某事（过去式）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">This app <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">nables</span> users to track their daily exercise.</p>
+          <p class="fill-hint">提示：<b>enable users to do</b>，使用户能（第三人称单数）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The tool can be <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">nabled</span> or disabled in the settings menu.</p>
+          <p class="fill-hint">⚠️ 陷阱：这里要和 disabled 对称，填 <b>enabled</b>（被启用）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">New technologies have <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">nabled</span> faster communication worldwide.</p>
+          <p class="fill-hint">提示：<b>have enabled</b>，已经使……成为可能（现在完成时）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">This grant will <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">nable</span> the team to buy new equipment.</p>
+          <p class="fill-hint">提示：<b>enable sb to do sth</b>，使某人能做某事</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>enable</b> 造一句自己的句子。刻意用上今天学的一个搭配（enable sb to do / enable sth / be enabled by）。</p>
+        <textarea id="mySentence" placeholder="例：Regular practice enables students to speak English more confidently."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script>
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+  progressBar.style.width = (scrolled * 100) + '%';
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale')
+  .forEach(el => revealObserver.observe(el));
+
+const tableObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const rows = entry.target.querySelectorAll('tbody tr');
+      rows.forEach((row, i) => setTimeout(() => row.classList.add('row-visible'), i * 120));
+      tableObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const table = document.querySelector('.compare-table');
+if(table) tableObserver.observe(table);
+
+const reviewDays = document.querySelectorAll('.review-day');
+const reviewObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      reviewDays.forEach((day, i) => setTimeout(() => day.classList.add('day-visible'), i * 130));
+      reviewObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const reviewGrid = document.querySelector('.review-grid');
+if(reviewGrid) reviewObserver.observe(reviewGrid);
+
+document.querySelectorAll('.blank').forEach(b => {
+  b.addEventListener('click', function(){
+    this.style.transform = 'scale(1.15)';
+    setTimeout(() => { this.style.transform = ''; }, 180);
+  });
+});
+
+const speakBtn = document.getElementById('speakBtn');
+speakBtn.addEventListener('click', () => {
+  if(!('speechSynthesis' in window)) { alert('当前浏览器不支持朗读'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance('enable');
+  u.lang = 'en-US'; u.rate = 0.85;
+  u.onstart = () => speakBtn.classList.add('speaking');
+  u.onend = () => speakBtn.classList.remove('speaking');
+  window.speechSynthesis.speak(u);
+});
+document.getElementById('ipaBtn').addEventListener('click', () => speakBtn.click());
+
+const STORAGE_KEY = 'enable_sentence';
+const mySentence = document.getElementById('mySentence');
+const savedMsg = document.getElementById('savedMsg');
+const saved = localStorage.getItem(STORAGE_KEY);
+if(saved) mySentence.value = saved;
+document.getElementById('saveBtn').addEventListener('click', () => {
+  localStorage.setItem(STORAGE_KEY, mySentence.value);
+  savedMsg.classList.add('show');
+  setTimeout(() => savedMsg.classList.remove('show'), 1800);
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  mySentence.value = '';
+  localStorage.removeItem(STORAGE_KEY);
+});
+
+const REVIEW_KEY = 'enable_review';
+const reviewState = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
+reviewDays.forEach(day => {
+  const key = day.dataset.day;
+  if(reviewState[key]) day.classList.add('done');
+  day.addEventListener('click', () => {
+    day.classList.toggle('done');
+    reviewState[key] = day.classList.contains('done');
+    localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewState));
+  });
+});
+</script>
+
+</body>
+</html>
