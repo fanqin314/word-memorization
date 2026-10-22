@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>comply · 遵守 · 服从 · 顺从</title>
+
+<style>
+/* ==========================================================================
+   公共样式（对应 card-base.css）
+   ========================================================================== */
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:Georgia,"Songti SC","Times New Roman",serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+.progress-bar{
+  position:fixed;top:0;left:0;height:5px;width:0;
+  background:var(--cb-accent);
+  border-right:3px solid var(--ink);
+  z-index:999;
+  transition:width .1s linear;
+}
+
+.page{
+  position:relative;
+  max-width:960px;
+  margin:0 auto;
+  padding:0 0 70px;
+  z-index:1;
+}
+.body-wrap{padding:0 44px;}
+
+.section{margin:64px 0;}
+.section-title{
+  display:flex;align-items:center;gap:12px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:21px;font-weight:900;
+  color:var(--ink);
+  margin-bottom:24px;
+  letter-spacing:.01em;
+}
+.section-title .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;
+  background:var(--cb-accent);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:10px;
+  box-shadow:4px 4px 0 var(--ink);
+  font-size:15px;
+  transform:rotate(-3deg);
+}
+
+.root-family{display:block;}
+.root-line{
+  font-size:16px;
+  line-height:1.9;
+  background:var(--paper-2);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 20px;
+  margin-bottom:22px;
+}
+.affix{
+  display:inline-block;
+  background:var(--cb-3);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:7px;
+  padding:0 8px;
+  font-weight:800;
+  font-family:Georgia,serif;
+}
+.stem{
+  display:inline-block;
+  background:var(--cb-accent);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:7px;
+  padding:0 8px;
+  font-weight:800;
+  font-family:Georgia,serif;
+}
+.fam-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.fam-card{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:16px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:13px 14px 15px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  transform:rotate(.6deg);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.fam-card:nth-child(2n){transform:rotate(-.7deg);}
+.fam-card:nth-child(3n){transform:rotate(.3deg);}
+.fam-card:hover{
+  transform:translate(-2px,-2px) rotate(0);
+  box-shadow:6px 6px 0 var(--ink);
+}
+.fam-card .pos{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--cb-accent);
+}
+.fam-card .w{
+  font-family:Georgia,serif;
+  font-size:16px;
+  font-weight:800;
+  color:var(--ink);
+  word-break:break-word;
+}
+.fam-card .p{
+  font-family:Georgia,serif;
+  font-size:11.5px;
+  color:var(--deep);
+  opacity:.7;
+  word-break:break-word;
+}
+.fam-card .m{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:12.5px;
+  line-height:1.55;
+  color:var(--deep);
+}
+
+.image-card{
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  gap:24px;
+  align-items:center;
+  background:var(--paper-2);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px;
+  transform:rotate(.4deg);
+}
+.ic-text{display:block;}
+.ic-label{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--paper);
+  background:var(--deep);
+  border:2px solid var(--ink);
+  border-radius:999px;
+  padding:3px 12px;
+  margin-bottom:12px;
+}
+.ic-main{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:17px;
+  line-height:1.85;
+  color:var(--ink);
+  margin-bottom:10px;
+}
+.hl{
+  display:inline-block;
+  background:var(--cb-accent);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:6px;
+  padding:0 7px;
+  font-weight:800;
+  transform:rotate(-1.5deg);
+}
+.ic-sub{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14px;
+  line-height:1.8;
+  color:var(--deep);
+  opacity:.9;
+}
+.ic-svg{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:8px;
+  transform:rotate(1deg);
+}
+.ic-svg svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.collocations{display:flex;flex-direction:column;gap:13px;}
+.collo{
+  display:flex;
+  gap:16px;
+  align-items:baseline;
+  flex-wrap:wrap;
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:14px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:13px 18px;
+  transition:transform .15s ease;
+}
+.collo:nth-child(odd){transform:rotate(-.3deg);}
+.collo:nth-child(even){transform:rotate(.3deg);}
+.collo:hover{transform:translate(-2px,-2px) rotate(0);}
+.pattern{
+  font-family:Georgia,serif;
+  font-size:15.5px;
+  font-weight:800;
+  color:var(--cb-accent);
+}
+.meaning{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14px;
+  color:var(--deep);
+}
+
+.real-exs{display:flex;flex-direction:column;gap:14px;}
+.real-ex{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-left-width:11px;
+  border-radius:14px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:14px 18px;
+}
+.real-ex .src{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;
+  font-weight:900;
+  letter-spacing:.08em;
+  background:var(--cb-3);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:7px;
+  padding:2px 9px;
+  margin-bottom:8px;
+}
+.real-ex .en{
+  font-family:Georgia,serif;
+  font-size:15px;
+  line-height:1.7;
+  color:var(--ink);
+  margin-bottom:4px;
+}
+.real-ex .cn{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:13px;
+  line-height:1.65;
+  color:var(--deep);
+  opacity:.85;
+}
+.real-ex .hl{font-style:normal;}
+
+.pitfall{display:flex;flex-direction:column;gap:14px;}
+.pitfall-item{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:16px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:14px 18px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14.5px;
+  line-height:1.85;
+}
+.pitfall-item .tip{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  background:var(--cb-2);
+  color:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:7px;
+  padding:2px 9px;
+  margin-right:8px;
+  margin-bottom:6px;
+}
+.wrong{
+  font-family:Georgia,serif;
+  font-weight:800;
+  color:var(--cb-accent);
+  text-decoration:line-through;
+  text-decoration-thickness:2px;
+}
+.right{
+  font-family:Georgia,serif;
+  font-weight:800;
+  color:var(--cb-3);
+}
+
+.compare-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  box-shadow:var(--shadow-hard-sm);
+  font-size:14px;
+}
+.compare-table tr.highlight{background:var(--cb-accent-soft);}
+.compare-table td{
+  padding:12px 14px;
+  border-top:2.5px solid var(--ink);
+  font-family:Georgia,"Songti SC",serif;
+  color:var(--deep);
+  line-height:1.6;
+  vertical-align:top;
+}
+.compare-table tr:first-child td{border-top:none;}
+.compare-table td:first-child{
+  font-family:Georgia,serif;
+  font-weight:800;
+  font-size:15px;
+  color:var(--cb-accent);
+  white-space:nowrap;
+}
+.compare-table td.chant{
+  font-style:italic;
+  color:var(--ink);
+}
+
+.hint{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:13.5px;
+  color:var(--deep);
+  opacity:.85;
+  margin-bottom:16px;
+  line-height:1.7;
+}
+.hint b{color:var(--cb-accent);}
+.fill-list{display:flex;flex-direction:column;gap:13px;}
+.fill-item{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:14px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:14px 18px;
+}
+.fill-sentence{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:15.5px;
+  line-height:2;
+  color:var(--ink);
+}
+.first-letter{
+  color:var(--cb-accent);
+  font-weight:900;
+  font-family:Georgia,serif;
+}
+.blank{
+  border-bottom:3px solid var(--ink);
+  color:transparent;
+  cursor:pointer;
+  padding:0 3px;
+  user-select:none;
+  transition:color .22s ease, background .22s ease;
+  border-radius:3px 3px 0 0;
+  font-family:Georgia,serif;
+  font-weight:700;
+}
+.blank.revealed{
+  color:var(--ink);
+  background:var(--cb-accent-soft);
+}
+.fill-hint{
+  margin-top:8px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;
+  color:var(--deep);
+  opacity:.8;
+}
+.fill-hint b{
+  color:var(--cb-accent);
+  font-family:Georgia,serif;
+}
+
+.write-practice{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:20px;
+}
+.wp-hint{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14px;
+  line-height:1.75;
+  color:var(--deep);
+  margin-bottom:12px;
+}
+.wp-hint b{color:var(--cb-accent);}
+.write-practice textarea{
+  width:100%;
+  min-height:110px;
+  border:2.5px solid var(--ink);
+  border-radius:14px;
+  background:var(--paper-2);
+  padding:14px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:14.5px;
+  line-height:1.75;
+  color:var(--ink);
+  resize:vertical;
+  outline:none;
+  transition:background .2s ease;
+}
+.write-practice textarea:focus{background:#FBF6EC;}
+.wp-actions{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.wp-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.04em;
+  background:var(--cb-accent);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:12px;
+  padding:7px 18px;
+  cursor:pointer;
+  box-shadow:4px 4px 0 var(--ink);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.wp-btn:active{transform:translate(4px,4px);box-shadow:none;}
+.wp-btn.ghost{background:var(--paper-2);color:var(--ink);}
+.wp-saved{
+  display:none;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;
+  font-weight:900;
+  color:var(--cb-3);
+  letter-spacing:.06em;
+}
+.wp-saved.show{display:inline-block;}
+
+.review-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.review-day{
+  background:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:18px;
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 10px 14px;
+  text-align:center;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .15s ease, background .15s ease;
+}
+.review-day:hover{
+  transform:translate(-2px,-2px);
+  box-shadow:6px 6px 0 var(--ink);
+}
+.review-day .day{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:20px;
+  font-weight:900;
+  color:var(--cb-accent);
+  letter-spacing:.02em;
+  margin-bottom:4px;
+}
+.review-day .task{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;
+  line-height:1.55;
+  color:var(--deep);
+  opacity:.85;
+}
+.review-day.done{
+  background:var(--cb-3);
+  transform:rotate(-2deg);
+}
+.review-day.done .day,
+.review-day.done .task{
+  color:var(--paper);
+  opacity:1;
+}
+.review-tip{
+  margin-top:16px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:12.5px;
+  color:var(--deep);
+  opacity:.7;
+  text-align:center;
+}
+
+.reveal{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1);
+}
+.reveal.in{opacity:1;transform:none;}
+.reveal-scale{
+  opacity:0;
+  transform:scale(.94);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1);
+}
+.reveal-scale.in{opacity:1;transform:none;}
+.reveal-left{
+  opacity:0;
+  transform:translateX(-30px);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1);
+}
+.reveal-left.in{opacity:1;transform:none;}
+
+@media (max-width:640px){
+  .body-wrap{padding:0 18px;}
+  .section{margin:44px 0;}
+  .section-title{font-size:17px;}
+  .section-title .num{width:28px;height:28px;font-size:13px;}
+  .fam-grid{grid-template-columns:repeat(2,1fr);}
+  .image-card{grid-template-columns:1fr;gap:18px;padding:18px;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .collocations .collo{padding:11px 14px;gap:8px;}
+  .pattern{font-size:14px;}
+  .compare-table{font-size:12.5px;}
+  .compare-table td{padding:10px 10px;}
+}
+
+@media (min-width:1100px){
+  .page{max-width:1040px;}
+  .fam-grid{grid-template-columns:repeat(4,1fr);gap:16px;}
+  .body-wrap{padding:0 56px;}
+}
+
+@media print{
+  body{background:#fff;padding:0;}
+  .progress-bar{display:none!important;}
+  .reveal,.reveal-scale,.reveal-left{opacity:1!important;transform:none!important;}
+  .hero,.fam-card,.image-card,.collo,.real-ex,.pitfall-item,
+  .compare-table,.fill-item,.write-practice,.review-day{
+    box-shadow:none!important;
+  }
+  .fam-card,.image-card,.collo{transform:none!important;}
+  .section{page-break-inside:avoid;}
+  .write-practice textarea{min-height:80px;}
+}
+
+/* ==========================================================================
+   卡片专属样式：配色 / 底纹 / hero / 意象卡动画（前缀 cp-）
+   ========================================================================== */
+
+:root{
+  --paper:#F6F1E7;
+  --paper-2:#E8DFCE;
+  --cb-accent:#4E7A8A;
+  --cb-accent-soft:#DCE9EE;
+  --cb-2:#7E8E9B;
+  --cb-2-soft:#E2E8EC;
+  --cb-3:#7A8B5C;
+  --cb-3-soft:#E6EBDC;
+  --ink:#24201B;
+  --deep:#3A2E22;
+  --cb-deep:#3A2E22;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0 46px,
+      rgba(78,122,138,.055) 46px 48px,
+      transparent 48px 94px);
+  animation:bgDrift 20s linear infinite;
+}
+@keyframes bgDrift{ to{ background-position:0 94px; } }
+
+.hero{
+  background:linear-gradient(180deg,#EAF3F6 0%,#DCE9EE 45%,#CFDFE6 100%);
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  overflow:hidden;
+}
+.hero-band{
+  background:repeating-linear-gradient(90deg,
+    var(--cb-accent) 0 22px, transparent 22px 24px,
+    var(--cb-3) 24px 46px, transparent 46px 48px,
+    var(--cb-2) 48px 70px, transparent 70px 72px);
+  position:absolute;top:0;left:0;right:0;height:18px;
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:102px;font-weight:900;line-height:1.05;letter-spacing:-.02em;
+  color:var(--ink);
+  filter:drop-shadow(6px 6px 0 var(--cb-accent));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterStamp 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+}
+.word-anim .l1{animation-delay:.10s;color:var(--cb-accent);}
+.word-anim .l2{animation-delay:.26s;color:var(--ink);}
+.word-anim .l3{animation-delay:.42s;color:var(--cb-3);}
+.word-anim .l4{animation-delay:.58s;color:var(--ink);}
+.word-anim .l5{animation-delay:.74s;color:var(--cb-2);}
+.word-anim .l6{animation-delay:.90s;color:var(--ink);}
+@keyframes letterStamp{
+  0%{opacity:0;transform:translateY(-46px) scale(1.5) rotate(-8deg);filter:blur(8px);}
+  55%{opacity:1;filter:blur(0);transform:translateY(4px) scale(.94) rotate(1deg);}
+  80%{transform:translateY(-2px) scale(1.03);}
+  100%{opacity:1;transform:translateY(0) scale(1);color:var(--ink);}
+}
+.word-anim .letter:hover{
+  color:var(--cb-accent);
+  transform:translateY(-8px) scale(1.12);
+  filter:drop-shadow(0 0 14px var(--cb-accent));
+}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--cb-accent);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--cb-3);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.15s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--cb-3);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+
+.ipa-anim{
+  margin-top:20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;font-weight:700;color:var(--ink);letter-spacing:.06em;
+  background:var(--cb-2-soft);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-accent);
+  cursor:pointer;transform:rotate(-1.5deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+}
+.pos-anim{
+  margin-top:14px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--deep);display:inline-block;padding:5px 16px;border-radius:999px;
+  border:2px solid var(--ink);transform:rotate(1.2deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.35s forwards;
+}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--cb-3-soft);
+  border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-1deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px);}100%{opacity:1;transform:translateY(0);}}
+
+/* ---------- 意象卡动画（前缀 cp-） ---------- */
+.cp-cup{
+  stroke-dasharray:620;
+  stroke-dashoffset:620;
+  animation:cpCupDraw 4.4s ease-in-out infinite;
+}
+@keyframes cpCupDraw{
+  0%{stroke-dashoffset:620;opacity:.3;}
+  30%,74%{stroke-dashoffset:0;opacity:1;}
+  100%{stroke-dashoffset:0;opacity:.3;}
+}
+
+.cp-water{
+  animation:cpRise 4.4s cubic-bezier(.34,1.56,.64,1) infinite;
+}
+@keyframes cpRise{
+  0%,8%{transform:translateY(158px);}
+  44%,74%{transform:translateY(30px);}
+  92%,100%{transform:translateY(158px);}
+}
+
+.cp-line{
+  animation:cpLineGlow 2.2s ease-in-out infinite;
+}
+@keyframes cpLineGlow{
+  0%,100%{opacity:.3;}
+  50%{opacity:1;}
+}
+
+.cp-drop{
+  animation:cpDrop 2.2s cubic-bezier(.5,0,.9,.6) infinite;
+}
+@keyframes cpDrop{
+  0%{transform:translateY(-8px);opacity:0;}
+  16%{opacity:1;}
+  68%{transform:translateY(44px);opacity:1;}
+  84%,100%{transform:translateY(52px);opacity:0;}
+}
+.cp-drop.d2{animation-delay:1.1s;}
+
+.cp-bubble{
+  animation:cpBubble 3.2s ease-in infinite;
+}
+@keyframes cpBubble{
+  0%{transform:translateY(0);opacity:0;}
+  20%{opacity:.9;}
+  100%{transform:translateY(-56px);opacity:0;}
+}
+.cp-bubble.b2{animation-delay:1.1s;}
+.cp-bubble.b3{animation-delay:2.2s;}
+
+.cp-arrow{
+  animation:cpArrow 2.6s linear infinite;
+}
+@keyframes cpArrow{ to{stroke-dashoffset:-18;} }
+
+@media (max-width:640px){
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:56px;}
+}
+@media (min-width:1100px){
+  .hero{padding:100px 80px 80px;}
+  .hero-band{height:24px;}
+  .word-anim{font-size:140px;}
+}
+</style>
+</head>
+
+<body data-word="comply">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="comply">
+          <span class="letter l1">c</span><span class="letter l2">o</span><span class="letter l3">m</span><span class="letter l4">p</span><span class="letter l5">l</span><span class="letter l6">y</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn">英 /kəmˈplaɪ/ &nbsp;·&nbsp; 美 /kəmˈplaɪ/</div>
+      <div class="pos-anim">v.</div>
+      <div class="spell-hint">comply &nbsp; 遵守 · 服从 · 顺从</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">com-</span>（拉丁语 <i>com-</i>，完全、一起）+ <span class="stem">ply</span>（拉丁语 <i>plere</i>，填满）&nbsp;→&nbsp; "把要求完全填满" → <b>遵守；服从；顺从</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">n.</div><div class="w">compliance</div><div class="p">/kəmˈplaɪəns/</div><div class="m">遵守，依从；顺从</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">compliant</div><div class="p">/kəmˈplaɪənt/</div><div class="m">顺从的，服从的；符合的</div></div>
+          <div class="fam-card"><div class="pos">adj. / v.</div><div class="w">complete</div><div class="p">/kəmˈpliːt/</div><div class="m">完整的；完成</div></div>
+          <div class="fam-card"><div class="pos">n. / v.</div><div class="w">complement</div><div class="p">/ˈkɒmplɪment/</div><div class="m">补充物；补足，与…相配</div></div>
+          <div class="fam-card"><div class="pos">n. / v.</div><div class="w">supplement</div><div class="p">/ˈsʌplɪment/</div><div class="m">补充；增补</div></div>
+          <div class="fam-card"><div class="pos">v. / n.</div><div class="w">supply</div><div class="p">/səˈplaɪ/</div><div class="m">供应；补给</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">plenty</div><div class="p">/ˈplenti/</div><div class="m">大量，充足</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">replenish</div><div class="p">/rɪˈplenɪʃ/</div><div class="m">补充，重新装满</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">comply</span> = 容器里的水，正好升到"要求"那条刻度线。</p>
+          <p class="ic-sub">要求是一条线，水是你实际做到的事 —— 水涨到与线齐平，就是 comply with。<br>差一截叫 fail to comply；溢出来则没必要，规范要的是"刚好达标"。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 360 280">
+            <defs>
+              <clipPath id="cpCupClip">
+                <rect x="126" y="70" width="108" height="156" rx="8"/>
+              </clipPath>
+            </defs>
+
+            <!-- 地面阴影 -->
+            <ellipse cx="180" cy="240" rx="84" ry="8" fill="var(--cb-accent-soft)" opacity=".75"/>
+
+            <!-- 容器外框 -->
+            <rect class="cp-cup" x="120" y="64" width="120" height="168" rx="10"
+                  fill="none" stroke="var(--ink)" stroke-width="3.5"/>
+
+            <!-- 水位 -->
+            <g clip-path="url(#cpCupClip)">
+              <rect class="cp-water" x="126" y="70" width="108" height="156"
+                    fill="var(--cb-accent)" opacity=".8"/>
+              <circle class="cp-bubble b1" cx="152" cy="200" r="4" fill="var(--paper)" opacity=".8"/>
+              <circle class="cp-bubble b2" cx="186" cy="208" r="3" fill="var(--paper)" opacity=".8"/>
+              <circle class="cp-bubble b3" cx="212" cy="198" r="3.5" fill="var(--paper)" opacity=".8"/>
+            </g>
+
+            <!-- 目标刻度线 -->
+            <line class="cp-line" x1="104" y1="100" x2="262" y2="100"
+                  stroke="var(--cb-3)" stroke-width="3" stroke-dasharray="7 5"/>
+
+            <!-- 容器刻度标记 -->
+            <line x1="228" y1="128" x2="240" y2="128" stroke="var(--ink)" stroke-width="2" opacity=".55"/>
+            <line x1="228" y1="160" x2="240" y2="160" stroke="var(--ink)" stroke-width="2" opacity=".55"/>
+            <line x1="228" y1="192" x2="240" y2="192" stroke="var(--ink)" stroke-width="2" opacity=".55"/>
+
+            <!-- 水滴 -->
+            <path class="cp-drop d1" d="M 170 40 q 6 9 0 14 q -6 -5 0 -14 z"
+                  fill="var(--cb-accent)" stroke="var(--ink)" stroke-width="1.6"/>
+            <path class="cp-drop d2" d="M 196 34 q 6 9 0 14 q -6 -5 0 -14 z"
+                  fill="var(--cb-accent)" stroke="var(--ink)" stroke-width="1.6"/>
+
+            <!-- 标注：要求 -->
+            <path class="cp-arrow" d="M 292 100 L 268 100" stroke="var(--ink)" stroke-width="2"
+                  stroke-dasharray="5 4" fill="none"/>
+            <text x="296" y="105" font-family="Georgia,serif" font-size="13" fill="var(--deep)">要求</text>
+
+            <!-- 标注：实际 -->
+            <path class="cp-arrow" d="M 292 170 L 268 170" stroke="var(--ink)" stroke-width="2"
+                  stroke-dasharray="5 4" fill="none"/>
+            <text x="296" y="175" font-family="Georgia,serif" font-size="13" fill="var(--deep)">实际</text>
+
+            <!-- 底部标签 -->
+            <text x="180" y="264" text-anchor="middle" font-family="Georgia,serif"
+                  font-size="13" fill="var(--deep)" opacity=".8">刚好齐平 = comply with</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">comply with the rules</div><div class="meaning">遵守规则（rules 就是那条刻度线）</div></div>
+        <div class="collo"><div class="pattern">comply with the law</div><div class="meaning">遵守法律</div></div>
+        <div class="collo"><div class="pattern">comply with the requirements</div><div class="meaning">符合要求</div></div>
+        <div class="collo"><div class="pattern">fail to comply with</div><div class="meaning">未能遵守（水没涨到线）</div></div>
+        <div class="collo"><div class="pattern">comply fully with</div><div class="meaning">完全遵守</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2022 考研英语 · 阅读</div>
+          <p class="en">All factories must <em class="hl">comply</em> with the new emission standards.</p>
+          <p class="cn">所有工厂都必须遵守新的排放标准。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 CET-6 · 翻译</div>
+          <p class="en">Companies that fail to <em class="hl">comply</em> with the regulations will be fined.</p>
+          <p class="cn">未能遵守规定的公司将被罚款。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2023 雅思写作</div>
+          <p class="en">Some argue that students should <em class="hl">comply</em> with strict school rules.</p>
+          <p class="cn">有人认为学生应当遵守严格的校规。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 高考英语 · 阅读</div>
+          <p class="en">The machine <em class="hl">complies</em> with all safety requirements.</p>
+          <p class="cn">这台机器符合所有安全要求。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          comply 表示"遵守、服从"时是<b>不及物动词</b>，不能直接跟宾语。<br>
+          <span class="wrong">comply the rules</span> → <span class="right">comply with the rules</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">介词</span>
+          comply <b>只跟 with</b>，不跟 to；而 conform 可跟 to 也可跟 with。<br>
+          <span class="wrong">All staff must comply to the safety rules.</span> → <span class="right">All staff must comply with the safety rules.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          名词 compliance 中 y 变 i，别写成 complience；形容词是 compliant。<br>
+          <span class="wrong">The company is in complience with the law.</span> → <span class="right">The company is in compliance with the law.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>comply</td>
+            <td>遵守，服从（对指令、规定）</td>
+            <td class="chant">只跟 with，听命令</td>
+          </tr>
+          <tr>
+            <td>conform</td>
+            <td>遵守；符合（贴合模子去改变自己）</td>
+            <td class="chant">可跟 to，也可跟 with</td>
+          </tr>
+          <tr>
+            <td>abide</td>
+            <td>遵守；忍受</td>
+            <td class="chant">只跟 by，法律与承诺</td>
+          </tr>
+          <tr>
+            <td>obey</td>
+            <td>服从（人、命令）</td>
+            <td class="chant">及物，直接跟宾语</td>
+          </tr>
+          <tr>
+            <td>observe</td>
+            <td>遵守；观察到</td>
+            <td class="chant">及物，直接跟规则法律</td>
+          </tr>
+          <tr>
+            <td>follow</td>
+            <td>遵循；跟随</td>
+            <td class="chant">最通用，跟建议与步骤</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">All staff must <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">omply</span> with the safety rules.</p>
+          <p class="fill-hint">提示：<b>comply with</b>，遵守安全规则。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The company failed to <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">omply</span> with the new regulations.</p>
+          <p class="fill-hint">提示：<b>fail to comply with</b>，未能遵守。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Our products <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">omply</span> with all EU standards.</p>
+          <p class="fill-hint">提示：<b>comply with</b>，符合标准（主语复数用原形）。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Every member has to <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">omply</span> with the club's rules.</p>
+          <p class="fill-hint">提示：<b>have to comply with</b>，必须遵守。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The machine does not <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">omply</span> with the safety requirements.</p>
+          <p class="fill-hint">提示：<b>does not comply with</b>，不符合要求。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>comply with</b> 造一句自己的句子，写清"谁遵守了什么"。</p>
+        <textarea id="mySentence" placeholder="Every new building must comply with ..."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>朗读 + 看意象卡</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>做首字母填空</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>默写 compliance</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>用 comply 造句</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script>
+(function () {
+  'use strict';
+
+  var word = document.body.dataset.word || '';
+
+  /* ---------- 滚动进度条 ---------- */
+  var bar = document.getElementById('progressBar');
+  function updateBar() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+    if (bar) bar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateBar, { passive: true });
+  window.addEventListener('resize', updateBar);
+  updateBar();
+
+  /* ---------- 入场动画 ---------- */
+  var reveals = document.querySelectorAll('.reveal, .reveal-scale, .reveal-left');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* ---------- 朗读 ---------- */
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US';
+      u.rate = 0.9;
+      u.pitch = 1;
+      window.speechSynthesis.speak(u);
+    } catch (e) { /* 静默失败 */ }
+  }
+
+  var speakBtn = document.getElementById('speakBtn');
+  if (speakBtn) {
+    speakBtn.addEventListener('click', function () {
+      speak(word);
+      speakBtn.classList.add('speaking');
+      setTimeout(function () { speakBtn.classList.remove('speaking'); }, 800);
+    });
+  }
+
+  var ipaBtn = document.getElementById('ipaBtn');
+  if (ipaBtn) {
+    ipaBtn.addEventListener('click', function () { speak(word); });
+  }
+
+  /* ---------- 造句练习保存 ---------- */
+  var KEY_W = 'cb_write_' + word;
+  var ta = document.getElementById('mySentence');
+  var saveBtn = document.getElementById('saveBtn');
+  var clearBtn = document.getElementById('clearBtn');
+  var savedMsg = document.getElementById('savedMsg');
+
+  if (ta) {
+    try {
+      var saved = localStorage.getItem(KEY_W);
+      if (saved) ta.value = saved;
+    } catch (e) { /* 忽略 */ }
+  }
+
+  if (saveBtn && ta) {
+    saveBtn.addEventListener('click', function () {
+      try {
+        localStorage.setItem(KEY_W, ta.value);
+        if (savedMsg) {
+          savedMsg.classList.add('show');
+          setTimeout(function () { savedMsg.classList.remove('show'); }, 1600);
+        }
+      } catch (e) { /* 忽略 */ }
+    });
+  }
+
+  if (clearBtn && ta) {
+    clearBtn.addEventListener('click', function () {
+      ta.value = '';
+      try { localStorage.removeItem(KEY_W); } catch (e) { /* 忽略 */ }
+    });
+  }
+
+  /* ---------- 复习打卡持久化 ---------- */
+  var KEY_R = 'cb_review_' + word;
+  var grid = document.getElementById('reviewGrid');
+  var state = {};
+  try {
+    state = JSON.parse(localStorage.getItem(KEY_R) || '{}');
+  } catch (e) { state = {}; }
+
+  if (grid) {
+    var days = grid.querySelectorAll('.review-day');
+    days.forEach(function (dayEl) {
+      var id = dayEl.getAttribute('data-day');
+      if (state[id]) dayEl.classList.add('done');
+      dayEl.addEventListener('click', function () {
+        dayEl.classList.toggle('done');
+        state[id] = dayEl.classList.contains('done');
+        try { localStorage.setItem(KEY_R, JSON.stringify(state)); } catch (e) { /* 忽略 */ }
+      });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
