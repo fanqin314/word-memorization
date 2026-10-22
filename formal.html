@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>formal · 正式的</title>
+<style>
+:root{
+  /* 晚礼服色板 —— formal = 燕尾服 / 领结 / 红毯 / 香槟金 */
+  --paper:#F6F2E9;
+  --paper-2:#EAE4D4;
+  --ink:#191E33;
+  --navy:#232B4D;
+  --gold:#C9A227;
+  --gold-deep:#A8861B;
+  --gold-soft:#F4E9C4;
+  --wine:#8E2340;
+  --wine-soft:#F3DBE1;
+  --navy-soft:#DDE2F0;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:#0B0F1E;
+  padding:44px 16px 90px;
+  color:var(--ink);
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+  font-size:16px;
+  line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 12% 10%, rgba(201,162,39,.16) 0, transparent 42%),
+    radial-gradient(circle at 88% 90%, rgba(142,35,64,.20) 0, transparent 45%),
+    radial-gradient(circle at 50% 55%, rgba(35,43,77,.38) 0, transparent 60%);
+}
+
+body::after{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:9999;
+  opacity:.26;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+}
+
+/* 全页：缓缓上浮的领结 / 香槟气泡 / 星芒 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(75deg,
+      transparent 0 70px,
+      rgba(201,162,39,.05) 70px 72px,
+      transparent 72px 140px),
+    repeating-linear-gradient(-75deg,
+      transparent 0 90px,
+      rgba(142,35,64,.045) 90px 92px,
+      transparent 92px 180px);
+  animation:galaShift 60s linear infinite;
+}
+@keyframes galaShift{
+  to{ background-position:140px 140px, -140px 140px; }
+}
+
+.page{
+  position:relative;z-index:1;
+  max-width:860px;margin:0 auto;
+  background:var(--paper);
+  padding:0 0 72px;
+  border-radius:var(--radius-lg);
+  box-shadow:
+    0 0 0 3px var(--ink),
+    12px 12px 0 var(--gold),
+    -5px 5px 0 var(--wine),
+    0 20px 60px rgba(0,0,0,.6);
+  overflow:hidden;
+}
+
+/* 漂浮装饰：领结 / 气泡 / 星芒 */
+.page-floats{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.fl{
+  position:absolute;
+  opacity:0;
+  animation:flDrift linear infinite;
+}
+/* 领结 */
+.fl.bow{
+  width:20px;height:15px;
+  clip-path:polygon(0 0,45% 28%,45% 72%,0 100%,100% 100%,55% 72%,55% 28%,100% 0);
+}
+.fl.bow.gold{background:var(--gold);}
+.fl.bow.wine{background:var(--wine);}
+.fl.bow.pearl{background:var(--paper);}
+/* 香槟气泡 */
+.fl.bub{
+  width:12px;height:12px;
+  border-radius:50%;
+  border:2px solid var(--gold);
+}
+.fl.bub.wine{border-color:var(--wine);}
+.fl.bub.pearl{border-color:var(--paper);}
+/* 星芒 */
+.fl.star{color:var(--gold);font-size:13px;line-height:1;}
+
+.fl.f1{ left:6%;  bottom:-40px; animation-duration:24s; }
+.fl.f2{ left:20%; bottom:-55px; animation-duration:30s; animation-delay:3s; }
+.fl.f3{ left:36%; bottom:-45px; animation-duration:26s; animation-delay:6s; }
+.fl.f4{ left:52%; bottom:-70px; animation-duration:34s; animation-delay:9s; }
+.fl.f5{ left:66%; bottom:-50px; animation-duration:22s; animation-delay:12s; }
+.fl.f6{ left:78%; bottom:-60px; animation-duration:28s; animation-delay:1.5s; }
+.fl.f7{ left:90%; bottom:-35px; animation-duration:32s; animation-delay:7.5s; }
+.fl.f8{ left:44%; bottom:-65px; animation-duration:26s; animation-delay:15s; }
+
+@keyframes flDrift{
+  0%{ transform:translate(0,0) rotate(0); opacity:0; }
+  10%{ opacity:.85; }
+  50%{ transform:translate(-34px,-55vh) rotate(180deg); }
+  90%{ opacity:.35; }
+  100%{ transform:translate(-64px,-118vh) rotate(360deg); opacity:0; }
+}
+
+.hero,.body-wrap{position:relative;z-index:2;}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 130px;
+  border-bottom:3px solid var(--ink);
+  background:linear-gradient(180deg,
+    #10152B 0%,
+    #1B2242 52%,
+    #12172E 100%);
+  overflow:hidden;
+  color:var(--paper);
+}
+/* 顶部：礼堂灯泡串 */
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:20px;
+  background-image:
+    linear-gradient(180deg, transparent 9px, rgba(201,162,39,.75) 9px 10px, transparent 10px),
+    radial-gradient(circle, var(--gold) 3.5px, transparent 4px),
+    radial-gradient(circle, var(--wine) 3px, transparent 3.5px);
+  background-size:100% 20px, 30px 20px, 30px 20px;
+  background-position:0 0, 0 -1px, 15px -1px;
+  background-repeat:repeat-x;
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* 追光灯 */
+.hero-spots{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.spot{
+  position:absolute;top:-10%;width:250px;height:120%;
+  background:linear-gradient(180deg, rgba(201,162,39,.16), rgba(201,162,39,0) 78%);
+  clip-path:polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+}
+.spot.s1{left:6%;transform:skewX(-12deg);animation:spotFlicker 5s ease-in-out infinite;}
+.spot.s2{right:6%;transform:skewX(12deg);animation:spotFlicker 5s ease-in-out 1.3s infinite;}
+@keyframes spotFlicker{0%,100%{opacity:.7;}50%{opacity:1;}}
+
+/* 红毯 */
+.hero-carpet{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:110px;
+  pointer-events:none;z-index:0;
+  opacity:.95;
+}
+.carpet-svg{width:100%;height:100%;}
+
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:72px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.03em;
+  color:var(--paper);
+  filter:drop-shadow(5px 5px 0 rgba(0,0,0,.55));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterStep 0.9s cubic-bezier(.34,1.56,.64,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s, text-shadow .3s;
+}
+/* 灯泡依次点亮 */
+.word-anim .l1{ animation-delay:.10s; color:var(--gold); }
+.word-anim .l2{ animation-delay:.20s; color:var(--paper); }
+.word-anim .l3{ animation-delay:.30s; color:var(--gold); }
+.word-anim .l4{ animation-delay:.40s; color:var(--paper); }
+.word-anim .l5{ animation-delay:.50s; color:var(--gold); }
+.word-anim .l6{ animation-delay:.60s; color:var(--paper); }
+@keyframes letterStep{
+  0%{ opacity:0; transform:translateY(-30px) rotate(-10deg) scale(.4); filter:blur(6px); }
+  55%{ opacity:1; filter:blur(0); transform:translateY(6px) rotate(4deg) scale(1.08); }
+  100%{ opacity:1; transform:translateY(0) rotate(0) scale(1); }
+}
+.word-anim .letter:hover{
+  color:var(--gold);
+  transform:translateY(-8px) scale(1.12) rotate(-4deg);
+  text-shadow:0 0 18px rgba(201,162,39,.8);
+}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--gold);border:3px solid var(--paper);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--wine);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1s forwards;
+}
+.speak-btn:hover{transform:translate(3px,-3px) rotate(10deg);box-shadow:6px 6px 0 var(--wine);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--wine);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--gold);border:2.5px solid var(--paper);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--wine);
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--paper);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--wine);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.2s forwards;
+  transform:rotate(1.2deg);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--paper);background:#12172E;
+  border:2.5px solid var(--paper);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--gold);
+  opacity:0;animation:fadeUp .8s ease-out 1.4s forwards;
+  transform:rotate(-1deg);
+}
+
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1);}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1);}
+.reveal-scale.visible{opacity:1;transform:scale(1);}
+
+.section{margin:0 0 56px;}
+
+.section-title{
+  display:inline-flex;align-items:center;gap:12px;
+  margin:0 0 22px;
+  padding:8px 22px 8px 12px;
+  background:var(--gold-soft);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:18px;font-weight:900;
+  letter-spacing:-.01em;
+  transform:rotate(-.8deg);
+}
+.section:nth-of-type(even) .section-title{
+  background:var(--wine-soft);
+  transform:rotate(.9deg);
+}
+.section:nth-of-type(3n) .section-title{
+  background:var(--navy-soft);
+  transform:rotate(-.6deg);
+}
+.section-title .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex-shrink:0;
+  background:var(--ink);color:var(--paper);
+  border-radius:50%;font-size:14px;font-weight:900;
+}
+
+/* 1. 词根词族 */
+.root-family{
+  position:relative;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 24px;
+}
+.root-line{
+  font-size:17px;line-height:2.2;margin-bottom:22px;
+  padding:18px 20px;
+  background:var(--gold-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+  text-align:center;
+}
+.root-line .affix{
+  background:var(--wine);color:var(--paper);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(-2deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.root-line .stem{
+  background:var(--navy);color:var(--paper);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(1.5deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+.fam-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:10px;
+}
+.fam-card{
+  background:#fff;border:2.5px solid var(--ink);
+  border-radius:14px;padding:10px 12px;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.fam-card:hover{transform:translate(-2px,-2px) rotate(-1deg);}
+.fam-card .pos{
+  font-size:10px;font-weight:800;
+  background:var(--ink);color:var(--paper);
+  padding:2px 7px;border-radius:999px;
+  display:inline-block;margin-bottom:5px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  letter-spacing:.08em;
+}
+.fam-card .w{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:16px;
+  color:var(--gold-deep);
+  line-height:1.3;
+}
+.fam-card .w .hl{color:var(--wine);}
+.fam-card .p{font-size:11px;color:#8a7d6d;margin:2px 0 4px;font-family:monospace;}
+.fam-card .m{font-size:12.5px;line-height:1.5;}
+
+/* 2. 意象卡 —— 企鹅燕尾服 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(201,162,39,.16) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+.image-card .ic-text{position:relative;z-index:1;}
+.image-card .ic-label{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;font-weight:900;letter-spacing:.18em;
+  background:var(--gold);color:var(--ink);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--paper);
+  margin-bottom:16px;
+  transform:rotate(-2deg);
+}
+.image-card .ic-main{
+  font-size:22px;font-weight:800;line-height:1.6;
+  margin:0 0 14px;
+}
+.image-card .ic-main .hl{
+  background:var(--gold);color:var(--ink);
+  padding:1px 10px;border-radius:6px;
+}
+.image-card .ic-sub{
+  font-size:14.5px;opacity:.9;line-height:1.9;margin:0;
+}
+.image-card .ic-svg{
+  position:relative;z-index:1;
+  width:340px;height:280px;
+}
+.image-card .ic-svg svg{width:100%;height:100%;overflow:visible;}
+
+/* ========== formal SVG 动画 ========== */
+/* 领结脉动 */
+.bowtie{
+  transform-box:view-box;
+  transform-origin:170px 168px;
+  animation:bowPulse 1.8s ease-in-out infinite;
+}
+@keyframes bowPulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.14); }
+}
+/* 礼帽轻歪 */
+.tophat{
+  transform-box:view-box;
+  transform-origin:170px 100px;
+  animation:hatTip 3.2s ease-in-out infinite;
+}
+@keyframes hatTip{
+  0%,100%{ transform:rotate(-8deg); }
+  50%{ transform:rotate(-1deg); }
+}
+/* 星芒闪烁 */
+.twinkle{
+  transform-box:view-box;
+  animation:twinkle 2.2s ease-in-out infinite;
+}
+.twinkle.t2{ animation-delay:.5s; }
+.twinkle.t3{ animation-delay:1s; }
+.twinkle.t4{ animation-delay:1.5s; }
+@keyframes twinkle{
+  0%,100%{ opacity:.35; transform:scale(.8); }
+  50%{ opacity:1; transform:scale(1.2); }
+}
+/* dress code 招牌轻摆 */
+.dress-sign{
+  transform-box:view-box;
+  transform-origin:300px 34px;
+  animation:signSwing 3.6s ease-in-out infinite;
+}
+@keyframes signSwing{
+  0%,100%{ transform:rotate(-3deg); }
+  50%{ transform:rotate(4deg); }
+}
+/* 舞台光斑呼吸 */
+.stage-glow{
+  animation:glowBreath 3s ease-in-out infinite;
+}
+@keyframes glowBreath{
+  0%,100%{ opacity:.10; }
+  50%{ opacity:.22; }
+}
+/* ========== 结束 formal SVG 动画 ========== */
+
+/* 3. 搭配 */
+.collocations{display:flex;flex-direction:column;gap:14px;}
+.collo{
+  background:#FFFCF5;border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  padding:16px 20px;
+  display:flex;align-items:center;gap:16px;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  position:relative;
+  overflow:hidden;
+}
+.collo::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:6px;
+  background:var(--gold);
+  transition:width .3s;
+}
+.collo:nth-child(2)::before{background:var(--wine);}
+.collo:nth-child(3)::before{background:var(--navy);}
+.collo:nth-child(4)::before{background:var(--gold-deep);}
+.collo:nth-child(5)::before{background:var(--wine);}
+.collo:hover{transform:translate(-4px,-4px);box-shadow:7px 7px 0 var(--ink);}
+.collo:hover::before{width:14px;}
+.collo .pattern{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;font-size:14.5px;
+  background:var(--ink);color:var(--paper);
+  padding:6px 14px;border-radius:999px;
+  white-space:nowrap;flex-shrink:0;
+  margin-left:8px;
+}
+.collo .meaning{font-size:14.5px;line-height:1.55;}
+.collo .meaning b{color:var(--wine);font-weight:800;}
+
+/* 4. 例句 */
+.real-exs{display:flex;flex-direction:column;gap:16px;}
+.real-ex{
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:20px 24px;
+  position:relative;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  transform:rotate(.3deg);
+}
+.real-ex:nth-child(even){transform:rotate(-.5deg);}
+.real-ex:hover{transform:translate(-4px,-4px) rotate(0);box-shadow:9px 9px 0 var(--ink);}
+.real-ex::before{
+  content:"";
+  position:absolute;
+  top:-10px;left:-10px;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--wine);
+  border:3px solid var(--ink);
+}
+.real-ex:nth-child(even)::before{background:var(--gold);}
+.real-ex:nth-child(3n)::before{background:var(--navy);}
+.real-ex .src{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;font-weight:800;letter-spacing:.12em;
+  background:var(--navy);color:var(--paper);
+  padding:4px 14px;border-radius:999px;
+  border:2px solid var(--ink);
+  margin-bottom:12px;
+}
+.real-ex .en{
+  font-size:16px;line-height:1.8;margin:0 0 10px;
+  font-family:Georgia,serif;
+}
+.real-ex .en .hl{
+  background:var(--gold);color:var(--ink);
+  padding:1px 7px;border-radius:6px;
+  font-weight:800;font-style:normal;
+}
+.real-ex .cn{
+  font-size:13.5px;color:#7a6e60;line-height:1.7;
+  padding-left:16px;border-left:3px solid var(--wine);
+}
+
+/* 5. 易错 */
+.pitfall{
+  padding:28px 30px;
+  background:var(--wine-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  position:relative;overflow:hidden;
+  transform:rotate(-.5deg);
+}
+.pitfall::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;height:12px;
+  background-image:
+    radial-gradient(circle, var(--wine) 3px, transparent 3.5px);
+  background-size:20px 12px;
+  border-bottom:3px solid var(--ink);
+}
+.pitfall-item{
+  margin-bottom:14px;font-size:15px;line-height:1.9;
+  padding:14px 18px;
+  background:#FFFCF5;
+  border-left:6px solid var(--wine);
+  border-radius:0 var(--radius-md) var(--radius-md) 0;
+  transition:transform .3s;
+}
+.pitfall-item:hover{transform:translateX(8px);}
+.pitfall-item:last-child{margin-bottom:0;}
+.pitfall-item .wrong{
+  color:var(--wine);text-decoration:line-through;
+  text-decoration-thickness:2px;font-weight:700;
+}
+.pitfall-item .right{
+  color:var(--navy);font-weight:800;
+  background:var(--navy-soft);padding:1px 8px;border-radius:6px;
+}
+.pitfall-item .tip{
+  display:inline-block;
+  background:var(--gold);color:var(--ink);
+  padding:1px 10px;border-radius:999px;
+  font-size:12px;font-weight:800;margin-right:8px;
+  border:2px solid var(--ink);
+}
+
+/* 6. 辨析表 */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+.compare-table thead{display:none;}
+.compare-table tbody tr{
+  background:#FFFCF5;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+  opacity:0;transform:translateX(-20px);
+}
+.compare-table tbody tr.row-visible{opacity:1;transform:translateX(0);}
+.compare-table tbody tr:hover{transform:translate(-4px,-4px);box-shadow:7px 7px 0 var(--ink);}
+.compare-table td{
+  border-top:3px solid var(--ink);
+  border-bottom:3px solid var(--ink);
+  padding:14px 18px;vertical-align:middle;text-align:left;
+}
+.compare-table td:first-child{
+  border-left:3px solid var(--ink);
+  border-top-left-radius:18px;
+  border-bottom-left-radius:18px;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:800;white-space:nowrap;width:130px;
+  background:var(--navy-soft);
+  color:var(--ink);
+  font-size:16px;
+}
+.compare-table td:nth-child(2){width:180px;}
+.compare-table td:last-child{
+  border-right:3px solid var(--ink);
+  border-top-right-radius:18px;
+  border-bottom-right-radius:18px;
+}
+.compare-table .chant{
+  font-size:13px;color:var(--wine);font-weight:700;
+  font-style:italic;line-height:1.5;
+}
+.compare-table tr.highlight{background:var(--gold-soft);}
+.compare-table tr.highlight td:first-child{
+  background:var(--gold);
+  position:relative;
+}
+.compare-table tr.highlight td:first-child::after{
+  content:"★";
+  color:var(--wine);margin-left:6px;
+}
+
+/* 7. 填空 */
+.self-test .hint{
+  font-size:14px;color:var(--ink);
+  margin:0 0 22px;padding:14px 20px;
+  background:var(--gold-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+}
+.fill-item{
+  margin-bottom:16px;padding:18px 24px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+}
+.fill-item:hover{transform:translate(-3px,-3px) rotate(-.3deg);box-shadow:6px 6px 0 var(--ink);}
+.fill-sentence{font-size:16.5px;line-height:1.95;margin:0 0 10px;}
+.first-letter{
+  display:inline-block;
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-weight:900;color:var(--wine);
+  font-size:19px;
+  padding-right:2px;
+}
+.blank{
+  display:inline-block;min-width:70px;
+  border-bottom:3px solid var(--ink);
+  text-align:center;font-weight:800;
+  color:transparent;cursor:pointer;
+  transition:color .3s,border-color .3s,background .3s;
+  padding:0 10px;user-select:none;
+  font-family:Georgia,serif;
+}
+.blank:hover{background:var(--gold);border-color:var(--wine);}
+.blank.revealed{
+  color:var(--wine);border-color:var(--wine);
+  background:var(--gold-soft);
+  border-radius:8px 8px 0 0;
+  animation:answerPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.fill-hint{font-size:13.5px;color:var(--ink);opacity:.75;margin:0;}
+.fill-hint b{color:var(--wine);font-weight:800;}
+
+/* 8. 造句 */
+.write-practice{
+  background:var(--gold-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 28px;
+  transform:rotate(.4deg);
+}
+.write-practice .wp-hint{
+  font-size:14px;color:var(--ink);opacity:.85;
+  margin:0 0 16px;
+}
+.write-practice textarea{
+  width:100%;min-height:110px;
+  padding:16px 18px;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:16px;line-height:1.7;
+  color:var(--ink);
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:18px;
+  box-shadow:inset 3px 3px 0 rgba(25,30,51,.08);
+  resize:vertical;
+  outline:none;
+  transition:box-shadow .2s;
+}
+.write-practice textarea:focus{
+  box-shadow:inset 3px 3px 0 rgba(25,30,51,.08), 0 0 0 5px var(--gold);
+}
+.wp-actions{
+  margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+}
+.wp-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;font-weight:800;letter-spacing:.04em;
+  padding:11px 22px;
+  background:var(--ink);color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
+}
+.wp-btn:hover{transform:translate(-3px,-3px);box-shadow:-6px 6px 0 var(--wine);}
+.wp-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);}
+.wp-btn.ghost{background:transparent;color:var(--ink);}
+.wp-saved{
+  font-size:13px;color:var(--navy);font-weight:800;
+  opacity:0;transition:opacity .4s;
+}
+.wp-saved.show{opacity:1;}
+
+/* 9. 复习 */
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.review-day{
+  text-align:center;padding:20px 10px 18px;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background .3s;
+  cursor:pointer;user-select:none;
+  position:relative;overflow:hidden;
+  opacity:0;transform:translateY(20px) scale(.95);
+}
+.review-day.day-visible{
+  opacity:1;transform:translateY(0) scale(1);
+  transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,.7,.3,1);
+}
+.review-day:hover{
+  transform:translate(-4px,-4px) rotate(-2deg);
+  box-shadow:7px 7px 0 var(--ink);
+}
+.review-day.done{background:var(--navy);color:var(--paper);}
+.review-day.done .day,
+.review-day.done .task{color:var(--paper);}
+.review-day.done::after{
+  content:"✓";
+  position:absolute;top:8px;right:12px;
+  font-size:22px;font-weight:900;color:var(--gold);
+  text-shadow:1.5px 1.5px 0 var(--ink);
+}
+.review-day .day{
+  font-family:"Fredoka","Helvetica Neue",Arial,sans-serif;
+  font-size:28px;font-weight:900;margin-bottom:4px;
+  position:relative;z-index:1;
+}
+.review-day:nth-child(1) .day{color:var(--wine);}
+.review-day:nth-child(2) .day{color:var(--gold-deep);}
+.review-day:nth-child(3) .day{color:var(--navy);}
+.review-day:nth-child(4) .day{color:var(--gold);}
+.review-day .task{
+  font-size:12px;color:var(--ink);opacity:.75;
+  line-height:1.5;position:relative;z-index:1;
+}
+.review-tip{
+  margin-top:16px;font-size:13px;color:var(--ink);opacity:.6;
+  text-align:center;font-style:italic;
+}
+
+.progress-bar{
+  position:fixed;top:0;left:0;height:5px;width:0;
+  background:repeating-linear-gradient(90deg,
+    var(--gold) 0 20px,
+    var(--wine) 20px 40px,
+    var(--navy) 40px 60px,
+    var(--paper) 60px 80px);
+  z-index:100;transition:width .1s linear;
+  border-bottom:2px solid var(--ink);
+}
+
+/* ============================================================
+   手机（窄屏）
+   ============================================================ */
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 22px 90px;}
+  .word-anim{font-size:38px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .page{border-radius:22px;}
+  .image-card{grid-template-columns:1fr;padding:26px 22px;}
+  .image-card .ic-svg{width:220px;height:181px;margin:0 auto;}
+  .section-title{font-size:15px;padding:6px 16px 6px 10px;}
+  .hero-carpet{height:70px;}
+}
+
+/* ============================================================
+   桌面 ≥1100px
+   ============================================================ */
+@media (min-width:1100px){
+  body{padding:56px 32px 120px;}
+
+  .page{
+    max-width:1200px;
+    border-radius:36px;
+    box-shadow:
+      0 0 0 3px var(--ink),
+      14px 14px 0 var(--gold),
+      -6px 6px 0 var(--wine),
+      0 24px 70px rgba(0,0,0,.7);
+  }
+
+  .hero{padding:100px 80px 150px;}
+  .hero-band{height:24px;}
+  .word-anim{font-size:104px;}
+  .speak-btn{width:56px;height:56px;font-size:26px;}
+  .ipa-anim{font-size:18px;padding:6px 22px;}
+  .pos-anim{font-size:13px;padding:6px 20px;}
+  .spell-hint{font-size:13px;padding:10px 24px;}
+
+  .body-wrap{padding:76px 80px 0;}
+  .section{margin-bottom:68px;}
+
+  .section-title{font-size:22px;gap:14px;margin-bottom:26px;padding:10px 26px 10px 14px;}
+  .section-title .num{width:38px;height:38px;font-size:16px;}
+
+  /* 词族 3 列 */
+  .fam-grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fam-card{padding:14px 16px;}
+  .fam-card .w{font-size:18px;}
+  .fam-card .m{font-size:13.5px;}
+
+  /* 意象卡 */
+  .image-card{
+    grid-template-columns:1.3fr 1fr;
+    gap:40px;
+    padding:48px 44px;
+  }
+  .image-card .ic-main{font-size:27px;line-height:1.5;}
+  .image-card .ic-sub{font-size:16px;}
+  .image-card .ic-svg{width:420px;height:346px;}
+
+  /* 搭配 2 列，第 5 项占满 */
+  .collocations{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .collo:nth-child(5){grid-column:1 / -1;}
+  .collo{padding:20px 24px;}
+  .collo .pattern{font-size:15.5px;padding:7px 16px;}
+  .collo .meaning{font-size:15px;}
+
+  /* 例句 2×2 */
+  .real-exs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .real-ex{padding:24px 28px;}
+  .real-ex .en{font-size:17px;}
+  .real-ex .cn{font-size:14.5px;}
+
+  /* 易错 */
+  .pitfall{padding:36px 40px;}
+  .pitfall-item{font-size:15.5px;padding:18px 22px;}
+
+  /* 辨析表 */
+  .compare-table{font-size:16px;border-spacing:0 14px;}
+  .compare-table td{padding:18px 24px;}
+  .compare-table td:first-child{width:160px;font-size:18px;}
+  .compare-table td:nth-child(2){width:auto;}
+  .compare-table .chant{font-size:14.5px;}
+
+  /* 填空 2 列 */
+  .self-test .fill-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .self-test .fill-item:nth-child(5){grid-column:1 / -1;margin-bottom:0;}
+  .fill-item{padding:22px 26px;margin-bottom:0;}
+  .fill-sentence{font-size:17px;}
+
+  /* 造句 */
+  .write-practice{
+    max-width:900px;
+    margin:0 auto;
+    padding:36px 40px;
+  }
+  .write-practice textarea{font-size:17px;padding:18px 22px;}
+
+  /* 复习 */
+  .review-grid{gap:24px;}
+  .review-day{padding:28px 14px 24px;}
+  .review-day .day{font-size:34px;}
+  .review-day .task{font-size:13.5px;}
+
+  .hero-carpet{height:130px;}
+}
+
+/* ============================================================
+   超宽 ≥1500px
+   ============================================================ */
+@media (min-width:1500px){
+  .page{max-width:1400px;}
+  .hero{padding:120px 100px 170px;}
+  .word-anim{font-size:124px;}
+  .body-wrap{padding:92px 100px 0;}
+  .image-card{grid-template-columns:1.5fr 1fr;padding:56px 52px;}
+  .image-card .ic-main{font-size:30px;}
+  .image-card .ic-svg{width:500px;height:412px;}
+  .real-ex .en{font-size:18px;}
+  .hero-carpet{height:150px;}
+}
+
+/* ============================================================
+   打印
+   ============================================================ */
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  body::before,body::after{display:none;}
+  .page{box-shadow:none;max-width:100%;}
+  .blank{color:var(--wine)!important;}
+  .fill-item,.compare-table,.pitfall,.review-day{break-inside:avoid;}
+  .hero-spots,.hero-carpet,.page-floats,.progress-bar{display:none;}
+  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
+  .compare-table tbody tr,.review-day{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-floats" aria-hidden="true">
+    <div class="fl bow gold f1"></div>
+    <div class="fl bub f2"></div>
+    <div class="fl star f3">✦</div>
+    <div class="fl bow wine f4"></div>
+    <div class="fl bub pearl f5"></div>
+    <div class="fl bow pearl f6"></div>
+    <div class="fl bub wine f7"></div>
+    <div class="fl bow gold f8"></div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-spots" aria-hidden="true">
+      <div class="spot s1"></div>
+      <div class="spot s2"></div>
+    </div>
+
+    <div class="hero-carpet" aria-hidden="true">
+      <svg class="carpet-svg" viewBox="0 0 860 130" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="carpetGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6E1830"/>
+            <stop offset="100%" stop-color="#8E2340"/>
+          </linearGradient>
+        </defs>
+        <path d="M 0 0 L 860 0 L 720 130 L 140 130 Z" fill="url(#carpetGrad)"/>
+        <path d="M 0 0 L 140 130" stroke="#C9A227" stroke-width="2" opacity=".5" fill="none"/>
+        <path d="M 860 0 L 720 130" stroke="#C9A227" stroke-width="2" opacity=".5" fill="none"/>
+        <path d="M 300 0 L 400 130" stroke="#F6F2E9" stroke-width="26" opacity=".06" fill="none"/>
+        <line x1="0" y1="0" x2="860" y2="0" stroke="#C9A227" stroke-width="3"/>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="formal">
+          <span class="letter l1">f</span><span class="letter l2">o</span><span class="letter l3">r</span><span class="letter l4">m</span><span class="letter l5">a</span><span class="letter l6">l</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 formal">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˈfɔːml/ &nbsp;·&nbsp; 美 /ˈfɔːrml/</div>
+      <div class="pos-anim">adj.</div>
+      <div class="spell-hint">form + al &nbsp; 正式的 · 正规的</div>
+    </div>
+  </section>
+
+  <!-- 主体 -->
+  <div class="body-wrap">
+
+    <!-- 1. 词根词族 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          拉丁语 <span class="stem">forma</span>（形状 · 形式）
+          + <span class="affix">-al</span>（…的）
+          &nbsp;→&nbsp; "合于形式规格的" → <b>正式的 · 正规的</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">名词 · 动词</div><div class="w">form</div><div class="p">/fɔːm/</div><div class="m">形式；表格；形成</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w"><span class="hl">formal</span></div><div class="p">/ˈfɔːml/</div><div class="m">正式的；正规的</div></div>
+          <div class="fam-card"><div class="pos">副词</div><div class="w">formally</div><div class="p">/ˈfɔːməli/</div><div class="m">正式地</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w"><span class="hl">informal</span></div><div class="p">/ɪnˈfɔːml/</div><div class="m">非正式的（反义）</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">formality</div><div class="p">/fɔːˈmæləti/</div><div class="m">礼节；手续（常复数）</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">former</div><div class="p">/ˈfɔːmə/</div><div class="m">以前的；前任的</div></div>
+          <div class="fam-card"><div class="pos">副词</div><div class="w">formerly</div><div class="p">/ˈfɔːməli/</div><div class="m">以前，曾经（与 formally 同音！）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">conform</div><div class="p">/kənˈfɔːm/</div><div class="m">遵守；符合</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">transform</div><div class="p">/trænsˈfɔːm/</div><div class="m">使改变；变换</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 意象卡（企鹅燕尾服） -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">formal</span> = 企鹅那身<strong>燕尾服</strong>——全世界唯一"随时穿正装"的动物。
+          </p>
+          <p class="ic-sub">
+            晚宴请柬写着 dress code: formal，就是"请穿正装"；<br>
+            说话也分穿着：正式场合说 formal English，别张口就是 slang。<br>
+            一眼记忆法：<b>燕尾服一穿、领结一打 = formal；<br>
+            T 恤拖鞋一上身 = informal。</b>
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 340 280">
+            <!-- 舞台追光 -->
+            <path d="M 170 8 L 96 268 L 244 268 Z" fill="#C9A227" opacity="0.07"/>
+            <ellipse class="stage-glow" cx="170" cy="250" rx="85" ry="13" fill="#C9A227"/>
+
+            <!-- 红毯 -->
+            <path d="M 66 252 L 274 252 L 316 280 L 24 280 Z" fill="#8E2340" stroke="#C9A227" stroke-width="2"/>
+            <path d="M 86 252 L 54 280" stroke="#C9A227" stroke-width="1.5" opacity=".45"/>
+            <path d="M 254 252 L 286 280" stroke="#C9A227" stroke-width="1.5" opacity=".45"/>
+
+            <!-- 企鹅影子 -->
+            <ellipse cx="170" cy="250" rx="58" ry="9" fill="#000000" opacity=".3"/>
+
+            <!-- 企鹅身体（黑礼服） -->
+            <path d="M 170 88
+                     C 148 88 130 106 130 130
+                     C 130 152 138 164 150 172
+                     C 142 186 128 200 126 224
+                     C 122 250 140 258 170 258
+                     C 200 258 218 250 214 224
+                     C 212 200 198 186 190 172
+                     C 202 164 210 152 210 130
+                     C 210 106 192 88 170 88 Z"
+                  fill="#0B0F1E" stroke="#F6F2E9" stroke-width="3" stroke-linejoin="round"/>
+            <!-- 白肚皮 -->
+            <ellipse cx="170" cy="205" rx="33" ry="40" fill="#F6F2E9"/>
+            <!-- 白脸盘 -->
+            <ellipse cx="170" cy="136" rx="26" ry="22" fill="#F6F2E9"/>
+            <!-- 眼睛 -->
+            <circle cx="160" cy="130" r="6.5" fill="#0B0F1E"/>
+            <circle cx="180" cy="130" r="6.5" fill="#0B0F1E"/>
+            <circle cx="158" cy="128" r="2" fill="#FFFFFF"/>
+            <circle cx="178" cy="128" r="2" fill="#FFFFFF"/>
+            <!-- 嘴 -->
+            <path d="M 163 142 L 177 142 L 170 154 Z" fill="#E8963C" stroke="#0B0F1E" stroke-width="1.5" stroke-linejoin="round"/>
+            <!-- 翅膀 -->
+            <ellipse cx="124" cy="200" rx="11" ry="24" transform="rotate(16 124 200)" fill="#0B0F1E" stroke="#F6F2E9" stroke-width="2.5"/>
+            <ellipse cx="216" cy="200" rx="11" ry="24" transform="rotate(-16 216 200)" fill="#0B0F1E" stroke="#F6F2E9" stroke-width="2.5"/>
+            <!-- 脚蹼 -->
+            <ellipse cx="153" cy="252" rx="15" ry="6.5" fill="#E8963C" stroke="#0B0F1E" stroke-width="2"/>
+            <ellipse cx="187" cy="252" rx="15" ry="6.5" fill="#E8963C" stroke="#0B0F1E" stroke-width="2"/>
+
+            <!-- 领结（脉动） -->
+            <g class="bowtie">
+              <path d="M 170 168 L 148 156 L 148 180 Z" fill="#8E2340" stroke="#0B0F1E" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M 170 168 L 192 156 L 192 180 Z" fill="#8E2340" stroke="#0B0F1E" stroke-width="2" stroke-linejoin="round"/>
+              <rect x="165" y="162" width="10" height="12" rx="3" fill="#6E1730" stroke="#0B0F1E" stroke-width="2"/>
+            </g>
+
+            <!-- 礼帽（轻歪） -->
+            <g class="tophat">
+              <ellipse cx="170" cy="100" rx="46" ry="11" fill="#0B0F1E" stroke="#F6F2E9" stroke-width="2.5"/>
+              <rect x="146" y="52" width="48" height="50" rx="5" fill="#0B0F1E" stroke="#F6F2E9" stroke-width="2.5"/>
+              <rect x="146" y="86" width="48" height="12" fill="#8E2340" stroke="#F6F2E9" stroke-width="2"/>
+            </g>
+
+            <!-- 星芒闪烁 -->
+            <g class="twinkle t1" transform="translate(58,58)"><path d="M0 -9 L2.2 -2.2 L9 0 L2.2 2.2 L0 9 L-2.2 2.2 L-9 0 L-2.2 -2.2 Z" fill="#C9A227"/></g>
+            <g class="twinkle t2" transform="translate(296,44)"><path d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z" fill="#C9A227"/></g>
+            <g class="twinkle t3" transform="translate(300,158)"><path d="M0 -8 L2 -2 L8 0 L2 2 L0 8 L-2 2 L-8 0 L-2 -2 Z" fill="#F6F2E9"/></g>
+            <g class="twinkle t4" transform="translate(44,166)"><path d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5 Z" fill="#C9A227"/></g>
+
+            <!-- dress code 招牌（轻摆） -->
+            <line x1="300" y1="0" x2="300" y2="34" stroke="#F6F2E9" stroke-width="2"/>
+            <g class="dress-sign">
+              <rect x="244" y="34" width="112" height="40" rx="8" fill="#C9A227" stroke="#191E33" stroke-width="3"/>
+              <text x="300" y="49" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="9.5" font-weight="900" fill="#191E33" letter-spacing="1">DRESS CODE</text>
+              <text x="300" y="68" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="17" font-weight="900" fill="#8E2340">FORMAL</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">formal dress / attire</div><div class="meaning"><b>正装</b>（请柬常见 dress code: formal）</div></div>
+        <div class="collo"><div class="pattern">formal education</div><div class="meaning"><b>正规教育</b>（区别于"自学成才"）</div></div>
+        <div class="collo"><div class="pattern">formal invitation</div><div class="meaning"><b>正式邀请</b>（函件 · 请柬）</div></div>
+        <div class="collo"><div class="pattern">formal language</div><div class="meaning"><b>正式用语</b>（书面 · 官方场合）</div></div>
+        <div class="collo"><div class="pattern">formal agreement</div><div class="meaning"><b>正式协议</b>（双方落笔签署）</div></div>
+      </div>
+    </section>
+
+    <!-- 4. 例句 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 六级 · 阅读</div>
+          <p class="en">The two sides finally reached a <em class="hl">formal</em> agreement after months of negotiation.</p>
+          <p class="cn">双方经过数月谈判，最终达成正式协议。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 写作</div>
+          <p class="en"><em class="hl">Formal</em> letters usually begin with "Dear Sir or Madam" and avoid contractions.</p>
+          <p class="cn">正式信件通常以"Dear Sir or Madam"开头，并避免使用缩略形式。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 四级 · 听力</div>
+          <p class="en">The invitation states that guests should wear <em class="hl">formal</em> dress.</p>
+          <p class="cn">邀请函上注明，客人应着正装出席。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 考研 · 阅读</div>
+          <p class="en">He had no <em class="hl">formal</em> training in engineering, yet he became a skilled technician.</p>
+          <p class="cn">他从未接受过工程方面的正规培训，却成了一名熟练的技术员。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 易错 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">词族</span>
+          <b>formal</b>（adj. 正式的）· <b>formerly</b>（adv. 以前）· <b>former</b>（adj. 以前的）<br>
+          <span class="wrong">Formally, he was a taxi driver.</span> → <span class="right">Formerly, he was a taxi driver.</span><br>
+          他<b>以前</b>是出租车司机——表"以前"要用 formerly。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词性</span>
+          formal 是<b>形容词</b>，不能直接当副词用<br>
+          <span class="wrong">He spoke formal at the press conference.</span> → <span class="right">He spoke formally at the press conference.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">单复数</span>
+          表示"手续"时，formality 要用<b>复数</b><br>
+          <span class="wrong">complete the legal formality</span> → <span class="right">complete the legal formalities</span><br>
+          办理法律手续：go through the legal formalities。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">语义</span>
+          formal ≠ official：<br>
+          formal 强调"<b>合乎规格礼仪</b>"；official 强调"<b>官方授权</b>"。<br>
+          a formal announcement 可以是公司内部的正式公告，不一定是"官方"的。
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>formal</td><td>正式的（场合/着装/语言）</td><td class="chant">正装礼服用 formal</td></tr>
+          <tr><td>informal</td><td>非正式的</td><td class="chant">轻松随意 informal</td></tr>
+          <tr><td>casual</td><td>随意的（口语，多指衣着）</td><td class="chant">衣着随便 casual</td></tr>
+          <tr><td>official</td><td>官方的（权力背书）</td><td class="chant">官方授权 official</td></tr>
+          <tr><td>ceremonial</td><td>礼仪的、仪式的</td><td class="chant">典礼仪式 ceremonial</td></tr>
+          <tr><td>normal</td><td>正常的（普通状态）</td><td class="chant">平常状态 normal</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. 填空 -->
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The company requires employees to wear <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">ormal</span> dress on Mondays.</p>
+          <p class="fill-hint">提示：<b>formal dress</b> 正装；dress code: formal</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">We have received a <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">ormal</span> invitation to the palace banquet.</p>
+          <p class="fill-hint">提示：<b>a formal invitation</b> 正式邀请</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence"><span class="first-letter">F</span><span class="blank" onclick="this.classList.toggle('revealed')">ormerly</span>, the two countries were at war; today they are close partners.</p>
+          <p class="fill-hint">⚠️ 陷阱：这里要 <b>formerly</b>（以前），不是 formal！</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">We must complete the legal <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">ormalities</span> before signing the contract.</p>
+          <p class="fill-hint">⚠️ 陷阱："手续"要用复数 <b>formalities</b></p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The results were <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">ormally</span> announced at the opening ceremony.</p>
+          <p class="fill-hint">提示：修饰动词 announced，要用副词 <b>formally</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. 造句 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>formal</b> / <b>formally</b> / <b>informal</b> 造一句自己的句子。想想：你上一次穿正装，是什么场合？</p>
+        <textarea id="mySentence" placeholder="例：We received a formal invitation to the graduation ceremony, so I had to buy a suit."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. 复习 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script>
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+  progressBar.style.width = (scrolled * 100) + '%';
+});
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale')
+  .forEach(el => revealObserver.observe(el));
+
+const tableObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const rows = entry.target.querySelectorAll('tbody tr');
+      rows.forEach((row, i) => setTimeout(() => row.classList.add('row-visible'), i * 120));
+      tableObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const table = document.querySelector('.compare-table');
+if(table) tableObserver.observe(table);
+
+const reviewDays = document.querySelectorAll('.review-day');
+const reviewObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      reviewDays.forEach((day, i) => setTimeout(() => day.classList.add('day-visible'), i * 130));
+      reviewObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+const reviewGrid = document.querySelector('.review-grid');
+if(reviewGrid) reviewObserver.observe(reviewGrid);
+
+document.querySelectorAll('.blank').forEach(b => {
+  b.addEventListener('click', function(){
+    this.style.transform = 'scale(1.15)';
+    setTimeout(() => { this.style.transform = ''; }, 180);
+  });
+});
+
+const speakBtn = document.getElementById('speakBtn');
+speakBtn.addEventListener('click', () => {
+  if(!('speechSynthesis' in window)) { alert('当前浏览器不支持朗读'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance('formal');
+  u.lang = 'en-US'; u.rate = 0.8;
+  u.onstart = () => speakBtn.classList.add('speaking');
+  u.onend = () => speakBtn.classList.remove('speaking');
+  window.speechSynthesis.speak(u);
+});
+document.getElementById('ipaBtn').addEventListener('click', () => speakBtn.click());
+
+const STORAGE_KEY = 'formal_sentence';
+const mySentence = document.getElementById('mySentence');
+const savedMsg = document.getElementById('savedMsg');
+const saved = localStorage.getItem(STORAGE_KEY);
+if(saved) mySentence.value = saved;
+document.getElementById('saveBtn').addEventListener('click', () => {
+  localStorage.setItem(STORAGE_KEY, mySentence.value);
+  savedMsg.classList.add('show');
+  setTimeout(() => savedMsg.classList.remove('show'), 1800);
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  mySentence.value = '';
+  localStorage.removeItem(STORAGE_KEY);
+});
+
+const REVIEW_KEY = 'formal_review';
+const reviewState = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
+reviewDays.forEach(day => {
+  const key = day.dataset.day;
+  if(reviewState[key]) day.classList.add('done');
+  day.addEventListener('click', () => {
+    day.classList.toggle('done');
+    reviewState[key] = day.classList.contains('done');
+    localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewState));
+  });
+});
+</script>
+
+</body>
+</html>
