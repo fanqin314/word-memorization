@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>comply · 遵从 · 服从 · 应允</title>
+<link rel="stylesheet" href="card-base.css">
+<style>
+/* ==========================================================================
+   comply 专属样式：配色 / hero / 意象卡动画
+   ========================================================================== */
+:root{
+  /* 合规色板 —— comply = 遵从 / 服从 / 应允 */
+  --paper:#F3F1E9;
+  --paper-2:#E3E0D3;
+  --cb-accent:#5E7A5E;        /* 苔绿：清单与合规 */
+  --cb-accent-soft:#DDE8DA;
+  --cb-2:#A8735C;             /* 陶红：印章 */
+  --cb-2-soft:#F1DFD6;
+  --cb-3:#6E7B8C;             /* 灰蓝：条文 */
+  --cb-3-soft:#E1E7EE;
+  --ink:#20241F;
+  --deep:#2D352C;
+  --cb-deep:#2D352C;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+}
+
+/* ---------- 全页底纹：横格记录纸 ---------- */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent 0 38px,
+      rgba(94,122,94,.055) 38px 39px,
+      transparent 39px 76px);
+  animation:bgRule 14s linear infinite;
+}
+@keyframes bgRule{
+  to{ background-position:0 76px; }
+}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:linear-gradient(180deg,#E8EEE4 0%,#D9E4D4 48%,#C9D8C4 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--cb-accent) 0 22px, transparent 22px 24px,
+    var(--cb-2) 24px 46px, transparent 46px 48px,
+    var(--cb-3) 48px 70px, transparent 70px 72px,
+    var(--cb-accent) 72px 94px, transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+
+.hero-glow{
+  position:absolute;top:44%;left:50%;
+  transform:translate(-50%,-50%);
+  width:460px;height:460px;
+  pointer-events:none;z-index:0;opacity:.55;
+}
+.hero-glow svg{width:100%;height:100%;}
+.glow-pulse{
+  animation:heroGlowPulse 4.5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes heroGlowPulse{
+  0%,100%{ opacity:.5; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.1); }
+}
+
+/* 右侧装饰：清单与印章 */
+.hero-mold{
+  position:absolute;right:38px;top:50%;
+  transform:translateY(-50%) rotate(-6deg);
+  width:170px;height:210px;
+  pointer-events:none;z-index:0;opacity:.4;
+}
+.hero-mold svg{width:100%;height:100%;}
+.hm-box{
+  fill:none;stroke:var(--cb-accent);stroke-width:4;
+  stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:640;stroke-dashoffset:640;
+  animation:hmDraw 3s ease-out forwards;
+}
+@keyframes hmDraw{ to{ stroke-dashoffset:0; } }
+.hm-shape{
+  fill:none;stroke:var(--cb-3);stroke-width:3;
+  stroke-linecap:round;
+  stroke-dasharray:120;stroke-dashoffset:120;
+  animation:hmTick 3.6s ease-in-out infinite;
+}
+.hm-shape.s2{ animation-delay:.9s; }
+.hm-shape.s3{ animation-delay:1.8s; }
+@keyframes hmTick{
+  0%{ stroke-dashoffset:120; opacity:.3; }
+  30%,80%{ stroke-dashoffset:0; opacity:1; }
+  100%{ stroke-dashoffset:0; opacity:.3; }
+}
+.hm-stamp{
+  fill:var(--cb-2);opacity:.9;
+  animation:hmStamp 3.6s ease-in-out infinite;
+  transform-box:fill-box;transform-origin:center;
+}
+@keyframes hmStamp{
+  0%,100%{ opacity:.2; transform:scale(.9) rotate(-8deg); }
+  45%,70%{ opacity:.9; transform:scale(1) rotate(-8deg); }
+}
+
+.hero-inner{position:relative;z-index:2;text-align:center;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:98px;font-weight:900;line-height:1.05;letter-spacing:-.02em;
+  color:var(--ink);
+  filter:drop-shadow(6px 6px 0 var(--cb-accent)) drop-shadow(0 0 18px rgba(94,122,94,.28));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterStamp 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
+  animation-delay:calc(.08s + var(--i, 0) * .11s);
+  will-change:transform,opacity;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+}
+.word-anim .letter:nth-child(1),
+.word-anim .letter:nth-child(6){ color:var(--cb-accent); }
+@keyframes letterStamp{
+  0%{ opacity:0; transform:translateY(-46px) scale(1.5) rotate(-8deg); filter:blur(8px); }
+  55%{ opacity:1; filter:blur(0); transform:translateY(4px) scale(.94) rotate(1deg); }
+  80%{ transform:translateY(-2px) scale(1.03); }
+  100%{ opacity:1; transform:translateY(0) scale(1); color:var(--ink); }
+}
+.word-anim .letter:hover{
+  transform:translateY(-8px) scale(1.12);
+  filter:drop-shadow(0 0 14px var(--cb-accent));
+}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--cb-accent);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--cb-3);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{ transform:translate(-2px,-2px) rotate(12deg); box-shadow:6px 6px 0 var(--cb-3); }
+.speak-btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 var(--cb-3); }
+.speak-btn.speaking{ animation:speakPulse .6s ease-in-out infinite; }
+@keyframes speakPulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.15) rotate(-6deg);} }
+
+.ipa-anim{
+  margin-top:20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;font-weight:700;color:var(--ink);letter-spacing:.06em;
+  background:var(--cb-accent-soft);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-2);
+  cursor:pointer;transform:rotate(-1.5deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+}
+.ipa-anim:hover{ background:var(--cb-2-soft); }
+.pos-anim{
+  margin-top:14px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--deep);display:inline-block;padding:5px 16px;border-radius:999px;
+  border:2px solid var(--ink);transform:rotate(1.2deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--cb-3-soft);
+  border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-1deg);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+}
+@keyframes fadeUp{
+  0%{ opacity:0; transform:translateY(8px); }
+  100%{ opacity:1; transform:translateY(0); }
+}
+
+/* ---------- 意象卡专属动画（cp- 前缀） ---------- */
+
+/* 记录纸网格呼吸 */
+.cp-grid{ animation:cpGrid 5s ease-in-out infinite; }
+@keyframes cpGrid{ 0%,100%{opacity:.2;} 50%{opacity:.42;} }
+
+/* 清单板：描边逐步画出 */
+.cp-board{
+  fill:none;stroke:var(--cb-accent);stroke-width:3.5;
+  stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:680;stroke-dashoffset:680;
+  animation:cpBoardDraw 4.6s ease-in-out infinite;
+}
+@keyframes cpBoardDraw{
+  0%{ stroke-dashoffset:680; opacity:.35; }
+  28%,76%{ stroke-dashoffset:0; opacity:1; }
+  100%{ stroke-dashoffset:0; opacity:.35; }
+}
+
+/* 三个条目线：依次出现 */
+.cp-row{
+  stroke:var(--cb-3);stroke-width:3;stroke-linecap:round;
+  stroke-dasharray:80;stroke-dashoffset:80;
+  animation:cpRowIn 4.6s ease-in-out infinite;
+}
+.cp-row.r2{ animation-delay:.18s; }
+.cp-row.r3{ animation-delay:.36s; }
+@keyframes cpRowIn{
+  0%,14%{ stroke-dashoffset:80; opacity:.2; }
+  30%,76%{ stroke-dashoffset:0; opacity:1; }
+  100%{ stroke-dashoffset:0; opacity:.2; }
+}
+
+/* 三个对勾：逐条打勾 */
+.cp-tick{
+  fill:none;stroke:var(--cb-accent);stroke-width:4.5;
+  stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:40;stroke-dashoffset:40;
+  animation:cpTick 4.6s cubic-bezier(.34,1.56,.64,1) infinite;
+}
+.cp-tick.t2{ animation-delay:.42s; }
+.cp-tick.t3{ animation-delay:.84s; }
+@keyframes cpTick{
+  0%,20%{ stroke-dashoffset:40; opacity:0; }
+  34%,78%{ stroke-dashoffset:0; opacity:1; }
+  100%{ stroke-dashoffset:0; opacity:0; }
+}
+
+/* 印章：从上方压下并盖定 */
+.cp-stamp{
+  transform-box:fill-box;transform-origin:center;
+  animation:cpStampDown 4.6s cubic-bezier(.34,1.56,.64,1) infinite;
+}
+@keyframes cpStampDown{
+  0%,52%{ opacity:0; transform:translateY(-46px) scale(1.5) rotate(-24deg); }
+  66%,82%{ opacity:1; transform:translateY(0) scale(1) rotate(-12deg); }
+  94%,100%{ opacity:0; transform:translateY(0) scale(1.04) rotate(-12deg); }
+}
+
+/* 印章高光 */
+.cp-shine{
+  animation:cpShine 2.3s ease-in-out infinite;
+  transform-box:fill-box;transform-origin:center;
+}
+@keyframes cpShine{
+  0%,100%{ opacity:.25; transform:scale(.85); }
+  50%{ opacity:.9; transform:scale(1.1); }
+}
+
+/* 尺寸标注虚线流动 */
+.cp-measure{
+  fill:none;stroke:var(--cb-2);stroke-width:1.6;
+  stroke-dasharray:5 7;
+  animation:cpMeasure 2s linear infinite;
+}
+@keyframes cpMeasure{ to{ stroke-dashoffset:-48; } }
+
+/* 底部基线流动 */
+.cp-baseline{
+  stroke-dasharray:6 8;
+  animation:cpBase 2s linear infinite;
+}
+@keyframes cpBase{ to{ stroke-dashoffset:-28; } }
+
+/* 标注文字淡入淡出 */
+.cp-caption{ animation:cpCaption 4.6s ease-in-out infinite; }
+@keyframes cpCaption{
+  0%,22%{ opacity:0; }
+  45%,76%{ opacity:1; }
+  100%{ opacity:0; }
+}
+
+@media (max-width:640px){
+  .hero{ padding:50px 22px 40px; }
+  .word-anim{ font-size:50px; }
+  .hero-mold{ display:none; }
+  .hero-glow{ opacity:.35; }
+}
+@media (min-width:1100px){
+  .hero{ padding:100px 80px 80px; }
+  .hero-band{ height:24px; }
+  .word-anim{ font-size:132px; }
+}
+</style>
+</head>
+
+<body data-word="comply">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-glow" aria-hidden="true">
+      <svg viewBox="0 0 500 500">
+        <defs>
+          <radialGradient id="cpHeroGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#5E7A5E" stop-opacity=".42"/>
+            <stop offset="60%" stop-color="#A8735C" stop-opacity=".16"/>
+            <stop offset="100%" stop-color="#5E7A5E" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle class="glow-pulse" cx="250" cy="250" r="225" fill="url(#cpHeroGlow)"/>
+      </svg>
+    </div>
+
+    <div class="hero-mold" aria-hidden="true">
+      <svg viewBox="0 0 170 210">
+        <rect class="hm-box" x="30" y="18" width="110" height="160" rx="9"/>
+        <path class="hm-shape" d="M 52 78 L 62 88 L 80 66"/>
+        <path class="hm-shape s2" d="M 52 116 L 62 126 L 80 104"/>
+        <path class="hm-shape s3" d="M 52 154 L 62 164 L 80 142"/>
+        <circle class="hm-stamp" cx="112" cy="150" r="26"/>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="comply">
+          <span class="letter" style="--i:0">c</span><span class="letter" style="--i:1">o</span><span class="letter" style="--i:2">m</span><span class="letter" style="--i:3">p</span><span class="letter" style="--i:4">l</span><span class="letter" style="--i:5">y</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 comply">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn">英 /kəmˈplaɪ/ &nbsp;·&nbsp; 美 /kəmˈplaɪ/</div>
+      <div class="pos-anim">v.</div>
+      <div class="spell-hint">comply &nbsp; 遵从 · 服从 · 应允</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">com-</span>（完全、一起）+ <span class="stem">ply</span>（拉丁 plere：填满）
+          &nbsp;→&nbsp; "把要求<b>全部填满</b>" → <b>遵从 · 照办</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">名词</div><div class="w">compliance</div><div class="p">/kəmˈplaɪəns/</div><div class="m">遵从，合规</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">compliant</div><div class="p">/kəmˈplaɪənt/</div><div class="m">顺从的，合规的</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">complement</div><div class="p">/ˈkɒmplɪment/</div><div class="m">补充，补足</div></div>
+          <div class="fam-card"><div class="pos">形容词·动词</div><div class="w">complete</div><div class="p">/kəmˈpliːt/</div><div class="m">完整的；完成</div></div>
+          <div class="fam-card"><div class="pos">名词·动词</div><div class="w">supplement</div><div class="p">/ˈsʌplɪment/</div><div class="m">补充物；增补</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">implement</div><div class="p">/ˈɪmplɪment/</div><div class="m">实施，执行</div></div>
+          <div class="fam-card"><div class="pos">动词·名词</div><div class="w">supply</div><div class="p">/səˈplaɪ/</div><div class="m">供应；供给</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">plenty</div><div class="p">/ˈplenti/</div><div class="m">大量，充足</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">comply</span> = 一张检查清单，每一项都得打上勾，最后盖上<strong>合规印章</strong>。
+          </p>
+          <p class="ic-sub">
+            不填完 = 不合规；填完 = compliant（顺从的、合规的）。<br>
+            <b>comply with the rules</b>：把规则要求的空格一个个填满；<br>
+            <b>in compliance with</b>：以"已填满"的状态；<br>
+            核心：<b>"要求填满，才叫照办"</b>——不是同意，是<b>照做</b>。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 360 280">
+            <!-- 记录纸网格 -->
+            <g class="cp-grid" stroke="var(--paper)" stroke-width="0.6">
+              <line x1="20" y1="60" x2="340" y2="60"/>
+              <line x1="20" y1="110" x2="340" y2="110"/>
+              <line x1="20" y1="160" x2="340" y2="160"/>
+              <line x1="20" y1="210" x2="340" y2="210"/>
+              <line x1="60" y1="30" x2="60" y2="250"/>
+              <line x1="160" y1="30" x2="160" y2="250"/>
+              <line x1="260" y1="30" x2="260" y2="250"/>
+            </g>
+
+            <!-- 工作台基线 -->
+            <line class="cp-baseline" x1="20" y1="250" x2="340" y2="250"
+                  stroke="var(--paper)" stroke-width="2" opacity=".5"/>
+
+            <!-- 清单板 -->
+            <rect class="cp-board" x="112" y="34" width="136" height="206" rx="12"
+                  fill="var(--cb-accent-soft)" fill-opacity=".3"/>
+
+            <!-- 顶部夹子 -->
+            <rect x="150" y="24" width="60" height="18" rx="6"
+                  fill="var(--cb-3)" stroke="var(--ink)" stroke-width="2.4"/>
+
+            <!-- 三个条目：线 + 勾 -->
+            <line class="cp-row r1" x1="152" y1="94" x2="228" y2="94"/>
+            <line class="cp-row r2" x1="152" y1="134" x2="228" y2="134"/>
+            <line class="cp-row r3" x1="152" y1="174" x2="228" y2="174"/>
+
+            <path class="cp-tick t1" d="M 124 90 L 132 99 L 145 82"/>
+            <path class="cp-tick t2" d="M 124 130 L 132 139 L 145 122"/>
+            <path class="cp-tick t3" d="M 124 170 L 132 179 L 145 162"/>
+
+            <!-- 合规印章 -->
+            <g class="cp-stamp">
+              <circle cx="214" cy="212" r="34"
+                      fill="none" stroke="var(--cb-2)" stroke-width="4"/>
+              <circle cx="214" cy="212" r="26"
+                      fill="none" stroke="var(--cb-2)" stroke-width="1.6"/>
+              <text x="214" y="209" text-anchor="middle"
+                    font-family="Helvetica, Arial" font-size="10" font-weight="900"
+                    letter-spacing=".6" fill="var(--cb-2)">COMPLIED</text>
+              <text x="214" y="222" text-anchor="middle"
+                    font-family="Helvetica, Arial" font-size="8" font-weight="800"
+                    letter-spacing="1" fill="var(--cb-2)">已合规</text>
+            </g>
+
+            <!-- 印章高光 -->
+            <circle class="cp-shine" cx="214" cy="212" r="42"
+                    fill="var(--cb-2)" fill-opacity=".18"/>
+
+            <!-- 尺寸标注 -->
+            <path class="cp-measure" d="M 112 26 L 248 26"/>
+            <path class="cp-measure" d="M 254 40 L 254 232"/>
+
+            <!-- 标注文字 -->
+            <text class="cp-caption" x="180" y="18" text-anchor="middle"
+                  font-family="Helvetica, Arial" font-size="10" font-weight="800"
+                  letter-spacing="2" fill="var(--paper)">CHECKLIST</text>
+            <text class="cp-caption" x="70" y="120" text-anchor="middle"
+                  font-family="Helvetica, Arial" font-size="10" font-weight="800"
+                  letter-spacing="1.5" fill="var(--paper)">FILL</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">comply with</div><div class="meaning"><b>遵从</b>（规定、法律、标准）</div></div>
+        <div class="collo"><div class="pattern">comply with the law</div><div class="meaning"><b>守法</b>，依法办事</div></div>
+        <div class="collo"><div class="pattern">in compliance with</div><div class="meaning"><b>依照</b>，遵照（名词短语）</div></div>
+        <div class="collo"><div class="pattern">comply with requirements</div><div class="meaning"><b>满足</b>要求</div></div>
+        <div class="collo"><div class="pattern">refuse to comply</div><div class="meaning"><b>拒不</b>遵从</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 考研 · 阅读</div>
+          <p class="en">Employers are legally required to <em class="hl">comply with</em> health and safety regulations.</p>
+          <p class="cn">雇主在法律上必须遵守健康与安全法规。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">The company refused to <em class="hl">comply with</em> the court's ruling.</p>
+          <p class="cn">该公司拒绝服从法院的裁决。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 雅思 · 写作</div>
+          <p class="en">All new buildings must <em class="hl">comply with</em> energy-efficiency standards.</p>
+          <p class="cn">所有新建建筑必须符合节能标准。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2018 四级 · 完形</div>
+          <p class="en">Failure to <em class="hl">comply</em> may result in a heavy fine.</p>
+          <p class="cn">未照章执行可能导致高额罚款。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">介词</span>
+          <b>comply</b> 是不及物动词，后面<b>必须带 with</b>。<br>
+          <span class="wrong">comply the regulations</span> → <span class="right">comply with the regulations</span><br>
+          名词形式固定为 <span class="right">in compliance with</span>（不能再加 to）。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          <b>comply</b>（遵从）vs <b>compile</b>（编译、汇编）。<br>
+          <span class="wrong">The data was complied.</span> → <span class="right">The data was compiled.</span><br>
+          记：<b>compile</b> 里有 <b>i</b>（"输入"的 i，汇编数据），<b>comply</b> 是 ply（填满）。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">同义辨析</span>
+          <b>comply with</b> 偏"依从规定"（正式、法律语域）；<b>conform to</b> 偏"遵从标准、习俗"。<br>
+          题干出现 regulations / law / standards 时，两者都可能，但介词一定跟着动：<br>
+          <span class="right">comply with</span> ／ <span class="right">conform to</span>——介词错了就全错。
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>comply (with)</td>
+            <td>依从规定、法律、标准（正式照办）</td>
+            <td class="chant">要求填满才 comply</td>
+          </tr>
+          <tr>
+            <td>conform (to)</td>
+            <td>遵从标准、习俗（与模子同形）</td>
+            <td class="chant">压进模子 conform</td>
+          </tr>
+          <tr>
+            <td>obey</td>
+            <td>服从人、命令（有发令者）</td>
+            <td class="chant">听人命令用 obey</td>
+          </tr>
+          <tr>
+            <td>follow</td>
+            <td>遵循（最通用，口语化）</td>
+            <td class="chant">跟着走叫 follow</td>
+          </tr>
+          <tr>
+            <td>observe</td>
+            <td>遵守（法律、习俗，较书面）</td>
+            <td class="chant">郑重遵守 observe</td>
+          </tr>
+          <tr>
+            <td>abide by</td>
+            <td>遵守（承诺、协议、裁决）</td>
+            <td class="chant">守约守裁决 abide by</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">All factories must <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">omply</span> with environmental regulations.</p>
+          <p class="fill-hint">提示：<b>comply with</b>，遵守（动词原形）</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Companies that fail to <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">omply</span> with the new rules will be fined.</p>
+          <p class="fill-hint">提示：<b>fail to comply with</b>，未能遵守</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The firm <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">omplied</span> with the safety standards last year.</p>
+          <p class="fill-hint">提示：过去式，<b>comply → complied</b>（y 变 i）</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">In <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ompliance</span> with the court order, the records were released.</p>
+          <p class="fill-hint">⚠️ 陷阱：<b>in compliance with</b>，名词形式，不是 comply</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The software is fully <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ompliant</span> with the latest security requirements.</p>
+          <p class="fill-hint">提示：形容词形式，<b>be compliant with</b></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>comply</b> 造一句自己的句子，刻意用上 <b>comply with</b> 或 <b>in compliance with</b>。</p>
+        <textarea id="mySentence" placeholder="例：All restaurants must comply with strict hygiene regulations."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="card-base.js"></script>
+
+</body>
+</html>
