@@ -1,6 +1,6 @@
 /* 本文件由「更新单词数据.ps1 / .bat」自动生成，请勿手工编辑。 */
 window.WORDS_DATA = {
-    "generated":  "2026-10-24 19:26:12",
+    "generated":  "2026-10-24 19:26:22",
     "words":  [
                   {
                       "word":  "about",
@@ -183,18 +183,6 @@ window.WORDS_DATA = {
                                 ],
                       "morph":  "con-（一起，完全） + vert（转） → \"完全转向\" → 转变 · 转换 · 改造",
                       "scene":  "convert = 一个东西转到另一个形态。"
-                  },
-                  {
-                      "word":  "FIRE Simulator",
-                      "gloss":  "财富自由推演器",
-                      "ipa":  "",
-                      "pos":  "",
-                      "file":  "FIRE Simulator.html",
-                      "roots":  [
-                                    "other"
-                                ],
-                      "morph":  "",
-                      "scene":  ""
                   },
                   {
                       "word":  "develop",
