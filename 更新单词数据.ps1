@@ -313,19 +313,23 @@ foreach($f in $files){
   $targetDir = Join-Path $cardsDir $first
   if(-not (Test-Path -LiteralPath $targetDir)){ New-Item -ItemType Directory -Path $targetDir -Force | Out-Null }
   $dst = Join-Path $targetDir ($c.word + '.html')
-  if($f.FullName -ne $dst){
-    if(Test-Path -LiteralPath $dst){
-      Write-Host ("目标已存在，保留原文件: " + $f.Name) -ForegroundColor Yellow
-    } else {
-      try {
-        $raw = [System.IO.File]::ReadAllText($f.FullName, [System.Text.Encoding]::UTF8)
-        $raw = $raw.Replace('href="card-base.css"', 'href="../card-base.css"').Replace('src="card-base.js"', 'src="../card-base.js"')
-        [System.IO.File]::WriteAllText($f.FullName, $raw, (New-Object System.Text.UTF8Encoding($false)))
+  $needMove = ($f.FullName -ne $dst)
+  if($needMove -and (Test-Path -LiteralPath $dst)){
+    Write-Host ("目标已存在，保留原文件: " + $f.Name) -ForegroundColor Yellow
+  } else {
+    try {
+      # 卡片位于 cards/<字母>/，公共资源要往上两级
+      $raw = [System.IO.File]::ReadAllText($f.FullName, [System.Text.Encoding]::UTF8)
+      $fixed = $raw.Replace('href="card-base.css"', 'href="../../card-base.css"').Replace('src="card-base.js"', 'src="../../card-base.js"').Replace('href="../card-base.css"', 'href="../../card-base.css"').Replace('src="../card-base.js"', 'src="../../card-base.js"')
+      if($needMove){
         Move-Item -LiteralPath $f.FullName -Destination $dst -Force
         Write-Host ("已归位: " + $f.Name + " -> cards/" + $first + "/" + $c.word + ".html") -ForegroundColor Cyan
-      } catch {
-        Write-Host ("归位失败: " + $f.Name + " -> " + $_.Exception.Message) -ForegroundColor Yellow
+        if($fixed -ne $raw){ [System.IO.File]::WriteAllText($dst, $fixed, (New-Object System.Text.UTF8Encoding($false))) }
+      } elseif($fixed -ne $raw){
+        [System.IO.File]::WriteAllText($f.FullName, $fixed, (New-Object System.Text.UTF8Encoding($false)))
       }
+    } catch {
+      Write-Host ("归位失败: " + $f.Name + " -> " + $_.Exception.Message) -ForegroundColor Yellow
     }
   }
   $c['file'] = "cards/" + $first + "/" + $c.word + ".html"
