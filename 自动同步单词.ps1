@@ -57,11 +57,15 @@ function Write-OutputLines([string]$prefix, $lines){
 }
 
 # ---------- 卡片指纹 ----------
-# 本目录所有 *.html（排除 index.html）的文件名 + 大小 + 最后写入时间
+# cards 目录（含 a-z 子目录）和根目录里所有 *.html（排除 index.html 与 _ 开头的模板）
+# 的「相对路径 + 大小 + 最后写入时间」
 function Get-CardSignature {
-  $cards = @(Get-ChildItem -LiteralPath $script:dir -Filter '*.html' -File -ErrorAction SilentlyContinue |
-    Where-Object { $_.Name -ne 'index.html' } | Sort-Object Name)
-  return (@($cards | ForEach-Object { $_.Name + '|' + $_.Length + '|' + $_.LastWriteTimeUtc.Ticks }) -join ';')
+  $cards = @(Get-ChildItem -LiteralPath $script:dir -Filter '*.html' -File -Recurse -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -ne 'index.html' -and $_.Name -notmatch '^_' } | Sort-Object FullName)
+  return (@($cards | ForEach-Object {
+    $rel = $_.FullName.Substring($script:dir.Length).TrimStart('\', '/')
+    $rel + '|' + $_.Length + '|' + $_.LastWriteTimeUtc.Ticks
+  }) -join ';')
 }
 
 # 读取 .sync-state
@@ -75,13 +79,18 @@ function Read-StateValue {
 }
 
 # ---------- 文件稳定性校验 ----------
-# 两个目录里所有 *.html 的「文件名|大小」快照
+# 本目录（含 cards 子目录）与下载目录里所有 *.html 的「完整路径|大小」快照
 function Get-QuickSnapshot {
   $sb = New-Object System.Text.StringBuilder
-  foreach($p in @($script:dir, $script:downloads)){
+  $scanList = @(
+    @{ path = $script:dir;       recurse = $true },
+    @{ path = $script:downloads; recurse = $false }
+  )
+  foreach($s in $scanList){
+    $p = $s.path
     if(-not (Test-Path -LiteralPath $p)){ continue }
-    $fs = Get-ChildItem -LiteralPath $p -Filter '*.html' -File -ErrorAction SilentlyContinue | Sort-Object Name
-    foreach($f in $fs){ [void]$sb.Append($f.Name + '|' + $f.Length + ';') }
+    $fs = Get-ChildItem -LiteralPath $p -Filter '*.html' -File -Recurse:$s.recurse -ErrorAction SilentlyContinue | Sort-Object FullName
+    foreach($f in $fs){ [void]$sb.Append($f.FullName + '|' + $f.Length + ';') }
   }
   return $sb.ToString()
 }
@@ -292,7 +301,7 @@ function Invoke-Sync {
 $script:watchers = New-Object System.Collections.ArrayList
 $script:eventIds = New-Object System.Collections.ArrayList
 
-function Start-DirWatcher([string]$path, [string]$tag){
+function Start-DirWatcher([string]$path, [string]$tag, [bool]$includeSub = $false){
   if(-not (Test-Path -LiteralPath $path)){
     Write-SyncLog ('监听目录不存在，跳过: ' + $path)
     return
@@ -301,7 +310,7 @@ function Start-DirWatcher([string]$path, [string]$tag){
     $w = New-Object System.IO.FileSystemWatcher
     $w.Path = $path
     $w.Filter = '*.html'
-    $w.IncludeSubdirectories = $false
+    $w.IncludeSubdirectories = $includeSub
     # 监听文件名变化、内容写入、大小变化
     $w.NotifyFilter = [System.IO.NotifyFilters]::FileName -bor [System.IO.NotifyFilters]::LastWrite -bor [System.IO.NotifyFilters]::Size
     # 加大缓冲区，避免短时间大量事件时丢失
@@ -354,7 +363,8 @@ $script:nextProcessAt = Get-Date   # 下次处理重试时间
 try{
   Write-SyncLog ('监听进程启动 (PID=' + $PID + '，EnsureRunning=' + [bool]$EnsureRunning + ')')
 
-  Start-DirWatcher $script:dir 'CardWatchDir'
+  # 本目录要连 cards/a-z 子目录一起监听；下载目录只看顶层
+  Start-DirWatcher $script:dir 'CardWatchDir' -includeSub $true
   Start-DirWatcher $script:downloads 'CardWatchDl'
 
   # 启动时先比对一次，补上停机期间发生的变化

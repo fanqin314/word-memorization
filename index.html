@@ -2673,20 +2673,20 @@ body.swipe-on{overflow:hidden;}
    数据：14 张单词学习卡
    ============================================================ */
 const WORDS = [
-  {word:'about',       gloss:'环绕 · 大约 · 关于',    ipa:'/əˈbaʊt/',       pos:'prep. · adv. · adj.', file:'about.html', roots:['other'],        morph:'古英语 a-（在…周围）+ būtan（外面）→ "在四周"',        scene:'围着某个中心，一圈圈涟漪荡开'},
-  {word:'weave',       gloss:'交叉编织',              ipa:'/wiːv/',         pos:'v. & n.',             file:'weave.html', roots:['other'],        morph:'源自古英语 wefan（编织），与 web（网）/ weft（纬线）同源', scene:'把东西交叉着穿过去，编到一起'},
-  {word:'annual',      gloss:'每年的 · 年度的',       ipa:'/ˈænjuəl/',      pos:'adj. · n.',           file:'annual.html', roots:['ann'],          morph:'拉丁语 ann（年）+ -ual（形容词后缀）→ "一年一次的"',    scene:'一棵树，一年长出一圈年轮'},
-  {word:'convert',     gloss:'转变 · 转换 · 改造',    ipa:'/kənˈvɜːt/',     pos:'v. · n.',             file:'convert.html', roots:['vers'],         morph:'con-（一起，完全）+ vert（转）→ "完全转向"',            scene:'一个东西转到另一个形态'},
-  {word:'space',       gloss:'空间 · 太空 · 留白',    ipa:'/speɪs/',        pos:'n. · v.',             file:'space.html', roots:['other'],        morph:'拉丁语 spatium（距离，场地）→ 广阔、留白、宇宙',          scene:'一切事物之间空出来的位置'},
-  {word:'reunite',     gloss:'重聚 · 重逢 · 再度联合',ipa:'/ˌriːjuˈnaɪt/', pos:'v.',                  file:'reunite.html', roots:['un'],           morph:'re-（再，又）+ unus（一）+ -ite（动词后缀）→ "再次成为一"', scene:'走散的两个人，朝彼此重新走来'},
-  {word:'controversy', gloss:'争议 · 争论 · 论战',    ipa:'/ˈkɒntrəvɜːsi/', pos:'n.',                  file:'controversy.html', roots:['vers','contra'],morph:'contro-（相反，对抗）+ vers（转）+ -y → "转向相反方向"',  scene:'两方观点迎头相撞，火花四溅'},
-  {word:'accordingly', gloss:'相应地 · 因此',         ipa:'/əˈkɔːdɪŋli/',   pos:'adv.',                file:'accordingly.html', roots:['cor'],          morph:'ad-（向）+ cor（心，引申为"一致"）→ "心心相合"',          scene:'第一张牌倒了，后面的牌跟着倒'},
-  {word:'reverse',     gloss:'反转 · 倒退 · 相反',    ipa:'/rɪˈvɜːs/',      pos:'v. · n. · adj.',      file:'reverse.html', roots:['vers'],         morph:'re-（回，反）+ vers（转）+ -e → "转向相反方向"',         scene:'把方向反着转回来'},
-  {word:'diverse',     gloss:'多样的 · 各不相同的',   ipa:'/daɪˈvɜːs/',     pos:'adj.',                file:'diverse.html', roots:['vers'],         morph:'di-（分开，离开）+ vers（转）+ -e → "转向不同方向"',     scene:'往不同方向转出去的许多色彩与形状'},
-  {word:'unite',       gloss:'联合 · 团结 · 汇聚',    ipa:'/juˈnaɪt/',      pos:'v.',                  file:'unite.html', roots:['un'],           morph:'拉丁语 unus（一）+ -ite（动词后缀）→ "使之成为一"',        scene:'五湖四海的人，汇聚成一股绳'},
-  {word:'contrary',    gloss:'相反的 · 对立面',       ipa:'/ˈkɒntrəri/',    pos:'adj. · n.',           file:'contrary.html', roots:['contra'],       morph:'contra-（相反，对抗）+ -ry（形容词后缀）→ "站在对面的"', scene:'两个箭头背对背指向相反方向'},
-  {word:'anniversary', gloss:'周年 · 纪念日',         ipa:'/ˌænɪˈvɜːsəri/', pos:'n.',                  file:'anniversary.html', roots:['ann','vers'],   morph:'ann-（年）+ vers（转）+ -ary → "一年转回来的日子"',      scene:'时间转了一圈，又回到同一个日子'},
-  {word:'union',       gloss:'联盟 · 工会 · 联合',    ipa:'/ˈjuːniən/',     pos:'n.',                  file:'union.html', roots:['un'],           morph:'拉丁语 unus（一）+ -ion（名词后缀）→ "成为一体的状态"',   scene:'五个环环环相扣，串成一条不断裂的链'}
+  {word:'about',       gloss:'环绕 · 大约 · 关于',    ipa:'/əˈbaʊt/',       pos:'prep. · adv. · adj.', file:'cards/a/about.html', roots:['other'],        morph:'古英语 a-（在…周围）+ būtan（外面）→ "在四周"',        scene:'围着某个中心，一圈圈涟漪荡开'},
+  {word:'weave',       gloss:'交叉编织',              ipa:'/wiːv/',         pos:'v. & n.',             file:'cards/w/weave.html', roots:['other'],        morph:'源自古英语 wefan（编织），与 web（网）/ weft（纬线）同源', scene:'把东西交叉着穿过去，编到一起'},
+  {word:'annual',      gloss:'每年的 · 年度的',       ipa:'/ˈænjuəl/',      pos:'adj. · n.',           file:'cards/a/annual.html', roots:['ann'],          morph:'拉丁语 ann（年）+ -ual（形容词后缀）→ "一年一次的"',    scene:'一棵树，一年长出一圈年轮'},
+  {word:'convert',     gloss:'转变 · 转换 · 改造',    ipa:'/kənˈvɜːt/',     pos:'v. · n.',             file:'cards/c/convert.html', roots:['vers'],         morph:'con-（一起，完全）+ vert（转）→ "完全转向"',            scene:'一个东西转到另一个形态'},
+  {word:'space',       gloss:'空间 · 太空 · 留白',    ipa:'/speɪs/',        pos:'n. · v.',             file:'cards/s/space.html', roots:['other'],        morph:'拉丁语 spatium（距离，场地）→ 广阔、留白、宇宙',          scene:'一切事物之间空出来的位置'},
+  {word:'reunite',     gloss:'重聚 · 重逢 · 再度联合',ipa:'/ˌriːjuˈnaɪt/', pos:'v.',                  file:'cards/r/reunite.html', roots:['un'],           morph:'re-（再，又）+ unus（一）+ -ite（动词后缀）→ "再次成为一"', scene:'走散的两个人，朝彼此重新走来'},
+  {word:'controversy', gloss:'争议 · 争论 · 论战',    ipa:'/ˈkɒntrəvɜːsi/', pos:'n.',                  file:'cards/c/controversy.html', roots:['vers','contra'],morph:'contro-（相反，对抗）+ vers（转）+ -y → "转向相反方向"',  scene:'两方观点迎头相撞，火花四溅'},
+  {word:'accordingly', gloss:'相应地 · 因此',         ipa:'/əˈkɔːdɪŋli/',   pos:'adv.',                file:'cards/a/accordingly.html', roots:['cor'],          morph:'ad-（向）+ cor（心，引申为"一致"）→ "心心相合"',          scene:'第一张牌倒了，后面的牌跟着倒'},
+  {word:'reverse',     gloss:'反转 · 倒退 · 相反',    ipa:'/rɪˈvɜːs/',      pos:'v. · n. · adj.',      file:'cards/r/reverse.html', roots:['vers'],         morph:'re-（回，反）+ vers（转）+ -e → "转向相反方向"',         scene:'把方向反着转回来'},
+  {word:'diverse',     gloss:'多样的 · 各不相同的',   ipa:'/daɪˈvɜːs/',     pos:'adj.',                file:'cards/d/diverse.html', roots:['vers'],         morph:'di-（分开，离开）+ vers（转）+ -e → "转向不同方向"',     scene:'往不同方向转出去的许多色彩与形状'},
+  {word:'unite',       gloss:'联合 · 团结 · 汇聚',    ipa:'/juˈnaɪt/',      pos:'v.',                  file:'cards/u/unite.html', roots:['un'],           morph:'拉丁语 unus（一）+ -ite（动词后缀）→ "使之成为一"',        scene:'五湖四海的人，汇聚成一股绳'},
+  {word:'contrary',    gloss:'相反的 · 对立面',       ipa:'/ˈkɒntrəri/',    pos:'adj. · n.',           file:'cards/c/contrary.html', roots:['contra'],       morph:'contra-（相反，对抗）+ -ry（形容词后缀）→ "站在对面的"', scene:'两个箭头背对背指向相反方向'},
+  {word:'anniversary', gloss:'周年 · 纪念日',         ipa:'/ˌænɪˈvɜːsəri/', pos:'n.',                  file:'cards/a/anniversary.html', roots:['ann','vers'],   morph:'ann-（年）+ vers（转）+ -ary → "一年转回来的日子"',      scene:'时间转了一圈，又回到同一个日子'},
+  {word:'union',       gloss:'联盟 · 工会 · 联合',    ipa:'/ˈjuːniən/',     pos:'n.',                  file:'cards/u/union.html', roots:['un'],           morph:'拉丁语 unus（一）+ -ion（名词后缀）→ "成为一体的状态"',   scene:'五个环环环相扣，串成一条不断裂的链'}
 ];
 
 /* 极简低饱和：词根不再各占一色，统一收成中性灰；色彩只留给「强调色」表达交互 */
@@ -3383,6 +3383,11 @@ function toBase64(text){
   for(let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
   return btoa(bin);
 }
+/* 卡片在仓库里的路径：cards/<首字母>/<单词>.html，非字母归入 other */
+function cardPath(word){
+  const c = String(word || '').charAt(0).toLowerCase();
+  return 'cards/' + (/[a-z]/.test(c) ? c : 'other') + '/' + word + '.html';
+}
 async function ghPutFile(path, content, token){
   const url = `https://api.github.com/repos/${GH_REPO.owner}/${GH_REPO.repo}/contents/${encodeURIComponent(path)}`;
   const res = await fetch(url, {
@@ -3485,7 +3490,7 @@ async function uploadPending(){
   let ok = 0, skipped = 0, failed = 0;
   for(const it of pendingCards.slice()){
     try{
-      await ghPutFile(it.word + '.html', it.text, token);
+      await ghPutFile(cardPath(it.word), it.text, token);
       uploadedWords.add(it.word); ok++;
     }catch(e){
       if(e.status === 422){ uploadedWords.add(it.word); skipped++; continue; } // 仓库里已存在
@@ -3518,7 +3523,7 @@ async function uploadFilesManually(files){
     const word = wordFromCard(html);
     if(!word){ failed++; continue; }
     if(known.has(word)){ skipped++; continue; }
-    try{ await ghPutFile(word + '.html', html, token); known.add(word); ok++; }
+    try{ await ghPutFile(cardPath(word), html, token); known.add(word); ok++; }
     catch(e){
       if(e.status === 422){ skipped++; continue; }
       if(e.status === 401 || e.status === 403){

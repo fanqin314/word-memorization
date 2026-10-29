@@ -291,7 +291,11 @@ function Parse-Card([string]$path){
 }
 
 # ---------- 主流程 ----------
-$files = Get-ChildItem -Path $dir -Filter '*.html' -File | Where-Object { $_.Name -ne 'index.html' -and $_.Name -notmatch '^_' } | Sort-Object Name
+$cardsDir = Join-Path $dir 'cards'
+$files = @()
+$files += @(Get-ChildItem -LiteralPath $cardsDir -Filter '*.html' -File -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Name -notmatch '^_' })
+# 根目录里尚未归位的卡片（下载得到的新卡）也一并纳入
+$files += @(Get-ChildItem -LiteralPath $dir -Filter '*.html' -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'index.html' -and $_.Name -notmatch '^_' })
 $words = New-Object System.Collections.ArrayList
 $art = [ordered]@{}
 $artCss = [ordered]@{}
@@ -303,17 +307,28 @@ foreach($f in $files){
   if($null -eq $c){ Write-Host ("跳过（未取到单词）: " + $f.Name) -ForegroundColor Yellow; continue }
   if($seen.ContainsKey($c.word)){ Write-Host ("重复单词，跳过: " + $f.Name) -ForegroundColor Yellow; continue }
   $seen[$c.word] = $true
-  # 下载得到的文件名多为 deepseek_html_*，自动改名为 <单词>.html，让仓库文件名可读
-  $newName = $c.word + '.html'
-  if($f.Name -ne $newName -and $f.Name -match '^deepseek_html_'){
-    $dst = Join-Path $dir $newName
-    if(-not (Test-Path -LiteralPath $dst)){
-      try { Rename-Item -LiteralPath $f.FullName -NewName $newName; $c['file'] = $newName; Write-Host ("已改名: " + $f.Name + " -> " + $newName) -ForegroundColor Cyan }
-      catch { Write-Host ("改名失败: " + $f.Name) -ForegroundColor Yellow }
+  # 归位：按单词首字母放进 cards\<字母>\，让仓库结构可读
+  $first = if($c.word.Length -gt 0){ $c.word.Substring(0,1).ToLower() } else { 'other' }
+  if($first -notmatch '[a-z]'){ $first = 'other' }
+  $targetDir = Join-Path $cardsDir $first
+  if(-not (Test-Path -LiteralPath $targetDir)){ New-Item -ItemType Directory -Path $targetDir -Force | Out-Null }
+  $dst = Join-Path $targetDir ($c.word + '.html')
+  if($f.FullName -ne $dst){
+    if(Test-Path -LiteralPath $dst){
+      Write-Host ("目标已存在，保留原文件: " + $f.Name) -ForegroundColor Yellow
     } else {
-      Write-Host ("目标名已存在，保留原文件名: " + $f.Name) -ForegroundColor Yellow
+      try {
+        $raw = [System.IO.File]::ReadAllText($f.FullName, [System.Text.Encoding]::UTF8)
+        $raw = $raw.Replace('href="card-base.css"', 'href="../card-base.css"').Replace('src="card-base.js"', 'src="../card-base.js"')
+        [System.IO.File]::WriteAllText($f.FullName, $raw, (New-Object System.Text.UTF8Encoding($false)))
+        Move-Item -LiteralPath $f.FullName -Destination $dst -Force
+        Write-Host ("已归位: " + $f.Name + " -> cards/" + $first + "/" + $c.word + ".html") -ForegroundColor Cyan
+      } catch {
+        Write-Host ("归位失败: " + $f.Name + " -> " + $_.Exception.Message) -ForegroundColor Yellow
+      }
     }
   }
+  $c['file'] = "cards/" + $first + "/" + $c.word + ".html"
   $svg = $c.svg; $css = $c.css; $m = $c.mst
   $c.Remove('svg') | Out-Null
   $c.Remove('css') | Out-Null
