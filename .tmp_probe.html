@@ -3,6 +3,11 @@
 <iframe id="f" src="/index.html"></iframe>
 <pre id="out">pending</pre>
 <script>
+const qs = new URLSearchParams(location.search);
+const W = parseInt(qs.get('w') || '1440', 10);
+const H = parseInt(qs.get('h') || '900', 10);
+const f0 = document.getElementById('f');
+f0.style.width = W + 'px'; f0.style.height = H + 'px';
 const out = [];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const push = (k, v) => out.push(k + ': ' + v);
