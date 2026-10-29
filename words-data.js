@@ -1,6 +1,6 @@
 /* 本文件由「更新单词数据.ps1 / .bat」自动生成，请勿手工编辑。 */
 window.WORDS_DATA = {
-    "generated":  "2026-10-29 22:38:55",
+    "generated":  "2026-10-30 00:00:49",
     "words":  [
                   {
                       "word":  "about",
@@ -12,7 +12,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "古英语 a-（在…周围） + būtan（外面） → \"在四周\" → 环绕 · 大约 · 关于",
-                      "scene":  "about = 围着某个中心荡开一圈圈涟漪。"
+                      "scene":  "about = 围着某个中心荡开一圈圈涟漪。",
+                      "q":  [
+                                {
+                                    "q":  "The movie is \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the life of a scientist.",
+                                    "a":  "bout",
+                                    "h":  "表\"关于\"的介词 be about + 名词"
+                                },
+                                {
+                                    "q":  "I was \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to call you when you walked in.",
+                                    "a":  "bout",
+                                    "h":  "be about to do，正要做某事"
+                                },
+                                {
+                                    "q":  "There are \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e 50 students in the room.",
+                                    "a":  "bout",
+                                    "h":  "表\"大约\" about + 数字"
+                                },
+                                {
+                                    "q":  "What \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e going for a walk after dinner?",
+                                    "a":  "bout",
+                                    "h":  "What about + 动名词，提建议"
+                                },
+                                {
+                                    "q":  "The Internet has \u003cspan class=\"first-letter\"\u003eb\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e huge changes in how we communicate.",
+                                    "a":  "rought about",
+                                    "h":  "bring about，带来变化"
+                                }
+                            ]
                   },
                   {
                       "word":  "accordingly",
@@ -24,7 +51,34 @@ window.WORDS_DATA = {
                                     "cor"
                                 ],
                       "morph":  "拉丁语 ad-（向） + cor（心，引申为\"一致\"） → \"心心相合\" → 相应 · 一致 · 因此",
-                      "scene":  "accordingly = 第一张牌倒了，后面的牌跟着倒。"
+                      "scene":  "accordingly = 第一张牌倒了，后面的牌跟着倒。",
+                      "q":  [
+                                {
+                                    "q":  "The weather changed, and we adjusted our plans \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "ccordingly",
+                                    "h":  "表\"相应地\" adjust accordingly"
+                                },
+                                {
+                                    "q":  "He missed the deadline; \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e, he lost the contract.",
+                                    "a":  "ccordingly",
+                                    "h":  "表\"因此\" 句首 + 逗号"
+                                },
+                                {
+                                    "q":  "Please read the instructions carefully and act \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "ccordingly",
+                                    "h":  "act accordingly，照此行事"
+                                },
+                                {
+                                    "q":  "\u003cspan class=\"first-letter\"\u003eA\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the report, sales rose sharply.",
+                                    "a":  "ccording to",
+                                    "h":  "⚠️ 陷阱：这里填 according to（根据），不是 accordingly！"
+                                },
+                                {
+                                    "q":  "The rules vary \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the region.",
+                                    "a":  "ccording to",
+                                    "h":  "⚠️ 同理：vary according to，根据…不同"
+                                }
+                            ]
                   },
                   {
                       "word":  "advance",
@@ -36,7 +90,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "ad-（朝向） + vance（前） → \"朝前走\" → 前进 · 推进 · 提前",
-                      "scene":  "advance = 一个箭头一级一级往上跳，每跳一次就前进一格。"
+                      "scene":  "advance = 一个箭头一级一级往上跳，每跳一次就前进一格。",
+                      "q":  [
+                                {
+                                    "q":  "You should book your tickets \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to get a better price.",
+                                    "a":  "n advance",
+                                    "h":  "in advance，提前（固定短语，无冠词）"
+                                },
+                                {
+                                    "q":  "Recent \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in medicine have saved millions of lives.",
+                                    "a":  "dvances",
+                                    "h":  "advances in + 领域，某领域的进展（可数复数）"
+                                },
+                                {
+                                    "q":  "The army continued to \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e towards the city.",
+                                    "a":  "dvance",
+                                    "h":  "advance towards，向……推进"
+                                },
+                                {
+                                    "q":  "The company uses \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e technology to improve its products.",
+                                    "a":  "dvanced",
+                                    "h":  "⚠️ 陷阱：这里要 advanced（先进的形容词），不是 advance"
+                                },
+                                {
+                                    "q":  "The training program helped with her career \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "dvancement",
+                                    "h":  "⚠️ 陷阱：这里要 advancement（晋升/进步，名词）"
+                                }
+                            ]
                   },
                   {
                       "word":  "ahead",
@@ -48,7 +129,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "古英语 on heafod（在头前） → \"在……头上/前面\" → 在前面 · 向前 · 提前",
-                      "scene":  "ahead = 站在路中间，看着前方地平线上的太阳。"
+                      "scene":  "ahead = 站在路中间，看着前方地平线上的太阳。",
+                      "q":  [
+                                {
+                                    "q":  "Go \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e, I\u0027m listening.",
+                                    "a":  "head",
+                                    "h":  "go ahead，\"请便/你说吧\"（口语常用）"
+                                },
+                                {
+                                    "q":  "She finished the project three days \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e schedule.",
+                                    "a":  "head of",
+                                    "h":  "ahead of schedule，提前于计划"
+                                },
+                                {
+                                    "q":  "The road stretches \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e for miles.",
+                                    "a":  "traight ahead",
+                                    "h":  "straight ahead，一直向前"
+                                },
+                                {
+                                    "q":  "Our team is two goals \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of our rivals.",
+                                    "a":  "head",
+                                    "h":  "ahead of（领先于），空间/比分通用"
+                                },
+                                {
+                                    "q":  "It\u0027s important to \u003cspan class=\"first-letter\"\u003ep\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e before starting a new business.",
+                                    "a":  "lan ahead",
+                                    "h":  "⚠️ 陷阱：这里要 plan ahead（提前规划），不要只填 ahead"
+                                }
+                            ]
                   },
                   {
                       "word":  "anniversary",
@@ -61,7 +169,29 @@ window.WORDS_DATA = {
                                     "ann"
                                 ],
                       "morph":  "拉丁语 ann-（年） + vers（转） + -ary（名词后缀） → \"一年转回来的日子\" → 周年 · 纪念日",
-                      "scene":  "anniversary = 时间转了一圈，又回到同一个日子。"
+                      "scene":  "anniversary = 时间转了一圈，又回到同一个日子。",
+                      "q":  [
+                                {
+                                    "q":  "They celebrated their 20th wedding \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in Paris.",
+                                    "a":  "nniversary",
+                                    "h":  "wedding anniversary，结婚纪念日"
+                                },
+                                {
+                                    "q":  "The company held a party for its 50th \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "nniversary",
+                                    "h":  "50th anniversary，五十周年"
+                                },
+                                {
+                                    "q":  "A \u003cspan class=\"first-letter\"\u003eg\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e anniversary celebrates 50 years of marriage.",
+                                    "a":  "olden",
+                                    "h":  "golden anniversary，金婚（50周年）"
+                                },
+                                {
+                                    "q":  "Next year will mark the 100th \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of her birth.",
+                                    "a":  "nniversary",
+                                    "h":  "100th anniversary of，……的百年诞辰"
+                                }
+                            ]
                   },
                   {
                       "word":  "annual",
@@ -73,7 +203,34 @@ window.WORDS_DATA = {
                                     "ann"
                                 ],
                       "morph":  "拉丁语 ann（年） + -ual（形容词后缀） → \"一年一次的\" → 每年的 · 年度的",
-                      "scene":  "annual = 一棵树，一年长出一圈年轮。"
+                      "scene":  "annual = 一棵树，一年长出一圈年轮。",
+                      "q":  [
+                                {
+                                    "q":  "The company\u0027s \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e report shows a 20% increase in profit.",
+                                    "a":  "nnual",
+                                    "h":  "annual report，年度报告"
+                                },
+                                {
+                                    "q":  "The festival is held \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in the spring.",
+                                    "a":  "nnually",
+                                    "h":  "修饰动词 held → 用副词 annually"
+                                },
+                                {
+                                    "q":  "Her \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e salary is around $80,000.",
+                                    "a":  "nnual",
+                                    "h":  "annual salary，年薪"
+                                },
+                                {
+                                    "q":  "Employees get 15 days of \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e leave every year.",
+                                    "a":  "nnual",
+                                    "h":  "annual leave，年假"
+                                },
+                                {
+                                    "q":  "We celebrate our wedding \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e every October.",
+                                    "a":  "nniversary",
+                                    "h":  "⚠️ 陷阱：这里要名词\"纪念日\" anniversary，不是 annual！"
+                                }
+                            ]
                   },
                   {
                       "word":  "approve",
@@ -85,7 +242,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "ap-（= ad-，朝向） + prove（证明） → \"证明可行，予以认可\" → 批准 · 认可 · 赞成",
-                      "scene":  "approve = 一枚沉重的金色印章从上方砸下，在文件上盖章\"通过\"。"
+                      "scene":  "approve = 一枚沉重的金色印章从上方砸下，在文件上盖章\"通过\"。",
+                      "q":  [
+                                {
+                                    "q":  "The board of directors \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the budget for next year.",
+                                    "a":  "pproved",
+                                    "h":  "approve + 具体议案，批准（正式）"
+                                },
+                                {
+                                    "q":  "Her parents don\u0027t \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of her decision to quit her job.",
+                                    "a":  "pprove",
+                                    "h":  "approve of，赞成（表态度）"
+                                },
+                                {
+                                    "q":  "The project requires formal \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e from the government.",
+                                    "a":  "pproval",
+                                    "h":  "⚠️ 陷阱：这里要名词 approval（批准）"
+                                },
+                                {
+                                    "q":  "The committee must \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e every proposal before it goes to the president.",
+                                    "a":  "pprove",
+                                    "h":  "approve + 宾语，批准（无 of，正式动词用法）"
+                                },
+                                {
+                                    "q":  "His parents \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of the marriage.",
+                                    "a":  "isapproved",
+                                    "h":  "⚠️ 陷阱：这里要反义词 disapprove（不赞成），也带 of"
+                                }
+                            ]
                   },
                   {
                       "word":  "astronaut",
@@ -97,7 +281,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "astro-（星星，太空） + naut（航海者，水手） → \"太空航海者\" → 宇航员 · 航天员",
-                      "scene":  "astronaut = 戴着大头盔，在星星之间\"航行\"的人。"
+                      "scene":  "astronaut = 戴着大头盔，在星星之间\"航行\"的人。",
+                      "q":  [
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e floated gracefully inside the space station.",
+                                    "a":  "stronaut",
+                                    "h":  "the astronaut，宇航员（执行太空任务的人）"
+                                },
+                                {
+                                    "q":  "She trained for years to become the first female \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of her country.",
+                                    "a":  "stronaut",
+                                    "h":  "become an astronaut，成为宇航员"
+                                },
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e crew spent six months on the International Space Station.",
+                                    "a":  "stronaut",
+                                    "h":  "astronaut crew，宇航员乘组"
+                                },
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e wore special suits designed to protect them in space.",
+                                    "a":  "stronauts",
+                                    "h":  "复数形式 astronauts（多位宇航员）"
+                                },
+                                {
+                                    "q":  "Neil Armstrong was the first \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to walk on the Moon.",
+                                    "a":  "stronaut",
+                                    "h":  "the first astronaut to do sth，首位做某事的宇航员"
+                                }
+                            ]
                   },
                   {
                       "word":  "buckle",
@@ -109,7 +320,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "古法语 bocle（盾牌/金属环扣） → 金属框扣 → 皮带扣 · 扣紧 · 弯曲屈服",
-                      "scene":  "buckle = 皮带扣的针舌穿过孔眼，扣紧；同时也像金属杆受压弯曲。"
+                      "scene":  "buckle = 皮带扣的针舌穿过孔眼，扣紧；同时也像金属杆受压弯曲。",
+                      "q":  [
+                                {
+                                    "q":  "Please \u003cspan class=\"first-letter\"\u003eb\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e up — the plane is about to take off.",
+                                    "a":  "uckle",
+                                    "h":  "buckle up，系好安全带"
+                                },
+                                {
+                                    "q":  "He \u003cspan class=\"first-letter\"\u003eb\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e his seat belt before driving.",
+                                    "a":  "uckled",
+                                    "h":  "buckle the seat belt，系安全带（过去式）"
+                                },
+                                {
+                                    "q":  "She refused to \u003cspan class=\"first-letter\"\u003eb\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e under the pressure of public opinion.",
+                                    "a":  "uckle",
+                                    "h":  "buckle under pressure，在压力下屈服"
+                                },
+                                {
+                                    "q":  "With exams approaching, it\u0027s time to \u003cspan class=\"first-letter\"\u003eb\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e down.",
+                                    "a":  "uckle",
+                                    "h":  "buckle down，开始认真做"
+                                },
+                                {
+                                    "q":  "The leather \u003cspan class=\"first-letter\"\u003eb\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e on his belt was made of solid brass.",
+                                    "a":  "uckle",
+                                    "h":  "⚠️ 陷阱：这里要名词 buckle（皮带扣）"
+                                }
+                            ]
                   },
                   {
                       "word":  "comply",
@@ -121,7 +359,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "com-（拉丁语 com-，完全、一起）+ ply（拉丁语 plere，填满） → \"把要求完全填满\" → 遵守；服从；顺从",
-                      "scene":  "comply = 容器里的水，正好升到\"要求\"那条刻度线。"
+                      "scene":  "comply = 容器里的水，正好升到\"要求\"那条刻度线。",
+                      "q":  [
+                                {
+                                    "q":  "All staff must \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with the safety rules.",
+                                    "a":  "omply",
+                                    "h":  "comply with，遵守安全规则。"
+                                },
+                                {
+                                    "q":  "The company failed to \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with the new regulations.",
+                                    "a":  "omply",
+                                    "h":  "fail to comply with，未能遵守。"
+                                },
+                                {
+                                    "q":  "Our products \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with all EU standards.",
+                                    "a":  "omply",
+                                    "h":  "comply with，符合标准（主语复数用原形）。"
+                                },
+                                {
+                                    "q":  "Every member has to \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with the club\u0027s rules.",
+                                    "a":  "omply",
+                                    "h":  "have to comply with，必须遵守。"
+                                },
+                                {
+                                    "q":  "The machine does not \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with the safety requirements.",
+                                    "a":  "omply",
+                                    "h":  "does not comply with，不符合要求。"
+                                }
+                            ]
                   },
                   {
                       "word":  "conform",
@@ -133,7 +398,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "con-（拉丁语 con-，共同、一起）+ form（拉丁语 forma，形状、模子） → \"使形状共同\" → 遵守；符合；使一致",
-                      "scene":  "conform = 一团圆泥被压进方模子，照着模子的形状改变自己。"
+                      "scene":  "conform = 一团圆泥被压进方模子，照着模子的形状改变自己。",
+                      "q":  [
+                                {
+                                    "q":  "All new products must \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to the safety standards.",
+                                    "a":  "onform",
+                                    "h":  "conform to，遵守安全标准。"
+                                },
+                                {
+                                    "q":  "He refused to \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to the pressure of his peers.",
+                                    "a":  "onform",
+                                    "h":  "conform to，顺从同伴压力。"
+                                },
+                                {
+                                    "q":  "Her actions do not \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with her words.",
+                                    "a":  "onform",
+                                    "h":  "conform with，与……相符。"
+                                },
+                                {
+                                    "q":  "The new design \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to the local style.",
+                                    "a":  "onforms",
+                                    "h":  "conform to，符合当地风格。"
+                                },
+                                {
+                                    "q":  "Everyone must \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to the rules of the examination.",
+                                    "a":  "onform",
+                                    "h":  "conform to，遵守考试规则。"
+                                }
+                            ]
                   },
                   {
                       "word":  "contrary",
@@ -145,7 +437,34 @@ window.WORDS_DATA = {
                                     "contra"
                                 ],
                       "morph":  "contra-（相反，对抗） + -ry（形容词后缀） → \"站在对面的\" → 相反的 · 对立面",
-                      "scene":  "contrary = 两个箭头背对背指向相反方向。"
+                      "scene":  "contrary = 两个箭头背对背指向相反方向。",
+                      "q":  [
+                                {
+                                    "q":  "\u003cspan class=\"first-letter\"\u003eC\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e popular belief, stress is not always harmful.",
+                                    "a":  "ontrary to",
+                                    "h":  "contrary to + 名词，与……相反"
+                                },
+                                {
+                                    "q":  "— It seems cold today. — \u003cspan class=\"first-letter\"\u003eO\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e, it\u0027s quite warm.",
+                                    "a":  "n the contrary",
+                                    "h":  "on the contrary，恰恰相反（反驳对方）"
+                                },
+                                {
+                                    "q":  "There is no evidence \u003cspan class=\"first-letter\"\u003et\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "o the contrary",
+                                    "h":  "to the contrary，相反的（修饰 evidence）"
+                                },
+                                {
+                                    "q":  "The result was \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e expectations.",
+                                    "a":  "ontrary to",
+                                    "h":  "contrary to expectations，与预期相反"
+                                },
+                                {
+                                    "q":  "The team failed to win, and by the time the season ended, the situation was quite the \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "ontrary",
+                                    "h":  "quite the contrary，完全相反（名词用法）"
+                                }
+                            ]
                   },
                   {
                       "word":  "contrast",
@@ -157,7 +476,34 @@ window.WORDS_DATA = {
                                     "contra"
                                 ],
                       "morph":  "contra-（相对，对面） + st（站） → \"站在对面比一比\" → 对比 · 差异 · 反差",
-                      "scene":  "contrast = 把暖色圆和冷色圆并排放，一眼就看得出不同。"
+                      "scene":  "contrast = 把暖色圆和冷色圆并排放，一眼就看得出不同。",
+                      "q":  [
+                                {
+                                    "q":  "There is a sharp \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e between the two paintings.",
+                                    "a":  "ontrast",
+                                    "h":  "a sharp contrast between，……之间的鲜明对比"
+                                },
+                                {
+                                    "q":  "\u003cspan class=\"first-letter\"\u003eI\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e his brother, Tom is very outgoing.",
+                                    "a":  "n contrast to",
+                                    "h":  "in contrast to + 名词，与……相比"
+                                },
+                                {
+                                    "q":  "The white dress stands out in stark \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with the dark background.",
+                                    "a":  "ontrast",
+                                    "h":  "in contrast with，与……形成对比"
+                                },
+                                {
+                                    "q":  "Prices have risen by 5%. \u003cspan class=\"first-letter\"\u003eB\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e, wages have remained flat.",
+                                    "a":  "y contrast",
+                                    "h":  "By contrast，相比之下（句首过渡）"
+                                },
+                                {
+                                    "q":  "Her calm voice \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with the chaos around her.",
+                                    "a":  "ontrasted",
+                                    "h":  "contrast with，与……形成对比（动词过去式）"
+                                }
+                            ]
                   },
                   {
                       "word":  "controversy",
@@ -170,7 +516,34 @@ window.WORDS_DATA = {
                                     "contra"
                                 ],
                       "morph":  "contro-（相反，对抗） + vers（转） + -y（名词后缀） → \"转向相反方向\" → 争议 · 争论 · 论战",
-                      "scene":  "controversy = 两方观点迎头相撞，火花四溅。"
+                      "scene":  "controversy = 两方观点迎头相撞，火花四溅。",
+                      "q":  [
+                                {
+                                    "q":  "The new policy sparked a huge \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e among citizens.",
+                                    "a":  "ontroversy",
+                                    "h":  "spark a controversy，引起争议"
+                                },
+                                {
+                                    "q":  "There is ongoing \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e over the use of AI in classrooms.",
+                                    "a":  "ontroversy",
+                                    "h":  "controversy over，关于……的争议"
+                                },
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e surrounding the election lasted for weeks.",
+                                    "a":  "ontroversy",
+                                    "h":  "controversy surrounding，围绕……的争议"
+                                },
+                                {
+                                    "q":  "The theory remains highly \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e among scientists.",
+                                    "a":  "ontroversial",
+                                    "h":  "⚠️ 陷阱：这里要形容词 controversial（有争议的）"
+                                },
+                                {
+                                    "q":  "The company was \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in a bitter controversy.",
+                                    "a":  "mbroiled",
+                                    "h":  "be embroiled in controversy，卷入争议"
+                                }
+                            ]
                   },
                   {
                       "word":  "convert",
@@ -182,7 +555,34 @@ window.WORDS_DATA = {
                                     "vers"
                                 ],
                       "morph":  "con-（一起，完全） + vert（转） → \"完全转向\" → 转变 · 转换 · 改造",
-                      "scene":  "convert = 一个东西转到另一个形态。"
+                      "scene":  "convert = 一个东西转到另一个形态。",
+                      "q":  [
+                                {
+                                    "q":  "The old warehouse was \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e into a stylish gallery.",
+                                    "a":  "onverted",
+                                    "h":  "convert A into B，改造成（建筑/空间）"
+                                },
+                                {
+                                    "q":  "Solar panels \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e sunlight to electricity.",
+                                    "a":  "onvert",
+                                    "h":  "convert A to B，转换成（能量/货币）"
+                                },
+                                {
+                                    "q":  "She \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to Islam when she married her husband.",
+                                    "a":  "onverted",
+                                    "h":  "convert to，皈依（宗教）"
+                                },
+                                {
+                                    "q":  "The process of \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e takes about three weeks.",
+                                    "a":  "onversion",
+                                    "h":  "⚠️ 陷阱：这里要名词 conversion（转变过程）"
+                                },
+                                {
+                                    "q":  "The sofa can be easily \u003cspan class=\"first-letter\"\u003ec\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e from a seat into a bed.",
+                                    "a":  "onverted",
+                                    "h":  "convert from A into B，从 A 变成 B"
+                                }
+                            ]
                   },
                   {
                       "word":  "develop",
@@ -194,7 +594,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "de-（去掉，解开） + velop（包裹） → \"解开包裹\" → 展开 → 发展 · 开发 · 逐渐形成",
-                      "scene":  "develop = 一颗种子解开包裹，慢慢展开，长成藤蔓与花。"
+                      "scene":  "develop = 一颗种子解开包裹，慢慢展开，长成藤蔓与花。",
+                      "q":  [
+                                {
+                                    "q":  "It takes time to \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e a good habit.",
+                                    "a":  "evelop",
+                                    "h":  "develop a habit，培养习惯"
+                                },
+                                {
+                                    "q":  "The small startup gradually \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e into a global brand.",
+                                    "a":  "eveloped",
+                                    "h":  "develop into，发展成（过去式）"
+                                },
+                                {
+                                    "q":  "The new software was \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e by a team of engineers.",
+                                    "a":  "eveloped",
+                                    "h":  "be developed by，由……开发（被动语态）"
+                                },
+                                {
+                                    "q":  "Japan is a \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e country, while Vietnam is a developing one.",
+                                    "a":  "eveloped",
+                                    "h":  "⚠️ 陷阱：这里要 developed（发达的），不是 developing！"
+                                },
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of AI has changed many industries.",
+                                    "a":  "evelopment",
+                                    "h":  "⚠️ 陷阱：这里要名词 development（发展）"
+                                }
+                            ]
                   },
                   {
                       "word":  "diverse",
@@ -206,7 +633,34 @@ window.WORDS_DATA = {
                                     "vers"
                                 ],
                       "morph":  "di-（分开，离开） + vers（转） + -e（形容词后缀） → \"转向不同方向\" → 多样的 · 各不相同的",
-                      "scene":  "diverse = 往不同方向转出去的许多色彩与形状。"
+                      "scene":  "diverse = 往不同方向转出去的许多色彩与形状。",
+                      "q":  [
+                                {
+                                    "q":  "The city is famous for its culturally \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e population.",
+                                    "a":  "iverse",
+                                    "h":  "副词 + 形容词搭配 culturally diverse"
+                                },
+                                {
+                                    "q":  "The university offers a \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e range of courses for students.",
+                                    "a":  "iverse",
+                                    "h":  "固定搭配 a diverse range of"
+                                },
+                                {
+                                    "q":  "Students come from \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e backgrounds and cultures.",
+                                    "a":  "iverse",
+                                    "h":  "diverse backgrounds，不同背景"
+                                },
+                                {
+                                    "q":  "Amazon is home to the greatest \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of species on Earth.",
+                                    "a":  "iversity",
+                                    "h":  "⚠️ 陷阱：这里要名词 biodiversity（生物多样性）"
+                                },
+                                {
+                                    "q":  "Modern companies are trying to \u003cspan class=\"first-letter\"\u003ed\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e their workforce.",
+                                    "a":  "iversify",
+                                    "h":  "⚠️ 陷阱：这里要动词 diversify（使多样化）"
+                                }
+                            ]
                   },
                   {
                       "word":  "enable",
@@ -218,7 +672,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "en-（使）+ able（能够的） → \"使……能够\" → 使能够 · 使成为可能 · 启用",
-                      "scene":  "enable = 一把钥匙插进锁孔、转动、锁扣弹开——门打开了，光涌出来。"
+                      "scene":  "enable = 一把钥匙插进锁孔、转动、锁扣弹开——门打开了，光涌出来。",
+                      "q":  [
+                                {
+                                    "q":  "The scholarship \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e her to study abroad.",
+                                    "a":  "nabled",
+                                    "h":  "enable sb to do，使某人能做某事（过去式）"
+                                },
+                                {
+                                    "q":  "This app \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e users to track their daily exercise.",
+                                    "a":  "nables",
+                                    "h":  "enable users to do，使用户能（第三人称单数）"
+                                },
+                                {
+                                    "q":  "The tool can be \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e or disabled in the settings menu.",
+                                    "a":  "nabled",
+                                    "h":  "⚠️ 陷阱：这里要和 disabled 对称，填 enabled（被启用）"
+                                },
+                                {
+                                    "q":  "New technologies have \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e faster communication worldwide.",
+                                    "a":  "nabled",
+                                    "h":  "have enabled，已经使……成为可能（现在完成时）"
+                                },
+                                {
+                                    "q":  "This grant will \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the team to buy new equipment.",
+                                    "a":  "nable",
+                                    "h":  "enable sb to do sth，使某人能做某事"
+                                }
+                            ]
                   },
                   {
                       "word":  "enhance",
@@ -230,7 +711,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "en-（使） + hance（= high，高） → \"使……更高\" → 提高 · 增强 · 提升价值",
-                      "scene":  "enhance = 一颗朴素银宝石被一层层金色光晕包裹，逐渐闪耀。"
+                      "scene":  "enhance = 一颗朴素银宝石被一层层金色光晕包裹，逐渐闪耀。",
+                      "q":  [
+                                {
+                                    "q":  "Good lighting can greatly \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the beauty of a room.",
+                                    "a":  "nhance",
+                                    "h":  "enhance + the beauty，提升美感"
+                                },
+                                {
+                                    "q":  "The company uses AI to \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e customer experience.",
+                                    "a":  "nhance",
+                                    "h":  "enhance experience，提升体验"
+                                },
+                                {
+                                    "q":  "Adding fresh herbs can \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the flavor of the dish.",
+                                    "a":  "nhance",
+                                    "h":  "enhance + the flavor，提升风味"
+                                },
+                                {
+                                    "q":  "The new design is a clear \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to the old model.",
+                                    "a":  "nhancement",
+                                    "h":  "⚠️ 陷阱：这里要名词 enhancement（提升/改进）"
+                                },
+                                {
+                                    "q":  "Training programs help \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e employees\u0027 skills.",
+                                    "a":  "nhance",
+                                    "h":  "enhance skills，提升技能"
+                                }
+                            ]
                   },
                   {
                       "word":  "enlarge",
@@ -242,7 +750,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "en-（使）+ large（大的） → \"使……变大\" → 扩大 · 放大 · 扩充",
-                      "scene":  "enlarge = 一个相机取景框不断向外撑开，画面从 100% 放大到 400%。"
+                      "scene":  "enlarge = 一个相机取景框不断向外撑开，画面从 100% 放大到 400%。",
+                      "q":  [
+                                {
+                                    "q":  "You can \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the photo by clicking the zoom button.",
+                                    "a":  "nlarge",
+                                    "h":  "enlarge the photo，放大照片"
+                                },
+                                {
+                                    "q":  "The family plans to \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e their kitchen this summer.",
+                                    "a":  "nlarge",
+                                    "h":  "enlarge the kitchen，扩建厨房"
+                                },
+                                {
+                                    "q":  "She hopes to \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e her vocabulary through reading.",
+                                    "a":  "nlarge",
+                                    "h":  "enlarge vocabulary，扩大词汇量"
+                                },
+                                {
+                                    "q":  "Could you \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e on your last point?",
+                                    "a":  "nlarge",
+                                    "h":  "⚠️ 陷阱：这里要 enlarge on（详述），不是单纯 enlarge"
+                                },
+                                {
+                                    "q":  "The photo on the wall is an \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of a family picture.",
+                                    "a":  "nlargement",
+                                    "h":  "⚠️ 陷阱：这里要名词 enlargement（放大版照片）"
+                                }
+                            ]
                   },
                   {
                       "word":  "enrich",
@@ -254,7 +789,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "en-（使）+ rich（富有的，丰富的） → \"使……变丰富\" → 使丰富 · 充实 · 使富裕",
-                      "scene":  "enrich = 一罐清水，滴入几滴彩色墨水，整罐水被染成浓郁丰富的色彩。"
+                      "scene":  "enrich = 一罐清水，滴入几滴彩色墨水，整罐水被染成浓郁丰富的色彩。",
+                      "q":  [
+                                {
+                                    "q":  "Studying abroad can greatly \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e your life experience.",
+                                    "a":  "nrich",
+                                    "h":  "enrich life experience，丰富人生经历"
+                                },
+                                {
+                                    "q":  "Reading widely helps \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e your vocabulary.",
+                                    "a":  "nrich",
+                                    "h":  "enrich vocabulary，扩充词汇量"
+                                },
+                                {
+                                    "q":  "The compost will \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the poor soil over time.",
+                                    "a":  "nrich",
+                                    "h":  "enrich the soil，使土壤肥沃"
+                                },
+                                {
+                                    "q":  "These breakfast cereals are \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with vitamins and iron.",
+                                    "a":  "nriched",
+                                    "h":  "⚠️ 陷阱：这里要 enriched（营养强化过的，形容词）"
+                                },
+                                {
+                                    "q":  "The cultural \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e program offers free art classes.",
+                                    "a":  "nrichment",
+                                    "h":  "⚠️ 陷阱：这里要名词 enrichment（充实、丰富化）"
+                                }
+                            ]
                   },
                   {
                       "word":  "evolve",
@@ -266,7 +828,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "e-（= ex-，向外） + volve（卷，转） → \"向外展开卷起的东西\" → 进化 · 演变 · 逐渐发展",
-                      "scene":  "evolve = 一条螺旋缓慢向外卷开，转出越来越复杂的形态。"
+                      "scene":  "evolve = 一条螺旋缓慢向外卷开，转出越来越复杂的形态。",
+                      "q":  [
+                                {
+                                    "q":  "Birds are believed to have \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e from dinosaurs.",
+                                    "a":  "volved",
+                                    "h":  "evolve from，由……进化而来（完成时）"
+                                },
+                                {
+                                    "q":  "The small startup has \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e into a global corporation.",
+                                    "a":  "volved",
+                                    "h":  "evolve into，逐渐发展成（现在完成时）"
+                                },
+                                {
+                                    "q":  "Language constantly \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e as new words are created.",
+                                    "a":  "volves",
+                                    "h":  "language evolves，语言演变（一般现在时）"
+                                },
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of human beings took millions of years.",
+                                    "a":  "volution",
+                                    "h":  "⚠️ 陷阱：这里要名词 evolution（进化）"
+                                },
+                                {
+                                    "q":  "Some people believe that \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e theory contradicts their religious beliefs.",
+                                    "a":  "volutionary",
+                                    "h":  "⚠️ 陷阱：这里要形容词 evolutionary（进化的）"
+                                }
+                            ]
                   },
                   {
                       "word":  "fasten",
@@ -278,7 +867,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "古英语 fæstnian（使牢固，固定） → 系紧 · 扣紧 · 固定 · 扎牢",
-                      "scene":  "fasten = 上下两片安全带从两侧夹过来，咔哒一声扣紧。"
+                      "scene":  "fasten = 上下两片安全带从两侧夹过来，咔哒一声扣紧。",
+                      "q":  [
+                                {
+                                    "q":  "Please \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e your seat belt before the plane takes off.",
+                                    "a":  "asten",
+                                    "h":  "fasten the seat belt，系好安全带"
+                                },
+                                {
+                                    "q":  "She \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the buttons of her coat one by one.",
+                                    "a":  "astened",
+                                    "h":  "fasten the buttons，扣纽扣（过去式）"
+                                },
+                                {
+                                    "q":  "The rope was \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to a big tree, keeping the boat safe.",
+                                    "a":  "astened",
+                                    "h":  "be fastened to，被固定在（过去分词被动）"
+                                },
+                                {
+                                    "q":  "The little girl kept her eyes \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e on the colourful balloons.",
+                                    "a":  "astened",
+                                    "h":  "keep one\u0027s eyes fastened on，目光紧盯着"
+                                },
+                                {
+                                    "q":  "He pulled the zip and \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the bag shut.",
+                                    "a":  "astened",
+                                    "h":  "fasten ... shut，把……扣紧关好"
+                                }
+                            ]
                   },
                   {
                       "word":  "form",
@@ -290,7 +906,29 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "form（拉丁语 forma：形状、模子） → \"模子压出来的样子\" → 形式 · 形状 · 表格 · 形成",
-                      "scene":  "form = 一团软泥被木质模具压出规整的方形与圆形。"
+                      "scene":  "form = 一团软泥被木质模具压出规整的方形与圆形。",
+                      "q":  [
+                                {
+                                    "q":  "Please fill in this \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with your personal details.",
+                                    "a":  "orm",
+                                    "h":  "fill in a form，表格（名词）"
+                                },
+                                {
+                                    "q":  "The team began to \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e a clear plan for the project.",
+                                    "a":  "orm",
+                                    "h":  "form a plan，形成/制定（动词）"
+                                },
+                                {
+                                    "q":  "Ice is a solid \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of water.",
+                                    "a":  "orm",
+                                    "h":  "a solid form of，形态"
+                                },
+                                {
+                                    "q":  "She has \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the habit of reviewing notes every evening.",
+                                    "a":  "ormed",
+                                    "h":  "form a habit，养成习惯（现在完成时）"
+                                }
+                            ]
                   },
                   {
                       "word":  "format",
@@ -302,7 +940,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "form（形式，形状 · 拉丁语 forma） + -at（名词 / 动词化后缀） → \"被赋予的形式\" → 格式 · 版式 · 格式化",
-                      "scene":  "format = 一堆散乱的内容块飞入一张方格稿纸，被红框逐一钉住，最终排成整齐的版面。"
+                      "scene":  "format = 一堆散乱的内容块飞入一张方格稿纸，被红框逐一钉住，最终排成整齐的版面。",
+                      "q":  [
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of the exam has changed this year.",
+                                    "a":  "ormat",
+                                    "h":  "the format of + 名词，\"……的格式\""
+                                },
+                                {
+                                    "q":  "The report should be saved \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the format of PDF.",
+                                    "a":  "n",
+                                    "h":  "in the format of，以……格式"
+                                },
+                                {
+                                    "q":  "The software supports multiple video \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "ormats",
+                                    "h":  "multiple video formats，多种视频格式（复数）"
+                                },
+                                {
+                                    "q":  "⚠️ 陷阱题：You need to \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the USB drive before using it.",
+                                    "a":  "ormat",
+                                    "h":  "这里要动词 format（格式化），不是名词"
+                                },
+                                {
+                                    "q":  "⚠️ 陷阱题：Please fill in a \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e before the interview.",
+                                    "a":  "orm",
+                                    "h":  "这里要 form（表格），不是 format"
+                                }
+                            ]
                   },
                   {
                       "word":  "formation",
@@ -314,7 +979,29 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "form（形式，形状 · 拉丁语 forma） + -ation（名词后缀） → \"被赋予形式的过程\" → 形成 · 构成 · 编队 · 地层",
-                      "scene":  "formation = 散乱的个体依次飞入、排成 V 字编队；地表之下，岩层也正一层层沉积。"
+                      "scene":  "formation = 散乱的个体依次飞入、排成 V 字编队；地表之下，岩层也正一层层沉积。",
+                      "q":  [
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of good habits takes time and patience.",
+                                    "a":  "ormation",
+                                    "h":  "the formation of + 抽象名词，\"……的形成\""
+                                },
+                                {
+                                    "q":  "Geologists have mapped several unusual rock \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in the desert.",
+                                    "a":  "ormations",
+                                    "h":  "rock formations，岩层构造（可数复数）"
+                                },
+                                {
+                                    "q":  "⚠️ 陷阱题：Democracy is only one \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of government.",
+                                    "a":  "orm",
+                                    "h":  "\"一种政体形式\"要用 form（形式），不是 formation"
+                                },
+                                {
+                                    "q":  "⚠️ 陷阱题：The committee was \u003cspan class=\"first-letter\"\u003ef\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in 1950.",
+                                    "a":  "ormed",
+                                    "h":  "这里要动词被动 was formed（被组建），不是名词"
+                                }
+                            ]
                   },
                   {
                       "word":  "heaven",
@@ -326,7 +1013,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "古英语 heofon（天空，天堂） → \"覆盖在上方的天穹\" → 天堂 · 天国 · 乐土",
-                      "scene":  "heaven = 穿过云层，踏上光芒洒满的阶梯，走向天堂之门。"
+                      "scene":  "heaven = 穿过云层，踏上光芒洒满的阶梯，走向天堂之门。",
+                      "q":  [
+                                {
+                                    "q":  "Many people believe that good souls go to \u003cspan class=\"first-letter\"\u003eh\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e after death.",
+                                    "a":  "eaven",
+                                    "h":  "go to heaven，升入天堂（不加 the）"
+                                },
+                                {
+                                    "q":  "For a book lover, this library is a \u003cspan class=\"first-letter\"\u003eh\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e on earth.",
+                                    "a":  "eaven",
+                                    "h":  "a heaven on earth，人间天堂"
+                                },
+                                {
+                                    "q":  "The starry \u003cspan class=\"first-letter\"\u003eh\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e stretched above them like a giant tapestry.",
+                                    "a":  "eavens",
+                                    "h":  "the heavens（复数），苍穹（文学用语）"
+                                },
+                                {
+                                    "q":  "\u003cspan class=\"first-letter\"\u003eH\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e knows how much I\u0027ve missed you.",
+                                    "a":  "eaven",
+                                    "h":  "Heaven knows，天知道（强调语气）"
+                                },
+                                {
+                                    "q":  "The small island is a natural \u003cspan class=\"first-letter\"\u003eh\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e for birdwatchers.",
+                                    "a":  "eaven",
+                                    "h":  "a heaven for sb，某类人的乐园"
+                                }
+                            ]
                   },
                   {
                       "word":  "improve",
@@ -338,7 +1052,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "im-（进入，使） + prove（证明，检验） → \"使经过检验，变得更好\" → 改善 · 提高 · 变得更好",
-                      "scene":  "improve = 一排逐级升高的柱子，箭头一级一级往上跳。"
+                      "scene":  "improve = 一排逐级升高的柱子，箭头一级一级往上跳。",
+                      "q":  [
+                                {
+                                    "q":  "Reading every day can greatly \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e your vocabulary.",
+                                    "a":  "mprove",
+                                    "h":  "improve + 抽象名词，改善/提高（动词）"
+                                },
+                                {
+                                    "q":  "There has been a clear \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in her grades this term.",
+                                    "a":  "mprovement",
+                                    "h":  "⚠️ 陷阱：这里要名词 improvement（进步）"
+                                },
+                                {
+                                    "q":  "The team is trying to \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e on last year\u0027s performance.",
+                                    "a":  "mprove",
+                                    "h":  "improve on，超越/进一步改进"
+                                },
+                                {
+                                    "q":  "The new manager has \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e working conditions for everyone.",
+                                    "a":  "mproved",
+                                    "h":  "improve + 具体名词（过去完成时）"
+                                },
+                                {
+                                    "q":  "Regular practice is the best way to \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e your spoken English.",
+                                    "a":  "mprove",
+                                    "h":  "the way to improve，改善的方法（不定式）"
+                                }
+                            ]
                   },
                   {
                       "word":  "involve",
@@ -350,7 +1091,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "in-（进入） + volve（卷，转） → \"卷进去\" → 包含 · 涉及 · 使参与",
-                      "scene":  "involve = 一个漩涡把周围的东西卷进去。"
+                      "scene":  "involve = 一个漩涡把周围的东西卷进去。",
+                      "q":  [
+                                {
+                                    "q":  "The job \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e traveling abroad several times a year.",
+                                    "a":  "nvolves",
+                                    "h":  "involve doing sth，需要做某事（动名词）"
+                                },
+                                {
+                                    "q":  "She has been \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in charity work for over ten years.",
+                                    "a":  "nvolved",
+                                    "h":  "be involved in，参与某事"
+                                },
+                                {
+                                    "q":  "The teacher tried to \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e every student in the discussion.",
+                                    "a":  "nvolve",
+                                    "h":  "involve sb in sth，让某人参与"
+                                },
+                                {
+                                    "q":  "Three cars were \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in the accident on the highway.",
+                                    "a":  "nvolved",
+                                    "h":  "be involved in an accident，牵涉进事故"
+                                },
+                                {
+                                    "q":  "We need to find out about his \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in the scandal.",
+                                    "a":  "nvolvement",
+                                    "h":  "⚠️ 陷阱：这里要名词 involvement（参与/牵连）"
+                                }
+                            ]
                   },
                   {
                       "word":  "loose",
@@ -362,7 +1130,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "古诺斯语 lauss（松开的，自由的） → \"没有束缚\" → 松的 · 宽松的 · 松散的",
-                      "scene":  "loose = 一根绳子两端固定却大幅松垂，中间晃来晃去——余量充足。"
+                      "scene":  "loose = 一根绳子两端固定却大幅松垂，中间晃来晃去——余量充足。",
+                      "q":  [
+                                {
+                                    "q":  "These jeans are too \u003cspan class=\"first-letter\"\u003el\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e — I need a smaller size.",
+                                    "a":  "oose",
+                                    "h":  "too loose，太宽松了"
+                                },
+                                {
+                                    "q":  "A button on my coat has come \u003cspan class=\"first-letter\"\u003el\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "oose",
+                                    "h":  "come loose，变松了/脱落了"
+                                },
+                                {
+                                    "q":  "The dog broke \u003cspan class=\"first-letter\"\u003el\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e from its leash and ran away.",
+                                    "a":  "oose",
+                                    "h":  "break loose，挣脱（固定处）"
+                                },
+                                {
+                                    "q":  "Before the project ends, we must tie up all the \u003cspan class=\"first-letter\"\u003el\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e ends.",
+                                    "a":  "oose",
+                                    "h":  "loose ends，未了结的细节"
+                                },
+                                {
+                                    "q":  "Could you \u003cspan class=\"first-letter\"\u003el\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e this jar lid for me?",
+                                    "a":  "oosen",
+                                    "h":  "⚠️ 陷阱：这里要动词 loosen（松开），不是形容词 loose"
+                                }
+                            ]
                   },
                   {
                       "word":  "nasty",
@@ -374,7 +1169,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "中古英语 nast（肮脏的，卑劣的） + -y（形容词后缀） → \"像脏东西一样\" → 恶心的 · 恶劣的",
-                      "scene":  "nasty = 一团冒着绿气、滴着黏液的腐烂怪东西。"
+                      "scene":  "nasty = 一团冒着绿气、滴着黏液的腐烂怪东西。",
+                      "q":  [
+                                {
+                                    "q":  "There was a \u003cspan class=\"first-letter\"\u003en\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e smell coming from the fridge.",
+                                    "a":  "asty",
+                                    "h":  "a nasty smell，难闻的气味"
+                                },
+                                {
+                                    "q":  "She suffered a \u003cspan class=\"first-letter\"\u003en\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e fall on the ice and broke her arm.",
+                                    "a":  "asty",
+                                    "h":  "a nasty fall，严重的一跤"
+                                },
+                                {
+                                    "q":  "He has a \u003cspan class=\"first-letter\"\u003en\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e habit of biting his nails.",
+                                    "a":  "asty",
+                                    "h":  "a nasty habit，坏习惯"
+                                },
+                                {
+                                    "q":  "The team faced \u003cspan class=\"first-letter\"\u003en\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e weather conditions on the mountain.",
+                                    "a":  "asty",
+                                    "h":  "nasty weather，恶劣天气"
+                                },
+                                {
+                                    "q":  "This is the \u003cspan class=\"first-letter\"\u003en\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e medicine I\u0027ve ever tasted.",
+                                    "a":  "astiest",
+                                    "h":  "⚠️ 陷阱：这里要最高级 nastiest（最恶心的）"
+                                }
+                            ]
                   },
                   {
                       "word":  "ongoing",
@@ -386,7 +1208,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "on（继续）+ going（进行） → \"在持续地进行中\" → 持续进行的 · 不断发展的",
-                      "scene":  "ongoing = 一条无限符号的轨道上，光点永不停歇地跑。"
+                      "scene":  "ongoing = 一条无限符号的轨道上，光点永不停歇地跑。",
+                      "q":  [
+                                {
+                                    "q":  "The police investigation is still \u003cspan class=\"first-letter\"\u003eo\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "ngoing",
+                                    "h":  "still ongoing，仍在进行（be 动词 + ongoing）"
+                                },
+                                {
+                                    "q":  "There is an \u003cspan class=\"first-letter\"\u003eo\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e debate about climate change.",
+                                    "a":  "ngoing",
+                                    "h":  "an ongoing debate，持续的辩论"
+                                },
+                                {
+                                    "q":  "The project is part of an \u003cspan class=\"first-letter\"\u003eo\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e effort to reduce pollution.",
+                                    "a":  "ngoing",
+                                    "h":  "an ongoing effort，持续的努力"
+                                },
+                                {
+                                    "q":  "Housing shortage remains an \u003cspan class=\"first-letter\"\u003eo\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e problem in big cities.",
+                                    "a":  "ngoing",
+                                    "h":  "an ongoing problem，持续存在的问题"
+                                },
+                                {
+                                    "q":  "Due to \u003cspan class=\"first-letter\"\u003eo\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e maintenance, the road will be closed for a week.",
+                                    "a":  "ngoing",
+                                    "h":  "⚠️ 陷阱：注意 ongoing 是形容词，后面直接接名词 maintenance"
+                                }
+                            ]
                   },
                   {
                       "word":  "proof",
@@ -398,7 +1247,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "拉丁语 probare（检验，证明） → \"经过检验的东西\" → 证据 · 证明 · 校样 · 防…的",
-                      "scene":  "proof = 侦探的放大镜在证据文件上移动，指纹在镜片中逐一浮现。"
+                      "scene":  "proof = 侦探的放大镜在证据文件上移动，指纹在镜片中逐一浮现。",
+                      "q":  [
+                                {
+                                    "q":  "The detective found \u003cspan class=\"first-letter\"\u003ep\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e that the suspect was lying.",
+                                    "a":  "roof",
+                                    "h":  "find proof that，找到……的证据（不可数）"
+                                },
+                                {
+                                    "q":  "You need to show \u003cspan class=\"first-letter\"\u003ep\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e identity before boarding the plane.",
+                                    "a":  "roof of",
+                                    "h":  "proof of + 名词，……的证明"
+                                },
+                                {
+                                    "q":  "Her long career is \u003cspan class=\"first-letter\"\u003el\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e that talent will be recognized.",
+                                    "a":  "iving proof",
+                                    "h":  "living proof，活生生的证明"
+                                },
+                                {
+                                    "q":  "This jacket is \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e, so you can wear it in the rain.",
+                                    "a":  "aterproof",
+                                    "h":  "⚠️ 陷阱：这里要复合词 waterproof（防水的），不是单独 proof"
+                                },
+                                {
+                                    "q":  "The writer is checking the \u003cspan class=\"first-letter\"\u003ep\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of her new book before publication.",
+                                    "a":  "roofs",
+                                    "h":  "⚠️ 陷阱：这里要复数 proofs（校样，可数）"
+                                }
+                            ]
                   },
                   {
                       "word":  "reform",
@@ -410,7 +1286,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "re-（重新，再） + form（形式，形状 · 拉丁语 forma） → \"重新赋予形式\" → 改革 · 改良 · 重塑",
-                      "scene":  "reform = 一块裂痕斑斑的旧砖在炉火中被烧红、裂纹愈合、边缘归整，最后冷却成一块新铸的规整砖。"
+                      "scene":  "reform = 一块裂痕斑斑的旧砖在炉火中被烧红、裂纹愈合、边缘归整，最后冷却成一块新铸的规整砖。",
+                      "q":  [
+                                {
+                                    "q":  "The new government promised to \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the tax system.",
+                                    "a":  "eform",
+                                    "h":  "reform + 制度（动词，改革）"
+                                },
+                                {
+                                    "q":  "Economic \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e have lifted millions out of poverty.",
+                                    "a":  "eforms",
+                                    "h":  "economic reforms，经济改革（名词复数）"
+                                },
+                                {
+                                    "q":  "The country began its policy of \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e and opening-up in 1978.",
+                                    "a":  "eform",
+                                    "h":  "reform and opening-up，改革开放（固定译法）"
+                                },
+                                {
+                                    "q":  "⚠️ 陷阱题：The crowd demanded a \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e, not another slow reform.",
+                                    "a":  "evolution",
+                                    "h":  "这里要用 revolution（革命，推翻重建），不是 reform"
+                                },
+                                {
+                                    "q":  "⚠️ 陷阱题：She has \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e her bad habits completely.",
+                                    "a":  "eformed",
+                                    "h":  "这里要动词过去分词 reformed（已彻底改正），不是名词"
+                                }
+                            ]
                   },
                   {
                       "word":  "reunite",
@@ -422,7 +1325,34 @@ window.WORDS_DATA = {
                                     "un"
                                 ],
                       "morph":  "re-（再，又） + unus（一） + -ite（动词后缀） → \"再次成为一\" → 重聚 · 重逢 · 再度联合",
-                      "scene":  "reunite = 走散的两个人，朝彼此重新走来。"
+                      "scene":  "reunite = 走散的两个人，朝彼此重新走来。",
+                      "q":  [
+                                {
+                                    "q":  "After twenty years apart, the brothers were finally \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "eunited",
+                                    "h":  "被动语态，表\"终于团聚\" be reunited"
+                                },
+                                {
+                                    "q":  "She was overjoyed to be \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e with her long-lost sister.",
+                                    "a":  "eunited",
+                                    "h":  "be reunited with sb，与某人重逢"
+                                },
+                                {
+                                    "q":  "The two old friends \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e at the airport after years apart.",
+                                    "a":  "eunited",
+                                    "h":  "主动语态，表\"重逢\" reunite at + 地点"
+                                },
+                                {
+                                    "q":  "Every five years, our class holds a \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in the old school.",
+                                    "a":  "eunion",
+                                    "h":  "⚠️ 陷阱：这里要名词 class reunion（同学聚会）"
+                                },
+                                {
+                                    "q":  "The peace treaty helped \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the divided nation.",
+                                    "a":  "eunite",
+                                    "h":  "及物用法，表\"重新统一\" reunite + 国家/民族"
+                                }
+                            ]
                   },
                   {
                       "word":  "reverse",
@@ -434,7 +1364,34 @@ window.WORDS_DATA = {
                                     "vers"
                                 ],
                       "morph":  "re-（回，反） + vers（转） + -e → \"转向相反方向\" → 反转 · 倒退 · 相反",
-                      "scene":  "reverse = 把方向反着转回来。"
+                      "scene":  "reverse = 把方向反着转回来。",
+                      "q":  [
+                                {
+                                    "q":  "The Supreme Court decided to \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the lower court\u0027s ruling.",
+                                    "a":  "everse",
+                                    "h":  "reverse the decision，推翻决定"
+                                },
+                                {
+                                    "q":  "The company tried to \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the downward trend in sales.",
+                                    "a":  "everse",
+                                    "h":  "reverse the trend，扭转趋势"
+                                },
+                                {
+                                    "q":  "Put the car in \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e before backing into the garage.",
+                                    "a":  "everse",
+                                    "h":  "in reverse，倒车挡"
+                                },
+                                {
+                                    "q":  "The damage caused by the flood is considered \u003cspan class=\"first-letter\"\u003ei\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "rreversible",
+                                    "h":  "⚠️ 陷阱：这里要反义形容词 irreversible（不可逆的）"
+                                },
+                                {
+                                    "q":  "Some people believe that time cannot be \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "eversed",
+                                    "h":  "被动语态 be reversed，被倒转"
+                                }
+                            ]
                   },
                   {
                       "word":  "revolve",
@@ -446,7 +1403,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "re-（再，回） + volve（卷，转） → \"反复地转\" → 旋转 · 绕转 · 以…为中心",
-                      "scene":  "revolve = 行星以太阳为中心，一圈一圈绕。"
+                      "scene":  "revolve = 行星以太阳为中心，一圈一圈绕。",
+                      "q":  [
+                                {
+                                    "q":  "The Earth \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e around the Sun once every 365 days.",
+                                    "a":  "evolves",
+                                    "h":  "revolve around，绕……公转（一般现在时）"
+                                },
+                                {
+                                    "q":  "The whole debate \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e around one simple question.",
+                                    "a":  "evolved",
+                                    "h":  "revolve around，以……为中心（过去式）"
+                                },
+                                {
+                                    "q":  "Her life has always \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e around her children.",
+                                    "a":  "evolved",
+                                    "h":  "revolve around，以……为中心（现在完成时）"
+                                },
+                                {
+                                    "q":  "The Earth \u003cspan class=\"first-letter\"\u003er\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e on its axis, causing day and night.",
+                                    "a":  "otates",
+                                    "h":  "⚠️ 陷阱：这里要 rotate（绕自身轴自转），不是 revolve！"
+                                },
+                                {
+                                    "q":  "The Industrial \u003cspan class=\"first-letter\"\u003eR\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e transformed society in the 19th century.",
+                                    "a":  "evolution",
+                                    "h":  "⚠️ 陷阱：这里要名词 revolution（革命）"
+                                }
+                            ]
                   },
                   {
                       "word":  "satellite",
@@ -458,7 +1442,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "拉丁语 satelles（随从，侍卫） → \"绕着主人转的随从\" → 卫星 · 附属国 · 随从",
-                      "scene":  "satellite = 一颗绕着行星转、还不停往下发信号的小机器。"
+                      "scene":  "satellite = 一颗绕着行星转、还不停往下发信号的小机器。",
+                      "q":  [
+                                {
+                                    "q":  "The company plans to launch a new \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e into orbit next year.",
+                                    "a":  "atellite",
+                                    "h":  "launch a satellite，发射卫星"
+                                },
+                                {
+                                    "q":  "Many weather forecasts rely on data from \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in space.",
+                                    "a":  "atellites",
+                                    "h":  "复数形式 satellites（多颗卫星）"
+                                },
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e orbits the Earth every 90 minutes.",
+                                    "a":  "atellite",
+                                    "h":  "orbit the Earth，绕地球运行"
+                                },
+                                {
+                                    "q":  "The Moon is Earth\u0027s only natural \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "atellite",
+                                    "h":  "natural satellite，天然卫星"
+                                },
+                                {
+                                    "q":  "A \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e phone can work even in remote mountains.",
+                                    "a":  "atellite",
+                                    "h":  "satellite phone，卫星电话"
+                                }
+                            ]
                   },
                   {
                       "word":  "space",
@@ -470,7 +1481,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "拉丁语 spatium（距离，场地） → space（空间） → 广阔、留白、宇宙",
-                      "scene":  "space = 一切事物之间空出来的位置。"
+                      "scene":  "space = 一切事物之间空出来的位置。",
+                      "q":  [
+                                {
+                                    "q":  "The tiny apartment doesn\u0027t have enough \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e for a sofa.",
+                                    "a":  "pace",
+                                    "h":  "表\"空间\"（不可数） enough space"
+                                },
+                                {
+                                    "q":  "Scientists have sent many spacecraft into \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to explore the universe.",
+                                    "a":  "pace",
+                                    "h":  "in space，在太空中（不加 the）"
+                                },
+                                {
+                                    "q":  "I found a parking \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e right in front of the building.",
+                                    "a":  "pace",
+                                    "h":  "parking space，停车位（可数）"
+                                },
+                                {
+                                    "q":  "After months of hard work, she needed a breathing \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "pace",
+                                    "h":  "breathing space，喘息的机会"
+                                },
+                                {
+                                    "q":  "He tends to \u003cspan class=\"first-letter\"\u003es\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e during long meetings.",
+                                    "a":  "pace out",
+                                    "h":  "space out，走神（口语）"
+                                }
+                            ]
                   },
                   {
                       "word":  "tight",
@@ -482,7 +1520,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "中古英语 thight（牢固的，紧密的） → \"牢牢靠在一起\" → 紧的 · 紧绷 · 紧身 · 严格",
-                      "scene":  "tight = 一根橡皮筋从松弛的波浪被拉到笔直绷紧。"
+                      "scene":  "tight = 一根橡皮筋从松弛的波浪被拉到笔直绷紧。",
+                      "q":  [
+                                {
+                                    "q":  "I can\u0027t breathe—these trousers are too \u003cspan class=\"first-letter\"\u003et\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "ight",
+                                    "h":  "too tight，太紧了（紧身的）"
+                                },
+                                {
+                                    "q":  "The wedding planning is on a very \u003cspan class=\"first-letter\"\u003et\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e schedule.",
+                                    "a":  "ight",
+                                    "h":  "a tight schedule，紧凑的日程"
+                                },
+                                {
+                                    "q":  "The lid is screwed on so \u003cspan class=\"first-letter\"\u003et\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e that I can\u0027t open it.",
+                                    "a":  "ight",
+                                    "h":  "so tight，拧得如此紧"
+                                },
+                                {
+                                    "q":  "Security is very \u003cspan class=\"first-letter\"\u003et\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e at the airport.",
+                                    "a":  "ight",
+                                    "h":  "tight security，严密的安保"
+                                },
+                                {
+                                    "q":  "She held the ticket \u003cspan class=\"first-letter\"\u003et\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in her hand as she waited in line.",
+                                    "a":  "ightly",
+                                    "h":  "⚠️ 陷阱：修饰动词 held 要用副词 tightly（紧紧地）"
+                                }
+                            ]
                   },
                   {
                       "word":  "undo",
@@ -494,7 +1559,34 @@ window.WORDS_DATA = {
                                     "un"
                                 ],
                       "morph":  "un-（相反，取消）+ do（做） → \"把做过的事反过来\" → 撤销 · 解开 · 取消",
-                      "scene":  "undo = 打一个绳结，然后又把它慢慢解开——\"做过的，反过来\"。"
+                      "scene":  "undo = 打一个绳结，然后又把它慢慢解开——\"做过的，反过来\"。",
+                      "q":  [
+                                {
+                                    "q":  "The damage caused by the flood cannot be \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in a short time.",
+                                    "a":  "ndone",
+                                    "h":  "be undone，被消除/修复（被动）"
+                                },
+                                {
+                                    "q":  "She bent down to \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the buttons of her coat.",
+                                    "a":  "ndo",
+                                    "h":  "undo the buttons，解开扣子"
+                                },
+                                {
+                                    "q":  "His carelessness has \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e years of hard work.",
+                                    "a":  "ndone",
+                                    "h":  "have undone，已经毁掉（完成时）"
+                                },
+                                {
+                                    "q":  "The shoe lace has come \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e again.",
+                                    "a":  "ndone",
+                                    "h":  "come undone，松开了（固定搭配）"
+                                },
+                                {
+                                    "q":  "Greed was ultimately his \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "ndoing",
+                                    "h":  "⚠️ 陷阱：这里要名词 undoing（毁灭的根源）"
+                                }
+                            ]
                   },
                   {
                       "word":  "uniform",
@@ -506,7 +1598,29 @@ window.WORDS_DATA = {
                                     "un"
                                 ],
                       "morph":  "uni-（一，单一） + form（形式，形状） → \"只有一种形式\" → 制服 · 统一的 · 一致的",
-                      "scene":  "uniform = 三个原本高矮不一、衣着各异的人，套上同一件制服后，齐刷刷站成一排。"
+                      "scene":  "uniform = 三个原本高矮不一、衣着各异的人，套上同一件制服后，齐刷刷站成一排。",
+                      "q":  [
+                                {
+                                    "q":  "Nearly all British schools require students to wear a \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
+                                    "a":  "niform",
+                                    "h":  "wear a uniform，穿校服（名词）"
+                                },
+                                {
+                                    "q":  "The company applies \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e standards across all branches.",
+                                    "a":  "niform",
+                                    "h":  "形容词用法，统一的标准"
+                                },
+                                {
+                                    "q":  "⚠️ 陷阱题：She wears \u003cspan class=\"first-letter\"\u003ea\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e uniform to work.",
+                                    "a":  "_",
+                                    "h":  "/j/ 是辅音音素，冠词填 a，不能填 an"
+                                },
+                                {
+                                    "q":  "⚠️ 陷阱题：The team agreed to \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e its safety standards.",
+                                    "a":  "nify",
+                                    "h":  "这里要动词 unify（统一），不是名词/形容词 uniform"
+                                }
+                            ]
                   },
                   {
                       "word":  "union",
@@ -518,7 +1632,34 @@ window.WORDS_DATA = {
                                     "un"
                                 ],
                       "morph":  "拉丁语 unus（一） + -ion（名词后缀） → \"成为一体的状态\" → 联盟 · 工会 · 联合",
-                      "scene":  "union = 五个环环环相扣，串成一条不断裂的链。"
+                      "scene":  "union = 五个环环环相扣，串成一条不断裂的链。",
+                      "q":  [
+                                {
+                                    "q":  "The trade \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e called for a strike to protest the new policy.",
+                                    "a":  "nion",
+                                    "h":  "trade union，工会"
+                                },
+                                {
+                                    "q":  "Many countries have joined the European \u003cspan class=\"first-letter\"\u003eU\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to boost trade.",
+                                    "a":  "nion",
+                                    "h":  "专有名词要大写 the European Union"
+                                },
+                                {
+                                    "q":  "Their marriage was a happy \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e of two families.",
+                                    "a":  "nion",
+                                    "h":  "抽象用法，表\"结合\" a union of A and B"
+                                },
+                                {
+                                    "q":  "The \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e between labor and management broke down.",
+                                    "a":  "nion",
+                                    "h":  "union between A and B，A 与 B 的联盟"
+                                },
+                                {
+                                    "q":  "The team showed great \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in facing the challenge.",
+                                    "a":  "nity",
+                                    "h":  "⚠️ 陷阱：这里要用 unity（团结），不是 union！"
+                                }
+                            ]
                   },
                   {
                       "word":  "unite",
@@ -530,7 +1671,34 @@ window.WORDS_DATA = {
                                     "un"
                                 ],
                       "morph":  "拉丁语 unus（一） + -ite（动词后缀） → \"使之成为一\" → 联合 · 团结 · 汇聚",
-                      "scene":  "unite = 五湖四海的人，汇聚成一股绳。"
+                      "scene":  "unite = 五湖四海的人，汇聚成一股绳。",
+                      "q":  [
+                                {
+                                    "q":  "People from all over the world \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e to help the earthquake victims.",
+                                    "a":  "nited",
+                                    "h":  "过去式，联合起来做某事 unite to do sth"
+                                },
+                                {
+                                    "q":  "The workers \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e against the unfair treatment.",
+                                    "a":  "nited",
+                                    "h":  "unite against，联合起来反对"
+                                },
+                                {
+                                    "q":  "The two parties were \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e in their opposition to the plan.",
+                                    "a":  "nited",
+                                    "h":  "be united in，在……方面团结一致"
+                                },
+                                {
+                                    "q":  "The leader promised to \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e the divided country.",
+                                    "a":  "nite",
+                                    "h":  "及物动词用法 unite + 名词"
+                                },
+                                {
+                                    "q":  "The merger \u003cspan class=\"first-letter\"\u003eu\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e two leading companies into a single giant.",
+                                    "a":  "nited",
+                                    "h":  "unite A into B，把 A 联合成 B"
+                                }
+                            ]
                   },
                   {
                       "word":  "watertight",
@@ -542,7 +1710,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "water（水）+ tight（紧的，密封的） → \"水都进不去\" → 防水的 · 水密的 · 无懈可击",
-                      "scene":  "watertight = 潜艇的舷窗，外面下着暴雨、海水拍打，里面依然干燥。"
+                      "scene":  "watertight = 潜艇的舷窗，外面下着暴雨、海水拍打，里面依然干燥。",
+                      "q":  [
+                                {
+                                    "q":  "The cabin is divided into \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e compartments.",
+                                    "a":  "atertight",
+                                    "h":  "watertight compartments，水密舱"
+                                },
+                                {
+                                    "q":  "The prosecution has a \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e case against the suspect.",
+                                    "a":  "atertight",
+                                    "h":  "a watertight case，无懈可击的案卷"
+                                },
+                                {
+                                    "q":  "She took a \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e lunch box to the beach.",
+                                    "a":  "atertight",
+                                    "h":  "watertight lunch box，水密/防水的午餐盒"
+                                },
+                                {
+                                    "q":  "The evidence they gathered gave them a \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e alibi.",
+                                    "a":  "atertight",
+                                    "h":  "watertight alibi，无懈可击的不在场证明"
+                                },
+                                {
+                                    "q":  "A \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e contract protects both parties from misunderstandings.",
+                                    "a":  "atertight",
+                                    "h":  "watertight contract，无漏洞的合同"
+                                }
+                            ]
                   },
                   {
                       "word":  "weave",
@@ -554,7 +1749,34 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "weave 源自古英语 wefan（编织） → 与 web（网）、weft（纬线）同源",
-                      "scene":  "weave = 把东西交叉着穿过去，编到一起。"
+                      "scene":  "weave = 把东西交叉着穿过去，编到一起。",
+                      "q":  [
+                                {
+                                    "q":  "She \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e a basket from reeds.",
+                                    "a":  "ove",
+                                    "h":  "过去式，编织具体物品 weave A from B"
+                                },
+                                {
+                                    "q":  "The author \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e historical facts into a narrative.",
+                                    "a":  "eaves",
+                                    "h":  "weave A into B，把 A 编入 B"
+                                },
+                                {
+                                    "q":  "The motorcycle \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e through traffic.",
+                                    "a":  "ove",
+                                    "h":  "weave through，迂回穿行"
+                                },
+                                {
+                                    "q":  "These traditions are deeply \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e into the social fabric.",
+                                    "a":  "oven",
+                                    "h":  "be woven into，被融入"
+                                },
+                                {
+                                    "q":  "She \u003cspan class=\"first-letter\"\u003ew\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e a fascinating tale about her journey.",
+                                    "a":  "ove",
+                                    "h":  "weave a story / tale，编故事"
+                                }
+                            ]
                   }
               ],
     "art":  {

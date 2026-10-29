@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>res</title>
+<style>html,body{margin:0}iframe{border:0;display:block}pre{font:12px monospace;white-space:pre-wrap}</style>
+</head><body>
+<iframe id="f" width="1200" height="820"></iframe>
+<pre id="out"></pre>
+<script>
+const out = document.getElementById('out'); const f = document.getElementById('f');
+const lines = []; const log = s => lines.push(s);
+const tick = ms => new Promise(r => setTimeout(r, ms));
+(async () => {
+  localStorage.removeItem('wc_quiz_v1');
+  f.src = 'index.html';
+  await new Promise(r => f.addEventListener('load', r, {once:true}));
+  await tick(1000);
+  const w = f.contentWindow, d = w.document;
+  try{
+    d.getElementById('quizBtn').click();
+    await tick(300);
+    // 把本轮缩成 2 题，方便走到结算页
+    w.eval('quizList = quizList.slice(0, 2); quizIdx = 0; quizRight = 0; quizWrong = 0; quizRender();');
+    await tick(200);
+    log('progress=' + d.getElementById('quizProgress').textContent);
+    d.getElementById('quizInput').value = 'bout';
+    d.getElementById('quizSubmit').click();
+    await tick(150);
+    d.getElementById('quizSubmit').click();
+    await tick(150);
+    log('q2 progress=' + d.getElementById('quizProgress').textContent);
+    d.getElementById('quizInput').value = 'nonsense';
+    d.getElementById('quizSubmit').click();
+    await tick(150);
+    d.getElementById('quizSubmit').click();
+    await tick(250);
+    log('result html ok=' + /本轮完成/.test(d.getElementById('quizBody').innerHTML) +
+        ' | ' + (d.querySelector('.quiz-result-num') || {}).textContent +
+        ' | ' + (d.querySelector('.quiz-hint') || {}).textContent);
+    log('stat=' + localStorage.getItem('wc_quiz_v1'));
+    // 再来一轮 / 完成
+    d.getElementById('quizAgain').click();
+    await tick(200);
+    log('again progress=' + d.getElementById('quizProgress').textContent + ' score=' + d.getElementById('quizScore').textContent.trim());
+    d.getElementById('quizClose').click();
+    await tick(200);
+    log('closed=' + !d.getElementById('quizStage').classList.contains('open'));
+  }catch(err){ log('ERR ' + err.message + ' @ ' + String(err.stack).split('\n')[1]); }
+  out.textContent = lines.join('\n');
+})();
+</script>
+</body></html>

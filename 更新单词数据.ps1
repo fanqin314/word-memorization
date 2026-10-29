@@ -275,6 +275,34 @@ function Parse-Card([string]$path){
     }
   }
 
+  # 首字母填空（自测）：逐条收集题干 / 答案 / 提示
+  # 只保留「恰好一个空格」的句子；两个空格的句子无法用单输入框作答，跳过
+  $quiz = New-Object System.Collections.ArrayList
+  # 不用 Get-Block：.fill-list 内部还有多层 <div>，按第一个 </div> 配对会被截断。
+  # 直接把整段 HTML 按 fill-item 的开头切开，每一块正好是一道题。
+  $items = [regex]::Split($html, '<div class="fill-item')
+  if($items.Count -gt 1){
+    foreach($it in ($items | Select-Object -Skip 1)){
+      $ms2 = [regex]::Match($it, '<p class="fill-sentence">([\s\S]*?)</p>')
+      if(-not $ms2.Success){ continue }
+      $sent = $ms2.Groups[1].Value
+      if(([regex]::Matches($sent, 'class="blank"')).Count -ne 1){ continue }
+      $mb2 = [regex]::Match($sent, '<span class="blank"[^>]*>([\s\S]*?)</span>')
+      if(-not $mb2.Success){ continue }
+      $ans = Strip-Tags $mb2.Groups[1].Value
+      if([string]::IsNullOrWhiteSpace($ans)){ continue }
+      # 题干里把答案抹掉，只留位置（因此首页拿到的 HTML 不含答案）
+      $qHtml = [regex]::Replace($sent, '<span class="blank"[^>]*>[\s\S]*?</span>', '<span class="qz-blank"></span>').Trim()
+      $hint2 = ''
+      $mh = [regex]::Match($it, '<p class="fill-hint">([\s\S]*?)</p>')
+      if($mh.Success){
+        $hint2 = Strip-Tags $mh.Groups[1].Value
+        $hint2 = [regex]::Replace($hint2, '^提示[：:]\s*', '')
+      }
+      [void]$quiz.Add([ordered]@{ q = $qHtml; a = $ans; h = $hint2 })
+    }
+  }
+
   return [ordered]@{
     word  = $word
     gloss = $gloss
@@ -284,6 +312,7 @@ function Parse-Card([string]$path){
     roots = @($roots)
     morph = $morph
     scene = $scene
+    q     = @($quiz)
     svg   = $svg
     css   = $artCss
     mst   = $mstCss

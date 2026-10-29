@@ -351,6 +351,11 @@ body{
 .card-note svg{width:13px;height:13px;flex:none;}
 
 .card-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);margin-top:auto;padding-top:var(--sp-2);border-top:1px dashed var(--line-2);}
+.card-foot-r{display:flex;align-items:center;gap:var(--sp-2);flex:none;}
+/* 复习打卡进度：四个小方块 + n/4（数据来自卡片页的 <单词>_review） */
+.card-check{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-micro);font-weight:800;color:var(--ink-2);white-space:nowrap;}
+.card-check .ck{width:5px;height:5px;background:transparent;border:1px solid var(--line-2);border-radius:1px;}
+.card-check .ck.on{background:var(--ink);border-color:var(--ink);}
 .tag{
   display:inline-block;
   font-size:var(--fs-micro);font-weight:600;color:var(--ink-2);
@@ -463,6 +468,13 @@ body{
   padding:var(--sp-3);outline:none;margin-top:var(--sp-3);transition:box-shadow .16s ease,background .16s ease,border-color .16s ease;
 }
 .modal textarea:focus{background:#fff;border-color:color-mix(in srgb, var(--accent) 40%, transparent);box-shadow:0 0 0 3px var(--accent-soft);}
+/* 笔记弹窗里回显卡片页保存的造句（只读） */
+.modal-sentence{
+  margin-top:var(--sp-3);padding:var(--sp-2) var(--sp-3);
+  background:var(--paper-2);border-left:2px solid var(--accent);border-radius:var(--r-md);
+}
+.modal-sentence .ms-label{font-size:var(--fs-micro);font-weight:800;letter-spacing:.14em;color:var(--accent);}
+.modal-sentence p{margin:3px 0 0;font-size:var(--fs-sm);font-weight:500;line-height:var(--lh);color:var(--ink-2);max-height:5.6em;overflow:auto;}
 .modal-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);margin-top:var(--sp-3);}
 .modal-hint{font-size:var(--fs-sm);font-weight:700;color:var(--muted);}
 .modal-btns{display:flex;gap:var(--sp-2);}
@@ -784,6 +796,68 @@ body.swipe-on{overflow:hidden;}
 .draw-size[data-size="9"] span{width:17px;height:17px;}
 .draw-size.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft), var(--btn-inset);transform:scale(1.06);}
 .draw-tools .divider{height:30px;}
+
+/* ============ 自测模式（复用卡片的填空题，题干与答案由生成器提取） ============ */
+.quiz-stage{
+  position:fixed;inset:0;z-index:250;display:none;flex-direction:column;
+  background:radial-gradient(120% 70% at 50% 0%, #fff 0%, var(--paper) 55%, var(--paper-2) 100%);
+  overscroll-behavior:contain;
+}
+.quiz-stage.open{display:flex;}
+.quiz-top{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);
+  padding:calc(env(safe-area-inset-top) + var(--sp-3)) var(--sp-4) var(--sp-2);
+}
+.quiz-progress{font-family:var(--font-sans);font-size:var(--fs-sm);font-weight:800;color:var(--muted);letter-spacing:.06em;}
+.quiz-score{display:inline-flex;gap:var(--sp-3);font-size:var(--fs-sm);font-weight:800;color:var(--muted);}
+.quiz-score b{font-weight:800;color:var(--ink);}
+.quiz-body{
+  flex:1 1 auto;min-height:0;overflow:auto;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:var(--sp-2) var(--sp-4);
+}
+.quiz-card{
+  width:100%;max-width:620px;margin:0 auto;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-3);
+}
+.quiz-kicker{font-size:var(--fs-micro);font-weight:800;letter-spacing:.16em;color:var(--accent);}
+.quiz-sentence{margin:0;font-size:var(--fs-lg);font-weight:500;line-height:1.9;color:var(--ink);}
+.quiz-sentence .first-letter{font-weight:800;color:var(--accent);}
+.qz-blank{display:inline-block;min-width:64px;height:1.1em;border-bottom:2px solid var(--line-2);vertical-align:-2px;}
+.qz-blank.on{border-color:var(--ink);}
+.quiz-input{
+  width:100%;height:48px;font-family:var(--font-sans);font-size:var(--fs-lg);font-weight:600;
+  color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:0 var(--sp-3);outline:none;transition:box-shadow .16s ease, background .16s ease, border-color .16s ease;
+}
+.quiz-input::placeholder{font-size:var(--fs-sm);font-weight:500;color:var(--muted);}
+.quiz-input:focus{background:#fff;border-color:color-mix(in srgb, var(--accent) 40%, transparent);box-shadow:0 0 0 3px var(--accent-soft);}
+.quiz-input:disabled{opacity:.62;}
+.quiz-hint{margin:0;font-size:var(--fs-sm);font-weight:600;color:var(--muted);line-height:var(--lh);}
+.quiz-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);}
+.quiz-feedback{font-size:var(--fs-sm);font-weight:800;line-height:1.4;}
+.quiz-feedback.right{color:var(--ink);}
+.quiz-feedback.wrong{color:var(--accent);}
+.quiz-btn{
+  appearance:none;cursor:pointer;flex:none;font-family:var(--font-sans);font-size:var(--fs-sm);font-weight:700;
+  color:var(--accent);background:var(--accent-soft);
+  border:1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+  border-radius:var(--r-pill);padding:var(--sp-2) var(--sp-4);
+  transition:transform .14s ease, background .16s ease, color .16s ease, border-color .16s ease;
+}
+.quiz-btn:hover{border-color:color-mix(in srgb, var(--accent) 52%, transparent);}
+.quiz-btn:active{transform:translateY(1px);}
+.quiz-btn.ghost{color:var(--ink-2);background:var(--card);border-color:var(--line);}
+.quiz-btn.ghost:hover{border-color:var(--ink);color:var(--ink);}
+.quiz-result-num{margin:0;font-family:var(--font-sans);font-size:var(--fs-xl);font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.1;}
+.quiz-foot-note{
+  text-align:center;font-size:var(--fs-micro);font-weight:800;letter-spacing:.14em;color:var(--muted);
+  padding:var(--sp-2) 0 calc(env(safe-area-inset-bottom) + var(--sp-3));
+}
+
+/* 朗读按钮反馈（统一给首页所有发音入口） */
+.icon-btn.speaking{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb, var(--accent) 30%, transparent);}
 
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
 
@@ -2150,6 +2224,9 @@ body.swipe-on{overflow:hidden;}
     <button class="icon-btn" type="button" id="swipeBtn" title="滑动学习：左右切换单词卡" aria-label="滑动学习">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="4.5" width="9" height="15" rx="2"></rect><path d="M4 8.5v7M20 8.5v7"></path></svg>
     </button>
+    <button class="icon-btn" type="button" id="quizBtn" title="自测：首字母填空（按当前筛选范围）" aria-label="自测填空">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="2"></rect><path d="M7.5 12.5l3 3 6-6"></path></svg>
+    </button>
     <input type="file" id="uploadInput" accept=".html,text/html" multiple hidden="">
 
     <div class="recent" id="recent" hidden="">
@@ -2506,6 +2583,9 @@ body.swipe-on{overflow:hidden;}
       <div class="dipa" id="drawerSub">—</div>
     </div>
     <div class="drawer-actions">
+      <button class="icon-btn" type="button" id="drawerSpeak" title="朗读单词" aria-label="朗读单词">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"></path><path d="M15.5 9a4.5 4.5 0 0 1 0 6"></path><path d="M18 6.5a8 8 0 0 1 0 11"></path></svg>
+      </button>
       <button class="icon-btn" type="button" id="drawerNote" title="笔记" aria-label="笔记">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17v3z"></path><path d="M14.5 6.5l3 3"></path></svg>
       </button>
@@ -2534,6 +2614,10 @@ body.swipe-on{overflow:hidden;}
       <button class="icon-btn" type="button" id="modalClose" title="关闭" aria-label="关闭">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
+    </div>
+    <div class="modal-sentence" id="modalSentence" hidden>
+      <span class="ms-label">我在卡片上写的造句</span>
+      <p id="modalSentenceText"></p>
     </div>
     <textarea id="modalNote" placeholder="写下这个词的记忆点、易错点、联想……"></textarea>
     <div class="modal-foot">
@@ -2653,6 +2737,9 @@ body.swipe-on{overflow:hidden;}
     </button>
     <span class="swipe-progress" id="swipeProgress">1 / 1</span>
     <div class="swipe-tools">
+      <button class="icon-btn" type="button" id="swipeSpeak" title="朗读单词" aria-label="朗读单词">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"></path><path d="M15.5 9a4.5 4.5 0 0 1 0 6"></path><path d="M18 6.5a8 8 0 0 1 0 11"></path></svg>
+      </button>
       <button class="icon-btn" type="button" id="swipeFav" title="收藏" aria-label="收藏">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M12 3.4l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.8 6.7 19.6l1.1-5.9L3.5 9.6l5.9-.8z"></path></svg>
       </button>
@@ -2710,6 +2797,19 @@ body.swipe-on{overflow:hidden;}
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<!-- 自测模式：首字母填空 -->
+<div class="quiz-stage" id="quizStage" aria-hidden="true">
+  <div class="quiz-top">
+    <button class="icon-btn" type="button" id="quizClose" title="退出自测" aria-label="退出自测">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </button>
+    <span class="quiz-progress" id="quizProgress">1 / 1</span>
+    <span class="quiz-score" id="quizScore">✓ <b>0</b>　✗ <b>0</b></span>
+  </div>
+  <div class="quiz-body" id="quizBody"></div>
+  <div class="quiz-foot-note">回车提交 · 再按一次进入下一题</div>
+</div>
+
 <script src="words-data.js"></script>
 <script>
 /* ============================================================
@@ -2757,8 +2857,29 @@ const ICON = {
   mst1:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="8.2"/><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor" stroke="none"/></svg>',
   mst2:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><path d="M8 12.3l2.7 2.7L16 9.7"/></svg>',
   empty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>',
-  open:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-8.5 8.5"/><path d="M19 14.5V19a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19V8a1.5 1.5 0 0 1 1.5-1.5H11"/></svg>'
+  open:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-8.5 8.5"/><path d="M19 14.5V19a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19V8a1.5 1.5 0 0 1 1.5-1.5H11"/></svg>',
+  speak: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></svg>'
 };
+
+/* ------------------------------------------------------------
+   朗读：与卡片页同一套 speechSynthesis，en-US 慢速
+   ------------------------------------------------------------ */
+let speakVO = null;
+function speakWord(word, btn){
+  if(!word) return;
+  if(!('speechSynthesis' in window)){ toast('当前浏览器不支持朗读'); return; }
+  window.speechSynthesis.cancel();
+  const u = speakVO = new SpeechSynthesisUtterance(word);
+  u.lang = 'en-US';
+  u.rate = 0.85;
+  if(btn){
+    btn.classList.add('speaking');
+    const off = () => { if(speakVO === u) btn.classList.remove('speaking'); };
+    u.onend = off;
+    u.onerror = off;
+  }
+  window.speechSynthesis.speak(u);
+}
 
 /* ============================================================
    存储
@@ -2818,6 +2939,35 @@ function cycleMastery(word){
   return { level:r.mastery, auto:r.pin === null, changed:before !== r.mastery };
 }
 
+/* ------------------------------------------------------------
+   复习打卡：读卡片页写的 localStorage（键 <单词>_review）
+   卡片里点过的 D1/D3/D7/D15 记为 true，这里汇总成 n/4。
+   只读，不写——打卡动作仍在卡片里完成，首页负责汇总与筛选。
+   ------------------------------------------------------------ */
+const REVIEW_SUFFIX = '_review';
+const REVIEW_DAYS = ['d1','d3','d7','d15'];
+let reviewCache = null;
+function reviewMap(){
+  if(reviewCache) return reviewCache;
+  const map = {};
+  try{
+    for(let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      if(!k || k.slice(-REVIEW_SUFFIX.length) !== REVIEW_SUFFIX) continue;
+      let v; try{ v = JSON.parse(localStorage.getItem(k) || '{}'); }catch(e){ v = null; }
+      map[k.slice(0, -REVIEW_SUFFIX.length)] = (v && typeof v === 'object') ? v : {};
+    }
+  }catch(e){}
+  reviewCache = map;
+  return map;
+}
+function reviewDone(word){
+  const v = reviewMap()[word];
+  return v ? REVIEW_DAYS.filter(k => v[k]).length : 0;
+}
+/* 待复习：已经开始打卡但还没走完四轮，且尚未标记为已掌握 */
+function isDue(word){ const n = reviewDone(word); return n > 0 && n < REVIEW_DAYS.length && rec(word).mastery !== 2; }
+
 const chipsPref = localStorage.getItem('wc_chips_user');
 const state = {
   q:'', sort:'az', layout:'comfort', root:'all', mastery:'all',
@@ -2868,15 +3018,21 @@ function relTime(ts){
    ============================================================ */
 function renderStats(){
   const total = WORDS.length;
-  let mastered=0, learning=0, fav=0;
-  WORDS.forEach(w => { const r = rec(w.word); if(r.mastery===2) mastered++; else if(r.mastery===1) learning++; if(r.fav) fav++; });
+  let mastered=0, learning=0, fav=0, due=0;
+  WORDS.forEach(w => {
+    const r = rec(w.word);
+    if(r.mastery===2) mastered++; else if(r.mastery===1) learning++;
+    if(r.fav) fav++;
+    if(isDue(w.word)) due++;
+  });
   const unlearned = total - mastered - learning;
   const pills = [
     {key:'all',       label:'全部',   val:total},
     {key:'unlearned', label:'未学',   val:unlearned},
     {key:'learning',  label:'学习中', val:learning},
     {key:'mastered',  label:'已掌握', val:mastered},
-    {key:'fav',       label:'收藏',   val:fav}
+    {key:'fav',       label:'收藏',   val:fav},
+    {key:'due',       label:'待复习', val:due}
   ];
   document.getElementById('stats').innerHTML = pills.map(p =>
     `<button class="pill ${state.mastery===p.key?'on':''}" type="button" data-filter="${p.key}">${p.label} <b>${p.val}</b></button>`).join('');
@@ -2920,6 +3076,7 @@ function visibleWords(){
     if(state.mastery === 'mastered'  && r.mastery !== 2) return false;
     if(state.mastery === 'learning'  && r.mastery !== 1) return false;
     if(state.mastery === 'unlearned' && r.mastery !== 0) return false;
+    if(state.mastery === 'due'       && !isDue(w.word))      return false;
     if(q){
       const hay = [w.word, w.gloss, w.ipa, w.pos, w.morph, primaryTag(w),
                    w.roots.map(k => ROOTS[k].label + ROOTS[k].meaning).join(' ')].join(' ').toLowerCase();
@@ -2958,7 +3115,10 @@ function cardHTML(w, idx){
     ${noteBlock}
     <div class="card-foot">
       <span class="tag">${e(primaryTag(w))}</span>
-      <span class="card-meta">${relTime(r.lastOpened)}</span>
+      <span class="card-foot-r">
+        ${reviewBadge(w.word)}
+        <span class="card-meta">${relTime(r.lastOpened)}</span>
+      </span>
     </div>
     <div class="card-reveal">
       <div class="rl">词根拆解</div>
@@ -2967,6 +3127,13 @@ function cardHTML(w, idx){
     </div>
   </article>`;
 }
+/* 复习打卡进度徽标：只在已开始打卡时出现 */
+function reviewBadge(word){
+  const n = reviewDone(word);
+  if(!n) return '';
+  const dots = REVIEW_DAYS.map((k, i) => `<i class="ck${i < n ? ' on' : ''}"></i>`).join('');
+  return `<span class="card-check" title="复习打卡 ${n}/4" aria-label="复习打卡 ${n} / 4">${dots}<b>${n}/4</b></span>`;
+}
 function escapeHTML(s){
   return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
@@ -2974,6 +3141,7 @@ function escapeHTML(s){
    渲染：主内容
    ============================================================ */
 function render(animate){
+  reviewCache = null;          // 打卡状态可能刚在卡片页里改过，渲染前重新读一次
   // 重建 DOM 会丢焦点：记住当前聚焦的卡片/按钮，渲染后还原
   const prevFocus = document.activeElement;
   const prevCard = prevFocus && prevFocus.closest ? prevFocus.closest('.card') : null;
@@ -3097,6 +3265,9 @@ function closeDrawer(){
     try{ el.focus({ preventScroll:true }); }catch(e){}
   }
   setTimeout(() => { if(!drawer.classList.contains('open')) drawerFrame.src = 'about:blank'; }, 360);
+  // 卡片里可能刚点过复习打卡，关抽屉后把汇总更新到卡片与外层统计
+  reviewCache = null;
+  render(false);
 }
 function syncDrawerActions(){
   if(!currentWord) return;
@@ -3125,6 +3296,9 @@ document.getElementById('drawerFav').addEventListener('click', () => {
   toast(r.fav ? `已收藏 ${currentWord}` : `已取消收藏 ${currentWord}`);
 });
 document.getElementById('drawerNote').addEventListener('click', () => { if(currentWord) openNote(currentWord, true); });
+document.getElementById('drawerSpeak').addEventListener('click', () => {
+  if(currentWord) speakWord(currentWord, document.getElementById('drawerSpeak'));
+});
 
 /* ============================================================
    交互：卡片区（单一委托）
@@ -3221,6 +3395,12 @@ function openNote(word, fromDrawer){
   document.getElementById('modalWord').textContent = word;
   document.getElementById('modalSub').textContent = `${w.ipa} · ${w.gloss}`;
   modalNote.value = r.note || '';
+  // 回显卡片页保存的造句（键 <单词>_sentence，与卡片里同一个存储）
+  let sentence = '';
+  try{ sentence = (localStorage.getItem(word + '_sentence') || '').trim(); }catch(e){ sentence = ''; }
+  const sentenceBox = document.getElementById('modalSentence');
+  document.getElementById('modalSentenceText').textContent = sentence;
+  sentenceBox.hidden = !sentence;
   document.getElementById('modalDelete').disabled = !r.note;
   overlay.classList.add('open');
   openTrap(overlay, modalNote);
@@ -3398,12 +3578,14 @@ function buildDaily(force){
   daily.pool = pool.length;
   if(!pool.length){ daily.picks = []; saveDaily(); return; }
   let base = pool.slice();
+  // 待复习的词优先进入当天推荐，其余仍按原有规则排序
+  const dueFirst = (a,b) => (isDue(a.word) ? 0 : 1) - (isDue(b.word) ? 0 : 1);
   if(daily.oldest){
     // 先按「最久没打开」排序，只在最久未学的一小批里轮换，兼顾优先级与每日新鲜感
-    base.sort((a,b) => (rec(a.word).lastOpened || 0) - (rec(b.word).lastOpened || 0) || a.word.localeCompare(b.word));
+    base.sort((a,b) => dueFirst(a,b) || (rec(a.word).lastOpened || 0) - (rec(b.word).lastOpened || 0) || a.word.localeCompare(b.word));
     base = base.slice(0, Math.max(daily.count, Math.min(base.length, daily.count * 3)));
   }else{
-    base.sort((a,b) => a.word.localeCompare(b.word));
+    base.sort((a,b) => dueFirst(a,b) || a.word.localeCompare(b.word));
   }
   const picked = seededShuffle(base, daySeed()).slice(0, Math.min(daily.count, base.length));
   daily.picks = picked.map(w => w.word);
@@ -3448,6 +3630,8 @@ const ART = {
       // 卡片文件可能被重命名（如 deepseek_html_*.html → <单词>.html），同步过来
       const ex = WORDS.find(x => x.word === w.word);
       if(ex && w.file) ex.file = w.file;
+      // 首字母填空题干只存在于卡片里，随生成器一起同步到已登记的词
+      if(ex && Array.isArray(w.q) && w.q.length) ex.q = w.q;
       return;
     }
     WORDS.push(w); known.add(w.word); added.push(w.word);
@@ -3841,6 +4025,10 @@ function swipeCloseMode(){
 
 document.getElementById('swipeBtn').addEventListener('click', swipeOpenMode);
 document.getElementById('swipeClose').addEventListener('click', swipeCloseMode);
+document.getElementById('swipeSpeak').addEventListener('click', () => {
+  const w = swipeList[swipeIdx]; if(!w) return;
+  speakWord(w.word, document.getElementById('swipeSpeak'));
+});
 
 document.getElementById('swipeFav').addEventListener('click', () => {
   const w = swipeList[swipeIdx]; if(!w) return;
@@ -4107,6 +4295,7 @@ function renderDaily(){
           <p>${e(w.morph)}</p>
         </div>
         <div class="di-actions">
+          <button class="icon-btn sm" type="button" data-daily-action="speak" data-word="${e(w.word)}" title="朗读 ${e(w.word)}" aria-label="朗读">${ICON.speak}</button>
           <button class="icon-btn sm ${mstCls}" type="button" data-daily-action="mastery" title="掌握度：${MASTERY[r.mastery].label}（点击切换）" aria-label="切换掌握度">${mstIcon}</button>
           <button class="icon-btn sm" type="button" data-daily-action="open" title="打开预览" aria-label="打开预览">${ICON.open}</button>
         </div>
@@ -4322,6 +4511,8 @@ dailyRollEl().addEventListener('click', (e) => {
       const res = cycleMastery(word);
       refreshDaily(); render(false);
       toast(res.changed ? word + ' · ' + MASTERY[res.level].label + (res.auto ? '（自动）' : '') : word + ' · 已是最新状态');
+    }else if(btn.dataset.dailyAction === 'speak'){
+      speakWord(word, btn);
     }else if(btn.dataset.dailyAction === 'open'){
       openDrawer(word);
     }
@@ -4332,6 +4523,156 @@ dailyRollEl().addEventListener('click', (e) => {
   if(k >= 0 && k !== dailyPos) gotoDaily(k, true);
   openDrawer(word);
 });
+
+/* ============================================================
+   自测模式：把卡片里的首字母填空抽出来做成一轮测验
+   题干与答案由生成器写进 words-data.js 的 q 字段；
+   题干里的空格是空的，答案不会出现在首页 DOM 里。
+   ============================================================ */
+const QUIZ_KEY = 'wc_quiz_v1';
+const quizStageEl = document.getElementById('quizStage');
+const quizBodyEl  = document.getElementById('quizBody');
+const quizProgEl  = document.getElementById('quizProgress');
+const quizScoreEl = document.getElementById('quizScore');
+let quizList = [], quizIdx = 0, quizRight = 0, quizWrong = 0, quizAnswered = false;
+
+function quizStat(){
+  try{ return Object.assign({rounds:0, total:0, right:0}, JSON.parse(localStorage.getItem(QUIZ_KEY) || '{}')); }
+  catch(e){ return {rounds:0, total:0, right:0}; }
+}
+function quizSaveStat(s){ try{ localStorage.setItem(QUIZ_KEY, JSON.stringify(s)); }catch(e){} }
+
+/* 取当前筛选范围内的填空（保持卡片原有顺序，够短就一轮跑完） */
+function quizCollect(){
+  const out = [];
+  visibleWords().forEach(w => {
+    (w.q || []).forEach(item => {
+      if(item && item.q && item.a) out.push({word:w.word, q:item.q, a:item.a, h:item.h || ''});
+    });
+  });
+  return out;
+}
+
+function quizNorm(s){
+  return String(s == null ? '' : s).toLowerCase()
+    .replace(/[^a-z ]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function quizOpenMode(){
+  quizList = quizCollect();
+  if(!quizList.length){ toast('当前范围没有可自测的填空题'); return; }
+  quizIdx = 0; quizRight = 0; quizWrong = 0;
+  quizStageEl.classList.add('open');
+  quizStageEl.setAttribute('aria-hidden', 'false');
+  lockScroll();
+  quizRender();
+}
+function quizCloseMode(){
+  quizStageEl.classList.remove('open');
+  quizStageEl.setAttribute('aria-hidden', 'true');
+  unlockScroll();
+  render(false);
+}
+
+function quizRender(){
+  const item = quizList[quizIdx];
+  if(!item){ quizResult(); return; }
+  quizAnswered = false;
+  quizProgEl.textContent = (quizIdx + 1) + ' / ' + quizList.length;
+  quizScoreEl.innerHTML = '✓ <b>' + quizRight + '</b>　✗ <b>' + quizWrong + '</b>';
+  quizBodyEl.innerHTML = `<div class="quiz-card">
+      <span class="quiz-kicker">首字母填空 · 第 ${quizIdx + 1} 题</span>
+      <p class="quiz-sentence">${item.q}</p>
+      <input class="quiz-input" id="quizInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="补全空格" placeholder="补全空格处的字母…">
+      <p class="quiz-hint" id="quizHint" hidden></p>
+      <div class="quiz-foot">
+        <span class="quiz-feedback" id="quizFeedback"></span>
+        <button class="quiz-btn" type="button" id="quizSubmit">检查</button>
+      </div>
+    </div>`;
+  const input = document.getElementById('quizInput');
+  input.focus();
+}
+
+function quizCheck(){
+  if(quizAnswered) return;
+  const input = document.getElementById('quizInput');
+  const item = quizList[quizIdx];
+  if(!input || !item) return;
+  const val = quizNorm(input.value);
+  if(!val){ input.focus(); return; }
+  quizAnswered = true;
+
+  // 首字母已显示，答案既可能是空格部分，也可能被写成完整单词
+  const first = (item.q.match(/class="first-letter">([^<]*)</) || ['', ''])[1];
+  const ok = val === quizNorm(item.a)
+          || val === quizNorm(item.word)
+          || val === quizNorm(first + item.a);
+
+  if(ok) quizRight++; else quizWrong++;
+  quizScoreEl.innerHTML = '✓ <b>' + quizRight + '</b>　✗ <b>' + quizWrong + '</b>';
+
+  // 答案填进空格，让句子读起来是完整的
+  const blank = quizBodyEl.querySelector('.qz-blank');
+  if(blank){ blank.textContent = item.a; blank.classList.add('on'); }
+  input.disabled = true;
+
+  const hint = document.getElementById('quizHint');
+  if(item.h){ hint.textContent = item.h; hint.hidden = false; }
+
+  const fb = document.getElementById('quizFeedback');
+  fb.className = 'quiz-feedback ' + (ok ? 'right' : 'wrong');
+  fb.textContent = ok ? '✓ 正确' : '✗ 正确答案：' + item.a;
+
+  const btn = document.getElementById('quizSubmit');
+  btn.textContent = '下一题';
+  btn.classList.add('ghost');
+  btn.focus();
+}
+
+function quizNext(){
+  quizIdx++;
+  if(quizIdx >= quizList.length) quizResult(); else quizRender();
+}
+
+function quizResult(){
+  quizProgEl.textContent = quizList.length + ' / ' + quizList.length;
+  const total = quizRight + quizWrong;
+  const rate = total ? Math.round(quizRight / total * 100) : 0;
+  const stat = quizStat();
+  stat.rounds += 1; stat.total += total; stat.right += quizRight;
+  quizSaveStat(stat);
+  const histRate = stat.total ? Math.round(stat.right / stat.total * 100) : 0;
+  quizBodyEl.innerHTML = `<div class="quiz-card">
+      <span class="quiz-kicker">本轮完成</span>
+      <p class="quiz-result-num">${quizRight} / ${total}</p>
+      <p class="quiz-hint">正确率 ${rate}% · 累计 ${stat.right} / ${stat.total}（${histRate}%，共 ${stat.rounds} 轮）</p>
+      <div class="quiz-foot">
+        <button class="quiz-btn ghost" type="button" id="quizDone">完成</button>
+        <button class="quiz-btn" type="button" id="quizAgain">再来一轮</button>
+      </div>
+    </div>`;
+  quizAnswered = true;
+}
+
+document.getElementById('quizBtn').addEventListener('click', quizOpenMode);
+document.getElementById('quizClose').addEventListener('click', quizCloseMode);
+
+quizBodyEl.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  if(btn.id === 'quizSubmit'){ quizAnswered ? quizNext() : quizCheck(); }
+  else if(btn.id === 'quizAgain'){ quizIdx = 0; quizRight = 0; quizWrong = 0; quizRender(); }
+  else if(btn.id === 'quizDone'){ quizCloseMode(); }
+});
+quizBodyEl.addEventListener('keydown', (e) => {
+  // 焦点在按钮上时回车会自己触发 click，这里让给 click 处理，避免一次回车走两题
+  if(e.key !== 'Enter' || e.target.closest('button')) return;
+  if(quizIdx >= quizList.length) return;
+  e.preventDefault();
+  quizAnswered ? quizNext() : quizCheck();
+});
+quizStageEl.addEventListener('keydown', (e) => { if(e.key === 'Escape') quizCloseMode(); });
 
 /* ============================================================
    提示
