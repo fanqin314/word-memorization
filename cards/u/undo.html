@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>undo · 撤销</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 回退色板 —— undo = 撤销 / 解开 / 取消 / 毁掉 */
+  --paper:#F3EEE4;
+  --paper-2:#E3D9C8;
+  --ink:#0E0B16;
+  --deep:#181228;
+  --deep-soft:#DDD5E8;
+  --rewind:#C94F3D;       /* 回退红 */
+  --rewind-soft:#F5D9D2;
+  --tape:#E8C25C;         /* 磁带黄 */
+  --tape-soft:#FCEFC7;
+  --cyan:#5FBFC2;         /* 冷青（新方向） */
+  --cyan-soft:#D6EFEF;
+  --violet:#8B6BC9;       /* 紫罗兰 */
+  --violet-soft:#E5DDF5;
+  --cream:#FFF9EE;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--rewind);
+  --cb-accent-soft:var(--rewind-soft);
+  --cb-2:var(--tape);
+  --cb-2-soft:var(--tape-soft);
+  --cb-3:var(--cyan);
+  --cb-3-soft:var(--cyan-soft);
+  --cb-deep:var(--deep);
+}
+html,body{margin:0;padding:0;}
+/* 全页：向后回退的虚线箭头纹理 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(135deg,
+      transparent 0 60px,
+      rgba(201,79,61,.05) 60px 62px,
+      transparent 62px 120px);
+  animation:rewindFlow 8s linear infinite;
+}
+@keyframes rewindFlow{
+  to{ background-position:-120px 120px; }
+}
+/* 漂浮的撤销碎片 */
+.page-floats{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+/* 回退弧形箭头 */
+.fl.arc{
+  width:16px;height:16px;
+  border:2.5px solid var(--rewind);
+  border-radius:50%;
+  border-top-color:transparent;
+  border-right-color:transparent;
+}
+.fl.arc.cyan{ border-color:var(--cyan); border-top-color:transparent; border-right-color:transparent; }
+.fl.arc.violet{ border-color:var(--violet); border-top-color:transparent; border-right-color:transparent; }
+/* 打结绳圈 */
+.fl.knot{
+  width:14px;height:14px;
+  border:2.5px solid var(--tape);
+  border-radius:50%;
+  border-left-color:transparent;
+}
+/* 磁带小方块 */
+.fl.tape{
+  width:14px;height:10px;
+  background:var(--tape);
+  border:2px solid var(--ink);
+  border-radius:2px;
+}
+/* 星芒 */
+.fl.star{
+  width:14px;height:14px;
+  color:var(--cream);
+  font-size:14px;
+  line-height:14px;
+  text-align:center;
+  text-shadow:0 0 6px var(--rewind);
+}
+.fl.star::before{ content:"✦"; }
+.fl.f1{ left:6%; bottom:-40px; animation-duration:24s; }
+.fl.f2{ left:22%; bottom:-55px; animation-duration:30s; animation-delay:3s; }
+.fl.f3{ left:78%; bottom:-45px; animation-duration:26s; animation-delay:1.5s; }
+.fl.f4{ left:90%; bottom:-30px; animation-duration:28s; animation-delay:6s; }
+.fl.f5{ left:52%; bottom:-70px; animation-duration:22s; animation-delay:4.5s; }
+.fl.f6{ left:38%; bottom:-50px; animation-duration:32s; animation-delay:9s; }
+.fl.f7{ left:64%; bottom:-60px; animation-duration:20s; animation-delay:7.5s; }
+@keyframes flDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.85; }
+  50%{ transform:translateY(-50vh) rotate(-180deg); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) rotate(-360deg); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    radial-gradient(ellipse at 50% 45%, #2A1F40 0%, #181228 45%, #06050C 100%);
+  overflow:hidden;
+  color:var(--cream);
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--rewind) 0 22px,
+    transparent 22px 24px,
+    var(--tape) 24px 46px,
+    transparent 46px 48px,
+    var(--cyan) 48px 70px,
+    transparent 70px 72px,
+    var(--violet) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 大回退圆圈箭头 */
+.hero-rewind{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:600px;height:600px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.18;
+}
+.rewind-ring{
+  fill:none;
+  stroke:var(--rewind);
+  stroke-width:5;
+  stroke-linecap:round;
+  stroke-dasharray:8 12;
+  transform-origin:300px 300px;
+  animation:rewindSpin 8s linear infinite;
+}
+.rewind-arrow{
+  fill:var(--rewind);
+  transform-origin:300px 300px;
+  animation:arrowSpin 8s linear infinite;
+}
+@keyframes rewindSpin{
+  to{ transform:rotate(-360deg); }
+}
+@keyframes arrowSpin{
+  to{ transform:rotate(-360deg); }
+}
+/* HERO 磁带条（从上向下滚动） */
+.hero-tape{
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:4px;
+  height:100%;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+  opacity:.35;
+}
+.tape-strip{
+  position:absolute;
+  left:0;
+  width:100%;
+  height:40px;
+  background:repeating-linear-gradient(180deg,
+    var(--tape) 0 4px,
+    transparent 4px 8px);
+  animation:tapeRoll 3s linear infinite;
+}
+@keyframes tapeRoll{
+  0%{ top:-40px; }
+  100%{ top:100%; }
+}
+/* HERO 侧边 打结/解开的丝带 */
+.hero-ribbon{
+  position:absolute;
+  top:50%;right:24px;
+  transform:translateY(-50%) rotate(8deg);
+  width:130px;height:130px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.28;
+  animation:ribbonUntie 6s ease-in-out infinite;
+}
+.hero-ribbon svg{ width:100%; height:100%; }
+@keyframes ribbonUntie{
+  0%,30%{ transform:translateY(-50%) rotate(8deg) scale(1); }
+  50%,75%{ transform:translateY(-50%) rotate(14deg) scale(.94); }
+  90%,100%{ transform:translateY(-50%) rotate(8deg) scale(1); }
+}
+/* HERO 底部倒放指示（左向箭头 + 虚线轨迹） */
+.hero-trail{
+  position:absolute;
+  bottom:10%;
+  left:0;right:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.28;
+  overflow:hidden;
+}
+.trail-dots{
+  display:flex;
+  justify-content:space-between;
+  padding:0 8%;
+  align-items:center;
+}
+.trail-arrow{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:20px;
+  color:var(--rewind);
+  animation:arrowBlink 1.5s ease-in-out infinite;
+}
+.trail-arrow.a2{ animation-delay:.3s; }
+.trail-arrow.a3{ animation-delay:.6s; }
+@keyframes arrowBlink{
+  0%,100%{ opacity:.3; }
+  50%{ opacity:1; }
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:118px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  color:var(--cream);
+  filter:drop-shadow(5px 5px 0 var(--rewind)) drop-shadow(-3px 3px 0 var(--cyan));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterReverse 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1), color .25s;
+}
+/* 每个字母像在"倒带"中，从右往左倒着飞入 */
+.word-anim .l1{ animation-delay:.30s; color:var(--rewind); }
+.word-anim .l2{ animation-delay:.20s; color:var(--cream); }
+.word-anim .l3{ animation-delay:.10s; color:var(--tape); }
+.word-anim .l4{ animation-delay:.00s; color:var(--cream); }
+@keyframes letterReverse{
+  0%{
+    opacity:0;
+    transform:translateX(120px) rotate(15deg) scale(.4);
+    filter:blur(10px);
+  }
+  50%{
+    opacity:1;
+    filter:blur(0);
+    transform:translateX(-8px) rotate(-6deg) scale(1.15);
+  }
+  75%{
+    transform:translateX(4px) rotate(2deg) scale(.98);
+  }
+  100%{
+    opacity:1;
+    transform:translateX(0) rotate(0) scale(1);
+    color:var(--cream);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--tape);
+  transform:translateX(-6px) rotate(-6deg) scale(1.12);
+  filter:drop-shadow(0 0 16px var(--tape));
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--tape);border:3px solid var(--cream);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--rewind);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--rewind);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--rewind);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--tape);border:2.5px solid var(--cream);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--rewind);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--rewind);color:var(--cream);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--cream);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--cyan);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  transform:rotate(1.2deg);
+  border:2px solid var(--ink);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--cream);background:rgba(24,18,40,.85);
+  border:2.5px solid var(--cream);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--cyan);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 意象卡 */
+.image-card{
+  background:var(--deep);
+  color:var(--cream);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(201,79,61,.15) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 6s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* ========== undo SVG 动画 —— 打结→解开 + 撤销箭头 ========== */
+
+/* 主视觉1：打结的绳（右上方 → 解开到左下方） */
+.ud-knot{
+  fill:none;
+  stroke:var(--tape);
+  stroke-width:5;
+  stroke-linecap:round;
+  animation:knotUntie 5s cubic-bezier(.4,1.3,.6,1) infinite;
+}
+@keyframes knotUntie{
+  0%, 20%{
+    d:path("M 240 80 Q 260 100 280 90 Q 300 80 290 60 Q 280 40 250 50 Q 230 60 240 80 Q 250 100 270 95");
+    stroke-width:5;
+  }
+  50%, 75%{
+    d:path("M 240 80 Q 260 100 280 90 L 320 90");
+    stroke-width:5;
+    stroke:var(--cyan);
+  }
+  90%, 100%{
+    d:path("M 240 80 Q 260 100 280 90 Q 300 80 290 60 Q 280 40 250 50 Q 230 60 240 80 Q 250 100 270 95");
+    stroke-width:5;
+  }
+}
+/* 解开后的绳子末端（自由飘动） */
+.ud-loose-end{
+  fill:none;
+  stroke:var(--cyan);
+  stroke-width:4;
+  stroke-linecap:round;
+  animation:looseEndFloat 5s ease-in-out infinite;
+  opacity:0;
+}
+@keyframes looseEndFloat{
+  0%, 30%{ opacity:0; transform:translateX(0); }
+  50%, 70%{ opacity:1; transform:translateX(20px) translateY(-10px); }
+  85%, 100%{ opacity:0; transform:translateX(0); }
+}
+/* 主视觉2：逆时针回退箭头 */
+.ud-rewind{
+  animation:rewindBack 5s linear infinite;
+  transform-origin:190px 220px;
+}
+@keyframes rewindBack{
+  to{ transform:rotate(-360deg); }
+}
+/* 回退箭头周围的小轨迹点 */
+.ud-dot{
+  fill:var(--rewind);
+  animation:dotFade 5s ease-in-out infinite;
+}
+.ud-dot.d2{ animation-delay:.3s; }
+.ud-dot.d3{ animation-delay:.6s; }
+.ud-dot.d4{ animation-delay:.9s; }
+@keyframes dotFade{
+  0%, 40%{ opacity:.3; r:2; }
+  60%, 80%{ opacity:1; r:3.5; }
+  100%{ opacity:.3; r:2; }
+}
+/* 撤销成功后出现的 "UNDONE" 勾 */
+.ud-check{
+  fill:none;
+  stroke:var(--cyan);
+  stroke-width:5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:50;
+  stroke-dashoffset:50;
+  animation:checkDraw 5s ease-out infinite;
+}
+@keyframes checkDraw{
+  0%, 55%{ stroke-dashoffset:50; opacity:0; }
+  70%, 88%{ stroke-dashoffset:0; opacity:1; }
+  100%{ stroke-dashoffset:50; opacity:0; }
+}
+/* 中间"UNDO"文字渐现 */
+.ud-text{
+  animation:undoText 5s ease-in-out infinite;
+}
+@keyframes undoText{
+  0%, 40%{ opacity:0; }
+  55%, 85%{ opacity:1; }
+  100%{ opacity:0; }
+}
+/* 打结处的"缠绕"线条 */
+.ud-wrap{
+  fill:none;
+  stroke:var(--tape);
+  stroke-width:3;
+  stroke-linecap:round;
+  opacity:0;
+  animation:wrapFade 5s ease-in-out infinite;
+}
+@keyframes wrapFade{
+  0%, 15%{ opacity:.9; }
+  40%, 100%{ opacity:0; }
+}
+/* 顶部红→青的方向箭头（从右到左） */
+.ud-direction{
+  fill:none;
+  stroke:var(--rewind);
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-dasharray:8 6;
+  animation:directionFlow 2s linear infinite;
+}
+@keyframes directionFlow{
+  to{ stroke-dashoffset:28; }
+}
+/* 底部展示"计算机撤销"图标 */
+.ud-computer{
+  animation:computerPulse 5s ease-in-out infinite;
+}
+@keyframes computerPulse{
+  0%, 40%{ opacity:.4; }
+  55%, 85%{ opacity:1; }
+  100%{ opacity:.4; }
+}
+/* ========== 结束 undo SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+/* 辨析表 drop-shadow */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@media (max-width:640px){.hero{padding:50px 22px 40px;}
+.word-anim{font-size:56px;}
+.hero-rewind{ width:400px; height:400px; }
+.hero-ribbon{ display:none; }
+}
+@media (min-width:1100px){.hero{padding:100px 80px 80px;}
+.hero-band{height:24px;}
+.word-anim{font-size:160px;}
+.speak-btn{width:56px;height:56px;font-size:26px;}
+.ipa-anim{font-size:18px;padding:6px 22px;}
+.pos-anim{font-size:13px;padding:6px 20px;}
+.spell-hint{font-size:13px;padding:10px 24px;}
+.collo:nth-child(5){grid-column:1 / -1;}
+}
+@media (min-width:1500px){.hero{padding:120px 100px 96px;}
+.word-anim{font-size:184px;}
+}
+@media print{body::before,body::after{display:none;}
+.hero-rewind,.hero-tape,.hero-ribbon,.hero-trail,.page-floats,.progress-bar{display:none;}
+}
+</style>
+</head>
+<body data-word="undo">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-floats" aria-hidden="true">
+    <div class="fl arc f1"></div>
+    <div class="fl knot f2"></div>
+    <div class="fl tape f3"></div>
+    <div class="fl star f4"></div>
+    <div class="fl arc cyan f5"></div>
+    <div class="fl arc violet f6"></div>
+    <div class="fl tape f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <!-- 大回退箭头 -->
+    <div class="hero-rewind" aria-hidden="true">
+      <svg viewBox="0 0 600 600">
+        <circle class="rewind-ring" cx="300" cy="300" r="240"/>
+        <polygon class="rewind-arrow" points="300,120 340,180 300,160 260,180"/>
+      </svg>
+    </div>
+
+    <!-- 磁带条 -->
+    <div class="hero-tape" aria-hidden="true">
+      <div class="tape-strip"></div>
+    </div>
+
+    <!-- 侧边 松开的丝带 -->
+    <div class="hero-ribbon" aria-hidden="true">
+      <svg viewBox="0 0 130 130">
+        <path d="M 40 30 Q 65 50 65 65 Q 65 80 40 100"
+              fill="none" stroke="var(--tape)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 90 30 Q 65 50 65 65 Q 65 80 90 100"
+              fill="none" stroke="var(--rewind)" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="65" cy="65" r="6" fill="var(--cyan)"/>
+      </svg>
+    </div>
+
+    <!-- 底部回退指示 -->
+    <div class="hero-trail" aria-hidden="true">
+      <div class="trail-dots">
+        <span class="trail-arrow a1">◀</span>
+        <span class="trail-arrow a2">◀</span>
+        <span class="trail-arrow a3">◀</span>
+        <span class="trail-arrow a1">◀</span>
+        <span class="trail-arrow a2">◀</span>
+        <span class="trail-arrow a3">◀</span>
+        <span class="trail-arrow a1">◀</span>
+      </div>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="undo">
+          <span class="letter l1">u</span><span class="letter l2">n</span><span class="letter l3">d</span><span class="letter l4">o</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 undo">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ʌnˈduː/ &nbsp;·&nbsp; 美 /ʌnˈduː/</div>
+      <div class="pos-anim">v.</div>
+      <div class="spell-hint">un · do &nbsp; 撤销 · 解开 · 取消</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">un-</span>（相反，取消）+ <span class="stem">do</span>（做）
+          &nbsp;→&nbsp; "把做过的事反过来" → <b>撤销 · 解开 · 取消</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">动词</div><div class="w"><span class="hl">do</span></div><div class="p">/duː/</div><div class="m">做，干（本词根）</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">undoing</div><div class="p">/ʌnˈduːɪŋ/</div><div class="m">毁灭的原因；解开</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">undone</div><div class="p">/ʌnˈdʌn/</div><div class="m">解开的；未完成的；毁掉的</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">undoer</div><div class="p">/ʌnˈduːər/</div><div class="m">取消者，解开者（少见）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">redo</div><div class="p">/ˌriːˈduː/</div><div class="m">重做（undo 的反向）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">undoable</div><div class="p">/ʌnˈduːəbl/</div><div class="m">可撤销的；无法完成的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">undo</span> = 打<strong>一个绳结</strong>，然后又把它<strong>慢慢解开</strong>——"做过的，反过来"。
+          </p>
+          <p class="ic-sub">
+            物理：undo a knot / button（解开绳结/扣子）；<br>
+            抽象：undo the damage（消除损害）、undo a decision（撤销决定）；<br>
+            电脑：Ctrl+Z → undo（撤销）。<br>
+            核心：<b>"把之前做过的事反向取消"</b>——不是"不做"，而是"做了再撤销"。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 380 300">
+            <defs>
+              <radialGradient id="udGlowGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#C94F3D" stop-opacity=".25"/>
+                <stop offset="100%" stop-color="#C94F3D" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- 背景回退光晕 -->
+            <circle cx="190" cy="200" r="90" fill="url(#udGlowGrad)"/>
+
+            <!-- 顶部方向虚线（从右往左回退） -->
+            <path class="ud-direction" d="M 340 70 L 60 70" fill="none"/>
+            <polygon points="55,70 70,62 70,78" fill="var(--rewind)" stroke="var(--ink)" stroke-width="1.5"/>
+
+            <!-- 主视觉1：右上方打结的绳子（逐渐解开） -->
+            <g>
+              <!-- 缠绕线（打结状态） -->
+              <path class="ud-wrap" d="M 240 100 Q 255 90 265 105 Q 275 120 260 130 Q 250 140 235 125"
+                    fill="none"/>
+              <!-- 主绳路径（从打结到解开） -->
+              <path class="ud-knot"
+                    d="M 240 100 Q 260 120 280 110 Q 300 100 290 80 Q 280 60 250 70 Q 230 80 240 100 Q 250 120 270 115"/>
+              <!-- 松开后的飘动末端 -->
+              <path class="ud-loose-end" d="M 280 110 Q 300 115 320 100"/>
+            </g>
+
+            <!-- 主视觉2：逆时针回退箭头（在下方中心） -->
+            <g class="ud-rewind">
+              <path d="M 190 260 A 40 40 0 1 1 190 180" fill="none" stroke="var(--rewind)" stroke-width="4"/>
+              <polygon points="190,170 210,185 190,200" fill="var(--rewind)" stroke="var(--ink)" stroke-width="1.5"/>
+            </g>
+
+            <!-- 回退轨迹上的小点 -->
+            <circle class="ud-dot" cx="240" cy="260" r="2.5"/>
+            <circle class="ud-dot d2" cx="270" cy="240" r="2.5"/>
+            <circle class="ud-dot d3" cx="280" cy="210" r="2.5"/>
+            <circle class="ud-dot d4" cx="270" cy="185" r="2.5"/>
+
+            <!-- 撤销成功的勾 -->
+            <path class="ud-check" d="M 130 130 L 145 145 L 175 110" fill="none"/>
+
+            <!-- UNDO 文字 -->
+            <g class="ud-text">
+              <text x="190" y="45" text-anchor="middle"
+                    font-family="Helvetica" font-size="12" font-weight="900"
+                    fill="var(--tape)" letter-spacing="4">UNDO</text>
+              <line x1="150" y1="52" x2="230" y2="52"
+                    stroke="var(--tape)" stroke-width="1" opacity=".7"/>
+            </g>
+
+            <!-- 底部"计算机撤销"图标提示 -->
+            <g class="ud-computer">
+              <rect x="60" y="220" width="50" height="30" rx="4"
+                    fill="none" stroke="var(--cyan)" stroke-width="2"/>
+              <text x="85" y="240" text-anchor="middle"
+                    font-family="Helvetica" font-size="10" font-weight="900"
+                    fill="var(--cyan)">Ctrl+Z</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">undo the damage</div><div class="meaning"><b>消除/挽回</b>损害（抽象）</div></div>
+        <div class="collo"><div class="pattern">undo a knot / button</div><div class="meaning"><b>解开</b>绳结 / 纽扣（物理）</div></div>
+        <div class="collo"><div class="pattern">undo a decision</div><div class="meaning"><b>撤销</b>决定（正式）</div></div>
+        <div class="collo"><div class="pattern">come undone</div><div class="meaning"><b>松开</b>，脱开（衣服/绳子等）</div></div>
+        <div class="collo"><div class="pattern">be one's undoing</div><div class="meaning">成为某人<b>毁灭的原因</b>（名词 undoing）</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 阅读</div>
+          <p class="en">The new evidence could <em class="hl">undo</em> the court's original verdict.</p>
+          <p class="cn">新证据可能会推翻法院最初的裁决。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">Some environmental damage cannot be <em class="hl">undone</em> within a human lifetime.</p>
+          <p class="cn">有些环境损害在人的一生中是无法修复的。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">He bent down to <em class="hl">undo</em> the laces of his running shoes.</p>
+          <p class="cn">他弯下身去解跑鞋的鞋带。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">The button on my sleeve has come <em class="hl">undone</em> again.</p>
+          <p class="cn">我袖子上的扣子又松开了。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">多义</span>
+          undo 有两层核心含义：<br>
+          ① <b>物理</b>解开、松开（undo a knot / button / laces）<br>
+          ② <b>抽象</b>撤销、消除、毁掉（undo a decision / damage / sb's reputation）<br>
+          看宾语判断含义。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">过去分词</span>
+          <b>undo → undid → undone</b>（不规则变化）<br>
+          <span class="wrong">undoed</span> → <span class="right">undone</span><br>
+          <b>come undone</b> 是"松开/脱开"的固定搭配。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词性</span>
+          <b>undo</b>（动词）vs <b>undone</b>（形容词/过去分词）vs <b>undoing</b>（名词）<br>
+          <b>be one's undoing</b> = 成为某人失败的根源（固定表达）
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>undo</td>
+            <td>撤销 / 解开（做过再取消）</td>
+            <td class="chant">做过再反做 undo</td>
+          </tr>
+          <tr>
+            <td>untie</td>
+            <td>解开（绳索/结）</td>
+            <td class="chant">解绳子用 untie</td>
+          </tr>
+          <tr>
+            <td>unfasten</td>
+            <td>解开（扣子/安全带）</td>
+            <td class="chant">解扣用 unfasten</td>
+          </tr>
+          <tr>
+            <td>cancel</td>
+            <td>取消（预约/活动）</td>
+            <td class="chant">取消预约 cancel</td>
+          </tr>
+          <tr>
+            <td>reverse</td>
+            <td>反转（方向/决定）</td>
+            <td class="chant">翻转方向 reverse</td>
+          </tr>
+          <tr>
+            <td>redo</td>
+            <td>重做（undo 的反向）</td>
+            <td class="chant">重做一遍是 redo</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The damage caused by the flood cannot be <span class="first-letter">u</span><span class="blank" onclick="this.classList.toggle('revealed')">ndone</span> in a short time.</p>
+          <p class="fill-hint">提示：<b>be undone</b>，被消除/修复（被动）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She bent down to <span class="first-letter">u</span><span class="blank" onclick="this.classList.toggle('revealed')">ndo</span> the buttons of her coat.</p>
+          <p class="fill-hint">提示：<b>undo the buttons</b>，解开扣子</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">His carelessness has <span class="first-letter">u</span><span class="blank" onclick="this.classList.toggle('revealed')">ndone</span> years of hard work.</p>
+          <p class="fill-hint">提示：<b>have undone</b>，已经毁掉（完成时）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The shoe lace has come <span class="first-letter">u</span><span class="blank" onclick="this.classList.toggle('revealed')">ndone</span> again.</p>
+          <p class="fill-hint">提示：<b>come undone</b>，松开了（固定搭配）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Greed was ultimately his <span class="first-letter">u</span><span class="blank" onclick="this.classList.toggle('revealed')">ndoing</span>.</p>
+          <p class="fill-hint">⚠️ 陷阱：这里要名词 <b>undoing</b>（毁灭的根源）</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>undo</b> 或 <b>undone</b> 造一句自己的句子。刻意用上今天学的一个搭配（undo the damage / come undone / undo a decision）。</p>
+        <textarea id="mySentence" placeholder="例：It may take decades to undo the damage caused by deforestation."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>

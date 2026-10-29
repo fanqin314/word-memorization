@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>reunite · 重逢</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 重逢色板 —— reunite = 失散后再聚 / 重逢 / 复合 */
+  --paper:#FCF6EE;
+  --paper-2:#F2E7D6;
+  --ink:#2A1F1A;
+  --rose:#E05C6E;
+  --rose-soft:#FBE3E7;
+  --amber:#E9A93C;
+  --amber-soft:#FBEFCF;
+  --sky:#5D8BD9;
+  --sky-soft:#DEE7F8;
+  --teal:#3FA599;
+  --teal-soft:#D6EFEC;
+  --cream:#FFF9ED;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--rose);
+  --cb-accent-soft:var(--rose-soft);
+  --cb-2:var(--amber);
+  --cb-2-soft:var(--amber-soft);
+  --cb-3:var(--sky);
+  --cb-3-soft:var(--sky-soft);
+}
+html,body{margin:0;padding:0;}
+/* 全页：两条对偶的光弧互相靠近 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(ellipse 260px 100px at 15% 30%, rgba(224,92,110,.10) 0%, transparent 70%),
+    radial-gradient(ellipse 260px 100px at 85% 30%, rgba(93,139,217,.10) 0%, transparent 70%),
+    radial-gradient(ellipse 260px 100px at 15% 75%, rgba(233,169,60,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 260px 100px at 85% 75%, rgba(63,165,153,.08) 0%, transparent 70%);
+  animation:pairReach 8s ease-in-out infinite alternate;
+}
+@keyframes pairReach{
+  0%{ background-position:0 0; opacity:.75; }
+  100%{ background-position:20px 0; opacity:1; }
+}
+/* 漂浮的双点（成对出现） */
+.page-pairs{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.pair{
+  position:absolute;
+  opacity:0;
+  animation:pairDrift linear infinite;
+}
+.pair .dot{
+  position:absolute;
+  width:14px;height:14px;
+  border-radius:50%;
+  border:2px solid var(--ink);
+}
+.pair .dot.left{ left:0; }
+.pair .dot.right{ left:22px; }
+.pair.p1{ left:8%; bottom:-40px; animation-duration:26s; }
+.pair.p1 .dot.left{ background:var(--rose); }
+.pair.p1 .dot.right{ background:var(--sky); }
+.pair.p2{ left:24%; bottom:-55px; animation-duration:34s; animation-delay:4s; }
+.pair.p2 .dot.left{ background:var(--amber); }
+.pair.p2 .dot.right{ background:var(--teal); }
+.pair.p3{ left:78%; bottom:-45px; animation-duration:28s; animation-delay:2s; }
+.pair.p3 .dot.left{ background:var(--sky); }
+.pair.p3 .dot.right{ background:var(--rose); }
+.pair.p4{ left:90%; bottom:-30px; animation-duration:32s; animation-delay:8s; }
+.pair.p4 .dot.left{ background:var(--teal); }
+.pair.p4 .dot.right{ background:var(--amber); }
+.pair.p5{ left:52%; bottom:-70px; animation-duration:30s; animation-delay:6s; }
+.pair.p5 .dot.left{ background:var(--rose); }
+.pair.p5 .dot.right{ background:var(--amber); }
+.pair.p6{ left:38%; bottom:-50px; animation-duration:24s; animation-delay:12s; }
+.pair.p6 .dot.left{ background:var(--sky); }
+.pair.p6 .dot.right{ background:var(--teal); }
+@keyframes pairDrift{
+  0%{ transform:translateY(0) scale(.7); opacity:0; }
+  10%{ opacity:.7; }
+  50%{ transform:translateY(-50vh) scale(1) rotate(90deg); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) scale(1.2) rotate(180deg); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    linear-gradient(180deg,
+      #FFFCF5 0%,
+      #FBE9EC 45%,
+      #FCF6EE 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--rose) 0 22px,
+    transparent 22px 24px,
+    var(--amber) 24px 46px,
+    transparent 46px 48px,
+    var(--sky) 48px 70px,
+    transparent 70px 72px,
+    var(--teal) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 两条对偶光弧 */
+.hero-arcs{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.arcs-svg{width:100%;height:100%;}
+.arc{
+  fill:none;
+  stroke-linecap:round;
+  stroke-dasharray:600;
+  stroke-dashoffset:600;
+  animation:arcDraw 2.8s ease-out forwards;
+}
+.arc.a1{ stroke:var(--rose); stroke-width:2.5; opacity:.55; animation-delay:.2s; }
+.arc.a2{ stroke:var(--sky); stroke-width:2.5; opacity:.55; animation-delay:.5s; }
+.arc.a3{ stroke:var(--amber); stroke-width:2; opacity:.4; animation-delay:.9s; }
+.arc.a4{ stroke:var(--teal); stroke-width:2; opacity:.4; animation-delay:1.2s; }
+@keyframes arcDraw{ to{ stroke-dashoffset:0; } }
+/* 中央跳动的两颗心 */
+.hero-hearts{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:.5;
+}
+.heart-pair{
+  display:flex;
+  gap:44px;
+  animation:heartMeet 4s ease-in-out infinite;
+}
+.heart{
+  width:32px;height:32px;
+  position:relative;
+  transform:rotate(-45deg);
+  background:var(--rose);
+  border:2.5px solid var(--ink);
+  border-radius:0 50% 0 50%;
+}
+.heart.right{
+  background:var(--sky);
+}
+.heart::before,
+.heart::after{
+  content:"";
+  position:absolute;
+  width:32px;height:32px;
+  background:inherit;
+  border:2.5px solid var(--ink);
+  border-radius:50%;
+}
+.heart::before{
+  top:-18px;left:0;
+  border-bottom-color:transparent;
+  border-right-color:transparent;
+}
+.heart::after{
+  left:14px;top:-2px;
+  border-left-color:transparent;
+  border-bottom-color:transparent;
+}
+@keyframes heartMeet{
+  0%, 40%{ gap:44px; }
+  60%, 100%{ gap:0px; }
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:84px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  filter:drop-shadow(5px 5px 0 var(--rose));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterReunite 1.2s cubic-bezier(.34,1.56,.64,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s;
+}
+/* 前三个字母从左侧来，后四个从右侧来 */
+.word-anim .l1{ --sx:-80px; animation-delay:.15s; color:var(--rose); }
+.word-anim .l2{ --sx:-80px; animation-delay:.28s; color:var(--amber); }
+.word-anim .l3{ --sx:-80px; animation-delay:.41s; color:var(--sky); }
+.word-anim .l4{ --sx:-80px; animation-delay:.54s; color:var(--teal); }
+.word-anim .l5{ --sx:80px; animation-delay:.67s; color:var(--rose); }
+.word-anim .l6{ --sx:80px; animation-delay:.80s; color:var(--amber); }
+.word-anim .l7{ --sx:80px; animation-delay:.93s; color:var(--sky); }
+@keyframes letterReunite{
+  0%{
+    opacity:0;
+    transform:translateX(var(--sx)) scale(.4) rotate(-30deg);
+    filter:blur(10px);
+  }
+  55%{
+    opacity:1;
+    filter:blur(0);
+    transform:translateX(calc(var(--sx) * -.1)) scale(1.15) rotate(6deg);
+  }
+  100%{
+    opacity:1;
+    transform:translateX(0) scale(1) rotate(0);
+    color:var(--ink);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--rose);
+  transform:translateY(-8px) scale(1.15);
+  filter:drop-shadow(0 0 12px var(--rose));
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--amber);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--rose);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.2s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(8deg);box-shadow:6px 6px 0 var(--rose);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--rose);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--amber);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--rose);
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+}
+.ipa-anim:hover{background:var(--rose);color:var(--paper);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  transform:rotate(1.2deg);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--sky-soft);
+  border:2.5px solid var(--ink);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--sky);
+  opacity:0;animation:fadeUp .8s ease-out 1.65s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 1. 词根词族 */
+.root-family{
+  position:relative;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 24px;
+}
+.root-line .prefix{
+  background:var(--amber);color:var(--ink);
+  padding:3px 12px;border-radius:999px;font-weight:800;
+  display:inline-block;transform:rotate(-1deg);
+  border:2px solid var(--ink);
+  margin:0 4px;
+}
+/* 2. 意象卡 —— 两只手的动画 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 280px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(233,169,60,.16) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* 两侧人形元素：先分开，再靠近 */
+.separated-person{
+  animation:personMove 4s ease-in-out infinite;
+}
+.separated-person.sl{ transform-origin:left center; }
+.separated-person.sr{ transform-origin:right center; }
+@keyframes personMove{
+  0%, 25%{
+    transform:translateX(0);
+  }
+  60%, 100%{
+    transform:translateX(30px);
+  }
+}
+.reunite-meet{
+  animation:meetGlow 4s ease-in-out infinite;
+  transform-origin:150px 120px;
+}
+@keyframes meetGlow{
+  0%, 25%{ opacity:0; transform:scale(.5); }
+  65%, 100%{ opacity:1; transform:scale(1); }
+}
+.heart-pop{
+  animation:heartPop 4s ease-in-out infinite;
+  transform-origin:150px 55px;
+}
+@keyframes heartPop{
+  0%, 45%{ opacity:0; transform:scale(0) rotate(-20deg); }
+  70%, 100%{ opacity:1; transform:scale(1) rotate(0); }
+}
+.lost-line{
+  stroke-dasharray:4 6;
+  animation:lostFlow 3s linear infinite;
+}
+@keyframes lostFlow{
+  to{ stroke-dashoffset:-30; }
+}
+/* 3. 搭配 */
+.collocations{display:flex;flex-direction:column;gap:14px;}
+/* 4. 例句 */
+.real-exs{display:flex;flex-direction:column;gap:16px;}
+/* 5. 易错 */
+.pitfall{
+  padding:28px 30px;
+  background:var(--rose-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  position:relative;overflow:hidden;
+  transform:rotate(-.5deg);
+}
+/* 6. 辨析表 */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+.compare-table tr.highlight{background:var(--amber-soft);}
+/* 7. 填空 */
+.self-test .hint{
+  font-size:14px;color:var(--ink);
+  margin:0 0 22px;padding:14px 20px;
+  background:var(--sky-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+/* 8. 造句 */
+.write-practice{
+  background:var(--teal-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 28px;
+  transform:rotate(.4deg);
+}
+/* 9. 复习 */
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+/* ============================================================
+   手机
+   ============================================================ */
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:44px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .page{border-radius:22px;}
+  .image-card{grid-template-columns:1fr;padding:26px 22px;}
+  .image-card .ic-svg{width:240px;height:210px;margin:0 auto;}
+  .section-title{font-size:15px;padding:6px 16px 6px 10px;}
+  .heart-pair{ gap:24px; }
+}
+/* ============================================================
+   桌面 ≥1100px
+   ============================================================ */
+@media (min-width:1100px){
+  body{padding:56px 32px 120px;}
+
+  .page{
+    max-width:1200px;
+    border-radius:36px;
+    box-shadow:
+      0 0 0 3px var(--ink),
+      14px 14px 0 var(--rose),
+      0 24px 70px rgba(0,0,0,.65);
+  }
+
+  .hero{padding:100px 80px 80px;}
+  .hero-band{height:24px;}
+  .word-anim{font-size:120px;}
+  .speak-btn{width:56px;height:56px;font-size:26px;}
+  .ipa-anim{font-size:18px;padding:6px 22px;}
+  .pos-anim{font-size:13px;padding:6px 20px;}
+  .spell-hint{font-size:13px;padding:10px 24px;}
+
+  .body-wrap{padding:76px 80px 0;}
+  .section{margin-bottom:68px;}
+
+  .section-title{font-size:22px;gap:14px;margin-bottom:26px;padding:10px 26px 10px 14px;}
+  .section-title .num{width:38px;height:38px;font-size:16px;}
+
+  .fam-grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fam-card{padding:14px 16px;}
+  .fam-card .w{font-size:18px;}
+  .fam-card .m{font-size:13.5px;}
+
+  .image-card{
+    grid-template-columns:1.4fr 1fr;
+    gap:40px;
+    padding:48px 44px;
+  }
+  .image-card .ic-main{font-size:27px;line-height:1.5;}
+  .image-card .ic-sub{font-size:16px;}
+  .image-card .ic-svg{width:340px;height:300px;}
+
+  .collocations{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .collo:nth-child(5){grid-column:1 / -1;}
+  .collo{padding:20px 24px;}
+  .collo .pattern{font-size:15.5px;padding:7px 16px;}
+  .collo .meaning{font-size:15px;}
+
+  .real-exs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .real-ex{padding:24px 28px;}
+  .real-ex .en{font-size:17px;}
+  .real-ex .cn{font-size:14.5px;}
+
+  .pitfall{padding:36px 40px;}
+  .pitfall-item{font-size:15.5px;padding:18px 22px;}
+
+  .compare-table{font-size:16px;border-spacing:0 14px;}
+  .compare-table td{padding:18px 24px;}
+  .compare-table td:first-child{width:160px;font-size:18px;}
+  .compare-table td:nth-child(2){width:auto;}
+  .compare-table .chant{font-size:14.5px;}
+
+  .self-test .fill-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .self-test .fill-item:nth-child(5){grid-column:1 / -1;margin-bottom:0;}
+  .fill-item{padding:22px 26px;margin-bottom:0;}
+  .fill-sentence{font-size:17px;}
+
+  .write-practice{
+    max-width:900px;
+    margin:0 auto;
+    padding:36px 40px;
+  }
+  .write-practice textarea{font-size:17px;padding:18px 22px;}
+
+  .review-grid{gap:24px;}
+  .review-day{padding:28px 14px 24px;}
+  .review-day .day{font-size:34px;}
+  .review-day .task{font-size:13.5px;}
+}
+/* ============================================================
+   超宽 ≥1500px
+   ============================================================ */
+@media (min-width:1500px){
+  .page{max-width:1400px;}
+  .hero{padding:120px 100px 96px;}
+  .word-anim{font-size:144px;}
+  .body-wrap{padding:92px 100px 0;}
+  .image-card{grid-template-columns:1.6fr 1fr;padding:56px 52px;}
+  .image-card .ic-main{font-size:30px;}
+  .image-card .ic-svg{width:420px;height:360px;}
+  .real-ex .en{font-size:18px;}
+}
+/* ============================================================
+   打印
+   ============================================================ */
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  body::before,body::after{display:none;}
+  .page{box-shadow:none;max-width:100%;}
+  .blank{color:var(--rose)!important;}
+  .fill-item,.compare-table,.pitfall,.review-day{break-inside:avoid;}
+  .hero-arcs,.hero-hearts,.page-pairs,.progress-bar{display:none;}
+  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
+  .compare-table tbody tr,.review-day{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body data-word="reunite">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-pairs" aria-hidden="true">
+    <div class="pair p1"><div class="dot left"></div><div class="dot right"></div></div>
+    <div class="pair p2"><div class="dot left"></div><div class="dot right"></div></div>
+    <div class="pair p3"><div class="dot left"></div><div class="dot right"></div></div>
+    <div class="pair p4"><div class="dot left"></div><div class="dot right"></div></div>
+    <div class="pair p5"><div class="dot left"></div><div class="dot right"></div></div>
+    <div class="pair p6"><div class="dot left"></div><div class="dot right"></div></div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-arcs" aria-hidden="true">
+      <svg class="arcs-svg" viewBox="0 0 860 320" preserveAspectRatio="none">
+        <path class="arc a1" d="M -40 200 Q 200 60 430 160" />
+        <path class="arc a2" d="M 900 200 Q 660 60 430 160" />
+        <path class="arc a3" d="M -40 260 Q 200 130 430 200" />
+        <path class="arc a4" d="M 900 260 Q 660 130 430 200" />
+      </svg>
+    </div>
+
+    <div class="hero-hearts" aria-hidden="true">
+      <div class="heart-pair">
+        <div class="heart left"></div>
+        <div class="heart right"></div>
+      </div>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="reunite">
+          <span class="letter l1">r</span><span class="letter l2">e</span><span class="letter l3">u</span><span class="letter l4">n</span><span class="letter l5">i</span><span class="letter l6">t</span><span class="letter l7">e</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 reunite">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˌriːjuˈnaɪt/ &nbsp;·&nbsp; 美 /ˌriːjuˈnaɪt/</div>
+      <div class="pos-anim">v.</div>
+      <div class="spell-hint">re · unite &nbsp; 重聚 · 重逢 · 再度联合</div>
+    </div>
+  </section>
+
+  <!-- 主体 -->
+  <div class="body-wrap">
+
+    <!-- 1. 词根词族 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="prefix">re-</span>（再，又）
+          + <span class="affix">unus</span>（一）
+          + <span class="stem">-ite</span>（动词后缀）
+          &nbsp;→&nbsp; "再次成为一" → <b>重聚 · 重逢 · 再度联合</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">动词</div><div class="w">unite</div><div class="p">/juˈnaɪt/</div><div class="m">联合，团结（去掉前缀）</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w"><span class="hl">reunited</span></div><div class="p">/ˌriːjuˈnaɪtɪd/</div><div class="m">重聚的，重逢的</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">reunion</div><div class="p">/ˌriːˈjuːniən/</div><div class="m">重逢，聚会</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">united</div><div class="p">/juˈnaɪtɪd/</div><div class="m">联合的，团结的</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">unity</div><div class="p">/ˈjuːnəti/</div><div class="m">统一，团结</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">union</div><div class="p">/ˈjuːniən/</div><div class="m">联盟，工会，结合</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">reunite</span> = 走散的两个人，<strong>朝彼此重新走来</strong>。
+          </p>
+          <p class="ic-sub">
+            战争结束 → 家人 reunite；毕业十年 → 老同学 reunite；分裂的国家 → 重新 unite 成一个整体。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 300 240">
+            <!-- 中间虚线（隔阂/距离） -->
+            <line class="lost-line" x1="150" y1="60" x2="150" y2="200" stroke="var(--ink)" stroke-width="2" opacity=".5"/>
+
+            <!-- 左侧人（剪影） -->
+            <g class="separated-person sl">
+              <!-- 头 -->
+              <circle cx="60" cy="80" r="16" fill="var(--rose)" stroke="var(--ink)" stroke-width="2.5"/>
+              <!-- 身体 -->
+              <path d="M 40 120 Q 60 100 80 120 L 80 180 Q 60 185 40 180 Z"
+                    fill="var(--rose)" stroke="var(--ink)" stroke-width="2.5"/>
+              <!-- 手臂向前伸 -->
+              <path d="M 80 135 Q 110 130 135 130" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="135" cy="130" r="4" fill="var(--ink)"/>
+            </g>
+
+            <!-- 右侧人（剪影） -->
+            <g class="separated-person sr">
+              <circle cx="240" cy="80" r="16" fill="var(--sky)" stroke="var(--ink)" stroke-width="2.5"/>
+              <path d="M 220 120 Q 240 100 260 120 L 260 180 Q 240 185 220 180 Z"
+                    fill="var(--sky)" stroke="var(--ink)" stroke-width="2.5"/>
+              <path d="M 220 135 Q 190 130 165 130" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="165" cy="130" r="4" fill="var(--ink)"/>
+            </g>
+
+            <!-- 相触时的光晕 -->
+            <circle class="reunite-meet" cx="150" cy="130" r="22"
+                    fill="none" stroke="var(--amber)" stroke-width="3" opacity=".9"/>
+
+            <!-- 头顶冒出的心 -->
+            <path class="heart-pop"
+                  d="M 150 45 a 8 8 0 0 1 14 6 a 8 8 0 0 1 14 -6 q 4 8 -14 20 q -18 -12 -14 -20 z"
+                  fill="var(--rose)" stroke="var(--ink)" stroke-width="2"/>
+
+            <!-- 底部装饰线 -->
+            <line x1="30" y1="205" x2="270" y2="205" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">be reunited with</div><div class="meaning">与……<b>重新相聚</b>（最常用搭配）</div></div>
+        <div class="collo"><div class="pattern">reunite with sb</div><div class="meaning">与某人<b>重逢</b>（主动语态）</div></div>
+        <div class="collo"><div class="pattern">a family reunion</div><div class="meaning"><b>家庭聚会</b>（名词形式）</div></div>
+        <div class="collo"><div class="pattern">a class reunion</div><div class="meaning"><b>同学聚会</b>（老同学重聚）</div></div>
+        <div class="collo"><div class="pattern">reunite the country</div><div class="meaning"><b>重新统一</b>国家（政治语境）</div></div>
+      </div>
+    </section>
+
+    <!-- 4. 例句 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力</div>
+          <p class="en">After years of separation, the refugee family was finally <em class="hl">reunited</em> in Canada.</p>
+          <p class="cn">多年分离后，这个难民家庭终于在加拿大团聚。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">The documentary follows siblings who were <em class="hl">reunited</em> after being adopted by different families.</p>
+          <p class="cn">这部纪录片跟踪了被不同家庭收养后又重逢的兄弟姐妹。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">The two halves of the ancient artifact were <em class="hl">reunited</em> in a museum exhibition.</p>
+          <p class="cn">这件古代文物的两半在一次博物馆展览中重新合到了一起。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">Every summer, former classmates <em class="hl">reunite</em> to share stories and memories.</p>
+          <p class="cn">每年夏天，老同学都会重聚，分享故事和回忆。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 易错 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">介词</span>
+          "与某人重逢"用 <b>reunite with</b>，不用 reunite to<br>
+          <span class="wrong">I reunited to my brother.</span> → <span class="right">I reunited with my brother.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">语态</span>
+          常用 <b>be reunited with</b>（被动）表"得以重聚"<br>
+          例：<span class="right">She was finally reunited with her family.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>reunite</b>（动词）vs <b>reunion</b>（名词）<br>
+          <span class="wrong">a family reunite</span> → <span class="right">a family reunion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>reunite</td><td>重聚（分开后再次相聚）</td><td class="chant">分开又聚叫 reunite</td></tr>
+          <tr><td>unite</td><td>联合（首次走到一起）</td><td class="chant">第一次合叫 unite</td></tr>
+          <tr><td>gather</td><td>聚集（从各处来到一起）</td><td class="chant">四处聚来是 gather</td></tr>
+          <tr><td>meet</td><td>见面（一般性会面）</td><td class="chant">普通见面用 meet</td></tr>
+          <tr><td>assemble</td><td>集合（正式，有序）</td><td class="chant">正式集合 assemble</td></tr>
+          <tr><td>merge</td><td>合并（两方融为一体）</td><td class="chant">公司合并用 merge</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. 填空 -->
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">After twenty years apart, the brothers were finally <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">eunited</span>.</p>
+          <p class="fill-hint">提示：被动语态，表"终于团聚"　<b>be reunited</b></p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She was overjoyed to be <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">eunited</span> with her long-lost sister.</p>
+          <p class="fill-hint">提示：<b>be reunited with sb</b>，与某人重逢</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The two old friends <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">eunited</span> at the airport after years apart.</p>
+          <p class="fill-hint">提示：主动语态，表"重逢"　<b>reunite at + 地点</b></p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Every five years, our class holds a <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">eunion</span> in the old school.</p>
+          <p class="fill-hint">⚠️ 陷阱：这里要名词　<b>class reunion</b>（同学聚会）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The peace treaty helped <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">eunite</span> the divided nation.</p>
+          <p class="fill-hint">提示：及物用法，表"重新统一"　<b>reunite + 国家/民族</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. 造句 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>reunite</b> 或 <b>reunion</b> 造一句自己的句子。刻意用上今天学的一个搭配（be reunited with / reunite at / reunion）。</p>
+        <textarea id="mySentence" placeholder="例：After the war ended, the soldier was finally reunited with his family at the train station."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. 复习 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>

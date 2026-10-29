@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>uniform · 制服 · 统一的</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 制服色板 —— uniform = 制服 / 统一的 / 一致的 */
+  --paper:#F2EFE6;
+  --paper-2:#E2DCCB;
+  --ink:#151C30;
+  --navy:#28365C;
+  --navy-soft:#DBE1EE;
+  --brass:#C8923C;
+  --brass-soft:#F6E7C6;
+  --khaki:#8A8A67;
+  --khaki-soft:#E8E8DA;
+  --crimson:#A5382F;
+  --crimson-soft:#F3D9D4;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--navy);
+  --cb-accent-soft:var(--navy-soft);
+  --cb-2:var(--brass);
+  --cb-2-soft:var(--brass-soft);
+  --cb-3:var(--khaki);
+  --cb-3-soft:var(--khaki-soft);
+}
+html,body{margin:0;padding:0;}
+/* 全页：制服织带竖条纹底纹 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(90deg,
+      transparent 0 46px,
+      rgba(40,54,92,.045) 46px 48px,
+      transparent 48px 92px),
+    repeating-linear-gradient(90deg,
+      transparent 0 138px,
+      rgba(200,146,60,.035) 138px 139px,
+      transparent 139px 276px);
+  animation:stripeDrift 22s linear infinite;
+}
+@keyframes stripeDrift{
+  to{ background-position:-92px 0, -276px 0; }
+}
+/* 漂浮碎片 */
+.page-floats{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.fl.btn{
+  width:13px;height:13px;
+  border-radius:50%;
+  background:var(--brass);
+  border:2px solid var(--ink);
+}
+.fl.btn.navy{ background:var(--navy); }
+.fl.strip{
+  width:20px;height:5px;
+  background:var(--crimson);
+  border:1.5px solid var(--ink);
+  border-radius:2px;
+}
+.fl.strip.khaki{ background:var(--khaki); }
+.fl.shoulder{
+  width:16px;height:6px;
+  background:var(--brass-soft);
+  border:2px solid var(--ink);
+  border-radius:3px;
+}
+.fl.shoulder.navy{ background:var(--navy-soft); }
+.fl.f1{ left:6%; bottom:-40px; animation-duration:24s; }
+.fl.f2{ left:22%; bottom:-55px; animation-duration:30s; animation-delay:3s; }
+.fl.f3{ left:78%; bottom:-45px; animation-duration:26s; animation-delay:1.5s; }
+.fl.f4{ left:90%; bottom:-30px; animation-duration:28s; animation-delay:6s; }
+.fl.f5{ left:52%; bottom:-70px; animation-duration:22s; animation-delay:4.5s; }
+.fl.f6{ left:38%; bottom:-50px; animation-duration:32s; animation-delay:9s; }
+.fl.f7{ left:64%; bottom:-60px; animation-duration:20s; animation-delay:7.5s; }
+@keyframes flDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.85; }
+  50%{ transform:translateY(-50vh) rotate(180deg); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) rotate(360deg); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    linear-gradient(180deg,
+      #E9EDF5 0%,
+      #DBE2EE 48%,
+      #C9D3E6 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--navy) 0 22px,
+    transparent 22px 24px,
+    var(--brass) 24px 46px,
+    transparent 46px 48px,
+    var(--khaki) 48px 70px,
+    transparent 70px 72px,
+    var(--crimson) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 网格底纹 */
+.hero-grid{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.5;
+}
+.hero-grid svg{width:100%;height:100%;}
+.hg-line{
+  stroke:var(--navy);
+  stroke-width:1;
+  opacity:.16;
+}
+/* HERO 中央光晕 */
+.hero-glow{
+  position:absolute;
+  top:44%;left:50%;
+  transform:translate(-50%,-50%);
+  width:520px;height:520px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.55;
+}
+.hero-glow svg{width:100%;height:100%;}
+.glow-pulse{
+  animation:heroGlowPulse 4.5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes heroGlowPulse{
+  0%,100%{ opacity:.5; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.08); }
+}
+/* HERO 右侧制服外套 */
+.hero-coat{
+  position:absolute;
+  right:34px;
+  top:50%;
+  transform:translateY(-50%);
+  width:190px;
+  height:228px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.38;
+}
+.hero-coat svg{width:100%;height:100%;}
+.hm-coat,.hm-lapel{
+  fill:none;
+  stroke:var(--navy);
+  stroke-width:3.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:820;
+  stroke-dashoffset:820;
+  animation:hmDraw 3s ease-out forwards;
+}
+.hm-lapel{ animation-delay:.5s; }
+@keyframes hmDraw{ to{ stroke-dashoffset:0; } }
+.hm-ep{
+  stroke:var(--brass);
+  stroke-width:4.5;
+  stroke-linecap:round;
+  opacity:.9;
+}
+.hm-buttons circle{
+  fill:var(--brass-soft);
+  stroke:var(--navy);
+  stroke-width:2;
+  animation:btnPulse 3.2s ease-in-out infinite;
+}
+.hm-buttons circle:nth-child(2){ animation-delay:.28s; }
+.hm-buttons circle:nth-child(3){ animation-delay:.56s; }
+.hm-buttons circle:nth-child(4){ animation-delay:.14s; }
+.hm-buttons circle:nth-child(5){ animation-delay:.42s; }
+.hm-buttons circle:nth-child(6){ animation-delay:.70s; }
+@keyframes btnPulse{
+  0%,100%{ fill:var(--brass-soft); }
+  50%{ fill:var(--brass); }
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:100px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  color:var(--ink);
+  filter:drop-shadow(6px 6px 0 var(--navy)) drop-shadow(0 0 22px rgba(200,146,60,.28));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterFall 1.15s cubic-bezier(.4,1.4,.6,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1), color .25s;
+}
+/* 字母像列队一样，奇偶分别从上下归位对齐 */
+.word-anim .l1{ animation-delay:.10s; color:var(--navy);   --dy:-52px; }
+.word-anim .l2{ animation-delay:.20s; color:var(--ink);    --dy:52px; }
+.word-anim .l3{ animation-delay:.30s; color:var(--brass);  --dy:-52px; }
+.word-anim .l4{ animation-delay:.40s; color:var(--ink);    --dy:52px; }
+.word-anim .l5{ animation-delay:.50s; color:var(--khaki);  --dy:-52px; }
+.word-anim .l6{ animation-delay:.60s; color:var(--ink);    --dy:52px; }
+.word-anim .l7{ animation-delay:.70s; color:var(--crimson);--dy:-52px; }
+@keyframes letterFall{
+  0%{
+    opacity:0;
+    transform:translateY(var(--dy)) scale(1.35) rotate(-6deg);
+    filter:blur(8px);
+  }
+  55%{
+    opacity:1;
+    filter:blur(0);
+    transform:translateY(4px) scale(.94) rotate(1deg);
+  }
+  80%{
+    transform:translateY(-2px) scale(1.03) rotate(0);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1) rotate(0);
+    color:var(--ink);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--brass);
+  transform:translateY(-8px) scale(1.12);
+  filter:drop-shadow(0 0 14px var(--brass));
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--brass);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--navy);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--navy);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--navy);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--brass-soft);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--navy);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--navy-soft);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  transform:rotate(1.2deg);
+  border:2px solid var(--ink);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--khaki-soft);
+  border:2.5px solid var(--ink);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--khaki);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 意象卡 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(200,146,60,.18) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 6s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* ========== uniform SVG 动画 ==========
+   三个原本各不相同的人形 → 归位对齐、穿上同样的制服、配发同样的肩章
+   —— 这就是 "单一形式" 的图解
+   ========================================== */
+
+.uf-grid{
+  animation:ufGridBreath 5s ease-in-out infinite;
+}
+@keyframes ufGridBreath{
+  0%,100%{ opacity:.14; }
+  50%{ opacity:.34; }
+}
+/* 地面基线 */
+.uf-base{
+  stroke-dasharray:6 8;
+  animation:ufBaseFlow 2s linear infinite;
+}
+@keyframes ufBaseFlow{
+  to{ stroke-dashoffset:-28; }
+}
+/* 人形整体：从各自歪斜、高低不一 → 站正、等高 */
+.uf-fig{
+  transform-box:fill-box;
+  transform-origin:bottom center;
+  animation:figAlign 5s cubic-bezier(.5,0,.3,1) infinite;
+}
+.uf-fig.f1{ --ty0:0px;    --sy0:1;    animation-delay:0s; }
+.uf-fig.f2{ --ty0:-15px;  --sy0:.88;  animation-delay:.08s; }
+.uf-fig.f3{ --ty0:11px;   --sy0:1.07; animation-delay:.16s; }
+@keyframes figAlign{
+  0%, 16%{ transform:translateY(var(--ty0)) scaleY(var(--sy0)); }
+  42%, 86%{ transform:translateY(0) scaleY(1); }
+  96%, 100%{ transform:translateY(var(--ty0)) scaleY(var(--sy0)); }
+}
+/* 头与身体：从各自的便服颜色 → 统一的制服海军蓝 */
+.uf-fig .head,
+.uf-fig .coat{
+  fill:var(--navy);
+  animation:coatUnify 5s ease-in-out infinite;
+}
+.uf-fig.f2 .head,
+.uf-fig.f2 .coat{ animation-delay:.08s; }
+.uf-fig.f3 .head,
+.uf-fig.f3 .coat{ animation-delay:.16s; }
+@keyframes coatUnify{
+  0%, 16%{ fill:var(--coat0); }
+  42%, 86%{ fill:var(--navy); }
+  96%, 100%{ fill:var(--coat0); }
+}
+/* 制服配件：帽、肩章、胸章 —— 统一后才"配发" */
+.uf-fig .cap,
+.uf-fig .ep,
+.uf-fig .badge{
+  opacity:0;
+  animation:gearIn 5s ease-in-out infinite;
+}
+.uf-fig.f2 .cap,
+.uf-fig.f2 .ep,
+.uf-fig.f2 .badge{ animation-delay:.08s; }
+.uf-fig.f3 .cap,
+.uf-fig.f3 .ep,
+.uf-fig.f3 .badge{ animation-delay:.16s; }
+.uf-fig .cap,
+.uf-fig .ep{ fill:var(--brass); stroke:var(--ink); stroke-width:1.2; }
+.uf-fig .badge{ fill:var(--crimson); stroke:var(--ink); stroke-width:1; }
+@keyframes gearIn{
+  0%, 34%{ opacity:0; transform:translateY(-7px); }
+  48%, 86%{ opacity:1; transform:translateY(0); }
+  96%, 100%{ opacity:0; transform:translateY(-7px); }
+}
+/* 底部的等距标尺：统一后依次点亮，表示"间距完全一致" */
+.uf-tick{
+  stroke:var(--brass);
+  stroke-width:2.2;
+  stroke-linecap:round;
+  animation:tickLight 5s ease-in-out infinite;
+}
+.uf-tick.t1{ animation-delay:.30s; }
+.uf-tick.t2{ animation-delay:.45s; }
+.uf-tick.t3{ animation-delay:.60s; }
+@keyframes tickLight{
+  0%, 30%{ opacity:.22; }
+  48%, 86%{ opacity:1; }
+  96%, 100%{ opacity:.22; }
+}
+/* 顶部公式标注 */
+.uf-caption{
+  animation:captionFade 5s ease-in-out infinite;
+}
+@keyframes captionFade{
+  0%, 24%{ opacity:0; }
+  48%, 82%{ opacity:1; }
+  96%, 100%{ opacity:0; }
+}
+/* 人形间的"等号"刻度线 */
+.uf-equal{
+  stroke:var(--paper);
+  stroke-width:1.4;
+  stroke-dasharray:4 6;
+  opacity:.3;
+}
+/* ========== 结束 uniform SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+.real-ex .tip{
+  font-size:12.5px;color:var(--navy);margin-top:8px;
+  padding-left:16px;font-weight:700;
+}
+/* 辨析表 */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:52px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .page{border-radius:22px;}
+  .image-card{grid-template-columns:1fr;padding:26px 22px;}
+  .image-card .ic-svg{width:290px;height:230px;margin:0 auto;}
+  .section-title{font-size:15px;padding:6px 16px 6px 10px;}
+  .hero-coat{display:none;}
+  .hero-grid{opacity:.3;}
+}
+@media (min-width:1100px){.hero{padding:100px 80px 80px;}
+.hero-band{height:24px;}
+.word-anim{font-size:138px;}
+.speak-btn{width:56px;height:56px;font-size:26px;}
+.ipa-anim{font-size:18px;padding:6px 22px;}
+.pos-anim{font-size:13px;padding:6px 20px;}
+.spell-hint{font-size:13px;padding:10px 24px;}
+.collo:nth-child(5){grid-column:1 / -1;}
+}
+@media (min-width:1500px){.hero{padding:120px 100px 96px;}
+.word-anim{font-size:164px;}
+}
+@media print{body::before,body::after{display:none;}
+.hero-grid,.hero-glow,.hero-coat,.page-floats,.progress-bar{display:none;}
+}
+</style>
+</head>
+<body data-word="uniform">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-floats" aria-hidden="true">
+    <div class="fl btn f1"></div>
+    <div class="fl strip f2"></div>
+    <div class="fl shoulder f3"></div>
+    <div class="fl btn navy f4"></div>
+    <div class="fl strip khaki f5"></div>
+    <div class="fl shoulder navy f6"></div>
+    <div class="fl btn f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-grid" aria-hidden="true">
+      <svg viewBox="0 0 860 320" preserveAspectRatio="none">
+        <g class="hg-line" fill="none">
+          <line x1="0" y1="64" x2="860" y2="64"/>
+          <line x1="0" y1="128" x2="860" y2="128"/>
+          <line x1="0" y1="192" x2="860" y2="192"/>
+          <line x1="0" y1="256" x2="860" y2="256"/>
+          <line x1="143" y1="0" x2="143" y2="320"/>
+          <line x1="286" y1="0" x2="286" y2="320"/>
+          <line x1="429" y1="0" x2="429" y2="320"/>
+          <line x1="572" y1="0" x2="572" y2="320"/>
+          <line x1="715" y1="0" x2="715" y2="320"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-glow" aria-hidden="true">
+      <svg viewBox="0 0 520 520">
+        <defs>
+          <radialGradient id="heroGlowGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#C8923C" stop-opacity=".34"/>
+            <stop offset="55%" stop-color="#28365C" stop-opacity=".16"/>
+            <stop offset="100%" stop-color="#28365C" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle class="glow-pulse" cx="260" cy="260" r="240" fill="url(#heroGlowGrad)"/>
+      </svg>
+    </div>
+
+    <div class="hero-coat" aria-hidden="true">
+      <svg viewBox="0 0 200 240">
+        <path class="hm-coat" d="M 40 48 L 28 210 L 172 210 L 160 48 L 132 48 L 120 86 L 100 74 L 80 86 L 68 48 Z"/>
+        <path class="hm-lapel" d="M 68 48 L 100 108 L 132 48"/>
+        <line class="hm-ep" x1="42" y1="62" x2="72" y2="62"/>
+        <line class="hm-ep" x1="158" y1="62" x2="128" y2="62"/>
+        <g class="hm-buttons">
+          <circle cx="86" cy="128" r="4.5"/>
+          <circle cx="86" cy="158" r="4.5"/>
+          <circle cx="86" cy="188" r="4.5"/>
+          <circle cx="114" cy="128" r="4.5"/>
+          <circle cx="114" cy="158" r="4.5"/>
+          <circle cx="114" cy="188" r="4.5"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="uniform">
+          <span class="letter l1">u</span><span class="letter l2">n</span><span class="letter l3">i</span><span class="letter l4">f</span><span class="letter l5">o</span><span class="letter l6">r</span><span class="letter l7">m</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 uniform">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˈjuːnɪfɔːm/ &nbsp;·&nbsp; 美 /ˈjuːnɪfɔːrm/</div>
+      <div class="pos-anim">n. · adj.</div>
+      <div class="spell-hint">uni · form &nbsp; 制服 · 统一的 · 一致的</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">uni-</span>（一，单一）
+          + <span class="stem">form</span>（形式，形状）
+          &nbsp;→&nbsp; "只有一种形式" → <b>制服 · 统一的 · 一致的</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">动词</div><div class="w">unify</div><div class="p">/ˈjuːnɪfaɪ/</div><div class="m">统一，使一致</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w"><span class="hl">uniformity</span></div><div class="p">/ˌjuːnɪˈfɔːməti/</div><div class="m">一致性，统一性</div></div>
+          <div class="fam-card"><div class="pos">副词</div><div class="w">uniformly</div><div class="p">/ˈjuːnɪfɔːmli/</div><div class="m">一致地，均匀地</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">uniformed</div><div class="p">/ˈjuːnɪfɔːmd/</div><div class="m">身穿制服的</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">unity</div><div class="p">/ˈjuːnəti/</div><div class="m">统一，团结</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">union</div><div class="p">/ˈjuːniən/</div><div class="m">联盟，工会</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">conform</div><div class="p">/kənˈfɔːm/</div><div class="m">遵从，符合</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">reform</div><div class="p">/rɪˈfɔːm/</div><div class="m">改革，改造</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">uniform</span> = 三个原本<strong>高矮不一、衣着各异</strong>的人，套上同一件制服后，<strong>齐刷刷站成一排</strong>。
+          </p>
+          <p class="ic-sub">
+            名词 → 制服：让一个群体"形式上统一"的衣服；<br>
+            形容词 → 统一的：标准、速度、颜色完全一致；<br>
+            词源 → uni（一）+ form（形式）= 只有一个形式。<br>
+            核心：<b>"抹平差异，归于一体"</b>。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 380 300">
+            <defs>
+              <linearGradient id="ufGlowGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#C8923C" stop-opacity=".30"/>
+                <stop offset="100%" stop-color="#28365C" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+
+            <!-- 背景网格 -->
+            <g class="uf-grid" stroke="var(--paper)" stroke-width="0.7">
+              <line x1="20" y1="76" x2="360" y2="76"/>
+              <line x1="20" y1="126" x2="360" y2="126"/>
+              <line x1="20" y1="176" x2="360" y2="176"/>
+              <line x1="95" y1="40" x2="95" y2="248"/>
+              <line x1="190" y1="40" x2="190" y2="248"/>
+              <line x1="285" y1="40" x2="285" y2="248"/>
+            </g>
+
+            <!-- 顶部光晕 -->
+            <rect x="20" y="40" width="340" height="120" fill="url(#ufGlowGrad)" opacity=".5"/>
+
+            <!-- 头顶公式标注 -->
+            <g class="uf-caption">
+              <text x="190" y="34" text-anchor="middle"
+                    font-family="Helvetica, Arial" font-size="11" font-weight="900"
+                    letter-spacing="3" fill="var(--brass)">UNI- + FORM</text>
+            </g>
+
+            <!-- 人形之间的等距虚线 -->
+            <line class="uf-equal" x1="95" y1="60" x2="285" y2="60"/>
+
+            <!-- 地面基线 -->
+            <line class="uf-base" x1="26" y1="232" x2="354" y2="232"
+                  stroke="var(--brass)" stroke-width="2.5" stroke-linecap="round"/>
+
+            <!-- ===== 人形 1 ===== -->
+            <g class="uf-fig f1" style="--coat0:#8A8A67">
+              <rect class="cap" x="81" y="132" width="28" height="9" rx="2"/>
+              <circle class="head" cx="95" cy="158" r="13"/>
+              <path class="coat" d="M 78 232 L 82 182 Q 95 174 108 182 L 112 232 Z"/>
+              <rect class="ep" x="80" y="180" width="30" height="5" rx="1.5"/>
+              <circle class="badge" cx="95" cy="202" r="3.5"/>
+            </g>
+
+            <!-- ===== 人形 2 ===== -->
+            <g class="uf-fig f2" style="--coat0:#A5382F">
+              <rect class="cap" x="176" y="132" width="28" height="9" rx="2"/>
+              <circle class="head" cx="190" cy="158" r="13"/>
+              <path class="coat" d="M 173 232 L 177 182 Q 190 174 203 182 L 207 232 Z"/>
+              <rect class="ep" x="175" y="180" width="30" height="5" rx="1.5"/>
+              <circle class="badge" cx="190" cy="202" r="3.5"/>
+            </g>
+
+            <!-- ===== 人形 3 ===== -->
+            <g class="uf-fig f3" style="--coat0:#5C7FA8">
+              <rect class="cap" x="271" y="132" width="28" height="9" rx="2"/>
+              <circle class="head" cx="285" cy="158" r="13"/>
+              <path class="coat" d="M 268 232 L 272 182 Q 285 174 298 182 L 302 232 Z"/>
+              <rect class="ep" x="270" y="180" width="30" height="5" rx="1.5"/>
+              <circle class="badge" cx="285" cy="202" r="3.5"/>
+            </g>
+
+            <!-- 底部等距标尺：统一后依次点亮 -->
+            <line x1="60" y1="252" x2="320" y2="252"
+                  stroke="var(--paper)" stroke-width="1.5" opacity=".5"/>
+            <line class="uf-tick t1" x1="95"  y1="246" x2="95"  y2="258"/>
+            <line class="uf-tick t2" x1="190" y1="246" x2="190" y2="258"/>
+            <line class="uf-tick t3" x1="285" y1="246" x2="285" y2="258"/>
+
+            <text x="190" y="278" text-anchor="middle"
+                  font-family="Helvetica, Arial" font-size="9" font-weight="800"
+                  letter-spacing="2.5" fill="var(--paper)" opacity=".55">SAME FORM · SAME DISTANCE</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo">
+          <div class="pattern">school uniform</div>
+          <div class="meaning"><b>校服</b>（四级听力校园场景高频）</div>
+        </div>
+        <div class="collo">
+          <div class="pattern">in uniform</div>
+          <div class="meaning"><b>穿着制服</b>（状态，介词 in）</div>
+        </div>
+        <div class="collo">
+          <div class="pattern">military / police uniform</div>
+          <div class="meaning"><b>军装</b> / <b>警服</b></div>
+        </div>
+        <div class="collo">
+          <div class="pattern">a uniform standard / policy</div>
+          <div class="meaning">形容词用法：<b>统一的标准</b> / <b>统一的政策</b></div>
+        </div>
+        <div class="collo">
+          <div class="pattern">uniform in size / color</div>
+          <div class="meaning">在尺寸 / 颜色上<b>完全一致</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2025 四级 · 听力（改编）</div>
+          <p class="en">May said that the school's <em class="hl">uniform</em> policy showed the lack of regard for parents dealing with the high cost of living.</p>
+          <p class="cn">梅表示，学校的校服政策反映出其对正面临高生活成本压力的家长缺乏关注。</p>
+          <p class="tip">🎯 考点：uniform 作名词定语修饰 policy，是"校服政策"，不是形容词"统一的"。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2024 四级 · 阅读（改编）</div>
+          <p class="en">The price of school <em class="hl">uniforms</em> can spark panic among families struggling with the high cost of living.</p>
+          <p class="cn">校服的价格可能会让那些在高昂生活成本中挣扎的家庭感到恐慌。</p>
+          <p class="tip">🎯 考点：school uniform 固定搭配；复数形式指多套校服。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 六级 · 听力（改编）</div>
+          <p class="en">No one can be unique with her outfit every day. I mean that's why <em class="hl">uniforms</em> were invented.</p>
+          <p class="cn">没有人能每天都穿得独一无二。我的意思是，这就是制服被发明出来的原因。</p>
+          <p class="tip">🎯 考点：理解 uniform 与 unique 的语义对立——制服恰恰是反个性（反 unique）的。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">托福 · 听力（改编）</div>
+          <p class="en">The soil in any location isn't a <em class="hl">uniform</em> mixture.</p>
+          <p class="cn">任何地点的土壤都不是一个均匀的混合物。</p>
+          <p class="tip">🎯 考点：形容词用法，uniform 在学术语境中指"均匀的、各处一致的"。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">冠词</span>
+          uniform 以辅音音素 /j/ 开头，冠词用 <b>a</b>，不用 an<br>
+          <span class="wrong">an uniform</span> → <span class="right">a uniform</span><br>
+          类似：a university, a useful book, a European country。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词性</span>
+          同一个词两副面孔，看位置判断：<br>
+          <b>school uniform policy</b>（名词修饰名词 = 校服政策）<br>
+          <b>uniform policy across branches</b>（形容词 = 统一的政策）
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">介词</span>
+          "穿着制服"用 <b>in uniform</b>，不用 on / with<br>
+          <span class="wrong">The officer was on uniform.</span> → <span class="right">The officer was in uniform.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">与 unify 混用</span>
+          unify 是动词"统一"，uniform 是名词/形容词<br>
+          <span class="wrong">uniform the standards</span> → <span class="right">unify the standards</span> / <span class="right">make the standards uniform</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>uniform</td>
+            <td>团体制服（强调"统一形式"）</td>
+            <td class="chant">同款同色才叫 uniform</td>
+          </tr>
+          <tr>
+            <td>costume</td>
+            <td>戏装；时代 / 地域服装</td>
+            <td class="chant">舞台上穿 costume</td>
+          </tr>
+          <tr>
+            <td>suit</td>
+            <td>成套西装 / 套装</td>
+            <td class="chant">西装革履是 suit</td>
+          </tr>
+          <tr>
+            <td>outfit</td>
+            <td>整套搭配（口语）</td>
+            <td class="chant">你今天这身叫 outfit</td>
+          </tr>
+          <tr>
+            <td>dress</td>
+            <td>礼服 / 连衣裙</td>
+            <td class="chant">晚宴礼服是 dress</td>
+          </tr>
+          <tr>
+            <td>attire</td>
+            <td>着装（正式书面，泛指）</td>
+            <td class="chant">正式场合称 attire</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Nearly all British schools require students to wear a <span class="first-letter">u</span><span class="blank" onclick="this.classList.toggle('revealed')">niform</span>.</p>
+          <p class="fill-hint">提示：<b>wear a uniform</b>，穿校服（名词）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The officer was <span class="first-letter">i</span><span class="blank" onclick="this.classList.toggle('revealed')">n</span> <span class="first-letter">u</span><span class="blank" onclick="this.classList.toggle('revealed')">niform</span> when the accident happened.</p>
+          <p class="fill-hint">提示：<b>in uniform</b>，穿着制服（固定介词）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The company applies <span class="first-letter">u</span><span class="blank" onclick="this.classList.toggle('revealed')">niform</span> standards across all branches.</p>
+          <p class="fill-hint">提示：形容词用法，<b>统一的标准</b></p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">⚠️ 陷阱题：She wears <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">_</span> uniform to work.</p>
+          <p class="fill-hint">提示：/j/ 是辅音音素，冠词填 <b>a</b>，不能填 an</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">⚠️ 陷阱题：The team agreed to <span class="first-letter">u</span><span class="blank" onclick="this.classList.toggle('revealed')">nify</span> its safety standards.</p>
+          <p class="fill-hint">提示：这里要动词 <b>unify</b>（统一），不是名词/形容词 uniform</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>uniform</b> 造一句自己的句子。可以是名词（制服）或形容词（统一的），刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="例：Students in school uniform all look the same, but their ideas are anything but uniform."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>

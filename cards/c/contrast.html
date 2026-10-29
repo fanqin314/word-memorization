@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>contrast · 对比</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 对照色板 —— contrast = 对比 / 差异 / 反差 */
+  --paper:#F5EFE4;
+  --paper-2:#EBE2CE;
+  --ink:#1A1A2E;
+  --warm:#F5A93D;
+  --warm-soft:#FBE9C8;
+  --warm-deep:#C86A1F;
+  --cool:#3A5FBF;
+  --cool-soft:#DAE3F7;
+  --cool-deep:#1B2D6B;
+  --rose:#E85A7C;
+  --rose-soft:#FBE0E8;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--warm);
+  --cb-accent-soft:var(--warm-soft);
+  --cb-2:var(--cool);
+  --cb-2-soft:var(--cool-soft);
+  --cb-3:var(--rose);
+  --cb-3-soft:var(--rose-soft);
+}
+html,body{margin:0;padding:0;}
+/* 全页：垂直中分 + 斜纹质感 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(90deg, transparent 49.7%, rgba(26,26,46,.15) 49.8%, rgba(26,26,46,.15) 50.2%, transparent 50.3%),
+    repeating-linear-gradient(135deg,
+      transparent 0 50px,
+      rgba(245,169,61,.04) 50px 52px,
+      transparent 52px 100px);
+  animation:contrastDrift 22s ease-in-out infinite alternate;
+}
+@keyframes contrastDrift{
+  0%{ opacity:.7; }
+  100%{ opacity:1; }
+}
+/* 漂浮的对比碎片 */
+.page-shards{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.shard{
+  position:absolute;
+  opacity:0;
+  animation:shardDrift linear infinite;
+}
+/* 暖方方块 */
+.shard.warm-sq{
+  width:22px;height:22px;
+  background:var(--warm);
+  border:2px solid var(--ink);
+  border-radius:4px;
+  filter:drop-shadow(2px 2px 0 var(--ink));
+}
+/* 冷方圆形 */
+.shard.cool-ci{
+  width:22px;height:22px;
+  background:var(--cool);
+  border:2px solid var(--ink);
+  border-radius:50%;
+  filter:drop-shadow(2px 2px 0 var(--ink));
+}
+/* 玫瑰星 */
+.shard.rose-st{
+  width:20px;height:20px;
+  color:var(--rose);
+  font-size:20px;
+  line-height:20px;
+  text-align:center;
+  -webkit-text-stroke:1.2px var(--ink);
+}
+.shard.rose-st::before{
+  content:"✦";
+}
+.shard.f1{ left:6%; bottom:-40px; animation-duration:26s; }
+.shard.f2{ left:22%; bottom:-55px; animation-duration:34s; animation-delay:4s; }
+.shard.f3{ left:78%; bottom:-45px; animation-duration:30s; animation-delay:2s; }
+.shard.f4{ left:90%; bottom:-30px; animation-duration:32s; animation-delay:8s; }
+.shard.f5{ left:52%; bottom:-70px; animation-duration:26s; animation-delay:6s; }
+.shard.f6{ left:38%; bottom:-50px; animation-duration:36s; animation-delay:12s; }
+.shard.f7{ left:64%; bottom:-60px; animation-duration:24s; animation-delay:10s; }
+@keyframes shardDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.75; }
+  50%{ transform:translateY(-50vh) rotate(360deg); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) rotate(720deg); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    linear-gradient(90deg,
+      #FBEED0 0%,
+      #FBF5E8 48%,
+      #FBF5E8 52%,
+      #E2E8F7 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--warm) 0 22px,
+    transparent 22px 24px,
+    var(--ink) 24px 26px,
+    transparent 26px 28px,
+    var(--cool) 28px 50px,
+    transparent 50px 52px,
+    var(--ink) 52px 54px,
+    transparent 54px 56px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 中线（分割） */
+.hero-divider{
+  position:absolute;
+  top:0;bottom:0;left:50%;
+  width:4px;
+  background:
+    repeating-linear-gradient(180deg,
+      var(--warm) 0 12px,
+      var(--ink) 12px 14px,
+      var(--cool) 14px 26px,
+      var(--ink) 26px 28px);
+  transform:translateX(-50%);
+  z-index:2;
+  opacity:.7;
+  animation:dividerPulse 3s ease-in-out infinite;
+}
+@keyframes dividerPulse{
+  0%,100%{ opacity:.5; transform:translateX(-50%) scaleY(.95); }
+  50%{ opacity:.9; transform:translateX(-50%) scaleY(1); }
+}
+/* HERO 左右对照背景装饰 */
+.hero-split{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.split-svg{width:100%;height:100%;}
+.split-arc{
+  fill:none;
+  stroke-linecap:round;
+  stroke-dasharray:600;
+  stroke-dashoffset:600;
+  animation:splitDraw 3s ease-out forwards;
+}
+.split-arc.sa1{ stroke:var(--warm); stroke-width:2.5; animation-delay:.2s; opacity:.55; }
+.split-arc.sa2{ stroke:var(--cool); stroke-width:2.5; animation-delay:.5s; opacity:.55; }
+.split-arc.sa3{ stroke:var(--rose); stroke-width:2; animation-delay:.9s; opacity:.6; }
+@keyframes splitDraw{ to{ stroke-dashoffset:0; } }
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:88px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  filter:drop-shadow(5px 5px 0 var(--warm-deep)) drop-shadow(-5px 5px 0 var(--cool-deep));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterSplit 1.15s cubic-bezier(.34,1.56,.64,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s;
+}
+/* 奇数位字母从左上暖方来，偶数位从右下冷方来 */
+.word-anim .l1{ animation-delay:.15s; color:var(--warm); --dx:-90px; --dy:-40px; }
+.word-anim .l2{ animation-delay:.28s; color:var(--cool); --dx:90px; --dy:40px; }
+.word-anim .l3{ animation-delay:.41s; color:var(--warm); --dx:-70px; --dy:-50px; }
+.word-anim .l4{ animation-delay:.54s; color:var(--cool); --dx:70px; --dy:50px; }
+.word-anim .l5{ animation-delay:.67s; color:var(--warm); --dx:-50px; --dy:-50px; }
+.word-anim .l6{ animation-delay:.80s; color:var(--cool); --dx:50px; --dy:50px; }
+.word-anim .l7{ animation-delay:.93s; color:var(--warm); --dx:-50px; --dy:50px; }
+.word-anim .l8{ animation-delay:1.06s; color:var(--cool); --dx:50px; --dy:-50px; }
+@keyframes letterSplit{
+  0%{
+    opacity:0;
+    transform:translate(var(--dx),var(--dy)) scale(.4) rotate(-30deg);
+    filter:blur(10px);
+  }
+  55%{
+    opacity:1;
+    filter:blur(0);
+    transform:translate(calc(var(--dx) * -.1), calc(var(--dy) * -.1)) scale(1.15) rotate(6deg);
+  }
+  100%{
+    opacity:1;
+    transform:translate(0,0) scale(1) rotate(0);
+    color:var(--ink);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--rose);
+  transform:translateY(-8px) scale(1.15);
+  filter:drop-shadow(0 0 12px var(--rose));
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--warm);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--cool);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.15s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--cool);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--cool);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:linear-gradient(90deg, var(--warm) 0%, var(--warm) 45%, var(--cool) 55%, var(--cool) 100%);
+  border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--warm-deep), -3px -3px 0 var(--cool-deep);
+  opacity:0;animation:fadeUp .8s ease-out 1.2s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  color:var(--paper);
+  font-weight:800;
+}
+.ipa-anim:hover{filter:brightness(1.1);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.4s forwards;
+  transform:rotate(1.2deg);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--rose-soft);
+  border:2.5px solid var(--ink);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--rose);
+  opacity:0;animation:fadeUp .8s ease-out 1.65s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 意象卡 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 360px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(232,90,124,.20) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* ========== contrast SVG 动画 ========== */
+
+/* 左侧暖盘持续扩张收缩 */
+.cnt-panel-left{
+  transform-origin:90px 130px;
+  animation:leftBreathe 5s ease-in-out infinite;
+}
+@keyframes leftBreathe{
+  0%,100%{ transform:scale(1) rotate(0); }
+  50%{ transform:scale(1.08) rotate(6deg); }
+}
+/* 右侧冷盘反向呼吸 */
+.cnt-panel-right{
+  transform-origin:270px 130px;
+  animation:rightBreathe 5s ease-in-out infinite;
+}
+@keyframes rightBreathe{
+  0%,100%{ transform:scale(1.08) rotate(-6deg); }
+  50%{ transform:scale(1) rotate(0); }
+}
+/* 中央滑动分割条 */
+.cnt-slider{
+  animation:sliderSlide 5s cubic-bezier(.65,0,.35,1) infinite;
+}
+@keyframes sliderSlide{
+  0%, 30%{ transform:translateX(0); }
+  50%, 80%{ transform:translateX(30px); }
+  95%, 100%{ transform:translateX(0); }
+}
+/* 中央光点脉冲 */
+.cnt-core{
+  animation:corePulse 3s ease-in-out infinite;
+  transform-origin:180px 130px;
+}
+@keyframes corePulse{
+  0%,100%{ opacity:.6; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.35); }
+}
+/* 上下对照标记闪烁 */
+.cnt-mark{
+  animation:markBlink 2.5s ease-in-out infinite;
+}
+.cnt-mark.m2{ animation-delay:1.25s; }
+@keyframes markBlink{
+  0%,100%{ opacity:.35; }
+  50%{ opacity:1; }
+}
+/* ========== 结束 contrast SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+.compare-table tr.highlight{background:linear-gradient(90deg, var(--warm-soft) 0%, var(--cool-soft) 100%);}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@media (max-width:640px){.hero{padding:50px 22px 40px;}
+.word-anim{font-size:48px;}
+}
+@media (min-width:1100px){.hero{padding:100px 80px 80px;}
+.hero-band{height:24px;}
+.word-anim{font-size:124px;}
+.speak-btn{width:56px;height:56px;font-size:26px;}
+.ipa-anim{font-size:18px;padding:6px 22px;}
+.pos-anim{font-size:13px;padding:6px 20px;}
+.spell-hint{font-size:13px;padding:10px 24px;}
+.collo:nth-child(5){grid-column:1 / -1;}
+}
+@media (min-width:1500px){.hero{padding:120px 100px 96px;}
+.word-anim{font-size:158px;}
+}
+@media print{body::before,body::after{display:none;}
+.hero-split,.hero-divider,.page-shards,.progress-bar{display:none;}
+}
+</style>
+</head>
+<body data-word="contrast">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-shards" aria-hidden="true">
+    <div class="shard warm-sq f1"></div>
+    <div class="shard cool-ci f2"></div>
+    <div class="shard rose-st f3"></div>
+    <div class="shard warm-sq f4"></div>
+    <div class="shard cool-ci f5"></div>
+    <div class="shard rose-st f6"></div>
+    <div class="shard warm-sq f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+    <div class="hero-divider" aria-hidden="true"></div>
+
+    <div class="hero-split" aria-hidden="true">
+      <svg class="split-svg" viewBox="0 0 860 320" preserveAspectRatio="none">
+        <path class="split-arc sa1" d="M -20 80 Q 200 60 430 160" />
+        <path class="split-arc sa2" d="M 880 80 Q 660 60 430 160" />
+        <path class="split-arc sa1" d="M -20 240 Q 200 260 430 160" />
+        <path class="split-arc sa2" d="M 880 240 Q 660 260 430 160" />
+        <path class="split-arc sa3" d="M 430 40 L 430 280" />
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="contrast">
+          <span class="letter l1">c</span><span class="letter l2">o</span><span class="letter l3">n</span><span class="letter l4">t</span><span class="letter l5">r</span><span class="letter l6">a</span><span class="letter l7">s</span><span class="letter l8">t</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 contrast">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˈkɒntrɑːst/ &nbsp;·&nbsp; 美 /ˈkɑːntræst/</div>
+      <div class="pos-anim">n. · v.</div>
+      <div class="spell-hint">con · trast &nbsp; 对比 · 差异 · 反差</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">contra-</span>（相对，对面）
+          + <span class="stem">st</span>（站）
+          &nbsp;→&nbsp; "站在对面比一比" → <b>对比 · 差异 · 反差</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">动词</div><div class="w"><span class="hl">contrast</span></div><div class="p">/kənˈtrɑːst/</div><div class="m">对比，对照（动词）</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">contrasting</div><div class="p">/kənˈtrɑːstɪŋ/</div><div class="m">形成对比的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">contrastive</div><div class="p">/kənˈtrɑːstɪv/</div><div class="m">对比的（语言学）</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">contrary</div><div class="p">/ˈkɒntrəri/</div><div class="m">相反的（同根）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">contradict</div><div class="p">/ˌkɒntrəˈdɪkt/</div><div class="m">反驳，与…矛盾</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">controversy</div><div class="p">/ˈkɒntrəvɜːsi/</div><div class="m">争议（同根）</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">contrast</span> = 把<strong>暖色圆</strong>和<strong>冷色圆</strong>并排放，一眼就看得出不同。
+          </p>
+          <p class="ic-sub">
+            黑和白放一起 → 黑白对比；白天和黑夜放一起 → 昼夜反差；两种文化放一起 → 跨文化对比。<br>
+            核心：<b>放在一起</b> + <b>凸显差异</b>。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 360 260">
+            <defs>
+              <radialGradient id="cntWarm" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFD580"/>
+                <stop offset="100%" stop-color="#F5A93D"/>
+              </radialGradient>
+              <radialGradient id="cntCool" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#7A9EE8"/>
+                <stop offset="100%" stop-color="#3A5FBF"/>
+              </radialGradient>
+              <radialGradient id="cntCore" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#E85A7C" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#E85A7C" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- 左侧暖色圆盘 -->
+            <g class="cnt-panel-left">
+              <circle cx="90" cy="130" r="62" fill="url(#cntWarm)" stroke="var(--ink)" stroke-width="3.5"/>
+              <!-- 暖色内部几何装饰 -->
+              <line x1="50" y1="130" x2="130" y2="130" stroke="var(--ink)" stroke-width="2" opacity=".5"/>
+              <line x1="90" y1="90" x2="90" y2="170" stroke="var(--ink)" stroke-width="2" opacity=".5"/>
+              <circle cx="90" cy="130" r="22" fill="none" stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+              <text x="90" y="138" text-anchor="middle"
+                    font-family="Georgia" font-size="20" font-weight="900"
+                    fill="var(--ink)">A</text>
+            </g>
+
+            <!-- 右侧冷色圆盘 -->
+            <g class="cnt-panel-right">
+              <circle cx="270" cy="130" r="62" fill="url(#cntCool)" stroke="var(--ink)" stroke-width="3.5"/>
+              <!-- 冷色内部圆形网格装饰 -->
+              <circle cx="270" cy="130" r="42" fill="none" stroke="var(--paper)" stroke-width="2" opacity=".45"/>
+              <circle cx="270" cy="130" r="22" fill="none" stroke="var(--paper)" stroke-width="2" opacity=".55"/>
+              <circle cx="270" cy="130" r="8" fill="var(--paper)" opacity=".7"/>
+              <text x="270" y="138" text-anchor="middle"
+                    font-family="Georgia" font-size="20" font-weight="900"
+                    fill="var(--paper)">B</text>
+            </g>
+
+            <!-- 中央分割线（滑动） -->
+            <g class="cnt-slider">
+              <!-- 竖线 -->
+              <line x1="180" y1="30" x2="180" y2="230" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+              <!-- 顶部三角形 -->
+              <polygon points="180,30 172,18 188,18" fill="var(--ink)"/>
+              <!-- 底部三角形 -->
+              <polygon points="180,230 172,242 188,242" fill="var(--ink)"/>
+              <!-- 中心圆 -->
+              <circle cx="180" cy="130" r="16" fill="var(--rose)" stroke="var(--ink)" stroke-width="3"/>
+              <line x1="172" y1="130" x2="188" y2="130" stroke="var(--paper)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+
+            <!-- 中央光晕脉冲 -->
+            <circle class="cnt-core" cx="180" cy="130" r="40" fill="url(#cntCore)" opacity=".5"/>
+
+            <!-- 上下 "对比" 标记 -->
+            <g class="cnt-mark m1">
+              <text x="90" y="30" text-anchor="middle"
+                    font-family="Georgia" font-size="11" font-weight="900"
+                    fill="var(--warm-deep)">暖 / WARM</text>
+            </g>
+            <g class="cnt-mark m2">
+              <text x="270" y="30" text-anchor="middle"
+                    font-family="Georgia" font-size="11" font-weight="900"
+                    fill="var(--cool-deep)">冷 / COOL</text>
+            </g>
+
+            <!-- 底部动态刻度 -->
+            <line x1="40" y1="240" x2="320" y2="240" stroke="var(--ink)" stroke-width="2" opacity=".4"/>
+            <line x1="40" y1="236" x2="40" y2="244" stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+            <line x1="180" y1="234" x2="180" y2="246" stroke="var(--ink)" stroke-width="3"/>
+            <line x1="320" y1="236" x2="320" y2="244" stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">in contrast to / with</div><div class="meaning"><b>与……相比</b>（形成对比）</div></div>
+        <div class="collo"><div class="pattern">by contrast</div><div class="meaning"><b>相比之下</b>（句子间过渡）</div></div>
+        <div class="collo"><div class="pattern">contrast with</div><div class="meaning">与……<b>形成对比</b>（动词）</div></div>
+        <div class="collo"><div class="pattern">stark / sharp contrast</div><div class="meaning"><b>鲜明</b>对比（强调差异大）</div></div>
+        <div class="collo"><div class="pattern">draw a contrast</div><div class="meaning">做出<b>对比</b>，指出差异</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力</div>
+          <p class="en">The study highlights the sharp <em class="hl">contrast between</em> urban and rural living standards.</p>
+          <p class="cn">这项研究凸显了城乡生活水平的鲜明对比。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en"><em class="hl">In contrast to</em> traditional methods, the new approach is far more efficient.</p>
+          <p class="cn">与传统方法相比，新方法效率要高得多。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">The two theories provide an interesting <em class="hl">contrast</em>.</p>
+          <p class="cn">这两种理论形成了有趣的对比。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en"><em class="hl">By contrast</em>, students who studied in groups performed better on the test.</p>
+          <p class="cn">相比之下，小组学习的学生在考试中表现更好。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>in contrast to</b> 后接名词（对比对象）；<b>by contrast</b> 单独用（句子间过渡）<br>
+          <span class="wrong">By contrast to traditional methods, ...</span> → <span class="right">In contrast to traditional methods, ...</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">介词</span>
+          <b>contrast between A and B</b>（A 与 B 的对比）；<b>contrast with</b>（与……形成对比）<br>
+          <span class="wrong">contrast of A and B</span> → <span class="right">contrast between A and B</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">重音</span>
+          名词重音在<b>首音节</b>（CON-trast）；动词重音在<b>第二音节</b>（con-TRAST）
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>contrast</td><td>对比（凸显不同点）</td><td class="chant">找不同用 contrast</td></tr>
+          <tr><td>compare</td><td>比较（可找相似或不同）</td><td class="chant">比相似用 compare</td></tr>
+          <tr><td>distinguish</td><td>区分（辨别差异）</td><td class="chant">辨别区分 distinguish</td></tr>
+          <tr><td>differentiate</td><td>区别（使不同）</td><td class="chant">使有区别 differentiate</td></tr>
+          <tr><td>contradict</td><td>反驳（逻辑冲突）</td><td class="chant">反驳冲突 contradict</td></tr>
+          <tr><td>oppose</td><td>反对（立场对立）</td><td class="chant">立场反对是 oppose</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">There is a sharp <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontrast</span> between the two paintings.</p>
+          <p class="fill-hint">提示：<b>a sharp contrast between</b>，……之间的鲜明对比</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence"><span class="first-letter">I</span><span class="blank" onclick="this.classList.toggle('revealed')">n contrast to</span> his brother, Tom is very outgoing.</p>
+          <p class="fill-hint">提示：<b>in contrast to + 名词</b>，与……相比</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The white dress stands out in stark <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontrast</span> with the dark background.</p>
+          <p class="fill-hint">提示：<b>in contrast with</b>，与……形成对比</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Prices have risen by 5%. <span class="first-letter">B</span><span class="blank" onclick="this.classList.toggle('revealed')">y contrast</span>, wages have remained flat.</p>
+          <p class="fill-hint">提示：<b>By contrast</b>，相比之下（句首过渡）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Her calm voice <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontrasted</span> with the chaos around her.</p>
+          <p class="fill-hint">提示：<b>contrast with</b>，与……形成对比（动词过去式）</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>contrast</b> 造一句自己的句子。刻意用上今天学的一个搭配（in contrast to / by contrast / contrast between A and B）。</p>
+        <textarea id="mySentence" placeholder="例：In contrast to his quiet brother, Jack is always the loudest one in the room."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>

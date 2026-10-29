@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>involve · 涉及</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 漩涡色板 —— involve = 包含 / 涉及 / 卷入 / 需要 */
+  --paper:#EFF4F1;
+  --paper-2:#DEE7E2;
+  --ink:#081A18;
+  --deep:#0E3B3A;
+  --deep-soft:#D2E5E3;
+  --teal:#2AA198;
+  --teal-soft:#D2EFEC;
+  --cyan:#4FC3E8;
+  --cyan-soft:#D7EFF8;
+  --coral:#E86A5A;
+  --coral-soft:#FADCD7;
+  --gold:#F5C34D;
+  --gold-soft:#FCEFCB;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--teal);
+  --cb-accent-soft:var(--teal-soft);
+  --cb-2:var(--cyan);
+  --cb-2-soft:var(--cyan-soft);
+  --cb-3:var(--coral);
+  --cb-3-soft:var(--coral-soft);
+  --cb-deep:var(--deep);
+}
+html,body{margin:0;padding:0;}
+/* 全页：向内卷入的同心环 */
+body::before{
+  content:"";
+  position:fixed;
+  top:50%;left:50%;
+  width:160vmax;height:160vmax;
+  transform:translate(-50%,-50%);
+  pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle, transparent 9%, rgba(42,161,152,.06) 9.3%, transparent 9.6%),
+    radial-gradient(circle, transparent 18%, rgba(79,195,232,.055) 18.3%, transparent 18.6%),
+    radial-gradient(circle, transparent 27%, rgba(42,161,152,.05) 27.3%, transparent 27.6%),
+    radial-gradient(circle, transparent 36%, rgba(232,106,90,.045) 36.3%, transparent 36.6%),
+    radial-gradient(circle, transparent 45%, rgba(79,195,232,.04) 45.3%, transparent 45.6%);
+  animation:swirlBreath 10s ease-in-out infinite;
+}
+@keyframes swirlBreath{
+  0%,100%{ transform:translate(-50%,-50%) scale(1) rotate(0deg); opacity:.85; }
+  50%{ transform:translate(-50%,-50%) scale(1.04) rotate(6deg); opacity:1; }
+}
+/* 漂浮的漩涡碎片（被卷入的元素） */
+.page-floats{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+/* 方块（被卷入的东西） */
+.fl.block{
+  width:16px;height:16px;
+  border:2px solid var(--ink);
+  border-radius:3px;
+}
+.fl.block.teal{ background:var(--teal); }
+.fl.block.cyan{ background:var(--cyan); }
+.fl.block.coral{ background:var(--coral); }
+.fl.block.gold{ background:var(--gold); }
+/* 小螺旋弧 */
+.fl.arc{
+  width:22px;height:22px;
+  border:2.5px solid var(--teal);
+  border-radius:50%;
+  border-right-color:transparent;
+  border-bottom-color:transparent;
+}
+/* 点 */
+.fl.dot{
+  width:8px;height:8px;
+  background:var(--deep);
+  border-radius:50%;
+}
+.fl.f1{ left:6%; bottom:-40px; animation-duration:30s; }
+.fl.f2{ left:22%; bottom:-55px; animation-duration:36s; animation-delay:4s; }
+.fl.f3{ left:78%; bottom:-45px; animation-duration:32s; animation-delay:2s; }
+.fl.f4{ left:90%; bottom:-30px; animation-duration:34s; animation-delay:8s; }
+.fl.f5{ left:52%; bottom:-70px; animation-duration:28s; animation-delay:6s; }
+.fl.f6{ left:38%; bottom:-50px; animation-duration:38s; animation-delay:12s; }
+.fl.f7{ left:64%; bottom:-60px; animation-duration:26s; animation-delay:10s; }
+@keyframes flDrift{
+  0%{ transform:translateY(0) translateX(0) rotate(0); opacity:0; }
+  10%{ opacity:.85; }
+  50%{ transform:translateY(-50vh) translateX(26px) rotate(200deg); }
+  90%{ opacity:.4; }
+  100%{ transform:translateY(-118vh) translateX(0) rotate(400deg); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    radial-gradient(ellipse at 50% 50%, #134D4A 0%, #0C3634 45%, #04100E 100%);
+  overflow:hidden;
+  color:var(--paper);
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--teal) 0 22px,
+    transparent 22px 24px,
+    var(--cyan) 24px 46px,
+    transparent 46px 48px,
+    var(--gold) 48px 70px,
+    transparent 70px 72px,
+    var(--coral) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 大漩涡 */
+.hero-vortex{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:760px;height:760px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.55;
+}
+.hero-vortex svg{
+  width:100%;
+  height:100%;
+  animation:heroVortexSpin 40s linear infinite;
+}
+@keyframes heroVortexSpin{
+  to{ transform:rotate(360deg); }
+}
+.vortex-arm{
+  fill:none;
+  stroke-linecap:round;
+  stroke-dasharray:900;
+  stroke-dashoffset:900;
+  animation:vortexDraw 3.5s ease-out forwards;
+}
+.vortex-arm.va1{ stroke:var(--teal); stroke-width:2.5; animation-delay:.2s; }
+.vortex-arm.va2{ stroke:var(--cyan); stroke-width:2; animation-delay:.6s; }
+.vortex-arm.va3{ stroke:var(--coral); stroke-width:1.8; animation-delay:1s; }
+.vortex-arm.va4{ stroke:var(--gold); stroke-width:1.5; animation-delay:1.4s; }
+@keyframes vortexDraw{ to{ stroke-dashoffset:0; } }
+/* HERO 中心漩涡眼 */
+.hero-eye{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:200px;height:200px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.5;
+}
+.hero-eye svg{width:100%;height:100%;}
+.eye-pulse{
+  animation:eyePulse 3s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes eyePulse{
+  0%,100%{ transform:scale(1); opacity:.8; }
+  50%{ transform:scale(1.2); opacity:1; }
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:96px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  color:var(--paper);
+  filter:drop-shadow(5px 5px 0 var(--deep)) drop-shadow(0 0 22px rgba(42,161,152,.45));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterSwirlIn 1.4s cubic-bezier(.4,1.4,.6,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s;
+}
+/* 每个字母从不同方向"卷入" */
+.word-anim .l1{ animation-delay:.15s; color:var(--teal); --dx:-60px; --dy:-40px; --rot:-200deg; }
+.word-anim .l2{ animation-delay:.27s; color:var(--cyan); --dx:50px; --dy:-50px; --rot:180deg; }
+.word-anim .l3{ animation-delay:.39s; color:var(--gold); --dx:-50px; --dy:50px; --rot:-160deg; }
+.word-anim .l4{ animation-delay:.51s; color:var(--coral); --dx:60px; --dy:40px; --rot:200deg; }
+.word-anim .l5{ animation-delay:.63s; color:var(--teal); --dx:-40px; --dy:-60px; --rot:-180deg; }
+.word-anim .l6{ animation-delay:.75s; color:var(--cyan); --dx:40px; --dy:60px; --rot:220deg; }
+.word-anim .l7{ animation-delay:.87s; color:var(--gold); --dx:-60px; --dy:30px; --rot:-190deg; }
+@keyframes letterSwirlIn{
+  0%{
+    opacity:0;
+    transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(.25);
+    filter:blur(12px);
+  }
+  55%{
+    opacity:1;
+    filter:blur(0);
+    transform:translate(0,0) rotate(18deg) scale(1.2);
+  }
+  80%{
+    transform:translate(0,0) rotate(-6deg) scale(1.02);
+  }
+  100%{
+    opacity:1;
+    transform:translate(0,0) rotate(0) scale(1);
+    color:var(--paper);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--teal);
+  transform:translateY(-6px) scale(1.15) rotate(-8deg);
+  filter:drop-shadow(0 0 14px var(--teal));
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--teal);border:3px solid var(--paper);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--deep);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.2s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--deep);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--deep);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--teal);border:2.5px solid var(--paper);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--deep);
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--cyan);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--deep);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  transform:rotate(1.2deg);
+  border:2px solid var(--ink);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--paper);background:#0C3634;
+  border:2.5px solid var(--paper);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--coral);
+  opacity:0;animation:fadeUp .8s ease-out 1.7s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 意象卡 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(42,161,152,.16) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* ========== involve SVG 动画 ========== */
+
+/* 漩涡整体旋转 */
+.iv-vortex{
+  transform-origin:170px 140px;
+  animation:ivVortexSpin 22s linear infinite;
+}
+@keyframes ivVortexSpin{
+  to{ transform:rotate(360deg); }
+}
+/* 三条螺旋臂描边流动 */
+.iv-arm{
+  fill:none;
+  stroke-linecap:round;
+  stroke-dasharray:12 8;
+  animation:ivArmFlow 3s linear infinite;
+}
+.iv-arm.a1{ stroke:var(--teal); }
+.iv-arm.a2{ stroke:var(--cyan); animation-delay:-1s; }
+.iv-arm.a3{ stroke:var(--coral); animation-delay:-2s; }
+@keyframes ivArmFlow{
+  to{ stroke-dashoffset:-40; }
+}
+/* 中心漩涡眼脉动 */
+.iv-eye{
+  animation:ivEyePulse 2.8s ease-in-out infinite;
+  transform-origin:170px 140px;
+}
+@keyframes ivEyePulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.12); }
+}
+/* 中心光晕呼吸 */
+.iv-halo{
+  animation:ivHaloBreath 3.2s ease-in-out infinite;
+  transform-origin:170px 140px;
+}
+@keyframes ivHaloBreath{
+  0%,100%{ opacity:.4; transform:scale(.9); }
+  50%{ opacity:.85; transform:scale(1.15); }
+}
+/* 被卷入的方块 —— 沿螺旋向中心移动 */
+.iv-particle{
+  animation:ivParticlePull 5s ease-in infinite;
+}
+.iv-particle.p2{ animation-delay:1s; }
+.iv-particle.p3{ animation-delay:2s; }
+.iv-particle.p4{ animation-delay:3s; }
+.iv-particle.p5{ animation-delay:4s; }
+@keyframes ivParticlePull{
+  0%{
+    opacity:0;
+    transform:translate(0,0) rotate(0deg) scale(1);
+  }
+  15%{ opacity:1; }
+  70%{ opacity:.9; }
+  100%{
+    opacity:0;
+    transform:translate(var(--px), var(--py)) rotate(220deg) scale(.25);
+  }
+}
+/* ========== 结束 involve SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+/* ============================================================
+   辨析表格 —— drop-shadow 跟随圆角
+   ============================================================ */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@media (max-width:640px){.hero{padding:50px 22px 40px;}
+.word-anim{font-size:54px;}
+.hero-vortex{ width:520px; height:520px; }
+}
+@media (min-width:1100px){.hero{padding:100px 80px 80px;}
+.hero-band{height:24px;}
+.word-anim{font-size:132px;}
+.speak-btn{width:56px;height:56px;font-size:26px;}
+.ipa-anim{font-size:18px;padding:6px 22px;}
+.pos-anim{font-size:13px;padding:6px 20px;}
+.spell-hint{font-size:13px;padding:10px 24px;}
+.collo:nth-child(5){grid-column:1 / -1;}
+}
+@media (min-width:1500px){.hero{padding:120px 100px 96px;}
+.word-anim{font-size:158px;}
+}
+@media print{body::before,body::after{display:none;}
+.hero-vortex,.hero-eye,.page-floats,.progress-bar{display:none;}
+}
+</style>
+</head>
+<body data-word="involve">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-floats" aria-hidden="true">
+    <div class="fl block teal f1"></div>
+    <div class="fl arc f2"></div>
+    <div class="fl block coral f3"></div>
+    <div class="fl dot f4"></div>
+    <div class="fl block cyan f5"></div>
+    <div class="fl arc f6"></div>
+    <div class="fl block gold f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-vortex" aria-hidden="true">
+      <svg viewBox="0 0 760 760">
+        <!-- 4 条螺旋臂（从中心向外卷） -->
+        <path class="vortex-arm va1"
+              d="M 380 380 Q 400 340 440 360 Q 490 390 460 450 Q 420 520 340 490 Q 250 450 280 350 Q 320 220 460 240 Q 640 270 610 460 Q 580 660 380 640"/>
+        <path class="vortex-arm va2"
+              d="M 380 380 Q 360 420 320 400 Q 270 370 300 310 Q 340 240 420 270 Q 510 310 480 410 Q 440 540 300 520 Q 120 490 150 300 Q 180 100 380 120"/>
+        <path class="vortex-arm va3"
+              d="M 380 380 Q 420 380 420 420 Q 420 480 360 480 Q 280 480 280 400 Q 280 300 380 300 Q 500 300 500 400 Q 500 520 380 520 Q 220 520 220 380"/>
+        <path class="vortex-arm va4"
+              d="M 380 380 Q 340 380 340 340 Q 340 280 400 280 Q 480 280 480 360 Q 480 460 380 460 Q 260 460 260 360 Q 260 220 380 220"/>
+      </svg>
+    </div>
+
+    <div class="hero-eye" aria-hidden="true">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#2AA198" stop-opacity=".9"/>
+            <stop offset="55%" stop-color="#2AA198" stop-opacity=".3"/>
+            <stop offset="100%" stop-color="#2AA198" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle class="eye-pulse" cx="100" cy="100" r="90" fill="url(#eyeGlow)"/>
+        <circle cx="100" cy="100" r="26" fill="#04100E" stroke="var(--teal)" stroke-width="2"/>
+        <circle cx="100" cy="100" r="8" fill="var(--teal)"/>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="involve">
+          <span class="letter l1">i</span><span class="letter l2">n</span><span class="letter l3">v</span><span class="letter l4">o</span><span class="letter l5">l</span><span class="letter l6">v</span><span class="letter l7">e</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 involve">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ɪnˈvɒlv/ &nbsp;·&nbsp; 美 /ɪnˈvɑːlv/</div>
+      <div class="pos-anim">v.</div>
+      <div class="spell-hint">in · volve &nbsp; 包含 · 涉及 · 使参与</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">in-</span>（进入）
+          + <span class="stem">volve</span>（卷，转）
+          &nbsp;→&nbsp; "卷进去" → <b>包含 · 涉及 · 使参与</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">名词</div><div class="w"><span class="hl">involvement</span></div><div class="p">/ɪnˈvɒlvmənt/</div><div class="m">参与，卷入</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">involved</div><div class="p">/ɪnˈvɒlvd/</div><div class="m">参与的；复杂的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">involving</div><div class="p">/ɪnˈvɒlvɪŋ/</div><div class="m">需要……的</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">evolve</div><div class="p">/ɪˈvɒlv/</div><div class="m">进化（向外卷，同根）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">revolve</div><div class="p">/rɪˈvɒlv/</div><div class="m">旋转（反复转，同根）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">devolve</div><div class="p">/dɪˈvɒlv/</div><div class="m">移交，退化（同根）</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">involve</span> = 一个漩涡把周围的东西<strong>卷进去</strong>。
+          </p>
+          <p class="ic-sub">
+            一件事 involve 很多人 → 涉及很多人；<br>
+            一份工作 involve 出差 → 包含出差（必然需要）；<br>
+            一场事故 involve 三辆车 → 牵涉三辆车。<br>
+            核心：<b>"卷进来"</b>——不是"顺带提到"，而是"必须包含在内"。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 340 280">
+            <defs>
+              <radialGradient id="ivHalo" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#2AA198" stop-opacity=".85"/>
+                <stop offset="55%" stop-color="#0E3B3A" stop-opacity=".35"/>
+                <stop offset="100%" stop-color="#081A18" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- 中心光晕 -->
+            <circle class="iv-halo" cx="170" cy="140" r="90" fill="url(#ivHalo)"/>
+
+            <!-- 漩涡（三条螺旋臂旋转） -->
+            <g class="iv-vortex">
+              <path class="iv-arm a1"
+                    d="M 170 140 Q 190 115 215 135 Q 245 160 225 195 Q 200 235 155 215 Q 110 190 130 140 Q 155 80 220 100"/>
+              <path class="iv-arm a2"
+                    d="M 170 140 Q 150 165 125 145 Q 95 120 115 85 Q 140 45 185 65 Q 230 90 210 140 Q 185 200 120 180"/>
+              <path class="iv-arm a3"
+                    d="M 170 140 Q 170 110 200 110 Q 240 110 240 150 Q 240 195 195 195 Q 145 195 145 145 Q 145 80 215 80"/>
+            </g>
+
+            <!-- 被卷入的方块（从外向内） -->
+            <rect class="iv-particle" x="240" y="60" width="14" height="14" rx="2"
+                  fill="var(--teal)" stroke="var(--ink)" stroke-width="2"
+                  style="--px:-70px; --py:80px;"/>
+            <rect class="iv-particle p2" x="90" y="70" width="12" height="12" rx="2"
+                  fill="var(--coral)" stroke="var(--ink)" stroke-width="2"
+                  style="--px:80px; --py:70px;"/>
+            <rect class="iv-particle p3" x="255" y="200" width="13" height="13" rx="2"
+                  fill="var(--cyan)" stroke="var(--ink)" stroke-width="2"
+                  style="--px:-85px; --py:-60px;"/>
+            <rect class="iv-particle p4" x="80" y="205" width="12" height="12" rx="2"
+                  fill="var(--gold)" stroke="var(--ink)" stroke-width="2"
+                  style="--px:90px; --py:-65px;"/>
+            <rect class="iv-particle p5" x="170" y="35" width="13" height="13" rx="2"
+                  fill="var(--teal)" stroke="var(--ink)" stroke-width="2"
+                  style="--px:0px; --py:105px;"/>
+
+            <!-- 中心漩涡眼 -->
+            <g class="iv-eye">
+              <circle cx="170" cy="140" r="34" fill="#081A18" stroke="var(--teal)" stroke-width="3"/>
+              <circle cx="170" cy="140" r="16" fill="var(--teal)"/>
+              <circle cx="170" cy="140" r="6" fill="#081A18"/>
+            </g>
+
+            <!-- 外圈轨道虚线 -->
+            <circle cx="170" cy="140" r="120" fill="none"
+                    stroke="var(--teal)" stroke-width="1.5"
+                    stroke-dasharray="4 8" opacity=".4"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">involve doing sth</div><div class="meaning">需要/包含<b>做某事</b>（后接动名词）</div></div>
+        <div class="collo"><div class="pattern">be involved in</div><div class="meaning"><b>参与</b>某事 / <b>卷入</b>某事</div></div>
+        <div class="collo"><div class="pattern">be involved with</div><div class="meaning">与……<b>有牵连/有关系</b>（人或组织）</div></div>
+        <div class="collo"><div class="pattern">involve sb in sth</div><div class="meaning"><b>让某人参与</b>某事</div></div>
+        <div class="collo"><div class="pattern">get involved</div><div class="meaning"><b>主动参与</b>进来</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力</div>
+          <p class="en">This experiment <em class="hl">involves</em> measuring the temperature changes over time.</p>
+          <p class="cn">这个实验需要测量温度随时间的变化。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">The role of the manager <em class="hl">involves</em> coordinating the work of several departments.</p>
+          <p class="cn">经理的职责包括协调几个部门的工作。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">Many factors <em class="hl">involved</em> in the economic crisis have been identified by researchers.</p>
+          <p class="cn">研究人员已经确定了此次经济危机涉及的许多因素。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">Parents should <em class="hl">involve</em> their children in deciding family rules.</p>
+          <p class="cn">父母应该让孩子参与制定家规。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">后接形式</span>
+          involve 后接动词必须用<b>动名词</b>，不能用不定式<br>
+          <span class="wrong">involves to travel</span> → <span class="right">involves travelling</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">被动语态</span>
+          <b>be involved in</b>（参与/卷入）≠ <b>be involved with</b>（与人有关系）<br>
+          <span class="wrong">She is involved with the project.</span> → <span class="right">She is involved in the project.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词义变化</span>
+          <b>involved</b> 放名词前 = "相关的"；放名词后 = "复杂的"<br>
+          the involved parties（相关各方）/ the problem involved（复杂的问题）
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>involve</td>
+            <td>必然包含 / 卷入（强）</td>
+            <td class="chant">卷进来是 involve</td>
+          </tr>
+          <tr>
+            <td>include</td>
+            <td>包含（作为其中一部分）</td>
+            <td class="chant">顺带包含是 include</td>
+          </tr>
+          <tr>
+            <td>contain</td>
+            <td>容纳，装有（容器内有）</td>
+            <td class="chant">装在里面 contain</td>
+          </tr>
+          <tr>
+            <td>entail</td>
+            <td>必然涉及（后果/条件）</td>
+            <td class="chant">必然牵涉 entail</td>
+          </tr>
+          <tr>
+            <td>concern</td>
+            <td>与……有关（较中性）</td>
+            <td class="chant">有关系是 concern</td>
+          </tr>
+          <tr>
+            <td>implicate</td>
+            <td>牵连（多指负面）</td>
+            <td class="chant">牵连犯罪 implicate</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The job <span class="first-letter">i</span><span class="blank" onclick="this.classList.toggle('revealed')">nvolves</span> traveling abroad several times a year.</p>
+          <p class="fill-hint">提示：<b>involve doing sth</b>，需要做某事（动名词）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She has been <span class="first-letter">i</span><span class="blank" onclick="this.classList.toggle('revealed')">nvolved</span> in charity work for over ten years.</p>
+          <p class="fill-hint">提示：<b>be involved in</b>，参与某事</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The teacher tried to <span class="first-letter">i</span><span class="blank" onclick="this.classList.toggle('revealed')">nvolve</span> every student in the discussion.</p>
+          <p class="fill-hint">提示：<b>involve sb in sth</b>，让某人参与</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Three cars were <span class="first-letter">i</span><span class="blank" onclick="this.classList.toggle('revealed')">nvolved</span> in the accident on the highway.</p>
+          <p class="fill-hint">提示：<b>be involved in an accident</b>，牵涉进事故</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">We need to find out about his <span class="first-letter">i</span><span class="blank" onclick="this.classList.toggle('revealed')">nvolvement</span> in the scandal.</p>
+          <p class="fill-hint">⚠️ 陷阱：这里要名词 <b>involvement</b>（参与/牵连）</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>involve</b> 造一句自己的句子。刻意用上今天学的一个搭配（involve doing / be involved in / involve sb in）。</p>
+        <textarea id="mySentence" placeholder="例：Being a good team leader involves listening carefully to everyone's ideas."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>

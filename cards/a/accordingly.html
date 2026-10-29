@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>accordingly · 相应地</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 仪表盘色板 —— accordingly = 因果链 / 相应调整 */
+  --paper:#F8F4EC;
+  --paper-2:#EDE6D8;
+  --ink:#1C2A3A;
+  --teal:#3DB9A5;
+  --teal-soft:#DCF1EC;
+  --coral:#FF6E5B;
+  --coral-soft:#FFE1DC;
+  --butter:#FFD166;
+  --butter-soft:#FFF2CC;
+  --violet:#8E7CC3;
+  --violet-soft:#E8E2F4;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--teal);
+  --cb-accent-soft:var(--teal-soft);
+  --cb-2:var(--coral);
+  --cb-2-soft:var(--coral-soft);
+  --cb-3:var(--butter);
+  --cb-3-soft:var(--butter-soft);
+}
+html,body{margin:0;padding:0;}
+/* 全页：多米诺 / 因果链纹理 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(45deg,
+      transparent 0 60px,
+      rgba(61,185,165,.06) 60px 62px,
+      transparent 62px 120px),
+    repeating-linear-gradient(-45deg,
+      transparent 0 80px,
+      rgba(255,110,91,.05) 80px 82px,
+      transparent 82px 160px);
+  animation:chainShift 50s linear infinite;
+}
+@keyframes chainShift{
+  to{ background-position:120px 120px, -120px 120px; }
+}
+/* 漂浮齿轮/方点 */
+.page-gears{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.gear{
+  position:absolute;
+  border:2px solid var(--ink);
+  opacity:0;
+  animation:gearFloat linear infinite;
+}
+.gear.g1{left:8%;bottom:-50px;width:36px;height:36px;background:var(--teal-soft);border-radius:8px;animation-duration:26s;transform:rotate(20deg);}
+.gear.g2{left:24%;bottom:-70px;width:24px;height:24px;background:var(--butter-soft);border-radius:6px;animation-duration:32s;animation-delay:4s;transform:rotate(45deg);}
+.gear.g3{left:78%;bottom:-60px;width:44px;height:44px;background:var(--coral-soft);border-radius:10px;animation-duration:28s;animation-delay:2s;transform:rotate(-15deg);}
+.gear.g4{left:90%;bottom:-40px;width:28px;height:28px;background:var(--violet-soft);border-radius:6px;animation-duration:30s;animation-delay:8s;transform:rotate(30deg);}
+.gear.g5{left:52%;bottom:-80px;width:34px;height:34px;background:var(--teal-soft);border-radius:8px;animation-duration:34s;animation-delay:6s;transform:rotate(60deg);}
+.gear.g6{left:38%;bottom:-50px;width:20px;height:20px;background:var(--butter-soft);border-radius:5px;animation-duration:24s;animation-delay:12s;transform:rotate(-40deg);}
+.gear.g7{left:64%;bottom:-70px;width:40px;height:40px;background:var(--coral-soft);border-radius:9px;animation-duration:36s;animation-delay:10s;transform:rotate(15deg);}
+@keyframes gearFloat{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.6; }
+  90%{ opacity:.4; }
+  100%{ transform:translateY(-115vh) rotate(360deg); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:linear-gradient(180deg, #FFFBF0 0%, var(--paper) 100%);
+  overflow:hidden;
+}
+/* 顶部：多米诺骨牌排列带 */
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:20px;
+  background:repeating-linear-gradient(90deg,
+    var(--coral) 0 12px,
+    transparent 12px 14px,
+    var(--butter) 14px 26px,
+    transparent 26px 28px,
+    var(--teal) 28px 40px,
+    transparent 40px 42px,
+    var(--violet) 42px 54px,
+    transparent 54px 56px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 背景：链条流向 */
+.hero-chain{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.85;
+}
+.hero-chain svg{width:100%;height:100%;}
+.chain-arrow{
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:600;
+  stroke-dashoffset:600;
+  animation:chainDraw 3s cubic-bezier(.4,.1,.2,1) forwards;
+}
+.chain-arrow.c1{stroke:var(--coral);stroke-width:3;animation-delay:.2s;opacity:.5;}
+.chain-arrow.c2{stroke:var(--butter);stroke-width:3;animation-delay:.7s;opacity:.55;}
+.chain-arrow.c3{stroke:var(--teal);stroke-width:2.5;animation-delay:1.2s;opacity:.45;}
+@keyframes chainDraw{to{stroke-dashoffset:0;}}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:72px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.03em;
+  filter:drop-shadow(5px 5px 0 var(--ink));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterStep 0.9s cubic-bezier(.34,1.56,.64,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s;
+}
+/* 逐字母依次倒下（呼应多米诺） */
+.word-anim .l1{animation-delay:.10s;color:var(--coral);}
+.word-anim .l2{animation-delay:.20s;color:var(--butter);}
+.word-anim .l3{animation-delay:.30s;color:var(--teal);}
+.word-anim .l4{animation-delay:.40s;color:var(--violet);}
+.word-anim .l5{animation-delay:.50s;color:var(--coral);}
+.word-anim .l6{animation-delay:.60s;color:var(--butter);}
+.word-anim .l7{animation-delay:.70s;color:var(--teal);}
+.word-anim .l8{animation-delay:.80s;color:var(--violet);}
+.word-anim .l9{animation-delay:.90s;color:var(--coral);}
+.word-anim .l10{animation-delay:1.00s;color:var(--butter);}
+@keyframes letterStep{
+  0%{ opacity:0; transform:translateY(-30px) rotate(-25deg) scale(.4); filter:blur(6px); }
+  55%{ opacity:1; filter:blur(0); transform:translateY(6px) rotate(8deg) scale(1.08); }
+  100%{ opacity:1; transform:translateY(0) rotate(0) scale(1); color:var(--ink); }
+}
+.word-anim .letter:hover{color:var(--coral);transform:translateY(-8px) scale(1.12) rotate(-4deg);}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--butter);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(8deg);box-shadow:6px 6px 0 var(--ink);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--butter);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  opacity:0;animation:fadeUp .8s ease-out 1.15s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+}
+.ipa-anim:hover{background:var(--coral);color:var(--paper);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.35s forwards;
+  transform:rotate(1.2deg);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--teal-soft);
+  border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:var(--shadow-hard-sm);
+  opacity:0;animation:fadeUp .8s ease-out 1.6s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 1. 词根词族 */
+.root-family{
+  position:relative;
+  background:#FFFCF5;
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 24px;
+}
+/* 2. 意象卡 —— 多米诺骨牌倒下 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 220px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,209,102,.14) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* 多米诺骨牌倒下动画 */
+.domino{
+  transform-origin:bottom center;
+  animation:dominoFall 4s ease-in-out infinite;
+}
+.domino.d1{ animation-delay:0s; }
+.domino.d2{ animation-delay:.35s; }
+.domino.d3{ animation-delay:.7s; }
+.domino.d4{ animation-delay:1.05s; }
+.domino.d5{ animation-delay:1.4s; }
+@keyframes dominoFall{
+  0%, 60%, 100% { transform:rotate(0); }
+  15%, 25% { transform:rotate(-55deg); }
+}
+.domino-fall-arrow{
+  fill:none;
+  stroke:var(--butter);
+  stroke-width:2.5;
+  stroke-linecap:round;
+  stroke-dasharray:8 6;
+  animation:arrowFlow 2s linear infinite;
+}
+@keyframes arrowFlow{
+  to{ stroke-dashoffset:-28; }
+}
+/* 3. 搭配 */
+.collocations{display:flex;flex-direction:column;gap:14px;}
+/* 4. 例句 */
+.real-exs{display:flex;flex-direction:column;gap:16px;}
+/* 5. 易错 */
+.pitfall{
+  padding:28px 30px;
+  background:var(--coral-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  position:relative;overflow:hidden;
+  transform:rotate(-.5deg);
+}
+/* 6. 辨析表 */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+.compare-table tr.highlight{background:var(--butter-soft);}
+/* 7. 填空 */
+.self-test .hint{
+  font-size:14px;color:var(--ink);
+  margin:0 0 22px;padding:14px 20px;
+  background:var(--butter-soft);
+  border:3px dashed var(--ink);
+  border-radius:var(--radius-md);
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+/* 8. 造句 */
+.write-practice{
+  background:var(--violet-soft);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:26px 28px;
+  transform:rotate(.4deg);
+}
+/* 9. 复习 */
+.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+/* ============================================================
+   手机（窄屏）
+   ============================================================ */
+@media (max-width:640px){
+  body{padding:20px 10px 60px;}
+  .hero{padding:50px 22px 40px;}
+  .word-anim{font-size:38px;}
+  .body-wrap{padding:36px 22px 0;}
+  .review-grid{grid-template-columns:repeat(2,1fr);}
+  .page{border-radius:22px;}
+  .image-card{grid-template-columns:1fr;padding:26px 22px;}
+  .image-card .ic-svg{width:180px;height:180px;margin:0 auto;}
+  .section-title{font-size:15px;padding:6px 16px 6px 10px;}
+}
+/* ============================================================
+   桌面 ≥1100px
+   ============================================================ */
+@media (min-width:1100px){
+  body{padding:56px 32px 120px;}
+
+  .page{
+    max-width:1200px;
+    border-radius:36px;
+    box-shadow:
+      0 0 0 3px var(--ink),
+      14px 14px 0 var(--ink),
+      0 24px 70px rgba(0,0,0,.55);
+  }
+
+  .hero{padding:100px 80px 80px;}
+  .hero-band{height:24px;}
+  .word-anim{font-size:104px;}
+  .speak-btn{width:56px;height:56px;font-size:26px;}
+  .ipa-anim{font-size:18px;padding:6px 22px;}
+  .pos-anim{font-size:13px;padding:6px 20px;}
+  .spell-hint{font-size:13px;padding:10px 24px;}
+
+  .body-wrap{padding:76px 80px 0;}
+  .section{margin-bottom:68px;}
+
+  .section-title{font-size:22px;gap:14px;margin-bottom:26px;padding:10px 26px 10px 14px;}
+  .section-title .num{width:38px;height:38px;font-size:16px;}
+
+  /* 词族 3 列 */
+  .fam-grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fam-card{padding:14px 16px;}
+  .fam-card .w{font-size:18px;}
+  .fam-card .m{font-size:13.5px;}
+
+  /* 意象卡 */
+  .image-card{
+    grid-template-columns:1.4fr 1fr;
+    gap:40px;
+    padding:48px 44px;
+  }
+  .image-card .ic-main{font-size:27px;line-height:1.5;}
+  .image-card .ic-sub{font-size:16px;}
+  .image-card .ic-svg{width:280px;height:240px;}
+
+  /* 搭配 2 列，第 5 项占满 */
+  .collocations{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .collo:nth-child(5){grid-column:1 / -1;}
+  .collo{padding:20px 24px;}
+  .collo .pattern{font-size:15.5px;padding:7px 16px;}
+  .collo .meaning{font-size:15px;}
+
+  /* 例句 2×2 */
+  .real-exs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .real-ex{padding:24px 28px;}
+  .real-ex .en{font-size:17px;}
+  .real-ex .cn{font-size:14.5px;}
+
+  /* 易错 */
+  .pitfall{padding:36px 40px;}
+  .pitfall-item{font-size:15.5px;padding:18px 22px;}
+
+  /* 辨析表 */
+  .compare-table{font-size:16px;border-spacing:0 14px;}
+  .compare-table td{padding:18px 24px;}
+  .compare-table td:first-child{width:160px;font-size:18px;}
+  .compare-table td:nth-child(2){width:auto;}
+  .compare-table .chant{font-size:14.5px;}
+
+  /* 填空 2 列 */
+  .self-test .fill-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .self-test .fill-item:nth-child(5){grid-column:1 / -1;margin-bottom:0;}
+  .fill-item{padding:22px 26px;margin-bottom:0;}
+  .fill-sentence{font-size:17px;}
+
+  /* 造句 */
+  .write-practice{
+    max-width:900px;
+    margin:0 auto;
+    padding:36px 40px;
+  }
+  .write-practice textarea{font-size:17px;padding:18px 22px;}
+
+  /* 复习 */
+  .review-grid{gap:24px;}
+  .review-day{padding:28px 14px 24px;}
+  .review-day .day{font-size:34px;}
+  .review-day .task{font-size:13.5px;}
+}
+/* ============================================================
+   超宽 ≥1500px
+   ============================================================ */
+@media (min-width:1500px){
+  .page{max-width:1400px;}
+  .hero{padding:120px 100px 96px;}
+  .word-anim{font-size:124px;}
+  .body-wrap{padding:92px 100px 0;}
+  .image-card{grid-template-columns:1.6fr 1fr;padding:56px 52px;}
+  .image-card .ic-main{font-size:30px;}
+  .image-card .ic-svg{width:340px;height:280px;}
+  .real-ex .en{font-size:18px;}
+}
+/* ============================================================
+   打印
+   ============================================================ */
+@media print{
+  body{background:#fff;padding:0;font-size:11pt;}
+  body::before,body::after{display:none;}
+  .page{box-shadow:none;max-width:100%;}
+  .blank{color:var(--coral)!important;}
+  .fill-item,.compare-table,.pitfall,.review-day{break-inside:avoid;}
+  .hero-chain,.page-gears,.progress-bar{display:none;}
+  .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1;transform:none;}
+  .compare-table tbody tr,.review-day{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body data-word="accordingly">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-gears" aria-hidden="true">
+    <div class="gear g1"></div><div class="gear g2"></div>
+    <div class="gear g3"></div><div class="gear g4"></div>
+    <div class="gear g5"></div><div class="gear g6"></div>
+    <div class="gear g7"></div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+    <div class="hero-chain" aria-hidden="true">
+      <svg viewBox="0 0 860 320" preserveAspectRatio="none">
+        <path class="chain-arrow c1" d="M -40 120 C 200 60, 480 200, 900 100" />
+        <path class="chain-arrow c2" d="M -40 220 C 260 280, 540 100, 900 240" />
+        <path class="chain-arrow c3" d="M -40 170 C 300 140, 500 200, 900 160" />
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="accordingly">
+          <span class="letter l1">a</span><span class="letter l2">c</span><span class="letter l3">c</span><span class="letter l4">o</span><span class="letter l5">r</span><span class="letter l6">d</span><span class="letter l7">i</span><span class="letter l8">n</span><span class="letter l9">g</span><span class="letter l10">ly</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 accordingly">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /əˈkɔːdɪŋli/ &nbsp;·&nbsp; 美 /əˈkɔːrdɪŋli/</div>
+      <div class="pos-anim">adv.</div>
+      <div class="spell-hint">ac · cord · ing · ly &nbsp; 相应地 · 因此</div>
+    </div>
+  </section>
+
+  <!-- 主体 -->
+  <div class="body-wrap">
+
+    <!-- 1. 词根词族 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          拉丁语 <span class="affix">ad-</span>（向）
+          + <span class="stem">cor</span>（心，引申为"一致"）
+          &nbsp;→&nbsp; "心心相合" → <b>相应 · 一致 · 因此</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">名词</div><div class="w">accord</div><div class="p">/əˈkɔːd/</div><div class="m">一致，协议</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">accordance</div><div class="p">/əˈkɔːdns/</div><div class="m">一致，符合</div></div>
+          <div class="fam-card"><div class="pos">介词短语</div><div class="w"><span class="hl">according to</span></div><div class="p">/əˈkɔːdɪŋ tə/</div><div class="m">根据，按照</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">according</div><div class="p">/əˈkɔːdɪŋ/</div><div class="m">相符的（常与 to 连用）</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">concord</div><div class="p">/ˈkɒŋkɔːd/</div><div class="m">和睦，和谐</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">discord</div><div class="p">/ˈdɪskɔːd/</div><div class="m">不和，分歧</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 意象卡（多米诺骨牌） -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">accordingly</span> = 第一张牌倒了，<strong>后面的牌跟着倒</strong>。
+          </p>
+          <p class="ic-sub">
+            情况变了 → 跟着调整 = 相应地；原因定了 → 结果来了 = 因此。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 220 200">
+            <!-- 多米诺骨牌（依次倒下） -->
+            <g class="domino d1" transform="translate(30,150)">
+              <rect x="-8" y="-60" width="16" height="60" rx="3" fill="var(--coral)" stroke="var(--ink)" stroke-width="2.5"/>
+            </g>
+            <g class="domino d2" transform="translate(60,150)">
+              <rect x="-8" y="-60" width="16" height="60" rx="3" fill="var(--butter)" stroke="var(--ink)" stroke-width="2.5"/>
+            </g>
+            <g class="domino d3" transform="translate(90,150)">
+              <rect x="-8" y="-60" width="16" height="60" rx="3" fill="var(--teal)" stroke="var(--ink)" stroke-width="2.5"/>
+            </g>
+            <g class="domino d4" transform="translate(120,150)">
+              <rect x="-8" y="-60" width="16" height="60" rx="3" fill="var(--violet)" stroke="var(--ink)" stroke-width="2.5"/>
+            </g>
+            <g class="domino d5" transform="translate(150,150)">
+              <rect x="-8" y="-60" width="16" height="60" rx="3" fill="var(--coral)" stroke="var(--ink)" stroke-width="2.5"/>
+            </g>
+            <!-- 顶部流动的箭头 -->
+            <path class="domino-fall-arrow" d="M 30 60 Q 90 40 170 60" />
+            <polygon points="170,55 180,60 170,65" fill="var(--butter)" stroke="var(--ink)" stroke-width="1.5"/>
+            <!-- 底线 -->
+            <line x1="10" y1="152" x2="190" y2="152" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">act / respond accordingly</div><div class="meaning"><b>相应地</b>行动 / 回应</div></div>
+        <div class="collo"><div class="pattern">adjust accordingly</div><div class="meaning"><b>相应调整</b></div></div>
+        <div class="collo"><div class="pattern">and accordingly</div><div class="meaning">从而，<b>因此</b>（表结果）</div></div>
+        <div class="collo"><div class="pattern">accordingly, ...</div><div class="meaning">句首作过渡词：<b>因此，所以</b></div></div>
+        <div class="collo"><div class="pattern">according to</div><div class="meaning">对比：<b>根据</b>（后接名词，≠ accordingly）</div></div>
+      </div>
+    </section>
+
+    <!-- 4. 例句 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 阅读</div>
+          <p class="en">The system detects changes in temperature and adjusts the airflow <em class="hl">accordingly</em>.</p>
+          <p class="cn">系统检测温度变化，并相应地调整气流。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 写作</div>
+          <p class="en">The government should assess the situation and <em class="hl">accordingly</em> revise its policies.</p>
+          <p class="cn">政府应评估形势，并据此修订政策。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">The project was delayed; <em class="hl">accordingly</em>, the deadline was extended.</p>
+          <p class="cn">项目被延误，因此截止日期被延长。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">Each department sets its own budget, and funds are distributed <em class="hl">accordingly</em>.</p>
+          <p class="cn">每个部门自定预算，资金也相应分配。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 易错 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          <span class="wrong">accordingly to the rules</span> → <span class="right">according to the rules</span><br>
+          表示"根据"用 <b>according to</b>（介词短语），不是 accordingly。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词性</span>
+          accordingly 是<b>副词</b>，不能直接连接两个句子<br>
+          <span class="wrong">It rained, accordingly we stayed.</span> → <span class="right">It rained; accordingly, we stayed.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          <span class="wrong">accordinglly / acordingly</span> → <span class="right">accordingly</span><br>
+          注意：accord + ing + ly，双 c 双 r。
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>accordingly</td><td>因此 / 相应地（副词）</td><td class="chant">情况变了跟着变用 accordingly</td></tr>
+          <tr><td>according to</td><td>根据（介词短语）</td><td class="chant">接名词用 according to</td></tr>
+          <tr><td>therefore</td><td>因此（逻辑推论）</td><td class="chant">纯逻辑推理 therefore</td></tr>
+          <tr><td>consequently</td><td>因此（强调结果）</td><td class="chant">导致结果 consequently</td></tr>
+          <tr><td>thus</td><td>因此（书面，常接分词）</td><td class="chant">书面简洁用 thus</td></tr>
+          <tr><td>so</td><td>所以（口语）</td><td class="chant">口语最常用 so</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. 填空 -->
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The weather changed, and we adjusted our plans <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">ccordingly</span>.</p>
+          <p class="fill-hint">提示：表"相应地"　<b>adjust accordingly</b></p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He missed the deadline; <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">ccordingly</span>, he lost the contract.</p>
+          <p class="fill-hint">提示：表"因此"　句首 + 逗号</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Please read the instructions carefully and act <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">ccordingly</span>.</p>
+          <p class="fill-hint">提示：<b>act accordingly</b>，照此行事</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence"><span class="first-letter">A</span><span class="blank" onclick="this.classList.toggle('revealed')">ccording to</span> the report, sales rose sharply.</p>
+          <p class="fill-hint">⚠️ 陷阱：这里填 <b>according to</b>（根据），不是 accordingly！</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The rules vary <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">ccording to</span> the region.</p>
+          <p class="fill-hint">⚠️ 同理：<b>vary according to</b>，根据…不同</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. 造句 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>accordingly</b> 造一句自己的句子。可以用"因此"或"相应地"两种意思。</p>
+        <textarea id="mySentence" placeholder="例：The situation changed, so we adjusted our strategy accordingly."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. 复习 -->
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>

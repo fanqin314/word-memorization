@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>watertight · 防水的</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 密封舱色板 —— watertight = 防水的 / 水密的 / 无懈可击的 */
+  --paper:#EEF2F4;
+  --paper-2:#DCE4EA;
+  --ink:#06101A;
+  --deep:#0A1626;
+  --deep-soft:#D6DFE9;
+  --ocean:#1B5C8A;        /* 深海蓝 */
+  --ocean-soft:#D3E4F0;
+  --cyan:#3CB8D4;         /* 水青 */
+  --cyan-soft:#D6EFF5;
+  --seal:#0F0E0C;         /* 密封橡胶黑 */
+  --seal-soft:#D8D6D2;
+  --warn:#F2B233;         /* 警示黄（密封胶条）*/
+  --warn-soft:#FCEBCB;
+  --ok:#2AA85B;           /* 干爽绿 */
+  --ok-soft:#D5F0DF;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--ocean);
+  --cb-accent-soft:var(--ocean-soft);
+  --cb-2:var(--cyan);
+  --cb-2-soft:var(--cyan-soft);
+  --cb-3:var(--seal);
+  --cb-3-soft:var(--seal-soft);
+  --cb-deep:var(--deep);
+}
+html,body{margin:0;padding:0;}
+/* 全页：斜向的雨线纹理 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(115deg,
+      transparent 0 40px,
+      rgba(60,184,212,.06) 40px 41px,
+      transparent 41px 80px),
+    repeating-linear-gradient(115deg,
+      transparent 0 70px,
+      rgba(27,92,138,.04) 70px 71px,
+      transparent 71px 140px);
+  animation:rainDrift 4s linear infinite;
+}
+@keyframes rainDrift{
+  to{ background-position:-40px 0, -70px 0; }
+}
+/* 漂浮的水滴 / 气泡 / 密封碎片 */
+.page-floats{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+/* 水滴 */
+.fl.drop{
+  width:12px;height:16px;
+  background:var(--cyan);
+  border:2px solid var(--ink);
+  border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow:0 0 8px rgba(60,184,212,.6);
+}
+.fl.drop.ocean{ background:var(--ocean); box-shadow:0 0 8px rgba(27,92,138,.6); }
+/* 气泡 */
+.fl.bubble{
+  width:10px;height:10px;
+  border:2px solid var(--ink);
+  border-radius:50%;
+  background:transparent;
+}
+/* 密封胶带碎片 */
+.fl.tape{
+  width:18px;height:5px;
+  background:var(--warn);
+  border:1.5px solid var(--ink);
+  border-radius:2px;
+  transform:rotate(-20deg);
+}
+/* 星芒 */
+.fl.star{
+  width:14px;height:14px;
+  color:var(--paper);
+  font-size:14px;
+  line-height:14px;
+  text-align:center;
+  text-shadow:0 0 6px var(--cyan);
+}
+.fl.star::before{ content:"✦"; }
+.fl.f1{ left:6%; bottom:-40px; animation-duration:22s; }
+.fl.f2{ left:22%; bottom:-55px; animation-duration:28s; animation-delay:3s; }
+.fl.f3{ left:78%; bottom:-45px; animation-duration:24s; animation-delay:1.5s; }
+.fl.f4{ left:90%; bottom:-30px; animation-duration:26s; animation-delay:6s; }
+.fl.f5{ left:52%; bottom:-70px; animation-duration:20s; animation-delay:4.5s; }
+.fl.f6{ left:38%; bottom:-50px; animation-duration:30s; animation-delay:9s; }
+.fl.f7{ left:64%; bottom:-60px; animation-duration:18s; animation-delay:7.5s; }
+@keyframes flDrift{
+  0%{ transform:translateY(0) translateX(0); opacity:0; }
+  10%{ opacity:.85; }
+  50%{ transform:translateY(-50vh) translateX(15px); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) translateX(-10px); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    radial-gradient(ellipse at 50% 45%, #16344E 0%, #0A1626 45%, #04080F 100%);
+  overflow:hidden;
+  color:var(--paper);
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--warn) 0 22px,
+    transparent 22px 24px,
+    var(--cyan) 24px 46px,
+    transparent 46px 48px,
+    var(--ocean) 48px 70px,
+    transparent 70px 72px,
+    var(--ok) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 大舷窗背景 */
+.hero-porthole{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:600px;height:600px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.28;
+}
+.hero-porthole svg{ width:100%; height:100%; }
+.porthole-outer{
+  fill:none;
+  stroke:var(--warn);
+  stroke-width:6;
+  stroke-linejoin:round;
+  transform-origin:300px 300px;
+  animation:portRingPulse 4s ease-in-out infinite;
+}
+.porthole-inner{
+  fill:none;
+  stroke:var(--cyan);
+  stroke-width:3;
+  stroke-dasharray:8 10;
+  transform-origin:300px 300px;
+  animation:portRingSpin 24s linear infinite;
+}
+@keyframes portRingPulse{
+  0%,100%{ opacity:.7; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.02); }
+}
+@keyframes portRingSpin{
+  to{ transform:rotate(360deg); }
+}
+/* HERO 从顶部流下的水帘 */
+.hero-waterfall{
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:200px;
+  height:100%;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+  opacity:.4;
+}
+.water-column{
+  position:absolute;
+  top:0;
+  width:6px;
+  height:100%;
+  background:linear-gradient(180deg,
+    transparent 0%,
+    var(--cyan) 20%,
+    var(--ocean) 60%,
+    transparent 100%);
+  border-radius:3px;
+  opacity:.7;
+  animation:waterFlow 2s linear infinite;
+}
+.water-column.c1{ left:30%; animation-delay:0s; }
+.water-column.c2{ left:50%; animation-delay:.4s; width:8px; }
+.water-column.c3{ left:70%; animation-delay:.8s; }
+@keyframes waterFlow{
+  0%{ transform:translateY(-50%); opacity:0; }
+  30%{ opacity:.8; }
+  70%{ opacity:.6; }
+  100%{ transform:translateY(100%); opacity:0; }
+}
+/* HERO 四角水花溅射 */
+.hero-splash{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.splash-dot{
+  position:absolute;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 10px rgba(60,184,212,.6);
+  opacity:0;
+  animation:splashOut 3s ease-out infinite;
+}
+.sd1{ top:30%; left:20%; animation-delay:0s; }
+.sd2{ top:30%; left:22%; animation-delay:.2s; }
+.sd3{ top:30%; right:22%; animation-delay:.4s; }
+.sd4{ top:30%; right:20%; animation-delay:.6s; }
+.sd5{ top:70%; left:18%; animation-delay:.3s; }
+.sd6{ top:70%; right:18%; animation-delay:.5s; }
+@keyframes splashOut{
+  0%, 20%{ opacity:0; transform:translate(0,0) scale(.3); }
+  35%{ opacity:1; transform:scale(1); }
+  70%{ opacity:.6; }
+  100%{ opacity:0; transform:translate(var(--sx),var(--sy)) scale(.5); }
+}
+.sd1{ --sx:-40px; --sy:-30px; }
+.sd2{ --sx:-20px; --sy:-50px; }
+.sd3{ --sx:20px; --sy:-50px; }
+.sd4{ --sx:40px; --sy:-30px; }
+.sd5{ --sx:-30px; --sy:20px; }
+.sd6{ --sx:30px; --sy:20px; }
+/* HERO 侧边干燥指示灯 */
+.hero-dry-indicator{
+  position:absolute;
+  right:24px;
+  top:50%;
+  transform:translateY(-50%) rotate(6deg);
+  width:100px;
+  height:100px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.4;
+  animation:dryIndicatorPulse 3s ease-in-out infinite;
+}
+.hero-dry-indicator svg{ width:100%; height:100%; }
+@keyframes dryIndicatorPulse{
+  0%,100%{ opacity:.4; transform:translateY(-50%) rotate(6deg) scale(1); }
+  50%{ opacity:.8; transform:translateY(-50%) rotate(6deg) scale(1.05); }
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:96px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  color:var(--paper);
+  filter:drop-shadow(5px 5px 0 var(--ocean)) drop-shadow(-3px 3px 0 var(--cyan));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterSeal 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1), color .25s;
+}
+/* 每个字母像被"密封胶条"从上往下压紧 */
+.word-anim .l1{ animation-delay:.10s; color:var(--cyan); }
+.word-anim .l2{ animation-delay:.20s; color:var(--paper); }
+.word-anim .l3{ animation-delay:.30s; color:var(--warn); }
+.word-anim .l4{ animation-delay:.40s; color:var(--paper); }
+.word-anim .l5{ animation-delay:.50s; color:var(--ocean); }
+.word-anim .l6{ animation-delay:.60s; color:var(--paper); }
+.word-anim .l7{ animation-delay:.70s; color:var(--cyan); }
+.word-anim .l8{ animation-delay:.80s; color:var(--paper); }
+.word-anim .l9{ animation-delay:.90s; color:var(--warn); }
+.word-anim .l10{ animation-delay:1.00s; color:var(--paper); }
+@keyframes letterSeal{
+  0%{
+    opacity:0;
+    transform:translateY(-70px) scaleY(1.6) scaleX(.6);
+    filter:blur(8px);
+  }
+  50%{
+    opacity:1;
+    filter:blur(0);
+    transform:translateY(8px) scaleY(.85) scaleX(1.15);
+  }
+  75%{
+    transform:translateY(-3px) scaleY(1.05) scaleX(.98);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scaleY(1) scaleX(1);
+    color:var(--paper);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--cyan);
+  transform:translateY(-6px) scale(1.12);
+  filter:drop-shadow(0 0 16px var(--cyan));
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--warn);border:3px solid var(--paper);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--ocean);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--ocean);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ocean);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--warn);border:2.5px solid var(--paper);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cyan);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--cyan);color:var(--ink);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ok);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  transform:rotate(1.2deg);
+  border:2px solid var(--ink);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--paper);background:rgba(10,22,38,.85);
+  border:2.5px solid var(--paper);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--ok);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 意象卡 */
+.image-card{
+  background:var(--deep);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(60,184,212,.15) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 6s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* ========== watertight SVG 动画 —— 舷窗 + 水帘 + 密封胶条 ========== */
+
+/* 舷窗外部金属框 */
+.wt-frame{
+  fill:none;
+  stroke:var(--warn);
+  stroke-width:8;
+  stroke-linejoin:round;
+  animation:frameSealPulse 4s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes frameSealPulse{
+  0%,100%{ stroke-width:8; opacity:.95; }
+  50%{ stroke-width:10; opacity:1; }
+}
+/* 密封橡胶圈 */
+.wt-seal{
+  fill:none;
+  stroke:var(--seal);
+  stroke-width:6;
+  stroke-dasharray:6 4;
+  transform-origin:190px 150px;
+  animation:sealSpin 20s linear infinite;
+}
+/* 内部玻璃区域 */
+.wt-glass{
+  fill:rgba(60,184,212,.08);
+  stroke:var(--cyan);
+  stroke-width:2;
+}
+/* 玻璃上的高光 */
+.wt-glass-shine{
+  fill:var(--paper);
+  opacity:.15;
+  animation:glassShine 4s ease-in-out infinite;
+}
+/* 外部水帘（从上方流下） */
+.wt-water{
+  fill:var(--cyan);
+  animation:waterFall 3s linear infinite;
+}
+.wt-water.w2{ animation-delay:.6s; opacity:.8; }
+.wt-water.w3{ animation-delay:1.2s; opacity:.6; }
+@keyframes waterFall{
+  0%{ opacity:0; transform:translateY(-40px); }
+  20%{ opacity:.9; }
+  80%{ opacity:.5; }
+  100%{ opacity:0; transform:translateY(50px); }
+}
+/* 水击打舷窗后溅开的水花 */
+.wt-splash{
+  fill:var(--cyan);
+  opacity:0;
+  animation:splashDrop 3s ease-out infinite;
+}
+.wt-splash.s2{ animation-delay:.4s; }
+.wt-splash.s3{ animation-delay:.8s; }
+.wt-splash.s4{ animation-delay:1.2s; }
+@keyframes splashDrop{
+  0%, 25%{ opacity:0; transform:translate(0,0) scale(.3); }
+  40%{ opacity:.9; transform:scale(1); }
+  100%{ opacity:0; transform:translate(var(--sx),var(--sy)) scale(.5); }
+}
+/* 内部干燥指示（绿灯闪） */
+.wt-dry{
+  animation:dryLight 3s ease-in-out infinite;
+  transform-origin:190px 150px;
+}
+@keyframes dryLight{
+  0%, 20%{ opacity:.3; }
+  50%, 80%{ opacity:1; }
+  100%{ opacity:.3; }
+}
+/* 内外对比的“水珠滑落” */
+.wt-runoff{
+  fill:var(--cyan);
+  animation:runoff 3s ease-in infinite;
+}
+@keyframes runoff{
+  0%, 30%{ opacity:0; transform:translateY(-20px); }
+  40%{ opacity:1; }
+  100%{ opacity:0; transform:translateY(30px); }
+}
+/* 底部论证“无懈可击”的盾牌/密封勾 */
+.wt-shield{
+  animation:shieldGlow 4s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes shieldGlow{
+  0%,100%{ opacity:.6; }
+  50%{ opacity:1; }
+}
+/* 底部 DRY / SEALED 文字 */
+.wt-text{
+  animation:textSeal 4s ease-in-out infinite;
+}
+@keyframes textSeal{
+  0%, 35%{ opacity:0; transform:translateY(6px); }
+  50%, 85%{ opacity:1; transform:translateY(0); }
+  100%{ opacity:0; transform:translateY(-6px); }
+}
+/* 舷窗上水膜涟漪 */
+.wt-ripple{
+  fill:none;
+  stroke:var(--cyan);
+  stroke-width:1.5;
+  opacity:0;
+  transform-origin:190px 150px;
+  animation:rippleRipple 3s ease-out infinite;
+}
+.wt-ripple.r2{ animation-delay:1s; }
+@keyframes rippleRipple{
+  0%, 20%{ opacity:0; transform:scale(.4); }
+  40%{ opacity:.7; }
+  80%, 100%{ opacity:0; transform:scale(1.4); }
+}
+/* ========== 结束 watertight SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+/* 辨析表 drop-shadow */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@media (max-width:640px){.hero{padding:50px 22px 40px;}
+.word-anim{font-size:42px;}
+.hero-porthole{ width:400px; height:400px; }
+.hero-dry-indicator{ display:none; }
+}
+@media (min-width:1100px){.hero{padding:100px 80px 80px;}
+.hero-band{height:24px;}
+.word-anim{font-size:124px;}
+.speak-btn{width:56px;height:56px;font-size:26px;}
+.ipa-anim{font-size:18px;padding:6px 22px;}
+.pos-anim{font-size:13px;padding:6px 20px;}
+.spell-hint{font-size:13px;padding:10px 24px;}
+.collo:nth-child(5){grid-column:1 / -1;}
+}
+@media (min-width:1500px){.hero{padding:120px 100px 96px;}
+.word-anim{font-size:150px;}
+}
+@media print{body::before,body::after{display:none;}
+.hero-porthole,.hero-waterfall,.hero-splash,.hero-dry-indicator,.page-floats,.progress-bar{display:none;}
+}
+</style>
+</head>
+<body data-word="watertight">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-floats" aria-hidden="true">
+    <div class="fl drop f1"></div>
+    <div class="fl bubble f2"></div>
+    <div class="fl tape f3"></div>
+    <div class="fl star f4"></div>
+    <div class="fl drop ocean f5"></div>
+    <div class="fl bubble f6"></div>
+    <div class="fl tape f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <!-- 背景舷窗 -->
+    <div class="hero-porthole" aria-hidden="true">
+      <svg viewBox="0 0 600 600">
+        <circle class="porthole-outer" cx="300" cy="300" r="240"/>
+        <circle class="porthole-inner" cx="300" cy="300" r="210"/>
+        <circle cx="300" cy="300" r="180" fill="none" stroke="var(--cyan)" stroke-width="1" opacity=".4"/>
+      </svg>
+    </div>
+
+    <!-- 从顶部流下的水帘 -->
+    <div class="hero-waterfall" aria-hidden="true">
+      <div class="water-column c1"></div>
+      <div class="water-column c2"></div>
+      <div class="water-column c3"></div>
+    </div>
+
+    <!-- 四角水花 -->
+    <div class="hero-splash" aria-hidden="true">
+      <div class="splash-dot sd1"></div>
+      <div class="splash-dot sd2"></div>
+      <div class="splash-dot sd3"></div>
+      <div class="splash-dot sd4"></div>
+      <div class="splash-dot sd5"></div>
+      <div class="splash-dot sd6"></div>
+    </div>
+
+    <!-- 侧边干燥指示灯 -->
+    <div class="hero-dry-indicator" aria-hidden="true">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--ok)" stroke-width="3"/>
+        <circle cx="50" cy="50" r="30" fill="none" stroke="var(--ok)" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text x="50" y="58" text-anchor="middle" font-family="Helvetica" font-size="14" font-weight="900" fill="var(--ok)">DRY</text>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="watertight">
+          <span class="letter l1">w</span><span class="letter l2">a</span><span class="letter l3">t</span><span class="letter l4">e</span><span class="letter l5">r</span><span class="letter l6">t</span><span class="letter l7">i</span><span class="letter l8">g</span><span class="letter l9">h</span><span class="letter l10">t</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 watertight">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˈwɔːtətaɪt/ &nbsp;·&nbsp; 美 /ˈwɔːtərtaɪt/</div>
+      <div class="pos-anim">adj.</div>
+      <div class="spell-hint">wa · ter · tight &nbsp; 防水的 · 水密的 · 无懈可击</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词源 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">water</span>（水）+ <span class="affix">tight</span>（紧的，密封的）
+          &nbsp;→&nbsp; "水都进不去" → <b>防水的 · 水密的 · 无懈可击</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">形容词</div><div class="w"><span class="hl">watertight</span></div><div class="p">/ˈwɔːtətaɪt/</div><div class="m">防水的，水密的（本词）</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">airtight</div><div class="p">/ˈeətaɪt/</div><div class="m">气密的，无漏洞的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">lighttight</div><div class="p">/ˈlaɪttaɪt/</div><div class="m">不透光的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">tight</div><div class="p">/taɪt/</div><div class="m">紧的，密封的</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">sealed</div><div class="p">/siːld/</div><div class="m">密封的（近义）</div></div>
+          <div class="fam-card"><div class="pos">形容词</div><div class="w">impermeable</div><div class="p">/ɪmˈpɜːmiəbl/</div><div class="m">不可渗透的（正式）</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">watertight</span> = 潜艇的<strong>舷窗</strong>，外面下着暴雨、海水拍打，<strong>里面依然干燥</strong>。
+          </p>
+          <p class="ic-sub">
+            物理义：水密舱 / 防水表（watertight watch）；<br>
+            比喻义：watertight argument（<b>无懈可击的</b>论证）—— 逻辑滴水不漏。<br>
+            核心：<b>"一个缝隙都没有，水一滴也进不来"</b>——既是物理防水，也是逻辑严密。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 380 300">
+            <defs>
+              <radialGradient id="wtGlassGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#3CB8D4" stop-opacity=".3"/>
+                <stop offset="100%" stop-color="#1B5C8A" stop-opacity=".15"/>
+              </radialGradient>
+            </defs>
+
+            <!-- 外部水膜（舷窗外侧） -->
+            <circle cx="190" cy="150" r="96" fill="var(--cyan)" opacity=".15"/>
+
+            <!-- 舷窗外圈黄铜框 -->
+            <circle class="wt-frame" cx="190" cy="150" r="90"/>
+
+            <!-- 密封橡胶圈 -->
+            <circle class="wt-seal" cx="190" cy="150" r="78"/>
+
+            <!-- 内部玻璃区域 -->
+            <circle class="wt-glass" cx="190" cy="150" r="70"/>
+
+            <!-- 玻璃内部的水滴/气泡（象征"内部"其实是没有水的，只是为了对比） -->
+            <g opacity=".5">
+              <circle cx="175" cy="130" r="3" fill="var(--cyan)" opacity=".5"/>
+              <circle cx="205" cy="175" r="2" fill="var(--cyan)" opacity=".4"/>
+              <circle cx="220" cy="140" r="2.5" fill="var(--cyan)" opacity=".5"/>
+            </g>
+
+            <!-- 玻璃上的高光（滑过） -->
+            <path class="wt-glass-shine" d="M 145 110 Q 165 100 185 115 Q 170 120 155 120 Z"/>
+
+            <!-- 玻璃内部中心的绿色"DRY"指示灯 -->
+            <g class="wt-dry">
+              <circle cx="190" cy="150" r="32" fill="var(--ok)" opacity=".18"/>
+              <circle cx="190" cy="150" r="22" fill="none" stroke="var(--ok)" stroke-width="2"/>
+              <text x="190" y="155" text-anchor="middle"
+                    font-family="Helvetica" font-size="9" font-weight="900"
+                    fill="var(--ok)" letter-spacing="1">DRY</text>
+            </g>
+
+            <!-- 外部从上方流下的水线 -->
+            <rect class="wt-water" x="148" y="30" width="4" height="40" rx="2"/>
+            <rect class="wt-water w2" x="188" y="26" width="5" height="46" rx="2"/>
+            <rect class="wt-water w3" x="228" y="32" width="4" height="40" rx="2"/>
+
+            <!-- 水击打框边缘后向外溅射的小水花 -->
+            <circle class="wt-splash" cx="94" cy="100" r="3" fill="var(--cyan)" style="--sx:-30px;--sy:-20px"/>
+            <circle class="wt-splash s2" cx="286" cy="100" r="3" fill="var(--cyan)" style="--sx:30px;--sy:-20px"/>
+            <circle class="wt-splash s3" cx="94" cy="200" r="2.5" fill="var(--cyan)" style="--sx:-25px;--sy:20px"/>
+            <circle class="wt-splash s4" cx="286" cy="200" r="2.5" fill="var(--cyan)" style="--sx:25px;--sy:20px"/>
+
+            <!-- 舷窗表面被水击打产生的涟漪 -->
+            <circle class="wt-ripple" cx="190" cy="150" r="90"/>
+            <circle class="wt-ripple r2" cx="190" cy="150" r="90"/>
+
+            <!-- 底部：无懈可击的论证盾牌（比喻义） -->
+            <g class="wt-shield">
+              <path d="M 140 250 L 190 235 L 240 250 L 240 275 Q 190 290 140 275 Z"
+                    fill="var(--ok)" opacity=".25" stroke="var(--ok)" stroke-width="2"/>
+              <path d="M 165 262 L 182 275 L 220 250"
+                    fill="none" stroke="var(--ok)" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+
+            <!-- 底部 WATERPROOF 文字 -->
+            <g class="wt-text">
+              <text x="190" y="290" text-anchor="middle"
+                    font-family="Helvetica" font-size="9" font-weight="900"
+                    fill="var(--ocean)" letter-spacing="3">WATERTIGHT</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">watertight seal / container</div><div class="meaning"><b>水密密封</b> / <b>水密容器</b>（物理防水）</div></div>
+        <div class="collo"><div class="pattern">a watertight argument / case</div><div class="meaning"><b>无懈可击的</b>论证 / 案卷（逻辑严密）</div></div>
+        <div class="collo"><div class="pattern">watertight alibi</div><div class="meaning"><b>无懈可击的</b>不在场证明（法律语境）</div></div>
+        <div class="collo"><div class="pattern">watertight compartment</div><div class="meaning"><b>水密舱</b>（船舶/潜艇的隔水舱室）</div></div>
+        <div class="collo"><div class="pattern">watertight contract</div><div class="meaning"><b>无漏洞的</b>合同（法律保障严密）</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力</div>
+          <p class="en">The submarine is divided into <em class="hl">watertight</em> compartments to prevent flooding.</p>
+          <p class="cn">潜艇被分成多个水密舱，以防止进水。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">The lawyer built a <em class="hl">watertight</em> case against the defendant.</p>
+          <p class="cn">律师构建了一个对被告无懈可击的案卷。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">Before signing, you should make sure the contract is absolutely <em class="hl">watertight</em>.</p>
+          <p class="cn">签字前，你应确保合同毫无漏洞。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">These <em class="hl">watertight</em> boots are perfect for hiking in rainy weather.</p>
+          <p class="cn">这双防水靴非常适合在雨天徒步。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>watertight</b>（防水的，水密的）vs <b>waterproof</b>（防水的，防水材料）<br>
+          watertight 常指结构密封（潜艇/舷窗）；waterproof 常指材料处理（防水衣/防水手机）。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">比喻义</span>
+          <b>watertight argument</b> = <b>无懈可击的</b>论证，不是"防水的论证"<br>
+          这是 watertight 最常考、最容易忘的比喻用法。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写与发音</span>
+          <b>watertight</b> = water + tight，<b>t 重叠不省略</b>（不是 wateright）<br>
+          合成词的重音在 <b>WATER</b> 上，读 /ˈwɔːtətaɪt/
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>watertight</td>
+            <td>水密的 / 无懈可击的</td>
+            <td class="chant">密封结构用 watertight</td>
+          </tr>
+          <tr>
+            <td>waterproof</td>
+            <td>防水的（材料涂层）</td>
+            <td class="chant">材料涂层 waterproof</td>
+          </tr>
+          <tr>
+            <td>airtight</td>
+            <td>气密的，无漏洞的</td>
+            <td class="chant">气体密封 airtight</td>
+          </tr>
+          <tr>
+            <td>sealed</td>
+            <td>密封的（动作/状态）</td>
+            <td class="chant">封口状态 sealed</td>
+          </tr>
+          <tr>
+            <td>impermeable</td>
+            <td>不可渗透的（学术/正式）</td>
+            <td class="chant">专业渗透 impermeable</td>
+          </tr>
+          <tr>
+            <td>leak-proof</td>
+            <td>防漏的（偏容器）</td>
+            <td class="chant">容器防漏 leak-proof</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The cabin is divided into <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">atertight</span> compartments.</p>
+          <p class="fill-hint">提示：<b>watertight compartments</b>，水密舱</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The prosecution has a <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">atertight</span> case against the suspect.</p>
+          <p class="fill-hint">提示：<b>a watertight case</b>，无懈可击的案卷</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She took a <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">atertight</span> lunch box to the beach.</p>
+          <p class="fill-hint">提示：<b>watertight lunch box</b>，水密/防水的午餐盒</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The evidence they gathered gave them a <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">atertight</span> alibi.</p>
+          <p class="fill-hint">提示：<b>watertight alibi</b>，无懈可击的不在场证明</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">A <span class="first-letter">w</span><span class="blank" onclick="this.classList.toggle('revealed')">atertight</span> contract protects both parties from misunderstandings.</p>
+          <p class="fill-hint">提示：<b>watertight contract</b>，无漏洞的合同</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>watertight</b> 造一句自己的句子。可以用物理义（防水）或比喻义（无懈可击）。</p>
+        <textarea id="mySentence" placeholder="例：The lawyer presented a watertight argument that convinced the entire jury."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>

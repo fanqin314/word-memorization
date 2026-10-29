@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fasten · 系紧</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 工业紧固色板 —— fasten = 系紧 / 扣紧 / 固定 / 扎牢 */
+  --paper:#F1EFEA;
+  --paper-2:#E0DCD0;
+  --ink:#0A1220;
+  --deep:#141C2E;         /* 深海军蓝 */
+  --deep-soft:#D8DEEA;
+  --safety:#F08A24;       /* 安全橙 */
+  --safety-soft:#FBE5D0;
+  --steel:#8A98AD;        /* 钢铁灰 */
+  --steel-soft:#E2E6EC;
+  --leather:#7A5230;      /* 皮革棕 */
+  --leather-soft:#EADCCB;
+  --bolt:#F5C042;         /* 铆钉金 */
+  --bolt-soft:#FCEFC8;
+  --ok:#2AA85B;           /* 扣紧绿 */
+  --ok-soft:#D5F0DF;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--safety);
+  --cb-accent-soft:var(--safety-soft);
+  --cb-2:var(--steel);
+  --cb-2-soft:var(--steel-soft);
+  --cb-3:var(--leather);
+  --cb-3-soft:var(--leather-soft);
+  --cb-deep:var(--deep);
+}
+html,body{margin:0;padding:0;}
+/* 全页：金属网格 + 铆钉点 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(90deg, rgba(138,152,173,.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(138,152,173,.05) 1px, transparent 1px),
+    radial-gradient(circle, rgba(245,192,66,.08) 1.5px, transparent 2px);
+  background-size: 60px 60px, 60px 60px, 120px 120px;
+  background-position: 0 0, 0 0, 30px 30px;
+  animation:gridTighten 30s linear infinite;
+}
+@keyframes gridTighten{
+  to{ background-position:60px 60px, 60px 60px, 90px 90px; }
+}
+/* 漂浮的紧固件 */
+.page-floats{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+/* 螺丝 */
+.fl.screw{
+  width:10px;height:20px;
+  background:var(--steel);
+  border:2px solid var(--ink);
+  border-radius:2px;
+  position:relative;
+}
+.fl.screw::before{
+  content:"";
+  position:absolute;
+  top:-4px;left:-3px;
+  width:12px;height:6px;
+  background:var(--steel);
+  border:2px solid var(--ink);
+  border-radius:2px;
+}
+/* 六角螺母 */
+.fl.nut{
+  width:14px;height:14px;
+  background:var(--bolt);
+  border:2px solid var(--ink);
+  clip-path:polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+}
+/* 拉链齿 */
+.fl.zipper{
+  width:8px;height:8px;
+  background:var(--safety);
+  border:2px solid var(--ink);
+  border-radius:2px;
+  transform:rotate(45deg);
+}
+/* 勾 */
+.fl.hook{
+  width:14px;height:14px;
+  color:var(--ok);
+  font-size:14px;
+  line-height:14px;
+  text-align:center;
+}
+.fl.hook::before{ content:"✓"; }
+.fl.f1{ left:6%; bottom:-40px; animation-duration:24s; }
+.fl.f2{ left:22%; bottom:-55px; animation-duration:30s; animation-delay:3s; }
+.fl.f3{ left:78%; bottom:-45px; animation-duration:26s; animation-delay:1.5s; }
+.fl.f4{ left:90%; bottom:-30px; animation-duration:28s; animation-delay:6s; }
+.fl.f5{ left:52%; bottom:-70px; animation-duration:22s; animation-delay:4.5s; }
+.fl.f6{ left:38%; bottom:-50px; animation-duration:32s; animation-delay:9s; }
+.fl.f7{ left:64%; bottom:-60px; animation-duration:20s; animation-delay:7.5s; }
+@keyframes flDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.85; }
+  50%{ transform:translateY(-50vh) rotate(180deg); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) rotate(360deg); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    radial-gradient(ellipse at 50% 45%, #24304A 0%, #141C2E 45%, #0A1220 100%);
+  overflow:hidden;
+  color:var(--paper);
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--safety) 0 22px,
+    transparent 22px 24px,
+    var(--bolt) 24px 46px,
+    transparent 46px 48px,
+    var(--steel) 48px 70px,
+    transparent 70px 72px,
+    var(--ok) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 大拉链背景（垂直拉合） */
+.hero-zipper{
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:120px;height:100%;
+  pointer-events:none;
+  z-index:0;
+  opacity:.28;
+  overflow:hidden;
+}
+.zipper-track{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  top:0;
+  width:4px;
+  height:100%;
+  background:repeating-linear-gradient(180deg,
+    var(--safety) 0 10px,
+    transparent 10px 20px);
+}
+.zipper-tape{
+  position:absolute;
+  top:0;
+  width:20px;
+  height:100%;
+  background:repeating-linear-gradient(180deg,
+    var(--steel) 0 8px,
+    transparent 8px 16px);
+}
+.zipper-tape.left{ left:calc(50% - 30px); }
+.zipper-tape.right{ right:calc(50% - 30px); }
+.zipper-slider{
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:44px;height:50px;
+  background:var(--bolt);
+  border:3px solid var(--ink);
+  border-radius:8px;
+  animation:sliderDown 4s cubic-bezier(.4,1.2,.6,1) infinite;
+  z-index:2;
+}
+.zipper-slider::after{
+  content:"";
+  position:absolute;
+  bottom:-12px;left:50%;
+  transform:translateX(-50%);
+  width:0;height:0;
+  border-left:8px solid transparent;
+  border-right:8px solid transparent;
+  border-top:14px solid var(--bolt);
+}
+@keyframes sliderDown{
+  0%, 20%{ top:0; }
+  50%, 70%{ top:calc(100% - 60px); }
+  90%, 100%{ top:0; }
+}
+/* HERO 安全带扣（四角装饰） */
+.hero-buckles{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.2;
+}
+.buckle{
+  position:absolute;
+  width:60px;height:60px;
+  border:3px solid var(--paper);
+  border-radius:10px;
+}
+.buckle::before{
+  content:"";
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:24px;height:24px;
+  border:2px solid var(--paper);
+  border-radius:50%;
+}
+.buckle.b1{ top:40px;left:40px; }
+.buckle.b2{ top:40px;right:40px; }
+.buckle.b3{ bottom:40px;left:40px; }
+.buckle.b4{ bottom:40px;right:40px; }
+/* HERO 中心旋转螺母 */
+.hero-bolt{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:480px;height:480px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.18;
+}
+.bolt-ring{
+  fill:none;
+  stroke:var(--bolt);
+  stroke-width:3;
+  stroke-dasharray:6 10;
+  transform-origin:240px 240px;
+  animation:boltSpin 24s linear infinite;
+}
+.bolt-ring.r2{
+  stroke:var(--safety);
+  animation-direction:reverse;
+  animation-duration:18s;
+  stroke-dasharray:4 12;
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:108px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  color:var(--paper);
+  filter:drop-shadow(5px 5px 0 var(--safety)) drop-shadow(-3px 3px 0 var(--steel));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterSnap 1.1s cubic-bezier(.4,1.6,.6,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1), color .25s;
+}
+/* 每个字母像被"卡扣"扣上一样，从两侧夹过来 */
+.word-anim .l1{ animation-delay:.10s; color:var(--safety); }
+.word-anim .l2{ animation-delay:.20s; color:var(--paper); }
+.word-anim .l3{ animation-delay:.30s; color:var(--bolt); }
+.word-anim .l4{ animation-delay:.40s; color:var(--paper); }
+.word-anim .l5{ animation-delay:.50s; color:var(--steel); }
+.word-anim .l6{ animation-delay:.60s; color:var(--paper); }
+@keyframes letterSnap{
+  0%{
+    opacity:0;
+    transform:translateY(-40px) scale(1.3) rotate(-8deg);
+    filter:blur(8px);
+  }
+  55%{
+    opacity:1;
+    filter:blur(0);
+    transform:translateY(8px) scale(.92) rotate(3deg);
+  }
+  75%{
+    transform:translateY(-3px) scale(1.03) rotate(-1deg);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1) rotate(0);
+    color:var(--paper);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--safety);
+  transform:translateY(-6px) scale(1.15) rotate(-4deg);
+  filter:drop-shadow(0 0 18px var(--safety));
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--safety);border:3px solid var(--paper);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--steel);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--steel);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--steel);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--safety);border:2.5px solid var(--paper);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--steel);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--bolt);color:var(--ink);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ok);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  transform:rotate(1.2deg);
+  border:2px solid var(--ink);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--paper);background:rgba(10,18,32,.85);
+  border:2.5px solid var(--paper);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--ok);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 意象卡 */
+.image-card{
+  background:var(--deep);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(240,138,36,.15) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 6s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* ========== fasten SVG 动画 —— 安全带扣合 ========== */
+
+/* 上下两片安全带 */
+.fa-belt-top{
+  animation:beltTopIn 5s cubic-bezier(.4,1.3,.6,1) infinite;
+  transform-origin:center;
+}
+@keyframes beltTopIn{
+  0%, 15%{ transform:translateY(-30px); }
+  40%, 80%{ transform:translateY(0); }
+  95%, 100%{ transform:translateY(-30px); }
+}
+.fa-belt-bottom{
+  animation:beltBottomIn 5s cubic-bezier(.4,1.3,.6,1) infinite;
+  transform-origin:center;
+}
+@keyframes beltBottomIn{
+  0%, 15%{ transform:translateY(30px); }
+  40%, 80%{ transform:translateY(0); }
+  95%, 100%{ transform:translateY(30px); }
+}
+/* 卡扣上的金属扣合件 */
+.fa-buckle-metal{
+  animation:buckleLock 5s cubic-bezier(.4,1.6,.6,1) infinite;
+  transform-origin:center;
+}
+@keyframes buckleLock{
+  0%, 40%{ opacity:.5; transform:scale(1); }
+  45%{ opacity:1; transform:scale(1.15); }
+  55%, 80%{ opacity:1; transform:scale(1); }
+  95%, 100%{ opacity:.5; transform:scale(1); }
+}
+/* 扣合瞬间的绿色闪光 */
+.fa-flash{
+  animation:flashPop 5s ease-out infinite;
+  transform-origin:center;
+}
+@keyframes flashPop{
+  0%, 42%{ opacity:0; transform:scale(.3); }
+  46%{ opacity:.95; transform:scale(1.2); }
+  55%{ opacity:.5; transform:scale(1); }
+  70%, 100%{ opacity:0; transform:scale(.3); }
+}
+/* 扣合瞬间向外扩散的光环 */
+.fa-ring{
+  fill:none;
+  stroke:var(--ok);
+  stroke-width:3;
+  transform-origin:center;
+  animation:ringExpand 5s ease-out infinite;
+}
+@keyframes ringExpand{
+  0%, 42%{ opacity:0; transform:scale(.3); }
+  46%{ opacity:.9; transform:scale(.7); }
+  70%, 100%{ opacity:0; transform:scale(1.6); }
+}
+/* 顶部小字 CLICK!（扣合音效） */
+.fa-click{
+  animation:clickText 5s ease-in-out infinite;
+}
+@keyframes clickText{
+  0%, 44%{ opacity:0; transform:scale(.6); }
+  48%{ opacity:1; transform:scale(1.2); }
+  60%, 100%{ opacity:0; transform:scale(1); }
+}
+/* 金属齿纹的咬合（拉链齿闪一下） */
+.fa-zip-tooth{
+  animation:toothLock 5s ease-in-out infinite;
+  transform-origin:center;
+}
+.fa-zip-tooth.t2{ animation-delay:.05s; }
+.fa-zip-tooth.t3{ animation-delay:.1s; }
+.fa-zip-tooth.t4{ animation-delay:.15s; }
+.fa-zip-tooth.t5{ animation-delay:.2s; }
+@keyframes toothLock{
+  0%, 40%{ fill:var(--steel); }
+  46%, 80%{ fill:var(--ok); }
+  95%, 100%{ fill:var(--steel); }
+}
+/* 底部文字 FASTENED 渐现 */
+.fa-text{
+  animation:textShow 5s ease-in-out infinite;
+}
+@keyframes textShow{
+  0%, 45%{ opacity:0; transform:translateY(6px); }
+  60%, 88%{ opacity:1; transform:translateY(0); }
+  100%{ opacity:0; transform:translateY(-6px); }
+}
+/* 顶部两个正在降落的铆钉 */
+.fa-rivet{
+  animation:rivetDrop 5s cubic-bezier(.4,1.4,.6,1) infinite;
+}
+.fa-rivet.r2{ animation-delay:.3s; }
+@keyframes rivetDrop{
+  0%, 10%{ opacity:0; transform:translateY(-50px); }
+  25%, 80%{ opacity:1; transform:translateY(0); }
+  95%, 100%{ opacity:0; transform:translateY(-50px); }
+}
+/* ========== 结束 fasten SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+/* 辨析表 drop-shadow */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@media (max-width:640px){.hero{padding:50px 22px 40px;}
+.word-anim{font-size:56px;}
+.hero-bolt{ width:300px; height:300px; }
+.hero-zipper{ width:80px; }
+}
+@media (min-width:1100px){.hero{padding:100px 80px 80px;}
+.hero-band{height:24px;}
+.word-anim{font-size:148px;}
+.speak-btn{width:56px;height:56px;font-size:26px;}
+.ipa-anim{font-size:18px;padding:6px 22px;}
+.pos-anim{font-size:13px;padding:6px 20px;}
+.spell-hint{font-size:13px;padding:10px 24px;}
+.collo:nth-child(5){grid-column:1 / -1;}
+}
+@media (min-width:1500px){.hero{padding:120px 100px 96px;}
+.word-anim{font-size:172px;}
+}
+@media print{body::before,body::after{display:none;}
+.hero-zipper,.hero-buckles,.hero-bolt,.page-floats,.progress-bar{display:none;}
+}
+</style>
+</head>
+<body data-word="fasten">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-floats" aria-hidden="true">
+    <div class="fl screw f1"></div>
+    <div class="fl zipper f2"></div>
+    <div class="fl nut f3"></div>
+    <div class="fl hook f4"></div>
+    <div class="fl zipper f5"></div>
+    <div class="fl screw f6"></div>
+    <div class="fl nut f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <!-- 背景大拉链 -->
+    <div class="hero-zipper" aria-hidden="true">
+      <div class="zipper-tape left"></div>
+      <div class="zipper-tape right"></div>
+      <div class="zipper-track"></div>
+      <div class="zipper-slider"></div>
+    </div>
+
+    <!-- 四角安全带扣 -->
+    <div class="hero-buckles" aria-hidden="true">
+      <div class="buckle b1"></div>
+      <div class="buckle b2"></div>
+      <div class="buckle b3"></div>
+      <div class="buckle b4"></div>
+    </div>
+
+    <!-- 旋转螺母 -->
+    <div class="hero-bolt" aria-hidden="true">
+      <svg viewBox="0 0 480 480">
+        <circle class="bolt-ring" cx="240" cy="240" r="200"/>
+        <circle class="bolt-ring r2" cx="240" cy="240" r="160"/>
+        <circle class="bolt-ring" cx="240" cy="240" r="120" style="animation-duration:32s"/>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="fasten">
+          <span class="letter l1">f</span><span class="letter l2">a</span><span class="letter l3">s</span><span class="letter l4">t</span><span class="letter l5">e</span><span class="letter l6">n</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 fasten">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˈfɑːsn/ &nbsp;·&nbsp; 美 /ˈfæsn/</div>
+      <div class="pos-anim">v.</div>
+      <div class="spell-hint">fas · ten &nbsp; 系紧 · 扣紧 · 固定 · 扎牢</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词源 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          古英语 <span class="stem">fæstnian</span>（使牢固，固定）
+          &nbsp;→&nbsp; <b>系紧 · 扣紧 · 固定 · 扎牢</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">形容词</div><div class="w"><span class="hl">fast</span></div><div class="p">/fɑːst/</div><div class="m">牢固的，紧的（古义）</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">fastener</div><div class="p">/ˈfɑːsnər/</div><div class="m">紧固件，拉链</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">fastening</div><div class="p">/ˈfɑːsnɪŋ/</div><div class="m">扣件，紧固装置</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">unfasten</div><div class="p">/ʌnˈfɑːsn/</div><div class="m">解开，松开（反义）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">secure</div><div class="p">/sɪˈkjʊər/</div><div class="m">固定，使安全（近义）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">attach</div><div class="p">/əˈtætʃ/</div><div class="m">系上，贴上（近义）</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">fasten</span> = 上下两片<strong>安全带从两侧夹过来，咔哒一声扣紧</strong>。
+          </p>
+          <p class="ic-sub">
+            系安全带 → fasten the seat belt；<br>
+            扣纽扣 → fasten a button；<br>
+            锁门 → fasten the door；<br>
+            抓牢 → fasten one's attention on。<br>
+            核心：<b>"把原本松开的东西紧紧扣在一起"</b>——不是粘，不是绑，而是"扣合/固定"。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 380 300">
+            <defs>
+              <linearGradient id="faBeltTop" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2A3A5E"/>
+                <stop offset="100%" stop-color="#141C2E"/>
+              </linearGradient>
+              <linearGradient id="faBeltBottom" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#141C2E"/>
+                <stop offset="100%" stop-color="#0A1220"/>
+              </linearGradient>
+            </defs>
+
+            <!-- 上片安全带 -->
+            <g class="fa-belt-top">
+              <rect x="70" y="60" width="240" height="55" rx="6"
+                    fill="url(#faBeltTop)" stroke="var(--ink)" stroke-width="3"/>
+              <!-- 安全带上的铆钉（两个） -->
+              <circle cx="100" cy="87" r="6" fill="var(--bolt)" stroke="var(--ink)" stroke-width="2"/>
+              <circle cx="280" cy="87" r="6" fill="var(--bolt)" stroke="var(--ink)" stroke-width="2"/>
+              <!-- 中间的扣合件 -->
+              <rect x="170" y="75" width="40" height="25" rx="3"
+                    fill="var(--steel)" stroke="var(--ink)" stroke-width="2.5"/>
+              <rect x="175" y="80" width="30" height="15" rx="2" fill="var(--bolt)"/>
+            </g>
+
+            <!-- 下片安全带 -->
+            <g class="fa-belt-bottom">
+              <rect x="70" y="185" width="240" height="55" rx="6"
+                    fill="url(#faBeltBottom)" stroke="var(--ink)" stroke-width="3"/>
+              <!-- 铆钉 -->
+              <circle cx="100" cy="212" r="6" fill="var(--bolt)" stroke="var(--ink)" stroke-width="2"/>
+              <circle cx="280" cy="212" r="6" fill="var(--bolt)" stroke="var(--ink)" stroke-width="2"/>
+              <!-- 卡扣插槽 -->
+              <rect x="170" y="200" width="40" height="25" rx="3"
+                    fill="var(--safety)" stroke="var(--ink)" stroke-width="2.5"/>
+              <rect x="175" y="205" width="30" height="15" rx="2" fill="var(--ink)"/>
+            </g>
+
+            <!-- 中间的金属扣合件（会缩放） -->
+            <g class="fa-buckle-metal">
+              <circle cx="190" cy="150" r="14"
+                      fill="var(--steel)" stroke="var(--ink)" stroke-width="3"/>
+              <circle cx="190" cy="150" r="6" fill="var(--bolt)"/>
+            </g>
+
+            <!-- 扣合瞬间的绿色闪光 -->
+            <circle class="fa-flash" cx="190" cy="150" r="24" fill="var(--ok)" opacity="0"/>
+
+            <!-- 扣合瞬间向外扩散的光环 -->
+            <circle class="fa-ring" cx="190" cy="150" r="30"/>
+
+            <!-- CLICK 音效文字 -->
+            <g class="fa-click">
+              <text x="260" y="145" text-anchor="middle"
+                    font-family="Helvetica" font-size="11" font-weight="900"
+                    fill="var(--ok)" letter-spacing="2">CLICK!</text>
+            </g>
+
+            <!-- 顶部两个正在降落的铆钉 -->
+            <g class="fa-rivet">
+              <circle cx="90" cy="20" r="5" fill="var(--bolt)" stroke="var(--ink)" stroke-width="2"/>
+            </g>
+            <g class="fa-rivet r2">
+              <circle cx="290" cy="20" r="5" fill="var(--bolt)" stroke="var(--ink)" stroke-width="2"/>
+            </g>
+
+            <!-- 金属齿纹咬合（左侧三条小齿） -->
+            <g>
+              <rect class="fa-zip-tooth" x="35" y="140" width="14" height="10" rx="2"
+                    fill="var(--steel)" stroke="var(--ink)" stroke-width="1.5"/>
+              <rect class="fa-zip-tooth t2" x="35" y="152" width="14" height="10" rx="2"
+                    fill="var(--steel)" stroke="var(--ink)" stroke-width="1.5"/>
+              <rect class="fa-zip-tooth t3" x="35" y="164" width="14" height="10" rx="2"
+                    fill="var(--steel)" stroke="var(--ink)" stroke-width="1.5"/>
+            </g>
+            <!-- 右侧三条小齿 -->
+            <g>
+              <rect class="fa-zip-tooth t4" x="331" y="140" width="14" height="10" rx="2"
+                    fill="var(--steel)" stroke="var(--ink)" stroke-width="1.5"/>
+              <rect class="fa-zip-tooth t5" x="331" y="152" width="14" height="10" rx="2"
+                    fill="var(--steel)" stroke="var(--ink)" stroke-width="1.5"/>
+              <rect class="fa-zip-tooth t4" x="331" y="164" width="14" height="10" rx="2"
+                    fill="var(--steel)" stroke="var(--ink)" stroke-width="1.5" style="animation-delay:.5s"/>
+            </g>
+
+            <!-- FASTENED 文字 -->
+            <g class="fa-text">
+              <text x="190" y="278" text-anchor="middle"
+                    font-family="Helvetica" font-size="10" font-weight="900"
+                    fill="var(--ok)" letter-spacing="3">FASTENED</text>
+              <line x1="140" y1="284" x2="240" y2="284"
+                    stroke="var(--ok)" stroke-width="1.2" opacity=".7"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">fasten one's seat belt</div><div class="meaning"><b>系好</b>安全带（飞机/汽车上最常用）</div></div>
+        <div class="collo"><div class="pattern">fasten a button / zip</div><div class="meaning"><b>扣上</b>纽扣 / <b>拉上</b>拉链</div></div>
+        <div class="collo"><div class="pattern">fasten the door / window</div><div class="meaning"><b>锁好</b>门 / 关紧窗</div></div>
+        <div class="collo"><div class="pattern">fasten A to B</div><div class="meaning">把 A <b>固定在</b> B 上</div></div>
+        <div class="collo"><div class="pattern">fasten on / upon</div><div class="meaning"><b>抓住</b>（注意力/视线）；<b>集中于</b></div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力</div>
+          <p class="en">Passengers are required to <em class="hl">fasten</em> their seat belts before takeoff.</p>
+          <p class="cn">乘客被要求在起飞前系好安全带。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">Please <em class="hl">fasten</em> the lid tightly so the contents don't spill.</p>
+          <p class="cn">请把盖子拧紧，以免里面的东西洒出来。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">The button was <em class="hl">fastened</em> to the coat with a strong thread.</p>
+          <p class="cn">纽扣用一根结实的线固定在外套上。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">The frightened child <em class="hl">fastened</em> her eyes on the doctor's face.</p>
+          <p class="cn">那个受惊的孩子目不转睛地盯着医生的脸。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          <b>fasten</b>（扣紧/系紧）vs <b>tie</b>（打结/绑）vs <b>attach</b>（附着/连接）<br>
+          <span class="right">fasten the seat belt</span>（系安全带）<br>
+          <span class="right">tie a knot</span>（打结）<br>
+          <span class="right">attach a file</span>（附加文件）
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">反义</span>
+          <b>fasten</b>（系紧）↔ <b>unfasten</b>（解开）<br>
+          别和 <b>loosen</b>（放松）混——unfasten 是"解开扣子"，loosen 是"把已经紧的弄松"
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写与发音</span>
+          <b>fasten</b> f-a-s-t-e-n —— **t 不发音**（读 /ˈfɑːsn/，不是 /ˈfɑːstən/）<br>
+          过去式 <b>fastened</b>、名词 <b>fastener</b> 注意 -en / -ener 结尾
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>fasten</td>
+            <td>扣紧/系紧（扣子、安全带）</td>
+            <td class="chant">扣上按扣用 fasten</td>
+          </tr>
+          <tr>
+            <td>tie</td>
+            <td>打结/绑（绳子、鞋带）</td>
+            <td class="chant">打结系绳 tie</td>
+          </tr>
+          <tr>
+            <td>attach</td>
+            <td>附着/粘贴（文件、标签）</td>
+            <td class="chant">贴上去是 attach</td>
+          </tr>
+          <tr>
+            <td>secure</td>
+            <td>固定/加固（安全语境）</td>
+            <td class="chant">保证牢固 secure</td>
+          </tr>
+          <tr>
+            <td>lock</td>
+            <td>上锁（锁门/锁车）</td>
+            <td class="chant">转锁用 key 去 lock</td>
+          </tr>
+          <tr>
+            <td>loosen</td>
+            <td>放松（把紧的变松）</td>
+            <td class="chant">变松是 loosen</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Please <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">asten</span> your seat belt before the plane takes off.</p>
+          <p class="fill-hint">提示：<b>fasten the seat belt</b>，系好安全带</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">astened</span> the buttons of her coat one by one.</p>
+          <p class="fill-hint">提示：<b>fasten the buttons</b>，扣纽扣（过去式）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The rope was <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">astened</span> to a big tree, keeping the boat safe.</p>
+          <p class="fill-hint">提示：<b>be fastened to</b>，被固定在（过去分词被动）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The little girl kept her eyes <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">astened</span> on the colourful balloons.</p>
+          <p class="fill-hint">提示：<b>keep one's eyes fastened on</b>，目光紧盯着</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He pulled the zip and <span class="first-letter">f</span><span class="blank" onclick="this.classList.toggle('revealed')">astened</span> the bag shut.</p>
+          <p class="fill-hint">提示：<b>fasten ... shut</b>，把……扣紧关好</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>fasten</b> 造一句自己的句子。刻意用上今天学的一个搭配（fasten seat belt / fasten A to B / fasten on）。</p>
+        <textarea id="mySentence" placeholder="例：The driver reminded everyone to fasten their seat belts before starting the car."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>

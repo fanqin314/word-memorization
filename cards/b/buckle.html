@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>buckle · 皮带扣</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 皮革马具色板 —— buckle = 带扣 / 扣紧 / 弯曲屈服 */
+  --paper:#F2EDE3;
+  --paper-2:#E0D7C4;
+  --ink:#0E0A08;
+  --deep:#1A120E;
+  --deep-soft:#E0D5C8;
+  --leather:#8B5A2B;      /* 皮革棕 */
+  --leather-soft:#E8D8C3;
+  --brass:#D4A62A;        /* 黄铜金 */
+  --brass-soft:#F5E9C3;
+  --steel:#8A9199;        /* 冷钢灰 */
+  --steel-soft:#E2E5E8;
+  --rust:#A8442A;         /* 锈红 */
+  --rust-soft:#F0D8D0;
+  --cream:#FFF9EE;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--leather);
+  --cb-accent-soft:var(--leather-soft);
+  --cb-2:var(--brass);
+  --cb-2-soft:var(--brass-soft);
+  --cb-3:var(--steel);
+  --cb-3-soft:var(--steel-soft);
+  --cb-deep:var(--deep);
+}
+html,body{margin:0;padding:0;}
+/* 全页：皮带孔洞排列纹理 */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle, rgba(212,166,42,.10) 3px, transparent 3.5px);
+  background-size: 36px 36px;
+  background-position: 18px 18px;
+  animation:holesDrift 40s linear infinite;
+}
+@keyframes holesDrift{
+  to{ background-position: 54px 54px; }
+}
+/* 漂浮的皮带碎片 */
+.page-floats{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+/* 皮带孔 */
+.fl.hole{
+  width:12px;height:12px;
+  border:2.5px solid var(--leather);
+  border-radius:50%;
+  background:var(--paper);
+}
+/* 黄铜铆钉 */
+.fl.rivet{
+  width:10px;height:10px;
+  background:var(--brass);
+  border:2px solid var(--ink);
+  border-radius:50%;
+  box-shadow:inset -1px -1px 0 rgba(0,0,0,.3);
+}
+/* 皮带小段 */
+.fl.strap{
+  width:22px;height:6px;
+  background:var(--leather);
+  border:1.5px solid var(--ink);
+  border-radius:2px;
+}
+/* 弯曲金属小片（词义2） */
+.fl.bent{
+  width:16px;height:5px;
+  background:var(--steel);
+  border:1.5px solid var(--ink);
+  border-radius:3px;
+  transform:rotate(20deg);
+}
+.fl.f1{ left:6%; bottom:-40px; animation-duration:24s; }
+.fl.f2{ left:22%; bottom:-55px; animation-duration:30s; animation-delay:3s; }
+.fl.f3{ left:78%; bottom:-45px; animation-duration:26s; animation-delay:1.5s; }
+.fl.f4{ left:90%; bottom:-30px; animation-duration:28s; animation-delay:6s; }
+.fl.f5{ left:52%; bottom:-70px; animation-duration:22s; animation-delay:4.5s; }
+.fl.f6{ left:38%; bottom:-50px; animation-duration:32s; animation-delay:9s; }
+.fl.f7{ left:64%; bottom:-60px; animation-duration:20s; animation-delay:7.5s; }
+@keyframes flDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.85; }
+  50%{ transform:translateY(-50vh) rotate(180deg); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) rotate(360deg); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    radial-gradient(ellipse at 50% 45%, #3A2819 0%, #1A120E 45%, #06050A 100%);
+  overflow:hidden;
+  color:var(--cream);
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--leather) 0 22px,
+    transparent 22px 24px,
+    var(--brass) 24px 46px,
+    transparent 46px 48px,
+    var(--rust) 48px 70px,
+    transparent 70px 72px,
+    var(--steel) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 中央大皮带扣 */
+.hero-buckle{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:620px;height:620px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.22;
+}
+.hero-buckle svg{ width:100%; height:100%; }
+.buckle-frame{
+  fill:none;
+  stroke:var(--brass);
+  stroke-width:6;
+  stroke-linejoin:round;
+  animation:framePulse 5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes framePulse{
+  0%,100%{ opacity:.7; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.02); }
+}
+.buckle-pin{
+  fill:none;
+  stroke:var(--brass);
+  stroke-width:5;
+  stroke-linecap:round;
+  transform-origin:center;
+  animation:pinSwing 5s ease-in-out infinite;
+}
+@keyframes pinSwing{
+  0%,30%{ transform:rotate(-8deg); }
+  50%,80%{ transform:rotate(0deg); }
+  95%,100%{ transform:rotate(-8deg); }
+}
+/* HERO 横贯的皮带 */
+.hero-strap{
+  position:absolute;
+  top:50%;left:0;right:0;
+  height:44px;
+  transform:translateY(-50%);
+  background:linear-gradient(180deg,
+    #A06A38 0%,
+    #8B5A2B 45%,
+    #6B431E 50%,
+    #8B5A2B 55%,
+    #7A4E24 100%);
+  border-top:3px solid var(--ink);
+  border-bottom:3px solid var(--ink);
+  pointer-events:none;
+  z-index:0;
+  opacity:.35;
+}
+/* 皮带上的穿孔 */
+.hero-strap::before{
+  content:"";
+  position:absolute;
+  top:50%;left:5%;
+  transform:translateY(-50%);
+  width:90%;
+  height:12px;
+  background-image:radial-gradient(circle, var(--ink) 5px, transparent 5.5px);
+  background-size: 60px 12px;
+  background-repeat:repeat-x;
+  opacity:.7;
+}
+/* HERO 顶部/底部：受压弯曲的杆（词义2） */
+.hero-bent{
+  position:absolute;
+  bottom:8%;
+  left:50%;
+  transform:translateX(-50%);
+  width:260px;
+  height:50px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.35;
+}
+.hero-bent svg{ width:100%; height:100%; }
+.bent-rod{
+  fill:none;
+  stroke:var(--steel);
+  stroke-width:5;
+  stroke-linecap:round;
+  transform-origin:center bottom;
+  animation:rodBend 5s ease-in-out infinite;
+}
+@keyframes rodBend{
+  0%,30%{ transform:scaleY(1) skewX(0); }
+  50%,75%{ transform:scaleY(.75) skewX(-8deg); }
+  90%,100%{ transform:scaleY(1) skewX(0); }
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:112px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  color:var(--cream);
+  filter:drop-shadow(5px 5px 0 var(--leather)) drop-shadow(-3px 3px 0 var(--brass));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterThread 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1), color .25s;
+}
+/* 每个字母像被"穿线"一样从皮带孔洞中穿出来 */
+.word-anim .l1{ animation-delay:.10s; color:var(--leather); }
+.word-anim .l2{ animation-delay:.22s; color:var(--cream); }
+.word-anim .l3{ animation-delay:.34s; color:var(--brass); }
+.word-anim .l4{ animation-delay:.46s; color:var(--cream); }
+.word-anim .l5{ animation-delay:.58s; color:var(--rust); }
+.word-anim .l6{ animation-delay:.70s; color:var(--cream); }
+@keyframes letterThread{
+  0%{
+    opacity:0;
+    transform:translateY(-80px) scaleY(.4) scaleX(.7);
+    filter:blur(8px);
+  }
+  50%{
+    opacity:1;
+    filter:blur(0);
+    transform:translateY(6px) scaleY(1.15) scaleX(1.1);
+  }
+  75%{
+    transform:translateY(-2px) scaleY(.98) scaleX(.98);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scaleY(1) scaleX(1);
+    color:var(--cream);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--brass);
+  transform:translateY(-6px) scale(1.12) rotate(-4deg);
+  filter:drop-shadow(0 0 16px var(--brass));
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--brass);border:3px solid var(--cream);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--leather);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--leather);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--leather);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--brass);border:2.5px solid var(--cream);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--leather);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+  font-weight:700;
+}
+.ipa-anim:hover{background:var(--leather);color:var(--cream);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--cream);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--rust);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  transform:rotate(1.2deg);
+  border:2px solid var(--ink);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--cream);background:rgba(26,18,14,.85);
+  border:2.5px solid var(--cream);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--rust);
+  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 意象卡 */
+.image-card{
+  background:var(--deep);
+  color:var(--cream);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(212,166,42,.16) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 6s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* ========== buckle SVG 动画 —— 皮带扣穿针扣合 ========== */
+
+/* 皮带主体（水平） */
+.bk-strap{
+  fill:var(--leather);
+  stroke:var(--ink);
+  stroke-width:2.5;
+}
+/* 皮带上的孔 */
+.bk-hole{
+  fill:var(--deep);
+  stroke:var(--ink);
+  stroke-width:1.5;
+}
+/* 黄铜扣环框 */
+.bk-frame{
+  fill:none;
+  stroke:var(--brass);
+  stroke-width:5;
+  stroke-linejoin:round;
+  transform-origin:130px 150px;
+  animation:frameSqueeze 5s ease-in-out infinite;
+}
+@keyframes frameSqueeze{
+  0%,25%{ transform:scale(1); stroke:var(--brass); }
+  45%,70%{ transform:scale(1.05); stroke:var(--rust); }
+  90%,100%{ transform:scale(1); stroke:var(--brass); }
+}
+/* 针舌（旋转穿过孔眼） */
+.bk-pin{
+  fill:none;
+  stroke:var(--brass);
+  stroke-width:4;
+  stroke-linecap:round;
+  transform-origin:130px 150px;
+  animation:pinThrough 5s cubic-bezier(.4,1.3,.6,1) infinite;
+}
+@keyframes pinThrough{
+  0%, 20%{ transform:rotate(-70deg); }
+  35%{ transform:rotate(-50deg); }
+  50%, 80%{ transform:rotate(90deg); }
+  95%, 100%{ transform:rotate(-70deg); }
+}
+/* 针尖穿出时的金色光点 */
+.bk-tip-glow{
+  animation:tipGlow 5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes tipGlow{
+  0%, 45%{ opacity:0; r:3; }
+  50%{ opacity:1; r:6; }
+  60%, 100%{ opacity:0; r:3; }
+}
+/* 扣合时的外扩光晕 */
+.bk-ring{
+  fill:none;
+  stroke:var(--brass);
+  stroke-width:2.5;
+  transform-origin:170px 150px;
+  animation:ringBuckle 5s ease-out infinite;
+}
+@keyframes ringBuckle{
+  0%, 42%{ opacity:0; transform:scale(.3); }
+  48%{ opacity:.9; transform:scale(1); }
+  70%, 100%{ opacity:0; transform:scale(1.8); }
+}
+/* 受压弯曲的杆（词义2） */
+.bk-rod{
+  fill:none;
+  stroke:var(--steel);
+  stroke-width:6;
+  stroke-linecap:round;
+  transform-origin:center 250px;
+  animation:rodBendSVG 5s ease-in-out infinite;
+}
+@keyframes rodBendSVG{
+  0%, 30%{ d:path("M 40 250 L 340 250"); stroke:var(--steel); }
+  50%, 75%{ d:path("M 40 250 Q 190 210 340 250"); stroke:var(--rust); }
+  90%, 100%{ d:path("M 40 250 L 340 250"); stroke:var(--steel); }
+}
+/* 弯曲杆上方下压的重物块 */
+.bk-weight{
+  animation:weightDrop 5s cubic-bezier(.4,1.3,.6,1) infinite;
+  transform-origin:center top;
+}
+@keyframes weightDrop{
+  0%, 30%{ opacity:0; transform:translateY(-40px); }
+  45%, 70%{ opacity:1; transform:translateY(0); }
+  85%, 100%{ opacity:0; transform:translateY(-40px); }
+}
+/* 顶部 CLICK 声效 */
+.bk-click{
+  animation:clickWord 5s ease-in-out infinite;
+}
+@keyframes clickWord{
+  0%, 44%{ opacity:0; transform:scale(.5); }
+  50%, 68%{ opacity:1; transform:scale(1); }
+  80%, 100%{ opacity:0; transform:scale(.8); }
+}
+/* 底部 BUCKLED / BUCKLED UNDER 文字切换 */
+.bk-text1{
+  animation:text1 5s ease-in-out infinite;
+}
+@keyframes text1{
+  0%, 35%{ opacity:0; }
+  50%, 70%{ opacity:1; }
+  85%, 100%{ opacity:0; }
+}
+.bk-text2{
+  animation:text2 5s ease-in-out infinite;
+}
+@keyframes text2{
+  0%, 50%{ opacity:0; }
+  65%, 82%{ opacity:1; }
+  95%, 100%{ opacity:0; }
+}
+/* ========== 结束 buckle SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+/* 辨析表 drop-shadow */
+.compare-table{
+  width:100%;border-collapse:separate;border-spacing:0 10px;
+  font-size:15px;line-height:1.7;
+}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@media (max-width:640px){.hero{padding:50px 22px 40px;}
+.word-anim{font-size:52px;}
+.hero-buckle{ width:420px; height:420px; }
+.hero-strap{ height:32px; }
+}
+@media (min-width:1100px){.hero{padding:100px 80px 80px;}
+.hero-band{height:24px;}
+.word-anim{font-size:150px;}
+.speak-btn{width:56px;height:56px;font-size:26px;}
+.ipa-anim{font-size:18px;padding:6px 22px;}
+.pos-anim{font-size:13px;padding:6px 20px;}
+.spell-hint{font-size:13px;padding:10px 24px;}
+.collo:nth-child(5){grid-column:1 / -1;}
+}
+@media (min-width:1500px){.hero{padding:120px 100px 96px;}
+.word-anim{font-size:176px;}
+}
+@media print{body::before,body::after{display:none;}
+.hero-buckle,.hero-strap,.hero-bent,.page-floats,.progress-bar{display:none;}
+}
+</style>
+</head>
+<body data-word="buckle">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-floats" aria-hidden="true">
+    <div class="fl hole f1"></div>
+    <div class="fl rivet f2"></div>
+    <div class="fl strap f3"></div>
+    <div class="fl bent f4"></div>
+    <div class="fl rivet f5"></div>
+    <div class="fl hole f6"></div>
+    <div class="fl strap f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <!-- 横贯的皮带 -->
+    <div class="hero-strap" aria-hidden="true"></div>
+
+    <!-- 中央大皮带扣（轮廓） -->
+    <div class="hero-buckle" aria-hidden="true">
+      <svg viewBox="0 0 620 620">
+        <rect class="buckle-frame" x="150" y="230" width="320" height="160" rx="24"/>
+        <line class="buckle-pin" x1="470" y1="310" x2="270" y2="310"/>
+        <circle cx="470" cy="310" r="8" fill="var(--brass)"/>
+      </svg>
+    </div>
+
+    <!-- 底部：受压弯曲的杆 -->
+    <div class="hero-bent" aria-hidden="true">
+      <svg viewBox="0 0 260 50">
+        <path class="bent-rod" d="M 10 45 L 250 45"/>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="buckle">
+          <span class="letter l1">b</span><span class="letter l2">u</span><span class="letter l3">c</span><span class="letter l4">k</span><span class="letter l5">l</span><span class="letter l6">e</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 buckle">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˈbʌkl/ &nbsp;·&nbsp; 美 /ˈbʌkl/</div>
+      <div class="pos-anim">n. · v.</div>
+      <div class="spell-hint">buc · kle &nbsp; 皮带扣 · 扣紧 · 弯曲屈服</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词源 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          古法语 <span class="stem">bocle</span>（盾牌/金属环扣）
+          &nbsp;→&nbsp; 金属框扣 → <b>皮带扣 · 扣紧 · 弯曲屈服</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">名词</div><div class="w"><span class="hl">buckle</span></div><div class="p">/ˈbʌkl/</div><div class="m">皮带扣，扣环（本词）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">buckle up</div><div class="p">/ˈbʌkl ʌp/</div><div class="m">系好（安全带）；准备行动</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">buckle down</div><div class="p">/ˈbʌkl daʊn/</div><div class="m">开始认真做，专心致志</div></div>
+          <div class="fam-card"><div class="pos">短语</div><div class="w">buckle under</div><div class="p">/ˈbʌkl ˈʌndər/</div><div class="m">屈服于（压力）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">unbuckle</div><div class="p">/ʌnˈbʌkl/</div><div class="m">解开扣子（反义）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">fasten</div><div class="p">/ˈfɑːsn/</div><div class="m">系紧（近义）</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">buckle</span> = 皮带扣的<strong>针舌穿过孔眼</strong>，扣紧；同时也像金属杆<strong>受压弯曲</strong>。
+          </p>
+          <p class="ic-sub">
+            名词：皮带扣、鞋扣；<br>
+            动词 1：扣紧 → buckle the belt / buckle up（系安全带）；<br>
+            动词 2：屈服/弯曲 → buckle under pressure（在压力下屈服）；<br>
+            短语：buckle down（开始认真工作）。<br>
+            核心：<b>"金属扣件"</b> + <b>"受压弯折"</b> 两层含义共用一根金属片。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 380 300">
+            <defs>
+              <linearGradient id="bkStrapGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#A06A38"/>
+                <stop offset="50%" stop-color="#8B5A2B"/>
+                <stop offset="100%" stop-color="#6B431E"/>
+              </linearGradient>
+            </defs>
+
+            <!-- 皮带主体 -->
+            <rect class="bk-strap" x="0" y="130" width="380" height="40" fill="url(#bkStrapGrad)"/>
+
+            <!-- 皮带上的孔眼（三个） -->
+            <circle class="bk-hole" cx="220" cy="150" r="7"/>
+            <circle class="bk-hole" cx="260" cy="150" r="7"/>
+            <circle class="bk-hole" cx="300" cy="150" r="7"/>
+
+            <!-- 黄铜扣环框 -->
+            <rect class="bk-frame" x="70" y="110" width="120" height="80" rx="12" fill="none"/>
+
+            <!-- 针舌（穿过孔眼时旋转） -->
+            <line class="bk-pin" x1="190" y1="150" x2="120" y2="150"/>
+            <circle cx="190" cy="150" r="6" fill="var(--brass)" stroke="var(--ink)" stroke-width="2"/>
+
+            <!-- 针尖穿出时的高光 -->
+            <circle class="bk-tip-glow" cx="120" cy="150" r="3" fill="var(--brass)"/>
+
+            <!-- 扣合瞬间光环 -->
+            <circle class="bk-ring" cx="170" cy="150" r="50" fill="none"/>
+
+            <!-- CLICK 声效 -->
+            <g class="bk-click">
+              <text x="260" y="100" text-anchor="middle"
+                    font-family="Helvetica" font-size="12" font-weight="900"
+                    fill="var(--brass)" letter-spacing="2">CLICK</text>
+            </g>
+
+            <!-- 下方：受压弯曲的金属杆 -->
+            <path class="bk-rod" d="M 40 250 L 340 250" fill="none"/>
+
+            <!-- 压在上方的重物块 -->
+            <g class="bk-weight">
+              <rect x="160" y="205" width="60" height="30" rx="4"
+                    fill="var(--rust)" stroke="var(--ink)" stroke-width="2.5"/>
+              <text x="190" y="225" text-anchor="middle"
+                    font-family="Helvetica" font-size="9" font-weight="900"
+                    fill="var(--cream)">LOAD</text>
+            </g>
+
+            <!-- 底部文字切换 -->
+            <g class="bk-text1">
+              <text x="190" y="285" text-anchor="middle"
+                    font-family="Helvetica" font-size="10" font-weight="900"
+                    fill="var(--brass)" letter-spacing="3">BUCKLED</text>
+            </g>
+            <g class="bk-text2">
+              <text x="190" y="285" text-anchor="middle"
+                    font-family="Helvetica" font-size="10" font-weight="900"
+                    fill="var(--rust)" letter-spacing="2">BUCKLING</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">buckle up</div><div class="meaning"><b>系好</b>安全带（口语常用）</div></div>
+        <div class="collo"><div class="pattern">buckle down</div><div class="meaning"><b>开始认真做</b>，专心致志</div></div>
+        <div class="collo"><div class="pattern">buckle under (pressure)</div><div class="meaning">在压力下<b>屈服/垮掉</b></div></div>
+        <div class="collo"><div class="pattern">belt buckle / shoe buckle</div><div class="meaning"><b>皮带扣</b> / 鞋扣（名词）</div></div>
+        <div class="collo"><div class="pattern">unbuckle one's seat belt</div><div class="meaning"><b>解开</b>安全带（反义）</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力</div>
+          <p class="en">The flight attendant reminded everyone to <em class="hl">buckle up</em> before takeoff.</p>
+          <p class="cn">空乘提醒大家在起飞前系好安全带。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">The company refused to <em class="hl">buckle under</em> pressure from competitors and kept innovating.</p>
+          <p class="cn">这家公司拒绝在竞争对手的压力下屈服，坚持创新。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">Final exams are coming, so it's time to <em class="hl">buckle down</em> and study hard.</p>
+          <p class="cn">期末考试临近，是时候专心学习、认真备考了。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 完形</div>
+          <p class="en">He tightened his belt <em class="hl">buckle</em> before heading out on the hike.</p>
+          <p class="cn">他出发去徒步前把皮带扣系紧了。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">多义</span>
+          buckle 有两个核心义：<br>
+          ① 物理扣紧（buckle up / buckle the belt）<br>
+          ② 受压弯曲/屈服（buckle under pressure）<br>
+          不要只记"扣紧"，看到 "buckle under" 要反应过来是"屈服"。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">短语</span>
+          <b>buckle down</b>（开始认真）≠ <b>buckle up</b>（系安全带）<br>
+          两个短语意思完全不同，别混用。
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">反义</span>
+          <b>buckle</b>（扣紧）↔ <b>unbuckle</b>（解开）<br>
+          是明确的反义动词对，不要用 "untie"（那是解绳子）。
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>buckle</td>
+            <td>带扣 / 扣紧 / 弯曲屈服</td>
+            <td class="chant">金属扣具 + 受压弯折</td>
+          </tr>
+          <tr>
+            <td>fasten</td>
+            <td>系紧（泛指）</td>
+            <td class="chant">泛指系紧用 fasten</td>
+          </tr>
+          <tr>
+            <td>unbuckle</td>
+            <td>解开带扣</td>
+            <td class="chant">解开带扣 unbuckle</td>
+          </tr>
+          <tr>
+            <td>tie</td>
+            <td>打结绑住</td>
+            <td class="chant">打结用 tie</td>
+          </tr>
+          <tr>
+            <td>yield</td>
+            <td>屈服（同义，正式）</td>
+            <td class="chant">正式屈服 yield</td>
+          </tr>
+          <tr>
+            <td>collapse</td>
+            <td>倒塌，崩溃</td>
+            <td class="chant">垮塌 collapse</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Please <span class="first-letter">b</span><span class="blank" onclick="this.classList.toggle('revealed')">uckle</span> up — the plane is about to take off.</p>
+          <p class="fill-hint">提示：<b>buckle up</b>，系好安全带</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He <span class="first-letter">b</span><span class="blank" onclick="this.classList.toggle('revealed')">uckled</span> his seat belt before driving.</p>
+          <p class="fill-hint">提示：<b>buckle the seat belt</b>，系安全带（过去式）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She refused to <span class="first-letter">b</span><span class="blank" onclick="this.classList.toggle('revealed')">uckle</span> under the pressure of public opinion.</p>
+          <p class="fill-hint">提示：<b>buckle under pressure</b>，在压力下屈服</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">With exams approaching, it's time to <span class="first-letter">b</span><span class="blank" onclick="this.classList.toggle('revealed')">uckle</span> down.</p>
+          <p class="fill-hint">提示：<b>buckle down</b>，开始认真做</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The leather <span class="first-letter">b</span><span class="blank" onclick="this.classList.toggle('revealed')">uckle</span> on his belt was made of solid brass.</p>
+          <p class="fill-hint">⚠️ 陷阱：这里要名词 <b>buckle</b>（皮带扣）</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>buckle</b> 造一句自己的句子。刻意用上今天学的一个搭配（buckle up / buckle down / buckle under）。</p>
+        <textarea id="mySentence" placeholder="例：Please buckle up before you start the car."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>

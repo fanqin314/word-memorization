@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>contrary · 相反的</title>
+<link rel="stylesheet" href="../card-base.css">
+<style>:root{
+  /* 镜像色板 —— contrary = 相反 / 对立 / 逆着 */
+  --paper:#F5F1E8;
+  --paper-2:#EBE4D4;
+  --ink:#1A1826;
+  --left:#7B4EE6;
+  --left-soft:#E8DEFF;
+  --right:#FFA53D;
+  --right-soft:#FFEBCB;
+  --mint:#3ECFB2;
+  --mint-soft:#D5F4EC;
+  --plum:#8B2E5E;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:28px;
+  --radius-md:20px;
+
+  /* 公共组件语义色 —— 供 card-base.css 使用 */
+  --cb-accent:var(--left);
+  --cb-accent-soft:var(--left-soft);
+  --cb-2:var(--right);
+  --cb-2-soft:var(--right-soft);
+  --cb-3:var(--mint);
+  --cb-3-soft:var(--mint-soft);
+}
+html,body{margin:0;padding:0;}
+/* 全页：镜像对角条纹（左上紫→右下橙） */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(135deg,
+      rgba(123,78,230,.08) 0%,
+      transparent 48%,
+      transparent 52%,
+      rgba(255,165,61,.08) 100%),
+    repeating-linear-gradient(45deg,
+      transparent 0 80px,
+      rgba(26,24,38,.04) 80px 82px,
+      transparent 82px 160px);
+  animation:mirrorShift 20s ease-in-out infinite alternate;
+}
+@keyframes mirrorShift{
+  0%{ opacity:.7; }
+  100%{ opacity:1; }
+}
+/* 漂浮的镜像符号 */
+.page-mirrors{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.mirror{
+  position:absolute;
+  opacity:0;
+  animation:mirrorDrift linear infinite;
+}
+/* 左指箭头 */
+.mirror.arrow-left{
+  width:0;height:0;
+  border-top:11px solid transparent;
+  border-bottom:11px solid transparent;
+  border-right:18px solid var(--left);
+  filter:drop-shadow(-2px 2px 0 var(--ink));
+}
+/* 右指箭头 */
+.mirror.arrow-right{
+  width:0;height:0;
+  border-top:11px solid transparent;
+  border-bottom:11px solid transparent;
+  border-left:18px solid var(--right);
+  filter:drop-shadow(2px 2px 0 var(--ink));
+}
+/* 对撞符号 ⚔ */
+.mirror.cross{
+  width:22px;height:22px;
+  color:var(--mint);
+  font-size:22px;
+  line-height:22px;
+  text-align:center;
+  -webkit-text-stroke:1.2px var(--ink);
+}
+.mirror.cross::before{
+  content:"⇄";
+}
+.mirror.f1{ left:6%; bottom:-40px; animation-duration:26s; }
+.mirror.f2{ left:22%; bottom:-55px; animation-duration:34s; animation-delay:4s; }
+.mirror.f3{ left:78%; bottom:-45px; animation-duration:30s; animation-delay:2s; }
+.mirror.f4{ left:90%; bottom:-30px; animation-duration:32s; animation-delay:8s; }
+.mirror.f5{ left:52%; bottom:-70px; animation-duration:26s; animation-delay:6s; }
+.mirror.f6{ left:38%; bottom:-50px; animation-duration:36s; animation-delay:12s; }
+.mirror.f7{ left:64%; bottom:-60px; animation-duration:24s; animation-delay:10s; }
+@keyframes mirrorDrift{
+  0%{ transform:translateY(0) rotate(0); opacity:0; }
+  10%{ opacity:.75; }
+  50%{ transform:translateY(-50vh) rotate(180deg) translateX(30px); }
+  90%{ opacity:.35; }
+  100%{ transform:translateY(-118vh) rotate(360deg) translateX(0); opacity:0; }
+}
+.hero,.body-wrap{position:relative;z-index:2;}
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  padding:80px 64px 60px;
+  border-bottom:3px solid var(--ink);
+  background:
+    linear-gradient(135deg,
+      #EFE8FF 0%,
+      #FBF6EA 50%,
+      #FFF0D6 100%);
+  overflow:hidden;
+}
+.hero-band{
+  position:absolute;
+  top:0;left:0;right:0;height:18px;
+  background:repeating-linear-gradient(90deg,
+    var(--left) 0 22px,
+    transparent 22px 24px,
+    var(--mint) 24px 46px,
+    transparent 46px 48px,
+    var(--right) 48px 70px,
+    transparent 70px 72px,
+    var(--mint) 72px 94px,
+    transparent 94px 96px);
+  border-bottom:3px solid var(--ink);
+  z-index:3;
+}
+/* HERO 镜像虚线 */
+.hero-mirror{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.mirror-svg{width:100%;height:100%;}
+.mirror-line{
+  fill:none;
+  stroke-linecap:round;
+  stroke-dasharray:600;
+  stroke-dashoffset:600;
+  animation:mirrorDraw 3s ease-out forwards;
+}
+.mirror-line.ml1{stroke:var(--left); stroke-width:2.5; animation-delay:.2s; opacity:.55;}
+.mirror-line.ml2{stroke:var(--right); stroke-width:2.5; animation-delay:.5s; opacity:.55;}
+.mirror-line.ml3{stroke:var(--mint); stroke-width:2; animation-delay:.9s; opacity:.7;}
+@keyframes mirrorDraw{to{stroke-dashoffset:0;}}
+/* HERO 中央的双向循环箭头 */
+.hero-cycle{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:440px;height:440px;
+  pointer-events:none;
+  z-index:0;
+  opacity:.28;
+}
+.hero-cycle svg{width:100%;height:100%;}
+.cycle-ring{
+  transform-origin:220px 220px;
+  animation:cycleSpin 30s linear infinite;
+}
+.cycle-ring.r2{
+  animation-direction:reverse;
+}
+@keyframes cycleSpin{
+  to{ transform:rotate(360deg); }
+}
+.hero-inner{position:relative;z-index:2;text-align:center;}
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:88px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-.02em;
+  filter:drop-shadow(5px 5px 0 var(--left));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:letterMirror 1.1s cubic-bezier(.34,1.56,.64,1) forwards;
+  will-change:transform,opacity;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), color .3s;
+}
+/* 前半从左边来，后半从右边来 */
+.word-anim .l1{ animation-delay:.15s; color:var(--left); --dx:-90px; --dy:-20px; }
+.word-anim .l2{ animation-delay:.28s; color:var(--mint); --dx:-70px; --dy:40px; }
+.word-anim .l3{ animation-delay:.41s; color:var(--left); --dx:-50px; --dy:-50px; }
+.word-anim .l4{ animation-delay:.54s; color:var(--mint); --dx:50px; --dy:-50px; }
+.word-anim .l5{ animation-delay:.67s; color:var(--right); --dx:70px; --dy:40px; }
+.word-anim .l6{ animation-delay:.80s; color:var(--right); --dx:90px; --dy:-20px; }
+.word-anim .l7{ animation-delay:.93s; color:var(--right); --dx:110px; --dy:0px; }
+@keyframes letterMirror{
+  0%{
+    opacity:0;
+    transform:translate(var(--dx),var(--dy)) scale(.4) rotate(30deg);
+    filter:blur(10px);
+  }
+  55%{
+    opacity:1;
+    filter:blur(0);
+    transform:translate(calc(var(--dx) * -.1), calc(var(--dy) * -.1)) scale(1.15) rotate(-10deg);
+  }
+  100%{
+    opacity:1;
+    transform:translate(0,0) scale(1) rotate(0);
+    color:var(--ink);
+  }
+}
+.word-anim .letter:hover{
+  color:var(--mint);
+  transform:translateY(-8px) scale(1.15);
+  filter:drop-shadow(0 0 12px var(--mint));
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-left:14px;vertical-align:middle;
+  background:var(--mint);border:3px solid var(--ink);
+  border-radius:50%;cursor:pointer;font-size:20px;
+  box-shadow:4px 4px 0 var(--left);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  opacity:0;animation:fadeUp .8s ease-out 1.15s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(8deg);box-shadow:6px 6px 0 var(--left);}
+.speak-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--left);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+.ipa-anim{
+  margin-top:20px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;color:var(--ink);letter-spacing:.06em;
+  background:var(--mint);border:2.5px solid var(--ink);
+  display:inline-block;padding:5px 18px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--left);
+  opacity:0;animation:fadeUp .8s ease-out 1.2s forwards;
+  transform:rotate(-1.5deg);
+  cursor:pointer;
+}
+.ipa-anim:hover{background:var(--right);color:var(--paper);}
+.pos-anim{
+  margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);display:inline-block;padding:5px 16px;border-radius:999px;
+  opacity:0;animation:fadeUp .8s ease-out 1.4s forwards;
+  transform:rotate(1.2deg);
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(8px) rotate(0);}100%{opacity:1;transform:translateY(0) rotate(var(--r,0));}}
+.spell-hint{
+  display:inline-block;margin-top:24px;padding:9px 20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--left-soft);
+  border:2.5px solid var(--ink);
+  border-radius:999px;
+  box-shadow:3px 3px 0 var(--left);
+  opacity:0;animation:fadeUp .8s ease-out 1.65s forwards;
+  transform:rotate(-1deg);
+}
+/* ============ 主体 ============ */
+.body-wrap{padding:60px 64px 0;}
+/* 意象卡 */
+.image-card{
+  background:var(--ink);
+  color:var(--paper);
+  border:3px solid var(--ink);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-hard);
+  padding:36px 32px;
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:28px;
+  align-items:center;
+  transform:rotate(-.6deg);
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(62,207,178,.20) 50%,transparent 70%);
+  transform:translateX(-100%);
+  animation:sheen 5s ease-in-out 2s infinite;
+  pointer-events:none;
+}
+@keyframes sheen{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
+/* ========== contrary SVG 动画 ========== */
+
+/* 左箭头向左推（远离中心） */
+.cnt-arrow-left{
+  animation:arrowPushLeft 4s cubic-bezier(.65,0,.35,1) infinite;
+  transform-origin:130px 130px;
+}
+@keyframes arrowPushLeft{
+  0%, 20%{ transform:translateX(0); }
+  45%, 65%{ transform:translateX(-40px); }
+  90%, 100%{ transform:translateX(0); }
+}
+/* 右箭头向右推 */
+.cnt-arrow-right{
+  animation:arrowPushRight 4s cubic-bezier(.65,0,.35,1) infinite;
+  transform-origin:210px 130px;
+}
+@keyframes arrowPushRight{
+  0%, 20%{ transform:translateX(0); }
+  45%, 65%{ transform:translateX(40px); }
+  90%, 100%{ transform:translateX(0); }
+}
+/* 中央支点（像跷跷板的轴） */
+.cnt-pivot{
+  animation:pivotPulse 4s ease-in-out infinite;
+  transform-origin:170px 130px;
+}
+@keyframes pivotPulse{
+  0%, 20%{ transform:scale(1); }
+  45%, 65%{ transform:scale(1.15); }
+  90%, 100%{ transform:scale(1); }
+}
+/* 中央发光脉冲 */
+.cnt-glow{
+  animation:glowPulse 4s ease-in-out infinite;
+  transform-origin:170px 130px;
+}
+@keyframes glowPulse{
+  0%, 20%{ opacity:.4; transform:scale(.9); }
+  45%, 65%{ opacity:1; transform:scale(1.2); }
+  90%, 100%{ opacity:.4; transform:scale(.9); }
+}
+/* 中央文字 A/B 交替 */
+.cnt-text-a{
+  animation:textSwapA 4s ease-in-out infinite;
+}
+@keyframes textSwapA{
+  0%, 25%{ opacity:1; }
+  45%, 70%{ opacity:0; }
+  90%, 100%{ opacity:1; }
+}
+.cnt-text-b{
+  animation:textSwapB 4s ease-in-out infinite;
+}
+@keyframes textSwapB{
+  0%, 25%{ opacity:0; }
+  45%, 70%{ opacity:1; }
+  90%, 100%{ opacity:0; }
+}
+/* 虚线路径上的流动点 */
+.cnt-flow{
+  animation:flowDash 2s linear infinite;
+}
+@keyframes flowDash{
+  to{ stroke-dashoffset:-40; }
+}
+/* 顶部虚线镜像线条持续呼吸 */
+.cnt-breath{
+  animation:breathFade 3s ease-in-out infinite;
+}
+@keyframes breathFade{
+  0%,100%{ opacity:.35; }
+  50%{ opacity:.75; }
+}
+/* ========== 结束 contrary SVG 动画 ========== */
+
+.collocations{display:flex;flex-direction:column;gap:14px;}
+.compare-table tr.highlight{background:var(--mint-soft);}
+@keyframes answerPop{0%{transform:scale(.85);opacity:.5;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@media (max-width:640px){.hero{padding:50px 22px 40px;}
+.word-anim{font-size:38px;}
+}
+@media (min-width:1100px){.hero{padding:100px 80px 80px;}
+.hero-band{height:24px;}
+.word-anim{font-size:124px;}
+.speak-btn{width:56px;height:56px;font-size:26px;}
+.ipa-anim{font-size:18px;padding:6px 22px;}
+.pos-anim{font-size:13px;padding:6px 20px;}
+.spell-hint{font-size:13px;padding:10px 24px;}
+.collo:nth-child(5){grid-column:1 / -1;}
+}
+@media (min-width:1500px){.hero{padding:120px 100px 96px;}
+.word-anim{font-size:158px;}
+}
+@media print{body::before,body::after{display:none;}
+.hero-mirror,.hero-cycle,.page-mirrors,.progress-bar{display:none;}
+}
+</style>
+</head>
+<body data-word="contrary">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <div class="page-mirrors" aria-hidden="true">
+    <div class="mirror arrow-left f1"></div>
+    <div class="mirror arrow-right f2"></div>
+    <div class="mirror cross f3"></div>
+    <div class="mirror arrow-left f4"></div>
+    <div class="mirror arrow-right f5"></div>
+    <div class="mirror cross f6"></div>
+    <div class="mirror arrow-left f7"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-band" aria-hidden="true"></div>
+
+    <div class="hero-mirror" aria-hidden="true">
+      <svg class="mirror-svg" viewBox="0 0 860 320" preserveAspectRatio="none">
+        <path class="mirror-line ml1" d="M -20 80 Q 200 60 430 160" />
+        <path class="mirror-line ml2" d="M 880 80 Q 660 60 430 160" />
+        <path class="mirror-line ml1" d="M -20 240 Q 200 260 430 160" />
+        <path class="mirror-line ml2" d="M 880 240 Q 660 260 430 160" />
+        <path class="mirror-line ml3" d="M 430 40 L 430 280" />
+      </svg>
+    </div>
+
+    <div class="hero-cycle" aria-hidden="true">
+      <svg viewBox="0 0 440 440">
+        <!-- 顺时针环 -->
+        <g class="cycle-ring">
+          <circle cx="220" cy="220" r="180" fill="none"
+                  stroke="var(--left)" stroke-width="2" stroke-dasharray="8 8" opacity=".7"/>
+          <polygon points="220,30 235,55 205,55" fill="var(--left)"/>
+        </g>
+        <!-- 逆时针环 -->
+        <g class="cycle-ring r2">
+          <circle cx="220" cy="220" r="140" fill="none"
+                  stroke="var(--right)" stroke-width="2" stroke-dasharray="8 8" opacity=".7"/>
+          <polygon points="220,410 205,385 235,385" fill="var(--right)"/>
+        </g>
+        <!-- 中心双向箭头 -->
+        <g>
+          <line x1="190" y1="220" x2="250" y2="220" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <polygon points="180,220 195,210 195,230" fill="var(--ink)"/>
+          <polygon points="260,220 245,210 245,230" fill="var(--ink)"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-inner">
+      <div>
+        <span class="word-anim" aria-label="contrary">
+          <span class="letter l1">c</span><span class="letter l2">o</span><span class="letter l3">n</span><span class="letter l4">t</span><span class="letter l5">r</span><span class="letter l6">a</span><span class="letter l7">r</span><span class="letter l8">y</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读 contrary">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn" title="点击再听一次">英 /ˈkɒntrəri/ &nbsp;·&nbsp; 美 /ˈkɑːntreri/</div>
+      <div class="pos-anim">adj. · n.</div>
+      <div class="spell-hint">con · tra · ry &nbsp; 相反的 · 对立面</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">1</span>
+        <span>词根 · 词族</span>
+      </h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="affix">contra-</span>（相反，对抗）
+          + <span class="stem">-ry</span>（形容词后缀）
+          &nbsp;→&nbsp; "站在对面的" → <b>相反的 · 对立面</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">名词</div><div class="w"><span class="hl">contrast</span></div><div class="p">/ˈkɒntrɑːst/</div><div class="m">对比，差异</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">contradict</div><div class="p">/ˌkɒntrəˈdɪkt/</div><div class="m">反驳，与……矛盾</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">contradiction</div><div class="p">/ˌkɒntrəˈdɪkʃn/</div><div class="m">矛盾，否认</div></div>
+          <div class="fam-card"><div class="pos">名词</div><div class="w">controversy</div><div class="p">/ˈkɒntrəvɜːsi/</div><div class="m">争议，争论</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">counter</div><div class="p">/ˈkaʊntər/</div><div class="m">反对，反击（同根）</div></div>
+          <div class="fam-card"><div class="pos">动词</div><div class="w">counteract</div><div class="p">/ˌkaʊntərˈækt/</div><div class="m">抵消，对抗</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">2</span>
+        <span>意象卡 · 一句话记住</span>
+      </h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main">
+            <span class="hl">contrary</span> = 两个箭头<strong>背对背指向相反方向</strong>。
+          </p>
+          <p class="ic-sub">
+            你说东 → 我说西；一个往左 → 一个往右。核心：<b>针锋相对，截然相反</b>。<br>
+            常见短语：<b>on the contrary</b>（恰恰相反）/ <b>contrary to</b>（与……相反）。
+          </p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 340 260">
+            <defs>
+              <radialGradient id="cntGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#3ECFB2" stop-opacity=".7"/>
+                <stop offset="60%" stop-color="#7B4EE6" stop-opacity=".2"/>
+                <stop offset="100%" stop-color="#FFA53D" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- 中央光晕 -->
+            <circle class="cnt-glow" cx="170" cy="130" r="100" fill="url(#cntGlow)"/>
+
+            <!-- 左侧箭头（左指） -->
+            <g class="cnt-arrow-left">
+              <!-- 箭头主体：一个指向左边的粗箭头 -->
+              <rect x="30" y="115" width="80" height="30" rx="4"
+                    fill="var(--left)" stroke="var(--ink)" stroke-width="3"/>
+              <!-- 箭头头部（左） -->
+              <polygon points="30,110 30,150 0,130"
+                       fill="var(--left)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+              <!-- 箭头纹理 -->
+              <line x1="50" y1="120" x2="50" y2="140" stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+              <line x1="70" y1="120" x2="70" y2="140" stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+              <line x1="90" y1="120" x2="90" y2="140" stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+            </g>
+
+            <!-- 右侧箭头（右指） -->
+            <g class="cnt-arrow-right">
+              <rect x="230" y="115" width="80" height="30" rx="4"
+                    fill="var(--right)" stroke="var(--ink)" stroke-width="3"/>
+              <polygon points="310,110 310,150 340,130"
+                       fill="var(--right)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+              <line x1="250" y1="120" x2="250" y2="140" stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+              <line x1="270" y1="120" x2="270" y2="140" stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+              <line x1="290" y1="120" x2="290" y2="140" stroke="var(--ink)" stroke-width="2" opacity=".6"/>
+            </g>
+
+            <!-- 中央支点（跷跷板轴） -->
+            <g class="cnt-pivot">
+              <!-- 中心圆 -->
+              <circle cx="170" cy="130" r="24"
+                      fill="var(--mint)" stroke="var(--ink)" stroke-width="3"/>
+              <circle cx="170" cy="130" r="12"
+                      fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+            </g>
+
+            <!-- 文字 A / B 交替 -->
+            <text class="cnt-text-a" x="170" y="136" text-anchor="middle"
+                  font-family="Georgia" font-size="16" font-weight="900"
+                  fill="var(--ink)" pointer-events="none">A</text>
+            <text class="cnt-text-b" x="170" y="136" text-anchor="middle"
+                  font-family="Georgia" font-size="16" font-weight="900"
+                  fill="var(--ink)" pointer-events="none">B</text>
+
+            <!-- 顶部镜像虚线（左紫右橙） -->
+            <line class="cnt-breath" x1="40" y1="50" x2="300" y2="50"
+                  stroke="var(--left)" stroke-width="2" stroke-dasharray="6 6" stroke-linecap="round"/>
+            <line class="cnt-breath" x1="40" y1="210" x2="300" y2="210"
+                  stroke="var(--right)" stroke-width="2" stroke-dasharray="6 6" stroke-linecap="round" style="animation-delay:-1.5s"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">3</span>
+        <span>核心搭配 · 语块记忆</span>
+      </h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">on the contrary</div><div class="meaning"><b>恰恰相反</b>（用于反驳对方）</div></div>
+        <div class="collo"><div class="pattern">contrary to</div><div class="meaning"><b>与……相反</b>（后接名词/从句）</div></div>
+        <div class="collo"><div class="pattern">to the contrary</div><div class="meaning"><b>相反的</b>（修饰名词，如 evidence to the contrary）</div></div>
+        <div class="collo"><div class="pattern">quite the contrary</div><div class="meaning"><b>完全相反</b>（强调语气）</div></div>
+        <div class="collo"><div class="pattern">contrary to popular belief</div><div class="meaning"><b>与普遍看法相反</b>（写作常用）</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">4</span>
+        <span>真题例句 · 语境记忆</span>
+      </h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2023 托福 · 听力</div>
+          <p class="en"><em class="hl">Contrary to</em> popular belief, not all bats are blind.</p>
+          <p class="cn">与普遍看法相反，并非所有蝙蝠都是盲的。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 雅思 · 阅读</div>
+          <p class="en">The results were <em class="hl">contrary to</em> what the researchers had predicted.</p>
+          <p class="cn">研究结果与研究人员预测的相反。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 阅读</div>
+          <p class="en">The evidence suggests the <em class="hl">contrary</em> of what was originally believed.</p>
+          <p class="cn">证据表明情况与最初所认为的相反。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 四级 · 听力</div>
+          <p class="en">— I thought you didn't like the movie. — <em class="hl">On the contrary</em>, I enjoyed it very much.</p>
+          <p class="cn">——我以为你不喜欢这部电影。——恰恰相反，我很喜欢。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">5</span>
+        <span>易错提醒 · 先防错</span>
+      </h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">固定搭配</span>
+          反驳对方用 <b>on the contrary</b>（恰恰相反）；<br>
+          修饰名词用 <b>to the contrary</b>（相反的证据）。<br>
+          <span class="wrong">on the contrary evidence</span> → <span class="right">evidence to the contrary</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">介词</span>
+          <b>contrary to</b> 后接名词/从句，不接 that 引导的完整句（正式）<br>
+          <span class="wrong">contrary of</span> → <span class="right">contrary to</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          <b>contrary</b>：con-tra-ry（注意 a 不是 e）<br>
+          <span class="wrong">contrery</span> → <span class="right">contrary</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">6</span>
+        <span>易混辨析 · 一句话区分</span>
+      </h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>contrary</td><td>相反的（强对立）</td><td class="chant">强对立用 contrary</td></tr>
+          <tr><td>opposite</td><td>对面的，相反的</td><td class="chant">位置相对是 opposite</td></tr>
+          <tr><td>reverse</td><td>反向的（顺序倒转）</td><td class="chant">顺序倒转是 reverse</td></tr>
+          <tr><td>opposed</td><td>反对的（态度）</td><td class="chant">态度反对用 opposed</td></tr>
+          <tr><td>contradictory</td><td>相互矛盾的（逻辑）</td><td class="chant">逻辑冲突 contradictory</td></tr>
+          <tr><td>adverse</td><td>不利的（负面影响）</td><td class="chant">对目标不利 adverse</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title">
+        <span class="num">7</span>
+        <span>首字母填空 · 提取练习</span>
+      </h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence"><span class="first-letter">C</span><span class="blank" onclick="this.classList.toggle('revealed')">ontrary to</span> popular belief, stress is not always harmful.</p>
+          <p class="fill-hint">提示：<b>contrary to + 名词</b>，与……相反</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">— It seems cold today. — <span class="first-letter">O</span><span class="blank" onclick="this.classList.toggle('revealed')">n the contrary</span>, it's quite warm.</p>
+          <p class="fill-hint">提示：<b>on the contrary</b>，恰恰相反（反驳对方）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">There is no evidence <span class="first-letter">t</span><span class="blank" onclick="this.classList.toggle('revealed')">o the contrary</span>.</p>
+          <p class="fill-hint">提示：<b>to the contrary</b>，相反的（修饰 evidence）</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The result was <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontrary to</span> expectations.</p>
+          <p class="fill-hint">提示：<b>contrary to expectations</b>，与预期相反</p>
+        </div>
+
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The team failed to win, and by the time the season ended, the situation was quite the <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontrary</span>.</p>
+          <p class="fill-hint">提示：<b>quite the contrary</b>，完全相反（名词用法）</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title">
+        <span class="num">8</span>
+        <span>造句练习 · 产出</span>
+      </h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>contrary</b> 造一句自己的句子。刻意用上今天学的一个搭配（on the contrary / contrary to / to the contrary）。</p>
+        <textarea id="mySentence" placeholder="例：Contrary to what many people think, learning a language as an adult is entirely possible."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title">
+        <span class="num">9</span>
+        <span>复习打卡 · 点击标记</span>
+      </h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>填空自测</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>回忆搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>自己造句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>辨析易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../card-base.js"></script>
+
+</body>
+</html>
