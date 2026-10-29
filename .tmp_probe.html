@@ -31,6 +31,10 @@ const push = (k, v) => out.push(k + ': ' + v);
   push('scrollTopApplied', col.scrollTop);
   push('toTopShown', d.getElementById('toTopBtn').classList.contains('show'));
   push('toTopClass', d.getElementById('toTopBtn').className + ' | colScrollH=' + col.scrollHeight + ' colClientH=' + col.clientHeight);
+  // 手动派发一次 scroll，确认监听器是否生效
+  col.dispatchEvent(new w.Event('scroll'));
+  await sleep(200);
+  push('afterManualScrollEvent', d.getElementById('toTopBtn').className + ' | colTop=' + col.scrollTop + ' docTop=' + d.scrollingElement.scrollTop);
   col.scrollTop = 0; await sleep(300);
 
   const hr = head.getBoundingClientRect();
