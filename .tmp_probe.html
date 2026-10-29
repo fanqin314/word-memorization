@@ -30,6 +30,7 @@ const push = (k, v) => out.push(k + ': ' + v);
   await sleep(500);
   push('scrollTopApplied', col.scrollTop);
   push('toTopShown', d.getElementById('toTopBtn').classList.contains('show'));
+  push('toTopClass', d.getElementById('toTopBtn').className + ' | colScrollH=' + col.scrollHeight + ' colClientH=' + col.clientHeight);
   col.scrollTop = 0; await sleep(300);
 
   const hr = head.getBoundingClientRect();
