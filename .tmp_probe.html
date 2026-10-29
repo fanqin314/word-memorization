@@ -57,6 +57,10 @@ const push = (k, v) => out.push(k + ': ' + v);
   push('navOnAfterScroll', navOn());
   push('rootnavPos', getComputedStyle(d.querySelector('.rootnav')).position + ' maxH=' + getComputedStyle(d.querySelector('.rootnav')).maxHeight);
   d.querySelector('[data-layout="comfort"]').click();
+  if(qs.get('layout') === 'group'){
+    d.querySelector('[data-layout="group"]').click();
+    col.scrollTop = 700;
+  }
   await sleep(300);
   push('errors', w.__errs || 0);
   document.getElementById('out').textContent = out.join('\n');
