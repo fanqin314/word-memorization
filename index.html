@@ -12,7 +12,7 @@
   --card:#FFFFFF;
   --ink:#141316;
   --ink-2:#444249;
-  --muted:#8A878E;
+  --muted:#6E6B74;
   --line:rgba(20,19,22,.14);
   --line-2:rgba(20,19,22,.34);
 
@@ -55,7 +55,7 @@
 
   /* 瑞士风格：无衬线，标题与正文同一字族，靠字号与字重分层 */
   --font-sans:"Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-  --font-serif:var(--font-sans);
+  --font-reading:var(--font-sans);
 
   --topbar-h:0px;
 }
@@ -366,7 +366,7 @@ body{
 }
 .card:hover .card-reveal,.card:focus-visible .card-reveal{transform:translateY(0);opacity:1;}
 .card-reveal .rl{font-size:var(--fs-micro);font-weight:800;letter-spacing:.12em;color:var(--accent);margin-bottom:var(--sp-1);}
-.card-reveal .rt{font-family:var(--font-serif);font-size:var(--fs-sm);line-height:var(--lh);color:var(--ink-2);}
+.card-reveal .rt{font-family:var(--font-reading);font-size:var(--fs-sm);line-height:var(--lh);color:var(--ink-2);}
 .card-reveal .rn{margin-top:var(--sp-2);padding-top:var(--sp-2);border-top:1px dashed var(--line-2);font-size:var(--fs-sm);font-weight:500;line-height:1.55;color:var(--ink-2);}
 
 /* 紧凑密度 */
@@ -553,7 +553,7 @@ body{
 .di-scene{background:var(--paper);border-radius:2px;padding:var(--sp-2) var(--sp-3);margin-top:var(--sp-2);}
 .di-scene p{margin:0;font-size:var(--fs-sm);font-weight:600;line-height:var(--lh);color:var(--ink);}
 .di-morph{margin-top:var(--sp-2);}
-.di-morph p{margin:0;font-family:var(--font-serif);font-size:var(--fs-sm);line-height:var(--lh);color:var(--ink-2);}
+.di-morph p{margin:0;font-family:var(--font-reading);font-size:var(--fs-sm);line-height:var(--lh);color:var(--ink-2);}
 .di-actions{display:flex;gap:var(--sp-1);margin-top:var(--sp-2);}
 
 .daily-empty{padding:var(--sp-4) var(--sp-3);text-align:center;color:var(--muted);font-size:var(--fs-sm);font-weight:600;line-height:var(--lh);}
@@ -2132,7 +2132,7 @@ body.swipe-on{overflow:hidden;}
         <span class="dot"></span>其他词源 <small>独立 3</small></button></nav>
   </div>
 
-  <main id="content"><div class="grid "><article class="card m0" data-word="about" tabindex="0" role="link" aria-label="about 环绕 · 大约 · 关于" style="--c:#7A7488;--d:0ms">
+  <main id="content"><div class="grid "><article class="card m0" data-word="about" tabindex="0" role="button" aria-label="about 环绕 · 大约 · 关于" style="--c:#7A7488;--d:0ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">about</h3>
@@ -2154,7 +2154,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">古英语 a-（在…周围）+ būtan（外面）→ "在四周"</div>
       
     </div>
-  </article><article class="card m0" data-word="accordingly" tabindex="0" role="link" aria-label="accordingly 相应地 · 因此" style="--c:#D9534F;--d:38ms">
+  </article><article class="card m0" data-word="accordingly" tabindex="0" role="button" aria-label="accordingly 相应地 · 因此" style="--c:#D9534F;--d:38ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">accordingly</h3>
@@ -2176,7 +2176,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">ad-（向）+ cor（心，引申为"一致"）→ "心心相合"</div>
       
     </div>
-  </article><article class="card m0" data-word="anniversary" tabindex="0" role="link" aria-label="anniversary 周年 · 纪念日" style="--c:#E08A2B;--d:76ms">
+  </article><article class="card m0" data-word="anniversary" tabindex="0" role="button" aria-label="anniversary 周年 · 纪念日" style="--c:#E08A2B;--d:76ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">anniversary</h3>
@@ -2198,7 +2198,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">ann-（年）+ vers（转）+ -ary → "一年转回来的日子"</div>
       
     </div>
-  </article><article class="card m0" data-word="annual" tabindex="0" role="link" aria-label="annual 每年的 · 年度的" style="--c:#E08A2B;--d:114ms">
+  </article><article class="card m0" data-word="annual" tabindex="0" role="button" aria-label="annual 每年的 · 年度的" style="--c:#E08A2B;--d:114ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">annual</h3>
@@ -2220,7 +2220,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">拉丁语 ann（年）+ -ual（形容词后缀）→ "一年一次的"</div>
       
     </div>
-  </article><article class="card m0" data-word="contrary" tabindex="0" role="link" aria-label="contrary 相反的 · 对立面" style="--c:#B03A6B;--d:152ms">
+  </article><article class="card m0" data-word="contrary" tabindex="0" role="button" aria-label="contrary 相反的 · 对立面" style="--c:#B03A6B;--d:152ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">contrary</h3>
@@ -2242,7 +2242,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">contra-（相反，对抗）+ -ry（形容词后缀）→ "站在对面的"</div>
       
     </div>
-  </article><article class="card m0" data-word="controversy" tabindex="0" role="link" aria-label="controversy 争议 · 争论 · 论战" style="--c:#6D4BD6;--d:190ms">
+  </article><article class="card m0" data-word="controversy" tabindex="0" role="button" aria-label="controversy 争议 · 争论 · 论战" style="--c:#6D4BD6;--d:190ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">controversy</h3>
@@ -2264,7 +2264,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">contro-（相反，对抗）+ vers（转）+ -y → "转向相反方向"</div>
       
     </div>
-  </article><article class="card m0" data-word="convert" tabindex="0" role="link" aria-label="convert 转变 · 转换 · 改造" style="--c:#6D4BD6;--d:228ms">
+  </article><article class="card m0" data-word="convert" tabindex="0" role="button" aria-label="convert 转变 · 转换 · 改造" style="--c:#6D4BD6;--d:228ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">convert</h3>
@@ -2286,7 +2286,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">con-（一起，完全）+ vert（转）→ "完全转向"</div>
       
     </div>
-  </article><article class="card m0" data-word="diverse" tabindex="0" role="link" aria-label="diverse 多样的 · 各不相同的" style="--c:#6D4BD6;--d:266ms">
+  </article><article class="card m0" data-word="diverse" tabindex="0" role="button" aria-label="diverse 多样的 · 各不相同的" style="--c:#6D4BD6;--d:266ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">diverse</h3>
@@ -2308,7 +2308,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">di-（分开，离开）+ vers（转）+ -e → "转向不同方向"</div>
       
     </div>
-  </article><article class="card m0" data-word="reunite" tabindex="0" role="link" aria-label="reunite 重聚 · 重逢 · 再度联合" style="--c:#1FA98B;--d:304ms">
+  </article><article class="card m0" data-word="reunite" tabindex="0" role="button" aria-label="reunite 重聚 · 重逢 · 再度联合" style="--c:#1FA98B;--d:304ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">reunite</h3>
@@ -2330,7 +2330,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">re-（再，又）+ unus（一）+ -ite（动词后缀）→ "再次成为一"</div>
       
     </div>
-  </article><article class="card m0" data-word="reverse" tabindex="0" role="link" aria-label="reverse 反转 · 倒退 · 相反" style="--c:#6D4BD6;--d:342ms">
+  </article><article class="card m0" data-word="reverse" tabindex="0" role="button" aria-label="reverse 反转 · 倒退 · 相反" style="--c:#6D4BD6;--d:342ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">reverse</h3>
@@ -2352,7 +2352,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">re-（回，反）+ vers（转）+ -e → "转向相反方向"</div>
       
     </div>
-  </article><article class="card m0" data-word="space" tabindex="0" role="link" aria-label="space 空间 · 太空 · 留白" style="--c:#7A7488;--d:380ms">
+  </article><article class="card m0" data-word="space" tabindex="0" role="button" aria-label="space 空间 · 太空 · 留白" style="--c:#7A7488;--d:380ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">space</h3>
@@ -2374,7 +2374,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">拉丁语 spatium（距离，场地）→ 广阔、留白、宇宙</div>
       
     </div>
-  </article><article class="card m0" data-word="union" tabindex="0" role="link" aria-label="union 联盟 · 工会 · 联合" style="--c:#1FA98B;--d:418ms">
+  </article><article class="card m0" data-word="union" tabindex="0" role="button" aria-label="union 联盟 · 工会 · 联合" style="--c:#1FA98B;--d:418ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">union</h3>
@@ -2396,7 +2396,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">拉丁语 unus（一）+ -ion（名词后缀）→ "成为一体的状态"</div>
       
     </div>
-  </article><article class="card m0" data-word="unite" tabindex="0" role="link" aria-label="unite 联合 · 团结 · 汇聚" style="--c:#1FA98B;--d:456ms">
+  </article><article class="card m0" data-word="unite" tabindex="0" role="button" aria-label="unite 联合 · 团结 · 汇聚" style="--c:#1FA98B;--d:456ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">unite</h3>
@@ -2418,7 +2418,7 @@ body.swipe-on{overflow:hidden;}
       <div class="rt">拉丁语 unus（一）+ -ite（动词后缀）→ "使之成为一"</div>
       
     </div>
-  </article><article class="card m0" data-word="weave" tabindex="0" role="link" aria-label="weave 交叉编织" style="--c:#7A7488;--d:456ms">
+  </article><article class="card m0" data-word="weave" tabindex="0" role="button" aria-label="weave 交叉编织" style="--c:#7A7488;--d:456ms">
     <span class="card-band"></span>
     <div class="card-head">
       <h3 class="card-word">weave</h3>
@@ -2477,8 +2477,8 @@ body.swipe-on{overflow:hidden;}
 </aside>
 
 <!-- 笔记弹窗 -->
-<div class="overlay" id="overlay">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalWord">
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="笔记">
+  <div class="modal">
     <div class="modal-head">
       <div>
         <h3 id="modalWord">—</h3>
@@ -2507,8 +2507,8 @@ body.swipe-on{overflow:hidden;}
 </div>
 
 <!-- 每日推荐设置弹窗 -->
-<div class="overlay" id="dailyCfgOverlay">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dailyCfgTitle">
+<div class="overlay" id="dailyCfgOverlay" role="dialog" aria-modal="true" aria-label="每日推荐设置">
+  <div class="modal">
     <div class="modal-head">
       <div>
         <h3 id="dailyCfgTitle">设置</h3>
@@ -2569,8 +2569,8 @@ body.swipe-on{overflow:hidden;}
 </div>
 
 <!-- GitHub 上传 Token 弹窗 -->
-<div class="overlay" id="ghOverlay">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ghTitle">
+<div class="overlay" id="ghOverlay" role="dialog" aria-modal="true" aria-label="GitHub 令牌">
+  <div class="modal">
     <div class="modal-head">
       <div>
         <h3 id="ghTitle">上传到 GitHub</h3>
@@ -2661,7 +2661,7 @@ body.swipe-on{overflow:hidden;}
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="words-data.js"></script>
 <script>
@@ -2720,9 +2720,12 @@ const STORE_KEY = 'vocab_workbench_v1';
 let store = load();
 function load(){ try{ const r = localStorage.getItem(STORE_KEY); return r ? JSON.parse(r) : {}; }catch(e){ return {}; } }
 function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }catch(e){ toast('本机存储不可用，记录不会保存'); } }
+const REC_DEFAULT = {fav:false, mastery:0, pin:null, note:'', opens:0, lastOpened:0};
 function rec(word){
   let r = store[word];
-  if(!r){ r = store[word] = {fav:false, mastery:0, pin:null, note:'', opens:0, lastOpened:0}; }
+  if(!r){ r = store[word] = Object.assign({}, REC_DEFAULT); }
+  // 旧数据可能缺字段（如只有 fav），补默认值，避免 opens += 1 变成 NaN
+  for(const k in REC_DEFAULT){ if(r[k] === undefined) r[k] = REC_DEFAULT[k]; }
   // 迁移旧数据：以前手动标记过的掌握度视为「手动固定」，未标记的走自动判定
   if(r.pin === undefined) r.pin = r.mastery > 0 ? r.mastery : null;
   return r;
@@ -2760,15 +2763,27 @@ function syncMastery(){
 /* 点击掌握度按钮：在 自动 / 学习中 / 已掌握 之间循环 */
 function cycleMastery(word){
   const r = rec(word);
+  const before = r.mastery;
   const cur = (r.pin === 1 || r.pin === 2) ? r.pin : null;
   r.pin = cur === null ? 1 : cur === 1 ? 2 : null;
   r.mastery = resolveMastery(r);
   save();
-  return { level:r.mastery, auto:r.pin === null };
+  return { level:r.mastery, auto:r.pin === null, changed:before !== r.mastery };
 }
 
 const state = { q:'', sort:'az', layout:'comfort', root:'all', mastery:'all', chipsCollapsed: window.matchMedia('(max-width:640px)').matches };
 const isGroup = () => state.layout === 'group';
+
+/* 页面滚动锁：滑动学习与手写画板可能同时打开，用引用计数避免互相解除 */
+let scrollLocks = 0;
+function lockScroll(){
+  scrollLocks++;
+  if(scrollLocks === 1) document.body.classList.add('swipe-on');
+}
+function unlockScroll(){
+  if(scrollLocks > 0) scrollLocks--;
+  if(scrollLocks === 0) document.body.classList.remove('swipe-on');
+}
 
 /* ============================================================
    工具
@@ -2874,38 +2889,44 @@ function cardHTML(w, idx){
   const mstCls = r.mastery===1 ? 'mst1' : r.mastery===2 ? 'mst2' : '';
   const mstIcon = r.mastery===1 ? ICON.mst1 : r.mastery===2 ? ICON.mst2 : ICON.mst0;
   const noteBlock = r.note ? `<div class="card-note">${ICON.note}<span>${escapeHTML(r.note)}</span></div>` : '';
-  return `<article class="card m${r.mastery}" data-word="${w.word}" tabindex="0" role="link"
-                   aria-label="${w.word} ${w.gloss}" style="--d:${Math.min(idx,12)*38}ms">
+  const e = escapeHTML;
+  return `<article class="card m${r.mastery}" data-word="${e(w.word)}" tabindex="0" role="button"
+                   aria-label="${e(w.word + ' ' + w.gloss)}" style="--d:${Math.min(idx,12)*38}ms">
     <span class="card-band"></span>
     <div class="card-head">
-      <h3 class="card-word">${w.word}</h3>
+      <h3 class="card-word">${e(w.word)}</h3>
       <div class="card-actions">
         <button class="icon-btn sm ${r.note?'note-on':''}" type="button" data-action="note" title="${r.note?'编辑笔记':'添加笔记'}" aria-label="笔记">${ICON.note}</button>
         <button class="icon-btn sm ${r.fav?'fav-on':''}" type="button" data-action="fav" title="${r.fav?'取消收藏':'收藏'}" aria-label="收藏">${r.fav?ICON.starF:ICON.star}</button>
         <button class="icon-btn sm ${mstCls}" type="button" data-action="mastery" title="掌握度：${MASTERY[r.mastery].label}（点击切换）" aria-label="切换掌握度">${mstIcon}</button>
       </div>
     </div>
-    <div class="card-ipa">${w.ipa}<span class="card-pos">${w.pos}</span></div>
-    <p class="card-gloss">${w.gloss}</p>
+    <div class="card-ipa">${e(w.ipa)}<span class="card-pos">${e(w.pos)}</span></div>
+    <p class="card-gloss">${e(w.gloss)}</p>
     ${noteBlock}
     <div class="card-foot">
-      <span class="tag">${primaryTag(w)}</span>
+      <span class="tag">${e(primaryTag(w))}</span>
       <span class="card-meta">${relTime(r.lastOpened)}</span>
     </div>
     <div class="card-reveal">
       <div class="rl">词根拆解</div>
-      <div class="rt">${w.morph}</div>
+      <div class="rt">${e(w.morph)}</div>
       ${r.note ? `<div class="rn"><b>笔记 · </b>${escapeHTML(r.note)}</div>` : ''}
     </div>
   </article>`;
 }
 function escapeHTML(s){
-  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 /* ============================================================
    渲染：主内容
    ============================================================ */
 function render(animate){
+  // 重建 DOM 会丢焦点：记住当前聚焦的卡片/按钮，渲染后还原
+  const prevFocus = document.activeElement;
+  const prevCard = prevFocus && prevFocus.closest ? prevFocus.closest('.card') : null;
+  const focusInfo = prevCard ? { word: prevCard.dataset.word, action: prevFocus.dataset.action || null } : null;
+
   renderStats(); renderRecent();
 
   const content = document.getElementById('content');
@@ -2953,6 +2974,12 @@ function render(animate){
   }
 
   if(!animate) content.querySelectorAll('.card').forEach(el => el.style.animation = 'none');
+
+  if(focusInfo){
+    const card = content.querySelector(`.card[data-word="${CSS.escape(focusInfo.word)}"]`);
+    const target = focusInfo.action && card ? card.querySelector(`[data-action="${focusInfo.action}"]`) : card;
+    if(target) target.focus({ preventScroll:true });
+  }
 }
 
 /* ============================================================
@@ -2977,6 +3004,7 @@ const drawer = document.getElementById('drawer');
 const drawerMask = document.getElementById('drawerMask');
 const drawerFrame = document.getElementById('drawerFrame');
 let currentWord = null;
+let drawerReturnFocus = null;
 
 function openDrawer(word){
   const w = WORDS.find(x => x.word === word);
@@ -2992,16 +3020,27 @@ function openDrawer(word){
   document.getElementById('drawerSub').textContent = `${w.ipa} · ${w.pos} · ${w.gloss}`;
   syncDrawerActions();
   drawerFrame.src = w.file;
+  drawerReturnFocus = document.activeElement;
   drawer.classList.add('open');
   drawer.setAttribute('aria-hidden','false');
+  drawer.setAttribute('role','dialog');
+  drawer.setAttribute('aria-modal','true');
   drawerMask.classList.add('open');
   render(false);   // 更新打开次数 / 最近打开
+  setTimeout(() => document.getElementById('drawerClose').focus(), 80);
 }
 function closeDrawer(){
   drawer.classList.remove('open');
   drawer.setAttribute('aria-hidden','true');
+  drawer.removeAttribute('role');
+  drawer.removeAttribute('aria-modal');
   drawerMask.classList.remove('open');
   currentWord = null;
+  if(drawerReturnFocus){
+    const el = drawerReturnFocus;
+    drawerReturnFocus = null;
+    try{ el.focus({ preventScroll:true }); }catch(e){}
+  }
   setTimeout(() => { if(!drawer.classList.contains('open')) drawerFrame.src = 'about:blank'; }, 360);
 }
 function syncDrawerActions(){
@@ -3037,6 +3076,13 @@ document.getElementById('drawerNote').addEventListener('click', () => { if(curre
    ============================================================ */
 const content = document.getElementById('content');
 
+/* 重渲染后把焦点放回同一张卡片的同一个操作按钮（按钮本身没有记录位置时也可靠） */
+function focusCardAction(word, action){
+  const card = document.querySelector(`.card[data-word="${CSS.escape(word)}"]`);
+  const btn = card && card.querySelector(`[data-action="${action}"]`);
+  if(btn) btn.focus({ preventScroll:true });
+}
+
 content.addEventListener('click', (e) => {
   const actionBtn = e.target.closest('[data-action]');
   const card = e.target.closest('.card');
@@ -3049,10 +3095,12 @@ content.addEventListener('click', (e) => {
     const r = rec(word);
     if(action === 'fav'){
       r.fav = !r.fav; save(); render(false);
+      focusCardAction(word, action);
       toast(r.fav ? `已收藏 ${word}` : `已取消收藏 ${word}`);
     }else if(action === 'mastery'){
       const res = cycleMastery(word); render(false);
-      toast(`${word} · ${MASTERY[res.level].label}${res.auto ? '（自动）' : ''}`);
+      focusCardAction(word, action);
+      toast(res.changed ? `${word} · ${MASTERY[res.level].label}${res.auto ? '（自动）' : ''}` : `${word} · 已是最新状态`);
     }else if(action === 'note'){
       openNote(word, false);
     }
@@ -3084,6 +3132,33 @@ const overlay = document.getElementById('overlay');
 const modalNote = document.getElementById('modalNote');
 let noteWord = null, noteFromDrawer = false;
 
+/* 弹窗焦点陷阱：Tab 只在弹窗内循环，关闭后焦点还给触发者 */
+let activeTrap = null, trapReturnFocus = null;
+function openTrap(container, focusEl){
+  closeTrap();
+  trapReturnFocus = document.activeElement;
+  const sel = 'button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])';
+  const items = [...container.querySelectorAll(sel)].filter(el => !el.disabled && el.offsetParent !== null);
+  if(items.length){
+    const first = items[0], last = items[items.length - 1];
+    const onKey = e => {
+      if(e.key !== 'Tab') return;
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    };
+    container.addEventListener('keydown', onKey);
+    activeTrap = () => container.removeEventListener('keydown', onKey);
+  }
+  (focusEl || items[0] || container).focus();
+}
+function closeTrap(){
+  if(activeTrap){ activeTrap(); activeTrap = null; }
+  if(trapReturnFocus){
+    try{ trapReturnFocus.focus({ preventScroll:true }); }catch(e){}
+    trapReturnFocus = null;
+  }
+}
+
 function openNote(word, fromDrawer){
   noteWord = word; noteFromDrawer = !!fromDrawer;
   const w = WORDS.find(x => x.word === word);
@@ -3093,9 +3168,9 @@ function openNote(word, fromDrawer){
   modalNote.value = r.note || '';
   document.getElementById('modalDelete').disabled = !r.note;
   overlay.classList.add('open');
-  setTimeout(() => modalNote.focus(), 60);
+  openTrap(overlay, modalNote);
 }
-function closeNote(){ overlay.classList.remove('open'); noteWord = null; }
+function closeNote(){ overlay.classList.remove('open'); noteWord = null; closeTrap(); }
 function saveNote(){
   if(noteWord){ const r = rec(noteWord); r.note = modalNote.value.trim(); save(); render(false); syncDrawerActions(); }
   closeNote();
@@ -3163,9 +3238,10 @@ const searchInput = document.getElementById('searchInput');
 const searchBox = document.getElementById('searchBox');
 let searchTimer = null;
 searchInput.addEventListener('input', () => {
+  state.q = searchInput.value;          // 立即同步，其它筛选操作读到的就是最新值
   searchBox.classList.toggle('has-value', !!searchInput.value);
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => { state.q = searchInput.value; render(false); }, 130);
+  searchTimer = setTimeout(() => render(false), 130);   // 只防抖渲染
 });
 document.getElementById('searchClear').addEventListener('click', () => {
   searchInput.value = ''; state.q = '';
@@ -3178,7 +3254,7 @@ document.getElementById('searchClear').addEventListener('click', () => {
    ============================================================ */
 document.addEventListener('keydown', (e) => {
   const tag = (e.target.tagName || '').toLowerCase();
-  const typing = tag === 'input' || tag === 'textarea' || e.target.isContentEditable;
+  const typing = tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable;
 
   if(e.key === 'Escape'){
     if(overlay.classList.contains('open')){ closeNote(); return; }
@@ -3349,11 +3425,12 @@ function ghToken(){
 function askGhToken(){
   ghTokenInput.value = ghToken();
   ghOverlay.classList.add('open');
-  setTimeout(() => ghTokenInput.focus(), 60);
+  openTrap(ghOverlay.querySelector('.modal') || ghOverlay, ghTokenInput);
   return new Promise(res => { ghResolve = res; });
 }
 function closeGhToken(val){
   ghOverlay.classList.remove('open');
+  closeTrap();
   if(val){ try{ localStorage.setItem(GH_TOKEN_KEY, val); }catch(e){} }
   if(ghResolve){ ghResolve(val || ''); ghResolve = null; }
 }
@@ -3376,7 +3453,10 @@ function wordFromCard(html){
 function toBase64(text){
   const bytes = new TextEncoder().encode(text);
   let bin = '';
-  for(let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  const CHUNK = 0x8000;   // 分块拼接，避免大文件逐字符累加导致卡顿
+  for(let i = 0; i < bytes.length; i += CHUNK){
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+  }
   return btoa(bin);
 }
 /* 卡片在仓库里的路径：cards/<首字母>/<单词>.html，非字母归入 other */
@@ -3396,11 +3476,21 @@ async function ghPutFile(path, content, token){
     body: JSON.stringify({ message: 'add: ' + path.replace(/\.html$/, ''), content: toBase64(content), branch: GH_REPO.branch })
   });
   if(!res.ok){
-    const err = new Error('HTTP ' + res.status);
+    // 把响应体带出来，便于区分「422 = 文件已存在」和其它校验失败
+    const body = await res.json().catch(() => null);
+    const msg = body && Array.isArray(body.errors)
+      ? body.errors.map(x => (x.code || '') + ' ' + (x.message || '')).join('; ')
+      : (body && body.message) || '';
+    const err = new Error(msg || ('HTTP ' + res.status));
     err.status = res.status;
     throw err;
   }
   return res.json();
+}
+
+/* GitHub 对「文件已存在」返回 422，需要看响应体才能区分其它 422（超大 / 路径非法） */
+function isAlreadyExists(e){
+  return !!e && e.status === 422 && /already exists|sha/i.test(e.message || '');
 }
 
 /* ---- 目录句柄：授权一次后自动扫描待上传卡片（Chrome / Edge 支持） ---- */
@@ -3459,7 +3549,11 @@ async function scanCardsDir(){
       if(h.kind !== 'file' || !/\.html$/i.test(name)) continue;
       if(/^(index|words-data)\.html$/i.test(name)) continue;
       let text = '';
-      try{ text = await (await h.getFile()).text(); }catch(e){ continue; }
+      try{
+        const file = await h.getFile();
+        if(file.size > 5 * 1024 * 1024) continue;   // 超大文件不解析，避免卡死主线程
+        text = await file.text();
+      }catch(e){ continue; }
       const word = wordFromCard(text);
       if(!word || known.has(word) || uploadedWords.has(word)) continue;
       found.push({ word, name, text });
@@ -3489,7 +3583,8 @@ async function uploadPending(){
       await ghPutFile(cardPath(it.word), it.text, token);
       uploadedWords.add(it.word); ok++;
     }catch(e){
-      if(e.status === 422){ uploadedWords.add(it.word); skipped++; continue; } // 仓库里已存在
+      if(isAlreadyExists(e)){ uploadedWords.add(it.word); skipped++; continue; }
+      if(e.status === 422){ failed++; continue; }   // 其它 422：内容过大 / 路径非法
       if(e.status === 401 || e.status === 403){
         toast('Token 无效或没有写权限');
         try{ localStorage.removeItem(GH_TOKEN_KEY); }catch(err){}
@@ -3514,6 +3609,7 @@ async function uploadFilesManually(files){
   const known = new Set(WORDS.map(w => w.word));
   let ok = 0, skipped = 0, failed = 0;
   for(const f of files){
+    if(f.size > 5 * 1024 * 1024){ failed++; continue; }   // 超大卡片跳过，避免主线程卡死
     let html;
     try{ html = await f.text(); }catch(e){ failed++; continue; }
     const word = wordFromCard(html);
@@ -3521,7 +3617,8 @@ async function uploadFilesManually(files){
     if(known.has(word)){ skipped++; continue; }
     try{ await ghPutFile(cardPath(word), html, token); known.add(word); ok++; }
     catch(e){
-      if(e.status === 422){ skipped++; continue; }
+      if(isAlreadyExists(e)){ skipped++; continue; }
+      if(e.status === 422){ failed++; continue; }
       if(e.status === 401 || e.status === 403){
         toast('Token 无效或没有写权限');
         try{ localStorage.removeItem(GH_TOKEN_KEY); }catch(err){}
@@ -3575,9 +3672,22 @@ uploadInput.addEventListener('change', () => {
   await scanCardsDir();
 })();
 
-/* 回到页面时自动重扫：新下载的卡片会直接冒红点 */
+/* 回到页面时自动重扫：新下载的卡片会直接冒红点；顺带刷新因长时间挂起而过期的掌握度 */
 window.addEventListener('focus', () => { if(cardsDir) scanCardsDir(); });
-document.addEventListener('visibilitychange', () => { if(!document.hidden && cardsDir) scanCardsDir(); });
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden) return;
+  if(cardsDir) scanCardsDir();
+  syncMastery(); renderStats();
+  // 弹层/全屏模式打开时不动主列表，避免打断当前操作
+  if(!overlay.classList.contains('open') && !swipeStage.classList.contains('open') && !drawStage.classList.contains('open')) render(false);
+});
+
+/* 字体加载完成后重新量一次高度：避免初始定位偏上/偏下 */
+if(document.fonts && document.fonts.ready){
+  document.fonts.ready.then(() => {
+    if(dailyLen){ measureDailyMetrics(); gotoDaily(dailyPos, false); }
+  });
+}
 
 /* ============================================================
    滑动学习模式：全屏卡片，左右拖动 / 方向键切换
@@ -3650,7 +3760,7 @@ function swipeOpenMode(){
   swipeCounted = new Set();
   swipeStage.classList.add('open');
   swipeStage.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('swipe-on');
+  lockScroll();
   swipeCardEl.style.transition = 'none';
   swipeCardEl.style.transform = 'translateX(0)';
   swipeCardEl.style.opacity = '1';
@@ -3661,7 +3771,7 @@ function swipeOpenMode(){
 function swipeCloseMode(){
   swipeStage.classList.remove('open');
   swipeStage.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('swipe-on');
+  unlockScroll();
   render(false);
 }
 
@@ -3677,9 +3787,9 @@ document.getElementById('swipeFav').addEventListener('click', () => {
 });
 document.getElementById('swipeMst').addEventListener('click', () => {
   const w = swipeList[swipeIdx]; if(!w) return;
-  const { level, auto } = cycleMastery(w.word);
+  const { level, auto, changed } = cycleMastery(w.word);
   swipeSyncActions(); render(false);
-  toast(`${w.word} · ${auto ? '自动' : level === 2 ? '已掌握' : level === 1 ? '学习中' : '未学'}`);
+  toast(changed ? `${w.word} · ${auto ? '自动' : level === 2 ? '已掌握' : level === 1 ? '学习中' : '未学'}` : `${w.word} · 已是最新状态`);
 });
 document.getElementById('swipeOpen').addEventListener('click', () => {
   const w = swipeList[swipeIdx]; if(!w) return;
@@ -3782,7 +3892,7 @@ function drawOpen(word){
   drawStrokes = saved && saved.strokes ? JSON.parse(JSON.stringify(saved.strokes)) : [];
   drawStage.classList.add('open');
   drawStage.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('swipe-on');
+  lockScroll();
   requestAnimationFrame(() => { drawResize(); });
 }
 
@@ -3798,7 +3908,7 @@ function drawClose(){
   }
   drawStage.classList.remove('open');
   drawStage.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('swipe-on');
+  unlockScroll();
   drawWord = null;
 }
 
@@ -3817,7 +3927,11 @@ drawCanvas.addEventListener('pointerdown', (e) => {
 drawCanvas.addEventListener('pointermove', (e) => {
   if(!drawCurrent) return;
   e.preventDefault();
-  drawCurrent.points.push(drawPoint(e));
+  const p = drawPoint(e);
+  const last = drawCurrent.points[drawCurrent.points.length - 1];
+  // 点抽稀：距离不足 2px 不记录，避免长笔画把 localStorage 撑爆
+  if(last && Math.abs(p.x - last.x) + Math.abs(p.y - last.y) < 2) return;
+  drawCurrent.points.push(p);
   const pts = drawCurrent.points;
   if(pts.length < 2) return;
   drawCtx.lineCap = 'round';
@@ -3907,25 +4021,26 @@ function renderDaily(){
   roll.classList.remove('is-empty');
 
   const one = (w, i, rep) => {
+    const e = escapeHTML;
     const r = rec(w.word);
     const mstCls = r.mastery === 1 ? 'mst1' : r.mastery === 2 ? 'mst2' : '';
     const mstIcon = r.mastery === 1 ? ICON.mst1 : r.mastery === 2 ? ICON.mst2 : ICON.mst0;
-    return `<article class="daily-item m${r.mastery}" data-word="${w.word}" style="--c:${rootColor(w)}">
+    return `<article class="daily-item m${r.mastery}" data-word="${e(w.word)}" style="--c:${rootColor(w)}">
       <div class="di-top">
         <span class="di-dot"></span>
-        <span class="di-word">${w.word}</span>
+        <span class="di-word">${e(w.word)}</span>
         <span class="di-idx">${i + 1}/${dailyLen}</span>
       </div>
-      <div class="di-gloss">${w.gloss}</div>
+      <div class="di-gloss">${e(w.gloss)}</div>
       <div class="di-detail"><div class="di-detail-in">
-        <div class="di-art" data-art="${w.word}" aria-hidden="true">${inlineArt(ART[w.word], rep + '_' + i)}</div>
+        <div class="di-art" data-art="${e(w.word)}" aria-hidden="true">${inlineArt(ART[w.word], rep + '_' + i)}</div>
         <div class="di-scene">
           <span class="di-lab">意象卡 · 核心画面</span>
-          <p>${w.scene}</p>
+          <p>${e(w.scene)}</p>
         </div>
         <div class="di-morph">
           <span class="di-lab">词根拆解</span>
-          <p>${w.morph}</p>
+          <p>${e(w.morph)}</p>
         </div>
         <div class="di-actions">
           <button class="icon-btn sm ${mstCls}" type="button" data-daily-action="mastery" title="掌握度：${MASTERY[r.mastery].label}（点击切换）" aria-label="切换掌握度">${mstIcon}</button>
@@ -4052,8 +4167,9 @@ function openDailyCfg(){
   document.getElementById('cfgMasterOpens').value = MST_RULE.masterOpens;
   document.getElementById('cfgDecayDays').value = MST_RULE.decayDays;
   dailyCfgOverlay.classList.add('open');
+  openTrap(dailyCfgOverlay.querySelector('.modal') || dailyCfgOverlay, null);
 }
-function closeDailyCfg(){ dailyCfgOverlay.classList.remove('open'); cfgDraft = null; }
+function closeDailyCfg(){ dailyCfgOverlay.classList.remove('open'); cfgDraft = null; closeTrap(); }
 
 function renderDailyCfg(){
   document.getElementById('cfgCount').innerHTML = COUNT_OPTS.map(n =>
@@ -4141,7 +4257,7 @@ dailyRollEl().addEventListener('click', (e) => {
     if(btn.dataset.dailyAction === 'mastery'){
       const res = cycleMastery(word);
       refreshDaily(); render(false);
-      toast(word + ' · ' + MASTERY[res.level].label + (res.auto ? '（自动）' : ''));
+      toast(res.changed ? word + ' · ' + MASTERY[res.level].label + (res.auto ? '（自动）' : '') : word + ' · 已是最新状态');
     }else if(btn.dataset.dailyAction === 'open'){
       openDrawer(word);
     }
@@ -4187,6 +4303,9 @@ window.addEventListener('resize', () => {
   if(!roll) return;
   let locked = 0;
   roll.addEventListener('wheel', e => {
+    // 横向滚动、或只有一个推荐词时，不拦截，交给页面正常滚动
+    if(Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    if(dailyLen < 2) return;
     e.preventDefault();
     const now = Date.now();
     if(now - locked < 240) return;
