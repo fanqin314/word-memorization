@@ -1,0 +1,54 @@
+<!DOCTYPE html><meta charset="utf-8"><title>probe</title>
+<style>body{margin:0}iframe{border:0;width:1440px;height:900px}pre{font:12px monospace}</style>
+<iframe id="f" src="/index.html"></iframe>
+<pre id="out">pending</pre>
+<script>
+const out = [];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const push = (k, v) => out.push(k + ': ' + v);
+
+(async () => {
+  const f = document.getElementById('f');
+  await new Promise(r => f.addEventListener('load', r, {once:true}));
+  await sleep(1200);
+  const w = f.contentWindow, d = f.contentDocument;
+  const col = d.querySelector('.main-body');
+  const head = d.querySelector('.main-head');
+  const grid = d.querySelector('.grid');
+  const daily = d.querySelector('.daily');
+  const tb = d.querySelector('.toolbar');
+
+  push('viewport', w.innerWidth + 'x' + w.innerHeight);
+  push('bodyOverflowY', getComputedStyle(col).overflowY);
+  push('bodyH', col.clientHeight + ' scrollH=' + col.scrollHeight);
+  col.scrollTop = 600;
+  await sleep(500);
+  push('scrollTopApplied', col.scrollTop);
+  push('toTopShown', d.getElementById('toTopBtn').classList.contains('show'));
+  col.scrollTop = 0; await sleep(300);
+
+  const hr = head.getBoundingClientRect();
+  push('headH', Math.round(hr.height) + ' ratio=' + (hr.height / w.innerHeight).toFixed(3));
+  const gcs = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+  push('gridCols', gcs);
+  const dr = daily.getBoundingClientRect();
+  push('dailyH', Math.round(dr.height) + ' alignSelf=' + getComputedStyle(daily).alignSelf);
+  push('toolbarOverflow', tb.scrollWidth + ' vs ' + tb.clientWidth);
+  push('pageScrollWidth', d.documentElement.scrollWidth + ' vs ' + w.innerWidth);
+  push('chipsCollapsedInitial', d.getElementById('chipsWrap').className);
+
+  // 分组视图 + 滚动高亮
+  d.querySelector('[data-layout="group"]').click();
+  await sleep(600);
+  const navOn = () => { const b = d.querySelector('.nav-item.on'); return b ? b.textContent.trim().replace(/\s+/g,' ') : 'none'; };
+  push('splitExists', !!d.querySelector('.split') && !!d.querySelector('.rootnav'));
+  push('navOnTop', navOn());
+  col.scrollTop = col.scrollHeight / 3; await sleep(500);
+  push('navOnAfterScroll', navOn());
+  push('rootnavPos', getComputedStyle(d.querySelector('.rootnav')).position + ' maxH=' + getComputedStyle(d.querySelector('.rootnav')).maxHeight);
+  d.querySelector('[data-layout="comfort"]').click();
+  await sleep(300);
+  push('errors', w.__errs || 0);
+  document.getElementById('out').textContent = out.join('\n');
+})();
+</script>

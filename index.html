@@ -79,20 +79,20 @@ body{
 
 /* ============ 头部（报头：标题左，统计右，下压一条分界线） ============ */
 .top{
-  display:flex;align-items:flex-end;justify-content:space-between;gap:var(--sp-4);flex-wrap:wrap;
-  margin-bottom:var(--sp-4);padding-bottom:var(--sp-3);border-bottom:1px solid var(--line-2);flex:none;
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);flex-wrap:wrap;
+  margin-bottom:var(--sp-3);padding-bottom:var(--sp-2);border-bottom:1px solid var(--line-2);flex:none;
 }
 .brand{display:flex;align-items:center;gap:var(--sp-3);}
 .brand-mark{
-  width:52px;height:52px;flex:none;border-radius:2px;
+  width:40px;height:40px;flex:none;border-radius:2px;
   background:var(--accent);
   display:grid;place-items:center;color:#fff;
 }
-.brand-mark svg{width:26px;height:26px;}
-.brand h1{margin:0;font-family:var(--font-sans);font-size:var(--fs-xl);font-weight:800;letter-spacing:-.025em;line-height:1.1;}
-.brand p{margin:3px 0 0;color:var(--muted);font-size:var(--fs-sm);font-weight:600;letter-spacing:.01em;}
+.brand-mark svg{width:20px;height:20px;}
+.brand h1{margin:0;font-family:var(--font-sans);font-size:var(--fs-lg);font-weight:800;letter-spacing:-.025em;line-height:1.1;}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:var(--fs-sm);font-weight:600;letter-spacing:.01em;display:none;}
 
-.stats{display:flex;gap:var(--sp-2);flex-wrap:wrap;}
+.stats{display:flex;gap:var(--sp-2);flex-wrap:wrap;justify-content:flex-end;}
 .pill{
   appearance:none;cursor:pointer;font-family:var(--font-sans);font-size:var(--fs-sm);font-weight:600;
   color:var(--ink-2);background:var(--card);border:1px solid var(--line);
@@ -107,7 +107,13 @@ body{
 /* ============ 最近打开 ============ */
 .recent{
   display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;
-  margin:0 0 var(--sp-3);
+  margin:0;
+}
+/* 最近打开收进工具栏末尾：占满一行，用发丝线隔开，不额外吃一段竖向空间 */
+.toolbar .recent{
+  flex:1 1 100%;
+  padding-top:var(--sp-2);
+  border-top:1px solid var(--line);
 }
 .recent-list{display:flex;gap:var(--sp-2);flex-wrap:wrap;}
 .recent-chip{
@@ -124,19 +130,18 @@ body{
 /* ============ 工具栏（单行不换行） ============ */
 .toolbar{
   background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
-  box-shadow:var(--shadow-hard-xs);padding:var(--sp-3);
-  display:flex;align-items:center;gap:var(--sp-3);
-  flex-wrap:nowrap;overflow-x:auto;
-  margin-bottom:var(--sp-3);
-  scrollbar-width:thin;
+  box-shadow:var(--shadow-hard-xs);padding:var(--sp-2) var(--sp-3);
+  display:flex;align-items:center;gap:var(--sp-2);
+  flex-wrap:wrap;overflow:visible;
+  margin:0;
 }
-.toolbar::-webkit-scrollbar{height:6px;}
-.toolbar::-webkit-scrollbar-thumb{background:var(--paper-2);border-radius:99px;}
+.toolbar .icon-btn{width:40px;height:40px;}
+.toolbar .icon-btn svg{width:17px;height:17px;}
 
-.search{position:relative;flex:1 1 200px;min-width:170px;}
+.search{position:relative;flex:1 1 260px;min-width:200px;}
 .search svg.ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none;}
 .search input{
-  width:100%;height:46px;font-family:var(--font-sans);font-size:var(--fs-base);font-weight:500;color:var(--ink);
+  width:100%;height:40px;font-family:var(--font-sans);font-size:var(--fs-base);font-weight:500;color:var(--ink);
   background:var(--paper);border:1px solid var(--line);border-radius:var(--r-pill);
   padding:0 44px 0 42px;outline:none;transition:box-shadow .16s ease, background .16s ease, border-color .16s ease;
 }
@@ -180,7 +185,7 @@ body{
 
 /* ============ 词根筛选（可折叠） ============ */
 .chips-wrap{
-  display:flex;align-items:flex-start;gap:var(--sp-2);margin-bottom:var(--sp-4);
+  display:flex;align-items:flex-start;gap:var(--sp-2);margin:0;
 }
 .chips-toggle{
   appearance:none;cursor:pointer;flex:none;
@@ -212,13 +217,14 @@ body{
 .chip:hover{border-color:var(--ink);color:var(--ink);}
 
 /* ============ 网格 / 卡片 ============ */
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4);}
-.grid.compact{grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-3);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:var(--sp-3);}
+.grid.compact{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--sp-2);}
 
 .card{
   position:relative;background:var(--card);border:1px solid var(--line);
   border-radius:var(--r-md);box-shadow:var(--shadow-hard-xs);
-  padding:var(--sp-4) var(--sp-4) var(--sp-3);cursor:pointer;overflow:hidden;
+  padding:var(--sp-3) var(--sp-3) var(--sp-2);cursor:pointer;overflow:hidden;
+  min-height:170px;
   display:flex;flex-direction:column;gap:var(--sp-2);
   transition:transform .16s cubic-bezier(.2,.9,.3,1.2), box-shadow .16s ease, border-color .16s ease;
   animation:cardIn .46s cubic-bezier(.2,.85,.3,1.28) backwards;
@@ -360,17 +366,18 @@ body{
   border-top:1px solid var(--line);
   box-shadow:none;
   padding:var(--sp-3);
+  max-height:80%;overflow-y:auto;
   transform:translateY(102%);opacity:0;
   transition:transform .3s cubic-bezier(.2,.85,.3,1.15), opacity .22s ease;
   pointer-events:none;
 }
-.card:hover .card-reveal,.card:focus-visible .card-reveal{transform:translateY(0);opacity:1;}
+.card:hover .card-reveal,.card:focus-visible .card-reveal{transform:translateY(0);opacity:1;pointer-events:auto;}
 .card-reveal .rl{font-size:var(--fs-micro);font-weight:800;letter-spacing:.12em;color:var(--accent);margin-bottom:var(--sp-1);}
 .card-reveal .rt{font-family:var(--font-reading);font-size:var(--fs-sm);line-height:var(--lh);color:var(--ink-2);}
 .card-reveal .rn{margin-top:var(--sp-2);padding-top:var(--sp-2);border-top:1px dashed var(--line-2);font-size:var(--fs-sm);font-weight:500;line-height:1.55;color:var(--ink-2);}
 
 /* 紧凑密度 */
-.grid.compact .card{padding:var(--sp-3) var(--sp-3) var(--sp-2);gap:var(--sp-1);}
+.grid.compact .card{padding:var(--sp-3) var(--sp-3) var(--sp-2);gap:var(--sp-1);min-height:130px;}
 .grid.compact .card-word{font-size:var(--fs-base);}
 .grid.compact .card-gloss{font-size:var(--fs-sm);}
 .grid.compact .card-actions{gap:var(--sp-1);}
@@ -379,12 +386,19 @@ body{
 
 /* ============ 分组视图 + 侧边导航 ============ */
 .split{display:grid;grid-template-columns:212px 1fr;gap:var(--sp-4);align-items:start;}
-.rootnav{position:sticky;top:18px;display:flex;flex-direction:column;gap:var(--sp-2);}
+.rootnav{
+  position:sticky;top:0;
+  max-height:calc(100vh - 220px);overflow-y:auto;
+  display:flex;flex-direction:column;gap:var(--sp-1);
+  scrollbar-width:thin;
+}
+.rootnav::-webkit-scrollbar{width:5px;}
+.rootnav::-webkit-scrollbar-thumb{background:var(--paper-2);border-radius:99px;}
 .rootnav-title{font-size:var(--fs-micro);font-weight:700;letter-spacing:.16em;color:var(--ink-2);margin:0 0 var(--sp-1) var(--sp-1);}
 .nav-item{
   appearance:none;cursor:pointer;text-align:left;font-family:var(--font-sans);
   background:var(--card);border:1px solid var(--line);border-radius:var(--r-pill);
-  box-shadow:none;padding:var(--sp-2) var(--sp-3);
+  box-shadow:none;padding:var(--sp-1) var(--sp-2);
   display:flex;align-items:center;gap:var(--sp-2);
   transition:transform .14s ease, background .16s ease, color .16s ease, border-color .16s ease;
 }
@@ -396,7 +410,7 @@ body{
 .nav-item.on .n-label{color:var(--accent);}
 .nav-item.on .n-cnt{color:var(--accent);opacity:.7;}
 
-.group{margin-bottom:var(--sp-5);scroll-margin-top:118px;}
+.group{margin-bottom:var(--sp-5);scroll-margin-top:16px;}
 .group-head{display:flex;align-items:baseline;gap:var(--sp-2);margin:0 0 var(--sp-3);}
 .group-head .dot{width:13px;height:13px;border-radius:2px;background:var(--c);align-self:center;}
 .group-head h2{margin:0;font-family:var(--font-sans);font-size:var(--fs-lg);font-weight:700;}
@@ -468,16 +482,30 @@ body{
 
 /* ============ 两栏外壳：左「今日推荐」+ 右主区 ============ */
 .shell{
-  display:grid;grid-template-columns:clamp(240px,16vw,320px) 1fr;
+  display:grid;grid-template-columns:clamp(260px,17vw,340px) 1fr;
   grid-template-rows:minmax(0,1fr);gap:var(--sp-4);
   flex:1 1 auto;min-height:0;position:relative;
 }
-.main-col{min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:6px;scrollbar-width:none;-ms-overflow-style:none;}
-.main-col::-webkit-scrollbar{width:0;height:0;display:none;}
+/* 主区分两段：上方 head（搜索/筛选/最近打开）固定，下方 body 单独滚动 */
+.main-col{
+  min-width:0;min-height:0;overflow:hidden;
+  padding-right:6px;
+  display:flex;flex-direction:column;gap:var(--sp-3);
+}
+.main-head{flex:none;min-width:0;display:flex;flex-direction:column;gap:var(--sp-2);}
+.main-body{
+  flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;
+  padding:var(--sp-1) 2px var(--sp-4) 0;
+  scrollbar-width:thin;
+}
+.main-body::-webkit-scrollbar{width:6px;}
+.main-body::-webkit-scrollbar-thumb{background:var(--paper-2);border-radius:99px;}
+.main-body::-webkit-scrollbar-thumb:hover{background:var(--line-2);}
 
 /* ============ 今日推荐（左侧固定面板 + 内部轮播） ============ */
 .daily{
-  position:relative;
+  position:relative;align-self:start;
+  max-height:min(100%,720px);
   background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
   box-shadow:var(--shadow-hard-xs);padding:var(--sp-3);
   display:flex;flex-direction:column;gap:var(--sp-3);
@@ -609,17 +637,28 @@ body{
 .cfg-num::-webkit-outer-spin-button,.cfg-num::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .cfg-num:focus{background:#fff;border-color:color-mix(in srgb, var(--accent) 40%, transparent);box-shadow:0 0 0 3px var(--accent-soft);}
 
+@media (max-width:1440px){
+  .brand p{display:none;}
+}
+@media (min-width:1441px){
+  .brand p{display:block;}
+}
+@media (max-width:1160px){
+  .nav-item .n-cnt{display:none;}
+}
 @media (max-width:1080px){
   body{height:auto;min-height:100vh;overflow:auto;padding:20px clamp(14px,2.6vw,40px) 70px;}
   .wrap{height:auto;display:block;}
   .shell{grid-template-columns:1fr;grid-template-rows:none;gap:var(--sp-4);}
-  .daily{height:auto;overflow:visible;}
-  .daily-roll{height:340px;flex:none;}
-  .main-col{overflow:visible;height:auto;padding-right:0;}
+  /* 单栏后不再分区滚动：head 与 body 都随页面正常流动 */
+  .main-col,.main-head,.main-body{overflow:visible;height:auto;display:block;}
+  .main-body{padding-right:0;}
+  .daily{height:auto;max-height:none;overflow:visible;align-self:stretch;}
+  .daily-roll{height:300px;flex:none;}
 }
 @media (max-width:860px){
   .split{grid-template-columns:1fr;gap:var(--sp-4);}
-  .rootnav{position:static;flex-direction:row;flex-wrap:wrap;}
+  .rootnav{position:static;max-height:none;overflow:visible;flex-direction:row;flex-wrap:wrap;}
   .rootnav-title{width:100%;}
   .nav-item{flex:1 1 auto;}
 }
@@ -643,7 +682,7 @@ body{
   /* 卡片：单列 + 紧凑内边距，一屏能多看几张 */
   .grid,.grid.compact{grid-template-columns:1fr;gap:var(--sp-2);}
   .card{padding:var(--sp-3) var(--sp-3) var(--sp-2);gap:var(--sp-1);}
-  .card-head{padding-top:0;padding-right:128px;}
+  .card-head{padding-top:0;padding-right:112px;}
   .card-word{font-size:var(--fs-base);}
   .card-ipa,.card-gloss{font-size:var(--fs-sm);}
   .card-foot{font-size:var(--fs-micro);}
@@ -2054,12 +2093,9 @@ body.swipe-on{overflow:hidden;}
       </div>
     </aside>
 
-    <div class="main-col" style="position: relative;">
+    <div class="main-col">
 
-    <div class="recent" id="recent" hidden="">
-      <span class="seg-label">最近打开</span>
-      <div class="recent-list" id="recentList"></div>
-    </div>
+    <div class="main-head">
 
     <section class="toolbar">
     <label class="search" id="searchBox">
@@ -2115,6 +2151,11 @@ body.swipe-on{overflow:hidden;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="4.5" width="9" height="15" rx="2"></rect><path d="M4 8.5v7M20 8.5v7"></path></svg>
     </button>
     <input type="file" id="uploadInput" accept=".html,text/html" multiple hidden="">
+
+    <div class="recent" id="recent" hidden="">
+      <span class="seg-label">最近打开</span>
+      <div class="recent-list" id="recentList"></div>
+    </div>
   </section>
 
   <div class="chips-wrap" id="chipsWrap">
@@ -2131,6 +2172,10 @@ body.swipe-on{overflow:hidden;}
         <span class="dot"></span>cor <small>心·一致 1</small></button><button class="chip " type="button" data-root="other" style="--c:#7A7488">
         <span class="dot"></span>其他词源 <small>独立 3</small></button></nav>
   </div>
+
+  </div><!-- /main-head -->
+
+  <div class="main-body">
 
   <main id="content"><div class="grid "><article class="card m0" data-word="about" tabindex="0" role="button" aria-label="about 环绕 · 大约 · 关于" style="--c:#7A7488;--d:0ms">
     <span class="card-band"></span>
@@ -2441,6 +2486,8 @@ body.swipe-on{overflow:hidden;}
       
     </div>
   </article></div></main>
+
+  </div><!-- /main-body -->
 
     </div><!-- /main-col -->
 
@@ -2771,7 +2818,12 @@ function cycleMastery(word){
   return { level:r.mastery, auto:r.pin === null, changed:before !== r.mastery };
 }
 
-const state = { q:'', sort:'az', layout:'comfort', root:'all', mastery:'all', chipsCollapsed: window.matchMedia('(max-width:640px)').matches };
+const chipsPref = localStorage.getItem('wc_chips_user');
+const state = {
+  q:'', sort:'az', layout:'comfort', root:'all', mastery:'all',
+  // 1280 以下默认折叠词根筛选；用户手动点过就以他的选择为准
+  chipsCollapsed: chipsPref ? chipsPref === '1' : window.matchMedia('(max-width:1280px)').matches
+};
 const isGroup = () => state.layout === 'group';
 
 /* 页面滚动锁：滑动学习与手写画板可能同时打开，用引用计数避免互相解除 */
@@ -2995,6 +3047,9 @@ function updateScrollSpy(){
   nav.querySelectorAll('[data-jump]').forEach(b => b.classList.toggle('on', b.dataset.jump === cur));
 }
 window.addEventListener('scroll', () => { if(isGroup()) updateScrollSpy(); }, { passive:true });
+// 宽屏下主区是独立滚动容器，导航高亮要跟着它走
+const mainBody = document.querySelector('.main-body');
+if(mainBody) mainBody.addEventListener('scroll', () => { if(isGroup()) updateScrollSpy(); }, { passive:true });
 window.addEventListener('resize', () => { if(isGroup()) updateScrollSpy(); });
 
 /* ============================================================
@@ -3215,8 +3270,17 @@ document.getElementById('rootChips').addEventListener('click', (e) => {
 });
 document.getElementById('chipsToggle').addEventListener('click', () => {
   state.chipsCollapsed = !state.chipsCollapsed;
+  localStorage.setItem('wc_chips_user', state.chipsCollapsed ? '1' : '0');
   document.getElementById('chipsWrap').classList.toggle('collapsed', state.chipsCollapsed);
 });
+/* 未手动设置过时，跟随视口宽度自动折叠/展开 */
+window.addEventListener('resize', () => {
+  if(localStorage.getItem('wc_chips_user')) return;
+  const collapsed = window.matchMedia('(max-width:1280px)').matches;
+  if(collapsed === state.chipsCollapsed) return;
+  state.chipsCollapsed = collapsed;
+  document.getElementById('chipsWrap').classList.toggle('collapsed', collapsed);
+}, {passive:true});
 
 document.getElementById('clearBtn').addEventListener('click', clearFilters);
 document.getElementById('recentList').addEventListener('click', (e) => {
@@ -4318,7 +4382,8 @@ window.addEventListener('resize', () => {
 /* 回到顶部：主区（宽屏）或窗口（窄屏）滚动超过阈值后浮现，点击平滑回顶 */
 (function(){
   const btn = document.getElementById('toTopBtn');
-  const col = document.querySelector('.main-col');
+  // 宽屏时真正滚动的是 .main-body；单栏时回落到窗口滚动
+  const col = document.querySelector('.main-body') || document.querySelector('.main-col');
   if(!btn || !col) return;
   const scroller = () => (col.scrollHeight > col.clientHeight + 1 ? col : document.scrollingElement || document.documentElement);
   const sync = () => btn.classList.toggle('show', scroller().scrollTop > 240);
