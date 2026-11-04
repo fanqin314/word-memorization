@@ -1,0 +1,20 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>layout2</title></head>
+<body style="margin:0;font:12px monospace;background:#EDE3D1">
+<pre id="o" style="margin:0;padding:8px;background:#fff;height:200px;overflow:auto;position:relative;z-index:9;white-space:pre-wrap"></pre>
+<iframe id="f" style="width:1000px;height:904px;border:0;display:block" src="/mobile/"></iframe>
+<script>
+const f = document.getElementById('f'), o = document.getElementById('o');
+f.onload = () => {
+  const w = f.contentWindow, d = w.document;
+  const r = s => { const e = d.querySelector(s); if(!e) return s + ' MISSING'; const b = e.getBoundingClientRect(); const cs = w.getComputedStyle(e); return s + ' top=' + Math.round(b.top) + ' h=' + Math.round(b.height) + ' bottom=' + Math.round(b.bottom) + ' w=' + Math.round(b.width) + ' display=' + cs.display; };
+  const main = d.querySelector('.main');
+  o.textContent = [
+    'inner=' + w.innerWidth + 'x' + w.innerHeight,
+    r('.app'), r('.main'),
+    'main scroll=' + main.scrollHeight + ' client=' + main.clientHeight,
+    r('.swipe-card'), r('.art-frame'), r('.scene'), r('.morph'),
+    r('.deck-hint'), r('.tabbar')
+  ].join('\n');
+};
+</script>
+</body></html>

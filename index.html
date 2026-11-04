@@ -1519,6 +1519,24 @@ body.swipe-on{overflow:hidden;}
 @keyframes ringSpin{
   to{ transform:rotate(360deg); }
 }
+
+/* 手机版入口：与报头同排的轻量链接 */
+.m-entry{
+  display:inline-flex;align-items:center;gap:5px;flex:none;
+  margin-left:var(--sp-2);
+  padding:5px 10px 6px;
+  font-family:var(--font-sans);font-size:var(--fs-sm);font-weight:600;
+  color:var(--ink-2);text-decoration:none;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-pill);
+  transition:border-color .16s ease,color .16s ease,transform .14s ease;
+}
+.m-entry svg{width:13px;height:13px;flex:none;}
+.m-entry:hover{border-color:var(--ink);color:var(--ink);}
+.m-entry:active{transform:translateY(1px);}
+@media (max-width:640px){
+  .m-entry span{display:none;}
+  .m-entry{padding:6px;border-radius:2px;}
+}
 </style>
 </head>
 <body>
@@ -1536,6 +1554,10 @@ body.swipe-on{overflow:hidden;}
         <h1>单词工作台</h1>
         <p>英语词汇学习卡 · 整理与记录</p>
       </div>
+      <a class="m-entry" href="mobile/" title="打开手机版：一屏一张卡，刷词流">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.6"></rect><path d="M11 18.4h2"></path></svg>
+        <span>手机版</span>
+      </a>
     </div>
     <div class="stats" id="stats"><button class="pill on" type="button" data-filter="all">全部 <b>14</b></button><button class="pill " type="button" data-filter="unlearned">未学 <b>14</b></button><button class="pill " type="button" data-filter="learning">学习中 <b>0</b></button><button class="pill " type="button" data-filter="mastered">已掌握 <b>0</b></button><button class="pill " type="button" data-filter="fav">收藏 <b>0</b></button></div>
   </header>

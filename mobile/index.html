@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#1A1512">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="随身刷词">
 <title>随身刷词 · 手机版</title>
 <style>
 /* ============================================================
@@ -219,7 +222,7 @@ body{
   border-radius:24px 24px 24px 10px;
   box-shadow:5px 5px 0 rgba(26,21,18,.85);
   padding:.62rem .72rem .68rem;
-  touch-action:pan-y;
+  touch-action:none;
   will-change:transform;
 }
 .swipe-card.out-up{transition:transform .38s var(--ease),opacity .38s var(--ease);transform:translateY(-120%) rotate(-4deg);opacity:0;}
@@ -273,13 +276,15 @@ body{
 @keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
 
 .ipa{font-family:var(--mono);font-size:.82rem;font-weight:900;color:var(--ink-2);margin-top:.18rem;letter-spacing:.01em;}
-.pos{font-family:var(--mono);font-size:.6rem;font-weight:900;color:var(--ink-2);opacity:.72;margin-top:.06rem;}
+.pos{font-family:var(--mono);font-size:.66rem;font-weight:800;color:rgba(59,50,42,.92);letter-spacing:.02em;margin-top:.12rem;}
 .gloss{font-size:.92rem;font-weight:900;line-height:1.35;margin-top:.16rem;color:var(--ink);}
 
 .art-frame{
-  position:relative;flex:none;
-  margin-top:.42rem;height:clamp(92px,18vh,148px);
-  border:2.5px solid var(--ink);border-radius:16px 16px 16px 8px;
+  position:relative;flex:1 1 0;min-height:120px;max-height:250px;
+  margin:.5rem auto 0;
+  width:auto;height:auto;aspect-ratio:1 / 1;
+  border:2.5px solid var(--ink);border-radius:14px;
+  box-shadow:3px 3px 0 rgba(26,21,18,.85);
   overflow:hidden;background:var(--ink);
 }
 .art-frame .di-art{
@@ -295,14 +300,14 @@ body{
 }
 
 .scene{
-  margin-top:.4rem;font-size:.73rem;font-weight:700;line-height:1.45;color:var(--ink-2);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-top:.42rem;font-size:.73rem;font-weight:700;line-height:1.45;color:var(--ink-2);
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
 }
 .morph{
   margin-top:.24rem;padding-top:.24rem;
   border-top:1.5px dashed rgba(26,21,18,.2);
   font-size:.66rem;line-height:1.42;color:rgba(26,21,18,.62);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
 }
 .morph b{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;color:rgba(26,21,18,.4);margin-right:.2rem;}
 
@@ -326,11 +331,6 @@ body{
 .rate.r1{--rc:var(--amber);}
 .rate.r2{--rc:var(--amber);background:var(--ink);color:#fff;}
 
-.deck-hint{
-  flex:none;text-align:center;padding:.5rem 0 .1rem;
-  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.12em;
-  color:rgba(26,21,18,.38);
-}
 .deck-empty{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;
   text-align:center;color:var(--ink-2);padding:1.2rem;
@@ -517,12 +517,28 @@ body{
 }
 .toast.show{opacity:1;transform:translate(-50%,0);}
 
-@media (max-width:380px){
+@media (max-width:350px){
   .word{font-size:1.7rem;}
-  .art-frame{height:clamp(86px,16vh,120px);}
+  .art-frame{flex:0 0 112px;min-height:0;}
   .scene,.morph{display:none;}
   .rate{font-size:.7rem;padding:.52rem .1rem .54rem;}
   .brand-txt p{display:none;}
+}
+/* 矮屏逐级减负：保证一屏一张卡，不出现内部滚动 */
+@media (max-height:740px){
+  .morph{display:none;}
+  .art-frame{flex:0 0 118px;min-height:0;}
+}
+@media (max-height:640px){
+  .scene{display:none;}
+  .art-frame{flex:0 0 96px;}
+  .hero{padding-top:.6rem;padding-bottom:.62rem;}
+  .goal{margin-top:.55rem;}
+}
+@media (max-height:560px){
+  .art-frame{display:none;}
+  .gloss{font-size:.82rem;}
+  .word{font-size:1.55rem;}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
@@ -589,7 +605,7 @@ body{
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 
-<script src="words-data.js"></script>
+<script src="../words-data.js"></script>
 <script>
 /* ============================================================
    数据层：全部读写与 index.html 相同的那几个 localStorage 键
@@ -764,9 +780,8 @@ function rootOf(w){
 function renderDeckShell(){
   const view = document.getElementById('view-deck');
   view.innerHTML = '<div class="deck-wrap">' +
-      '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span><span>遗忘优先</span></div>' +
+      '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span><span>上滑跳过 · 遗忘优先</span></div>' +
       '<div class="deck-stage" id="deckStage"><div class="stack" id="cardStack"></div></div>' +
-      '<p class="deck-hint">上滑跳过 · 点按钮记掌握度</p>' +
     '</div>';
   renderCard(false);
 }
@@ -780,7 +795,7 @@ function cardHtml(w){
       '<div class="card-head">' +
         '<span class="root-tag"><i class="dot"></i>' + rt.label + '</span>' +
         '<span class="mst-tag" style="color:' + (m === 2 ? '#4C6B52' : m === 1 ? '#9A7B34' : '#8A8378') + '">' + MST_LABEL[m] + '</span>' +
-        '<a class="mini-card" href="' + w.file + '">词卡 ›</a>' +
+        '<a class="mini-card" href="../' + w.file + '">词卡 ›</a>' +
       '</div>' +
       '<div class="card-main">' +
         '<div class="word-row"><div><h2 class="word">' + w.word + '</h2>' +
@@ -789,7 +804,7 @@ function cardHtml(w){
         '<p class="pos">' + (w.pos || '') + '</p>' +
         '<p class="gloss">' + (w.gloss || '') + '</p>' +
         '<div class="art-frame"><div class="di-art" data-art="' + w.word + '">' + art + '</div>' +
-          '<span class="art-tag">' + (w.scene ? '意象' : '词卡') + '</span></div>' +
+          '<span class="art-tag">' + (w.scene ? '意象' : '词卡') + (rep ? ' · 打卡 ' + rep + '/4' : '') + '</span></div>' +
         '<p class="scene">' + (w.scene || '') + '</p>' +
         '<p class="morph"><b>词根</b>' + (w.morph || '') + '</p>' +
       '</div>' +
@@ -889,7 +904,7 @@ function renderLibList(){
     const m = masteryOf(w.word);
     const rt = rootOf(w);
     const n = reviewDone(w.word);
-    return '<a class="wrow" href="' + w.file + '" style="--rc:' + rt.color + '">' +
+    return '<a class="wrow" href="../' + w.file + '" style="--rc:' + rt.color + '">' +
         '<i class="wbar"></i>' +
         '<div class="wbody"><div class="wword"><b>' + w.word + '</b><i>' + (w.ipa || '') + '</i></div>' +
           '<div class="wgloss">' + (w.gloss || '') + '</div></div>' +
@@ -1069,12 +1084,12 @@ function renderStat(){
         '<p class="ts">共 ' + WORDS.length + ' 个词 · 已打卡 ' + checked + ' 个</p>' +
       '</div>' +
       '<div class="tile"><span class="tk">累计刷词</span><span class="tv">' + (mb.total || 0) + '<small>次</small></span>' +
-        '<p class="ts">含跳过的也算一次？不算。</p></div>' +
+        '<p class="ts">每点一次掌握度记一次</p></div>' +
       '<div class="tile"><span class="tk">自测</span><span class="tv">' + rate + '<small>%</small></span>' +
         '<p class="ts">' + stat.right + ' / ' + stat.total + ' 题 · ' + stat.rounds + ' 轮</p></div>' +
     '</div>' +
     '<p class="stat-note">数据与电脑版工作站共用同一份本机记录</p>' +
-    '<div class="link-row"><a class="big-link" href="index.html">打开电脑版工作站' +
+    '<div class="link-row"><a class="big-link" href="../index.html">打开电脑版工作站' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>' +
     '</a></div>';
 }

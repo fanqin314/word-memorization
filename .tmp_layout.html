@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>layout</title></head>
+<body style="margin:0;font:12px monospace;background:#EDE3D1">
+<pre id="o" style="margin:0;padding:8px;background:#fff;height:220px;overflow:auto;position:relative;z-index:9;white-space:pre-wrap"></pre>
+<iframe id="f" style="width:390px;height:844px;border:0;display:block" src="/mobile/"></iframe>
+<script>
+const f = document.getElementById('f'), o = document.getElementById('o');
+f.onload = () => {
+  const w = f.contentWindow, d = w.document;
+  const r = s => { const e = d.querySelector(s); if(!e) return s + ' MISSING'; const b = e.getBoundingClientRect(); const cs = w.getComputedStyle(e); return s + ' top=' + Math.round(b.top) + ' h=' + Math.round(b.height) + ' bottom=' + Math.round(b.bottom) + ' display=' + cs.display; };
+  const lines = [];
+  lines.push('inner=' + w.innerWidth + 'x' + w.innerHeight);
+  lines.push(r('.app'));
+  lines.push(r('.hero'));
+  lines.push(r('.strip'));
+  lines.push(r('.main'));
+  lines.push('main scroll=' + d.querySelector('.main').scrollHeight + ' client=' + d.querySelector('.main').clientHeight);
+  lines.push(r('.swipe-card'));
+  lines.push(r('.art-frame'));
+  lines.push(r('.scene'));
+  lines.push(r('.morph'));
+  lines.push(r('.deck-hint'));
+  lines.push(r('.card-foot'));
+  lines.push(r('.tabbar'));
+  o.textContent = lines.join('\n');
+};
+</script>
+</body></html>

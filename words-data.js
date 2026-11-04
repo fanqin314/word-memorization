@@ -1,6 +1,6 @@
 /* 本文件由「更新单词数据.ps1 / .bat」自动生成，请勿手工编辑。 */
 window.WORDS_DATA = {
-    "generated":  "2026-11-04 23:06:51",
+    "generated":  "2026-11-04 23:12:50",
     "words":  [
                   {
                       "word":  "about",
@@ -1238,21 +1238,6 @@ window.WORDS_DATA = {
                             ]
                   },
                   {
-                      "word":  "随身刷词",
-                      "gloss":  "手机版",
-                      "ipa":  "",
-                      "pos":  "",
-                      "file":  "cards/other/随身刷词.html",
-                      "roots":  [
-                                    "other"
-                                ],
-                      "morph":  "",
-                      "scene":  "",
-                      "q":  [
-
-                            ]
-                  },
-                  {
                       "word":  "proof",
                       "gloss":  "证据 · 证明 · 校样 · 防…的",
                       "ipa":  "/pruːf/",
@@ -1923,7 +1908,6 @@ window.WORDS_DATA = {
                 "loose":  ".card.m1[data-word=\"loose\"]{--mst-ink:#0D1A14;--mst-accent:#0F2019;--mst-paper:#EFF3EE;--mst-hero:#EFF3EE;--mst-band:repeating-linear-gradient(90deg, #4A9EB8 0 22px, transparent 22px 24px, #7BC8A4 24px 46px, transparent 46px 48px, #B8A8D9 48px 70px, transparent 70px 72px, #D9C9A8 72px 94px, transparent 94px 96px);}",
                 "nasty":  ".card.m1[data-word=\"nasty\"]{--mst-ink:#1A1A0E;--mst-accent:#7CB518;--mst-paper:#F0EADB;--mst-hero:linear-gradient(180deg, #E8E2CC 0%, #F0EADB 50%, #E0D8BE 100%);--mst-band:repeating-linear-gradient(90deg, #7CB518 0 22px, transparent 22px 24px, #4A1942 24px 46px, transparent 46px 48px, #C4A000 48px 70px, transparent 70px 72px, #6B4423 72px 94px, transparent 94px 96px);}",
                 "ongoing":  ".card.m1[data-word=\"ongoing\"]{--mst-ink:#0A1A18;--mst-accent:#0C3634;--mst-paper:#EFF5F2;--mst-hero:#EFF5F2;--mst-band:repeating-linear-gradient(90deg, #2AA198 0 22px, transparent 22px 24px, #F0A93C 24px 46px, transparent 46px 48px, #7B5EA7 48px 70px, transparent 70px 72px, #E86A5A 72px 94px, transparent 94px 96px);}",
-                "随身刷词":  ".card.m1[data-word=\"随身刷词\"]{--mst-ink:#1A1512;--mst-accent:#FFFDF8;--mst-paper:#EDE3D1;--mst-hero:#EDE3D1;}",
                 "proof":  ".card.m1[data-word=\"proof\"]{--mst-ink:#0A1A18;--mst-accent:#0E2E2A;--mst-paper:#F2EFE4;--mst-hero:#F2EFE4;--mst-band:repeating-linear-gradient(90deg, #2DD4BF 0 22px, transparent 22px 24px, #F5B93F 24px 46px, transparent 46px 48px, #A3282A 48px 70px, transparent 70px 72px, #8B6F47 72px 94px, transparent 94px 96px);}",
                 "reform":  ".card.m1[data-word=\"reform\"]{--mst-ink:#1A1610;--mst-accent:#A8452F;--mst-paper:#F4EEE2;--mst-hero:linear-gradient(180deg, #F6E6CE 0%, #EFD9BC 40%, #E2C9A5 100%);--mst-band:repeating-linear-gradient(90deg, #A8452F 0 22px, transparent 22px 24px, #D98A24 24px 46px, transparent 46px 48px, #2E8B7F 48px 70px, transparent 70px 72px, #3E4E66 72px 94px, transparent 94px 96px);}",
                 "reunite":  ".card.m1[data-word=\"reunite\"]{--mst-ink:#2A1F1A;--mst-accent:#E05C6E;--mst-paper:#FCF6EE;--mst-hero:linear-gradient(180deg, #FFFCF5 0%, #FBE9EC 45%, #FCF6EE 100%);--mst-band:repeating-linear-gradient(90deg, #E05C6E 0 22px, transparent 22px 24px, #E9A93C 24px 46px, transparent 46px 48px, #5D8BD9 48px 70px, transparent 70px 72px, #3FA599 72px 94px, transparent 94px 96px);}",

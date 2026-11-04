@@ -1,0 +1,69 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>probe</title></head>
+<body style="margin:0;font:12px monospace">
+<pre id="o" style="margin:0;padding:6px;background:#fff;position:relative;z-index:9;white-space:pre-wrap;height:430px;overflow:auto"></pre>
+<iframe id="f" style="width:390px;height:844px;border:0" src="/mobile/"></iframe>
+<script>
+const f = document.getElementById('f');
+const o = document.getElementById('o');
+const log = [];
+function ok(name, cond, extra){ log.push((cond ? 'PASS ' : 'FAIL ') + name + (extra ? ' | ' + extra : '')); }
+f.onload = () => {
+  const w = f.contentWindow;
+  const E = code => w.eval(code);
+  const q = s => w.document.querySelector(s);
+  const qa = s => [...w.document.querySelectorAll(s)];
+  try{
+    ok('words loaded', E('WORDS.length') === 46, 'len=' + E('WORDS.length'));
+    ok('no bogus word', E("!WORDS.some(x => x.word === '随身刷词')"));
+    ok('tabs', qa('.tab').length === 4, 'n=' + qa('.tab').length);
+    ok('card rendered', !!q('.swipe-card'), 'word=' + (q('.word') && q('.word').textContent));
+
+    /* 刷词反馈写库 */
+    const before = JSON.parse(w.localStorage.getItem('vocab_workbench_v1') || '{}');
+    const cardWord = q('.swipe-card').dataset.word;
+    q('[data-rate="2"]').click();
+    const after = JSON.parse(w.localStorage.getItem('vocab_workbench_v1') || '{}');
+    ok('store shared key', Object.keys(after).length >= Object.keys(before).length, 'keys=' + Object.keys(after).length);
+    ok('rate writes mastery', !!after[cardWord] && after[cardWord].pin === 2 && after[cardWord].opens === 1, JSON.stringify(after[cardWord]));
+    ok('today count +1', E('todayCount()') === 1, 'today=' + E('todayCount()'));
+    ok('header updated', q('#todayNum').textContent === '1');
+
+    /* 词库 */
+    w.switchTab('lib');
+    ok('lib active', q('#view-lib').classList.contains('active'));
+    ok('lib rows 46', qa('.wrow').length === 46, 'rows=' + qa('.wrow').length);
+    const inp = q('#libSearch');
+    inp.value = 'about';
+    inp.dispatchEvent(new w.Event('input'));
+    ok('lib search filters', qa('.wrow').length === 1, 'rows=' + qa('.wrow').length);
+    ok('lib link prefixed', q('.wrow').getAttribute('href').indexOf('../cards/') === 0, q('.wrow').getAttribute('href'));
+
+    /* 自测 */
+    w.switchTab('quiz');
+    ok('quiz active', q('#view-quiz').classList.contains('active'));
+    ok('quiz 10 questions', E('quiz.list.length') === 10, 'n=' + E('quiz.list.length'));
+    const item = E('JSON.stringify(quiz.list[0])');
+    const it = JSON.parse(item);
+    q('#qInput').value = it.a;
+    q('#qSubmit').click();
+    ok('quiz marks right', E('quiz.right') === 1 && E('quiz.wrong') === 0, 'right=' + E('quiz.right'));
+    ok('quiz feedback', q('#qFeed').textContent.indexOf('正确') >= 0, q('#qFeed').textContent);
+    ok('quiz next btn', q('#qSubmit').textContent === '下一题', q('#qSubmit').textContent);
+    q('#qSubmit').click();
+    ok('quiz advances', E('quiz.idx') === 1, 'idx=' + E('quiz.idx'));
+
+    /* 数据 */
+    w.switchTab('stat');
+    ok('stat active', q('#view-stat').classList.contains('active'));
+    ok('stat today', q('.stat-grid .tile.wide .tv').textContent.indexOf('1') >= 0, q('.stat-grid .tile.wide .tv').textContent);
+    ok('desktop link', q('.big-link').getAttribute('href') === '../index.html', q('.big-link').getAttribute('href'));
+    ok('mst bars', qa('.mst-bar').length === 3);
+
+    ok('quiz key written', !!w.localStorage.getItem('wc_quiz_v1'));
+  }catch(err){
+    log.push('ERROR ' + err.message + ' @ ' + (err.stack || '').split('\n')[1]);
+  }
+  o.textContent = log.join('\n');
+};
+</script>
+</body></html>
