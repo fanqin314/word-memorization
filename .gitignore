@@ -3,3 +3,4 @@
 .sync.log
 .sync.pid
 .tmp_*
+.trae-html-share-packages/
