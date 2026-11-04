@@ -451,11 +451,34 @@ body::after{
 /* ============ 响应式 ============ */
 @media (max-width:640px){
   body{padding:20px 10px 60px;}
-  .body-wrap{padding:36px 22px 0;}
-  .review-grid{grid-template-columns:repeat(2,1fr);}
-  .page{border-radius:22px;}
-  .image-card{grid-template-columns:1fr;padding:26px 22px;}
-  .image-card .ic-svg{width:290px;height:230px;margin:0 auto;}
+  .body-wrap{padding:34px 18px 0!important;}
+  .review-grid{grid-template-columns:repeat(2,1fr)!important;}
+  .page{border-radius:22px;max-width:100%!important;}
+  /* 各卡内联样式按桌面宽度写死了多列布局，窄屏必须强制单列，否则意象图会被右侧裁掉 */
+  .image-card{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:16px!important;padding:22px 16px!important;transform:none!important;
+  }
+  .image-card .ic-text{min-width:0!important;}
+  .image-card .ic-main{font-size:18px!important;line-height:1.62!important;}
+  .image-card .ic-sub{font-size:13px!important;line-height:1.85!important;}
+  .image-card .ic-svg{
+    width:100%!important;max-width:100%!important;height:auto!important;
+    aspect-ratio:340/280;margin:2px auto 0!important;
+  }
+  .image-card .ic-svg svg{width:100%!important;height:100%!important;overflow:hidden!important;}
+  /* 辨析表原来按 150+180px 写死列宽、首列还不换行，窄屏会溢出裁掉右侧一列 */
+  .compare-table{table-layout:auto!important;width:100%!important;max-width:100%!important;}
+  .compare-table td{padding:9px 8px!important;font-size:13px!important;overflow-wrap:break-word;word-break:normal!important;}
+  .compare-table td:first-child{width:auto!important;min-width:68px;white-space:normal!important;font-size:14px!important;}
+  .compare-table td:nth-child(2){width:auto!important;}
+  .compare-table .chant{font-size:12px!important;line-height:1.45!important;}
+  .collo .meaning,.fam-card .m{overflow-wrap:anywhere;}
+  .word-anim{max-width:100%!important;overflow-wrap:anywhere;}
+  .write-practice{padding:20px 16px!important;}
+  .write-practice textarea{font-size:15px!important;padding:12px 14px!important;}
+  .real-ex,.pitfall,.collo{padding:18px 16px!important;}
+  .section{margin-bottom:44px;}
   .section-title{font-size:15px;padding:6px 16px 6px 10px;}
 }
 
