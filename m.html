@@ -1033,3 +1033,190 @@ function renderQuizResult(){
     '</div>';
 }
 
+/* ============================================================
+   数据页
+   ============================================================ */
+function renderStat(){
+  const view = document.getElementById('view-stat');
+  const today = todayCount();
+  const streak = streakDays();
+  const due = WORDS.filter(w => isDue(w.word)).length;
+  const m = [0,0,0];
+  WORDS.forEach(w => m[masteryOf(w.word)]++);
+  const stat = quizStat();
+  const rate = stat.total ? Math.round(stat.right / stat.total * 100) : 0;
+  const pct = n => Math.round(n / Math.max(1, WORDS.length) * 100);
+  const checked = WORDS.filter(w => reviewDone(w.word) > 0).length;
+
+  view.innerHTML = '<div class="stat-grid">' +
+      '<div class="tile wide">' +
+        '<span class="tk">今日已刷</span>' +
+        '<span class="tv">' + today + '<small>/ ' + GOAL + ' 个</small></span>' +
+        '<div class="mst-bar" style="margin-top:.4rem;"><span class="track">' +
+          '<i class="fill" style="width:' + Math.min(100, today / GOAL * 100) + '%;--bc:var(--amber);"></i></span></div>' +
+        '<p class="ts">' + (today >= GOAL ? '今天已经达标，明天记得回来。' : '轻量目标：每天 10 个，刷完就收工。') + '</p>' +
+      '</div>' +
+      '<div class="tile"><span class="tk">连续学习</span><span class="tv">' + streak + '<small>天</small></span>' +
+        '<p class="ts">' + (streak > 1 ? '保持住，别断。' : '今天开个头。') + '</p></div>' +
+      '<div class="tile"><span class="tk">待复习</span><span class="tv">' + due + '<small>个</small></span>' +
+        '<p class="ts">' + (due ? '刷词时会优先出现。' : '暂时没有到期的。') + '</p></div>' +
+      '<div class="tile wide"><span class="tk">掌握度分布</span>' +
+        '<div class="mst-bars">' +
+          '<div class="mst-bar"><span class="lab">未学</span><span class="track"><i class="fill" style="width:' + pct(m[0]) + '%;--bc:#8A8378;"></i></span><span class="num">' + m[0] + '</span></div>' +
+          '<div class="mst-bar"><span class="lab">学习中</span><span class="track"><i class="fill" style="width:' + pct(m[1]) + '%;--bc:var(--amber);"></i></span><span class="num">' + m[1] + '</span></div>' +
+          '<div class="mst-bar"><span class="lab">已掌握</span><span class="track"><i class="fill" style="width:' + pct(m[2]) + '%;--bc:var(--moss);"></i></span><span class="num">' + m[2] + '</span></div>' +
+        '</div>' +
+        '<p class="ts">共 ' + WORDS.length + ' 个词 · 已打卡 ' + checked + ' 个</p>' +
+      '</div>' +
+      '<div class="tile"><span class="tk">累计刷词</span><span class="tv">' + (mb.total || 0) + '<small>次</small></span>' +
+        '<p class="ts">含跳过的也算一次？不算。</p></div>' +
+      '<div class="tile"><span class="tk">自测</span><span class="tv">' + rate + '<small>%</small></span>' +
+        '<p class="ts">' + stat.right + ' / ' + stat.total + ' 题 · ' + stat.rounds + ' 轮</p></div>' +
+    '</div>' +
+    '<p class="stat-note">数据与电脑版工作站共用同一份本机记录</p>' +
+    '<div class="link-row"><a class="big-link" href="index.html">打开电脑版工作站' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>' +
+    '</a></div>';
+}
+
+/* ============================================================
+   顶栏 / 近七天 / 轻提示
+   ============================================================ */
+let toastTimer = null;
+function toast(msg){
+  const el = document.getElementById('toast');
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+function renderStrip(){
+  const host = document.getElementById('weekStrip');
+  if(!host) return;
+  const week = '日一二三四五六';
+  let html = '';
+  for(let i = 6; i >= 0; i--){
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const k = keyOf(d);
+    const n = mb.days[k] || 0;
+    html += '<div class="day-cell' + (i === 0 ? ' is-today' : '') + (n ? ' has' : '') + '">' +
+        '<span class="dc-day">' + week[d.getDay()] + '</span>' +
+        '<span class="dc-num">' + (n || '·') + '</span></div>';
+  }
+  host.innerHTML = html;
+}
+
+function refreshHeader(){
+  const today = todayCount();
+  const num = document.getElementById('todayNum');
+  const fill = document.getElementById('goalFill');
+  const tip = document.getElementById('goalTip');
+  const streak = document.getElementById('streakNum');
+  if(num) num.textContent = today;
+  if(fill) fill.style.width = Math.min(100, today / GOAL * 100) + '%';
+  if(tip){
+    tip.textContent = today === 0 ? '刷一张就热身'
+      : today >= GOAL ? '今日达成 · 继续也不亏'
+      : '再刷 ' + (GOAL - today) + ' 个就收工';
+  }
+  if(streak) streak.textContent = streakDays();
+  const d = new Date();
+  const label = document.getElementById('todayLabel');
+  if(label) label.textContent = (d.getMonth() + 1) + '月' + d.getDate() + '日 · 周' + '日一二三四五六'[d.getDay()];
+  renderStrip();
+}
+
+/* ============================================================
+   导航与交互（每个容器只绑定一次）
+   ============================================================ */
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const view = document.getElementById('view-' + name);
+  if(view) view.classList.add('active');
+  if(name === 'lib') renderLib();
+  if(name === 'quiz') renderQuiz();
+  if(name === 'stat') renderStat();
+  const main = document.querySelector('.main');
+  if(main) main.scrollTop = 0;
+}
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+/* 刷词：朗读 / 三档反馈 / 重开一轮 */
+document.getElementById('view-deck').addEventListener('click', (e) => {
+  const rateBtn = e.target.closest('[data-rate]');
+  if(rateBtn){ e.preventDefault(); e.stopPropagation(); advance(Number(rateBtn.dataset.rate)); return; }
+  const restart = e.target.closest('[data-restart]');
+  if(restart){ e.preventDefault(); queue = buildQueue(); pos = 0; renderDeckShell(); return; }
+  const sp = e.target.closest('[data-speak]');
+  if(sp){
+    e.preventDefault(); e.stopPropagation();
+    const card = sp.closest('.swipe-card');
+    speakWord(card ? card.dataset.word : '', sp);
+  }
+});
+
+/* 上滑跳过：只认竖向拖动，松手超过 80px 才算 */
+let dragState = null;
+document.getElementById('view-deck').addEventListener('pointerdown', (e) => {
+  const card = e.target.closest('.swipe-card');
+  if(!card) return;
+  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak')) return;
+  dragState = {id:e.pointerId, card, y:e.clientY, dy:0, moved:false};
+  card.style.transition = 'none';
+});
+document.getElementById('view-deck').addEventListener('pointermove', (e) => {
+  if(!dragState || e.pointerId !== dragState.id) return;
+  dragState.dy = e.clientY - dragState.y;
+  if(Math.abs(dragState.dy) > 6) dragState.moved = true;
+  if(dragState.dy < -4){
+    dragState.card.style.transform = 'translateY(' + dragState.dy + 'px) rotate(' + (dragState.dy / 70) + 'deg)';
+  }
+});
+function endDrag(){
+  if(!dragState) return;
+  const {card, dy, moved} = dragState;
+  dragState = null;
+  card.style.transition = '';
+  card.style.transform = '';
+  if(moved && dy < -80) advance(null);
+}
+window.addEventListener('pointerup', endDrag);
+window.addEventListener('pointercancel', endDrag);
+
+/* 自测 */
+document.getElementById('view-quiz').addEventListener('click', (e) => {
+  if(e.target.closest('[data-hint]')){
+    const hint = document.getElementById('qHint');
+    if(hint) hint.hidden = false;
+    const btn = e.target.closest('[data-hint]');
+    if(btn) btn.style.display = 'none';
+    return;
+  }
+  if(e.target.closest('[data-quiz-again]')){ startQuiz(); return; }
+  if(e.target.closest('[data-quiz-back]')){ switchTab('deck'); return; }
+  const submit = e.target.closest('#qSubmit');
+  if(submit){ if(quiz.answered) quizNext(); else quizCheck(); }
+});
+
+/* 连续天数：点一下看累计 */
+document.getElementById('streakBtn').addEventListener('click', () => {
+  toast('连续 ' + streakDays() + ' 天 · 累计刷词 ' + (mb.total || 0) + ' 次');
+});
+
+/* ============================================================
+   启动
+   ============================================================ */
+queue = buildQueue();
+renderDeckShell();
+refreshHeader();
+</script>
+</body>
+</html>
+
