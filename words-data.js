@@ -1,6 +1,6 @@
 /* 本文件由「更新单词数据.ps1 / .bat」自动生成，请勿手工编辑。 */
 window.WORDS_DATA = {
-    "generated":  "2026-10-30 00:00:49",
+    "generated":  "2026-11-04 23:05:36",
     "words":  [
                   {
                       "word":  "about",
@@ -1777,6 +1777,21 @@ window.WORDS_DATA = {
                                     "h":  "weave a story / tale，编故事"
                                 }
                             ]
+                  },
+                  {
+                      "word":  "随身刷词",
+                      "gloss":  "手机版",
+                      "ipa":  "",
+                      "pos":  "",
+                      "file":  "cards/other/随身刷词.html",
+                      "roots":  [
+                                    "other"
+                                ],
+                      "morph":  "",
+                      "scene":  "",
+                      "q":  [
+
+                            ]
                   }
               ],
     "art":  {
@@ -1921,6 +1936,7 @@ window.WORDS_DATA = {
                 "union":  ".card.m1[data-word=\"union\"]{--mst-ink:#1F1B16;--mst-accent:#E8B33C;--mst-paper:#FAF3E4;--mst-hero:radial-gradient(ellipse at 50% 100%, rgba(232,179,60,.22) 0%, #FCF7EA 60%);--mst-band:repeating-linear-gradient(90deg, #E8B33C 0 22px, transparent 22px 24px, #C9524A 24px 46px, transparent 46px 48px, #6B8E5A 48px 70px, transparent 70px 72px, #4A6B8A 72px 94px, transparent 94px 96px);}",
                 "unite":  ".card.m1[data-word=\"unite\"]{--mst-ink:#2B1A15;--mst-accent:#E85D4A;--mst-paper:#FAF3E8;--mst-hero:radial-gradient(ellipse at 50% 100%, rgba(232,93,74,.25) 0%, #FCF5EA 60%);--mst-band:repeating-linear-gradient(90deg, #E85D4A 0 22px, transparent 22px 24px, #F5A623 24px 46px, transparent 46px 48px, #3DB88C 48px 70px, transparent 70px 72px, #4A6CF7 72px 94px, transparent 94px 96px);}",
                 "watertight":  ".card.m1[data-word=\"watertight\"]{--mst-ink:#06101A;--mst-accent:#0A1626;--mst-paper:#EEF2F4;--mst-hero:#EEF2F4;--mst-band:repeating-linear-gradient(90deg, #F2B233 0 22px, transparent 22px 24px, #3CB8D4 24px 46px, transparent 46px 48px, #1B5C8A 48px 70px, transparent 70px 72px, #2AA85B 72px 94px, transparent 94px 96px);}",
-                "weave":  ".card.m1[data-word=\"weave\"]{--mst-ink:#2B2118;--mst-accent:#FAF2E0;--mst-hero:linear-gradient(180deg, #FFF8E8 0%, #FAF2E0 100%);--mst-band:repeating-linear-gradient(90deg, #B33A1F 0 24px, #E9A324 24px 48px, #1B3A5F 48px 72px, #2A7E6B 72px 96px);}"
+                "weave":  ".card.m1[data-word=\"weave\"]{--mst-ink:#2B2118;--mst-accent:#FAF2E0;--mst-hero:linear-gradient(180deg, #FFF8E8 0%, #FAF2E0 100%);--mst-band:repeating-linear-gradient(90deg, #B33A1F 0 24px, #E9A324 24px 48px, #1B3A5F 48px 72px, #2A7E6B 72px 96px);}",
+                "随身刷词":  ".card.m1[data-word=\"随身刷词\"]{--mst-ink:#1A1512;--mst-accent:#FFFDF8;--mst-paper:#EDE3D1;--mst-hero:#EDE3D1;}"
             }
 };
