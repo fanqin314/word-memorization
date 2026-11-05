@@ -114,7 +114,21 @@ body{
 .hero-tip{
   color:rgba(255,255,255,.6);font-size:.64rem;font-weight:700;text-align:right;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  flex:1;min-width:0;
 }
+/* 「隐藏释义」开关：绝对定位贴右上，不改变状态条高度 */
+.hero-bar{padding-right:30px;}
+.hero-btn{
+  position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:24px;height:24px;padding:0;
+  display:grid;place-items:center;cursor:pointer;
+  border:1.5px solid rgba(255,255,255,.34);border-radius:7px;
+  background:rgba(255,255,255,.08);color:#fff;
+  transition:transform .14s var(--spring),background .16s,border-color .16s,color .16s;
+}
+.hero-btn svg{width:14px;height:14px;display:block;}
+.hero-btn:active{transform:translateY(-50%) translate(1px,1px);}
+.hero-btn.on{background:var(--amber);border-color:var(--ink);color:var(--ink);}
 /* 进度条压成状态条底边的 3px 刻度线，不再单独占一行 */
 .hero-fill{
   position:absolute;left:0;bottom:0;height:3px;width:0;
@@ -450,7 +464,9 @@ body{
 
 .ipa{font-family:var(--mono);font-size:.75rem;font-weight:900;color:var(--ink-2);margin-top:.236rem;letter-spacing:.01em;}
 .pos{font-family:var(--mono);font-size:.618rem;font-weight:800;color:rgba(59,50,42,.92);letter-spacing:.02em;margin-top:.146rem;}
-.gloss{font-size:1rem;font-weight:900;line-height:1.35;margin-top:.236rem;color:var(--ink);}
+.gloss{font-size:1rem;font-weight:900;line-height:1.35;margin-top:.236rem;color:var(--ink);transition:filter .18s var(--ease);}
+/* 顶部开关打开时：正面释义模糊遮住，字号与布局完全不变 */
+.app.hide-gloss .face.front .gloss{filter:blur(7px);user-select:none;}
 
 .art-frame{
   position:relative;flex:0 0 auto;
@@ -759,6 +775,7 @@ body{
     <div class="hero-bar">
       <span class="hk">今日 <b id="todayNum">0</b><i>/10</i></span>
       <span class="hero-tip" id="goalTip">刷一张就热身</span>
+      <button class="hero-btn" id="hideGlossBtn" type="button" aria-label="隐藏释义" aria-pressed="false" title="隐藏释义"></button>
     </div>
     <i class="hero-fill" id="goalFill"></i>
   </header>
@@ -1195,6 +1212,44 @@ document.addEventListener('click', (e) => {
   setSfx(on);
   toast(on ? '音效已开启' : '音效已关闭');
 });
+
+/* ------------------------------------------------------------
+   顶部「隐藏释义」开关：只模糊正面释义，翻面/评分逻辑不变
+   状态单独存 wc_hide_gloss_v1
+   ------------------------------------------------------------ */
+const GLOSS_KEY = 'wc_hide_gloss_v1';
+const GLOSS_ON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const GLOSS_OFF_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg>';
+
+function glossHidden(){
+  try{ return localStorage.getItem(GLOSS_KEY) === '1'; }catch(e){ return false; }
+}
+function applyGloss(){
+  const hidden = glossHidden();
+  const app = document.querySelector('.app');
+  if(app) app.classList.toggle('hide-gloss', hidden);
+  const btn = document.getElementById('hideGlossBtn');
+  if(!btn) return;
+  btn.classList.toggle('on', hidden);
+  btn.setAttribute('aria-pressed', hidden ? 'true' : 'false');
+  btn.setAttribute('aria-label', hidden ? '显示释义' : '隐藏释义');
+  btn.title = hidden ? '显示释义' : '隐藏释义';
+  btn.innerHTML = hidden ? GLOSS_OFF_ICON : GLOSS_ON_ICON;
+}
+function setGloss(hidden){
+  try{ localStorage.setItem(GLOSS_KEY, hidden ? '1' : '0'); }catch(e){}
+  applyGloss();
+}
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('#hideGlossBtn');
+  if(!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const to = !glossHidden();
+  setGloss(to);
+  toast(to ? '释义已遮住' : '释义已显示');
+});
+applyGloss();
 
 /* ------------------------------------------------------------
    刷词卡渲染
