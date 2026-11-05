@@ -1004,16 +1004,11 @@ function savePos(){
   mb.pos = {date: todayKey(), index: pos, queueWords: queue.map(w => w.word)};
   persist(MB_KEY, mb);
 }
-/* 恢复进度：队列重排后用「当前词」重新定位，找不到就从头开始 */
+/* 恢复进度：已刷过的词已被排到队尾，直接按“今天已刷到第几张”续上即可 */
 function restorePos(q){
   const p = mb.pos;
-  if(!p || p.date !== todayKey() || !Array.isArray(p.queueWords) || !q.length) return 0;
-  const same = p.queueWords.length === q.length && p.queueWords.every((w, i) => q[i] && q[i].word === w);
-  if(same) return Math.min(p.index || 0, q.length);
-  const idx = Math.min(p.index || 0, p.queueWords.length - 1);
-  const at = q.findIndex(w => w.word === p.queueWords[idx]);
-  if(at >= 0) return at;
-  return 0;
+  if(!p || p.date !== todayKey() || !q.length) return 0;
+  return Math.min(Math.max(0, p.index || 0), q.length);
 }
 
 /* ------------------------------------------------------------
