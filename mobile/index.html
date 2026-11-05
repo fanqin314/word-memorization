@@ -346,8 +346,15 @@ body{
   border:2px solid var(--mi,var(--ink));border-radius:999px;
   font-family:var(--mono);font-size:.66rem;font-weight:900;line-height:1.5;
 }
-.back-root .stem{background:var(--ma,#F0C97E);color:var(--mi,var(--ink));transform:rotate(-1.5deg);}
-.back-root .affix{background:var(--mi,var(--ink));color:var(--mp,#FFFCF5);transform:rotate(1.5deg);}
+.back-root .stem{
+  /* 强调色可能是深色甚至等于墨色，用浅色混合底保证任何卡上都能看清字 */
+  background:#F3E9D2;
+  background:color-mix(in srgb, var(--ma,#F0C97E) 30%, #FFFCF5);
+  border-color:var(--ma,var(--mi,var(--ink)));
+  color:var(--mi,var(--ink));
+  transform:rotate(-1.5deg);
+}
+.back-root .affix{background:var(--mi,var(--ink));border-color:var(--mi,var(--ink));color:#FFFCF5;transform:rotate(1.5deg);}
 .back-root em{font-style:normal;font-weight:900;color:var(--ma,var(--ink));margin:0 .12rem;}
 .back-root .sep{font-weight:900;color:var(--ma,var(--ink));margin:0 .22rem;}
 .back-root b{font-weight:900;color:var(--mi,var(--ink));}
@@ -370,7 +377,11 @@ body{
   flex:none;appearance:none;cursor:pointer;
   font-family:var(--mono);font-size:.64rem;font-weight:900;
   padding:.22rem .58rem;border-radius:999px;
-  border:2px solid var(--mi,var(--ink));background:var(--ma,#E8C17B);color:var(--mi,var(--ink));
+  border:2px solid var(--mi,var(--ink));
+  /* 强调色可能是墨色本身，浅混合底 + 墨字才能保证按钮文字始终可读 */
+  background:#F3E9D2;
+  background:color-mix(in srgb, var(--ma,#E8C17B) 30%, #FFFCF5);
+  color:var(--mi,var(--ink));
   box-shadow:2px 2px 0 var(--mi,rgba(26,21,18,.7));
   transition:transform .14s var(--spring),box-shadow .14s;
 }
@@ -799,22 +810,36 @@ function esc(s){
 }
 
 /* 把词卡页 .root-line 的文本还原成「词素胶囊 + 括号释义 + → 释义」的排版 */
+function rootAtomHtml(seg, allowBare){
+  const raw = String(seg).trim();
+  const m = raw.match(/^([^（(]*)[（(]([^）)]*)[）)]/);
+  if(!m){
+    /* 只有构成部分里不带括号的单个词素（如 reverse 的 -e）做成胶囊，释义段不加 */
+    return (allowBare && /^\S+$/.test(raw)) ? '<span class="' + (/-/.test(raw) ? 'affix' : 'stem') + '">' + esc(raw) + '</span>' : null;
+  }
+  const toks = m[1].trim().split(/\s+/).filter(Boolean);
+  if(!toks.length) return null;
+  const morpheme = toks.pop();          /* 括号前最后一个词是词素，前面的「古英语 / 拉丁语」等作普通文字 */
+  const prefix = toks.join(' ');
+  return (prefix ? esc(prefix) + ' ' : '') +
+    '<span class="' + (/-/.test(morpheme) ? 'affix' : 'stem') + '">' + esc(morpheme) + '</span>（' + esc(m[2]) + '）';
+}
 function rootLineHtml(text){
   const raw = String(text || '').trim();
   if(!raw) return '';
   const parts = raw.split(/→/);
   const head = (parts[0] || '').trim();
   const rest = parts.slice(1).map(s => s.trim()).filter(Boolean);
-  const atoms = head.split(/[+＋]/).map(seg => {
-    const m = seg.trim().match(/^([^\s（(]+)\s*[（(]([^）)]*)[）)]$/);
-    if(!m) return null;
-    return '<span class="' + (/-/.test(m[1]) ? 'affix' : 'stem') + '">' + esc(m[1]) + '</span>（' + esc(m[2]) + '）';
-  });
+  const atoms = head.split(/[+＋]/).map(s => rootAtomHtml(s, true));
   if(!atoms.length || atoms.some(a => !a)) return '<div class="back-root plain">' + esc(raw) + '</div>';
   let html = '<div class="back-root">' + atoms.join('<em>+</em>');
   if(rest.length){
     html += '<span class="sep">→</span>' +
-      rest.map((s, i) => (i === rest.length - 1 ? '<b>' + esc(s) + '</b>' : esc(s))).join('<span class="sep">→</span>');
+      rest.map((s, i) => {
+        const a = rootAtomHtml(s);
+        if(a) return a;
+        return i === rest.length - 1 ? '<b>' + esc(s) + '</b>' : esc(s);
+      }).join('<span class="sep">→</span>');
   }
   return html + '</div>';
 }
