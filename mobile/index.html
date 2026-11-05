@@ -1666,7 +1666,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
     advance(Number(rateBtn.dataset.rate));
     return;
   }
-  if(e.target.closest('#sfxBtn')){ e.preventDefault(); e.stopPropagation(); return; }
+  if(e.target.closest('#sfxBtn')) return; /* 音效开关交给 document 级委托，不参与翻面 */
   const restart = e.target.closest('[data-restart]');
   if(restart){ e.preventDefault(); queue = buildQueue(true); pos = 0; savePos(); renderDeckShell(); return; }
   const sp = e.target.closest('[data-speak]');
