@@ -226,9 +226,70 @@ body{
   will-change:transform;
 }
 .swipe-card.out-up{transition:transform .38s var(--ease),opacity .38s var(--ease);transform:translateY(-120%) rotate(-4deg);opacity:0;}
-.swipe-card.out-side{transition:transform .34s var(--ease),opacity .34s var(--ease);transform:translateX(-118%) rotate(-5deg);opacity:0;}
+.swipe-card.out-down{transition:transform .38s var(--ease),opacity .38s var(--ease);transform:translateY(120%) rotate(4deg);opacity:0;}
+.swipe-card.out-left{transition:transform .34s var(--ease),opacity .34s var(--ease);transform:translateX(-122%) rotate(-6deg);opacity:0;}
+.swipe-card.out-right{transition:transform .34s var(--ease),opacity .34s var(--ease);transform:translateX(122%) rotate(6deg);opacity:0;}
 .swipe-card.in{animation:cardIn .46s var(--bounce) backwards;}
 @keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.96);}to{opacity:1;transform:none;}}
+
+/* 双面卡：正面 ↔ 背面 3D 翻转（拖动手势作用在外层 .swipe-card，翻面只转内层） */
+.swipe-card{perspective:1100px;}
+.flip-inner{
+  position:relative;display:flex;flex-direction:column;
+  flex:1;min-height:0;
+  transform-style:preserve-3d;
+  transition:transform .55s cubic-bezier(.4,.05,.2,1);
+}
+.swipe-card.flipped .flip-inner{transform:rotateY(180deg);}
+.swipe-card.flipped{touch-action:pan-y;}
+.face{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.face.back{transform:rotateY(180deg);}
+
+/* 拖动时中央的方向提示 */
+.dir-hint{
+  position:absolute;left:50%;top:50%;z-index:5;pointer-events:none;
+  transform:translate(-50%,-50%) scale(.9);
+  opacity:0;transition:opacity .12s,transform .12s;
+  font-family:var(--mono);font-size:.72rem;font-weight:900;letter-spacing:.05em;
+  padding:.42rem .82rem;border-radius:999px;border:2.5px solid var(--ink);
+  background:var(--paper);color:var(--ink);white-space:nowrap;
+  box-shadow:3px 3px 0 rgba(26,21,18,.8);
+}
+.dir-hint.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+.dir-hint[data-dir="right"]{background:#DCEBDD;}
+.dir-hint[data-dir="left"]{background:#F4DADA;}
+.dir-hint[data-dir="up"]{background:#E7E1D6;}
+.dir-hint[data-dir="down"]{background:#F6E7C5;}
+
+/* 背面内容 */
+.back-head{display:flex;align-items:center;justify-content:space-between;gap:.4rem;flex:none;margin-bottom:.42rem;}
+.back-word{font-family:var(--display);font-size:1.12rem;letter-spacing:-.02em;line-height:1.1;}
+.back-ipa{font-family:var(--mono);font-size:.6rem;font-weight:800;color:var(--ink-2);margin-left:.28rem;}
+.back-flip{
+  appearance:none;cursor:pointer;flex:none;
+  font-family:var(--mono);font-size:.57rem;font-weight:900;
+  padding:.18rem .5rem .2rem;border-radius:999px;
+  border:1.8px solid var(--ink);background:#fff;color:var(--ink);
+  box-shadow:2px 2px 0 rgba(26,21,18,.7);
+  transition:transform .16s var(--spring);
+}
+.back-flip:active{transform:translate(2px,2px);box-shadow:none;}
+.back-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:.12rem;}
+.back-gloss{font-size:1rem;font-weight:900;line-height:1.35;margin:.06rem 0 .52rem;}
+.back-block{
+  margin-bottom:.46rem;padding:.48rem .6rem;
+  background:#fff;border:2px solid var(--ink);border-radius:12px;
+  box-shadow:2px 2px 0 rgba(26,21,18,.6);
+}
+.back-block h4{font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.12em;color:rgba(26,21,18,.45);margin:0 0 .18rem;}
+.back-block p{margin:0;font-size:.72rem;line-height:1.55;color:var(--ink-2);}
+.back-block .back-ex{font-family:Georgia,serif;font-size:.78rem;color:var(--ink);}
+.bz-ans{background:var(--amber);color:var(--ink);padding:0 .16rem;border-radius:4px;font-weight:800;}
+.back-link{margin-top:.1rem;align-self:flex-start;}
 
 .card-head{display:flex;align-items:center;gap:.34rem;flex:none;margin-bottom:.34rem;}
 .root-tag{
@@ -780,7 +841,7 @@ function rootOf(w){
 function renderDeckShell(){
   const view = document.getElementById('view-deck');
   view.innerHTML = '<div class="deck-wrap">' +
-      '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span><span>上滑跳过 · 遗忘优先</span></div>' +
+      '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span><span>点按翻面 · 四向滑动</span></div>' +
       '<div class="deck-stage" id="deckStage"><div class="stack" id="cardStack"></div></div>' +
     '</div>';
   renderCard(false);
@@ -791,27 +852,47 @@ function cardHtml(w){
   const rt = rootOf(w);
   const rep = reviewDone(w.word);
   const art = ART[w.word] || '';
+  const qa = (w.q && w.q.length) ? w.q[0] : null;
+  const ex = qa && qa.q ? qa.q.replace('<span class="qz-blank"></span>', '<span class="bz-ans">' + (qa.a || '') + '</span>') : '';
   return '<div class="swipe-card in" data-word="' + w.word + '" style="--rc:' + rt.color + '">' +
-      '<div class="card-head">' +
-        '<span class="root-tag"><i class="dot"></i>' + rt.label + '</span>' +
-        '<span class="mst-tag" style="color:' + (m === 2 ? '#4C6B52' : m === 1 ? '#9A7B34' : '#8A8378') + '">' + MST_LABEL[m] + '</span>' +
-        '<a class="mini-card" href="../' + w.file + '">词卡 ›</a>' +
-      '</div>' +
-      '<div class="card-main">' +
-        '<div class="word-row"><div><h2 class="word">' + w.word + '</h2>' +
-          '<p class="ipa">' + (w.ipa || '') + '</p></div>' +
-          '<button class="speak" type="button" data-speak aria-label="朗读 ' + w.word + '">' + SPEAK_ICON + '</button></div>' +
-        '<p class="pos">' + (w.pos || '') + '</p>' +
-        '<p class="gloss">' + (w.gloss || '') + '</p>' +
-        '<div class="art-frame"><div class="di-art" data-art="' + w.word + '">' + art + '</div>' +
-          '<span class="art-tag">' + (w.scene ? '意象' : '词卡') + (rep ? ' · 打卡 ' + rep + '/4' : '') + '</span></div>' +
-        '<p class="scene">' + (w.scene || '') + '</p>' +
-        '<p class="morph"><b>词根</b>' + (w.morph || '') + '</p>' +
-      '</div>' +
-      '<div class="actions">' +
-        '<button class="rate r0" type="button" data-rate="0">不认识</button>' +
-        '<button class="rate r1" type="button" data-rate="1">有点印象</button>' +
-        '<button class="rate r2" type="button" data-rate="2">认识</button>' +
+      '<div class="dir-hint" aria-hidden="true"></div>' +
+      '<div class="flip-inner">' +
+        '<div class="face front">' +
+          '<div class="card-head">' +
+            '<span class="root-tag"><i class="dot"></i>' + rt.label + '</span>' +
+            '<span class="mst-tag" style="color:' + (m === 2 ? '#4C6B52' : m === 1 ? '#9A7B34' : '#8A8378') + '">' + MST_LABEL[m] + '</span>' +
+            '<a class="mini-card" href="../' + w.file + '">词卡 ›</a>' +
+          '</div>' +
+          '<div class="card-main">' +
+            '<div class="word-row"><div><h2 class="word">' + w.word + '</h2>' +
+              '<p class="ipa">' + (w.ipa || '') + '</p></div>' +
+              '<button class="speak" type="button" data-speak aria-label="朗读 ' + w.word + '">' + SPEAK_ICON + '</button></div>' +
+            '<p class="pos">' + (w.pos || '') + '</p>' +
+            '<p class="gloss">' + (w.gloss || '') + '</p>' +
+            '<div class="art-frame"><div class="di-art" data-art="' + w.word + '">' + art + '</div>' +
+              '<span class="art-tag">' + (w.scene ? '意象' : '词卡') + (rep ? ' · 打卡 ' + rep + '/4' : '') + '</span></div>' +
+            '<p class="scene">' + (w.scene || '') + '</p>' +
+            '<p class="morph"><b>词根</b>' + (w.morph || '') + '</p>' +
+          '</div>' +
+          '<div class="actions">' +
+            '<button class="rate r0" type="button" data-rate="0">不认识</button>' +
+            '<button class="rate r1" type="button" data-rate="1">有点印象</button>' +
+            '<button class="rate r2" type="button" data-rate="2">认识</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="face back">' +
+          '<div class="back-head">' +
+            '<div class="back-word">' + w.word + '<span class="back-ipa">' + (w.ipa || '') + '</span></div>' +
+            '<button class="back-flip" type="button" data-flip>翻回正面</button>' +
+          '</div>' +
+          '<div class="back-body">' +
+            '<p class="back-gloss">' + (w.gloss || '') + '</p>' +
+            (w.morph ? '<div class="back-block"><h4>构词</h4><p>' + w.morph + '</p></div>' : '') +
+            (w.scene ? '<div class="back-block"><h4>意象</h4><p>' + w.scene + '</p></div>' : '') +
+            (ex ? '<div class="back-block"><h4>例句</h4><p class="back-ex">' + ex + '</p></div>' : '') +
+            '<a class="mini-card back-link" href="../' + w.file + '">打开完整词卡 ›</a>' +
+          '</div>' +
+        '</div>' +
       '</div>' +
     '</div>';
 }
@@ -845,7 +926,7 @@ function rateWord(word, level){
   bumpToday(1);
 }
 
-function advance(level){
+function advance(level, dir){
   if(animating) return;
   const w = queue[pos];
   if(!w) return;
@@ -858,7 +939,7 @@ function advance(level){
     if(todayCount() === GOAL) setTimeout(() => toast('今日 10 个达成，收工！'), 700);
   }
   const card = document.querySelector('.swipe-card');
-  if(card) card.classList.add(level === null ? 'out-up' : 'out-side');
+  if(card) card.classList.add('out-' + (dir || (level === null ? 'up' : 'right')));
   setTimeout(() => {
     pos += 1;
     animating = false;
@@ -1163,8 +1244,9 @@ document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
 
-/* 刷词：朗读 / 三档反馈 / 重开一轮 */
+/* 刷词：朗读 / 三档反馈 / 重开一轮 / 点按翻面 */
 document.getElementById('view-deck').addEventListener('click', (e) => {
+  if(suppressTap){ suppressTap = false; return; }
   const rateBtn = e.target.closest('[data-rate]');
   if(rateBtn){ e.preventDefault(); e.stopPropagation(); advance(Number(rateBtn.dataset.rate)); return; }
   const restart = e.target.closest('[data-restart]');
@@ -1174,33 +1256,68 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
     e.preventDefault(); e.stopPropagation();
     const card = sp.closest('.swipe-card');
     speakWord(card ? card.dataset.word : '', sp);
+    return;
   }
+  if(e.target.closest('.mini-card')) return; /* 词卡链接照常跳转 */
+  if(e.target.closest('[data-flip]')){ e.preventDefault(); e.stopPropagation(); }
+  const card = e.target.closest('.swipe-card');
+  if(card) card.classList.toggle('flipped');
 });
 
-/* 上滑跳过：只认竖向拖动，松手超过 80px 才算 */
-let dragState = null;
-document.getElementById('view-deck').addEventListener('pointerdown', (e) => {
+/* 手势：上滑跳过 / 右滑认识 / 左滑不认识 / 下滑有点印象 / 点按翻面 */
+let dragState = null, suppressTap = false;
+const DIR_LABEL = {up:'↑ 跳过', right:'→ 认识', left:'← 不认识', down:'↓ 有点印象'};
+
+function hintDir(card, dx, dy){
+  const h = card.querySelector('.dir-hint');
+  if(!h) return;
+  const ax = Math.abs(dx), ay = Math.abs(dy);
+  if(Math.max(ax, ay) < 16){ h.classList.remove('show'); return; }
+  const dir = ax > ay ? (dx > 0 ? 'right' : 'left') : (dy < 0 ? 'up' : 'down');
+  if(h.dataset.dir !== dir){ h.dataset.dir = dir; h.textContent = DIR_LABEL[dir]; }
+  h.classList.add('show');
+}
+function hideHint(card){
+  const h = card.querySelector('.dir-hint');
+  if(h) h.classList.remove('show');
+}
+
+const deckView = document.getElementById('view-deck');
+deckView.addEventListener('pointerdown', (e) => {
   const card = e.target.closest('.swipe-card');
   if(!card) return;
-  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak')) return;
-  dragState = {id:e.pointerId, card, y:e.clientY, dy:0, moved:false};
+  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]')) return;
+  /* 背面交给浏览器原生滚动，只有点按（无位移）才翻回正面 */
+  if(card.classList.contains('flipped') && e.target.closest('.face.back')) return;
+  dragState = {id:e.pointerId, card, x:e.clientX, y:e.clientY, dx:0, dy:0, moved:false};
   card.style.transition = 'none';
 });
-document.getElementById('view-deck').addEventListener('pointermove', (e) => {
+deckView.addEventListener('pointermove', (e) => {
   if(!dragState || e.pointerId !== dragState.id) return;
+  dragState.dx = e.clientX - dragState.x;
   dragState.dy = e.clientY - dragState.y;
-  if(Math.abs(dragState.dy) > 6) dragState.moved = true;
-  if(dragState.dy < -4){
-    dragState.card.style.transform = 'translateY(' + dragState.dy + 'px) rotate(' + (dragState.dy / 70) + 'deg)';
-  }
+  if(Math.hypot(dragState.dx, dragState.dy) > 8) dragState.moved = true;
+  if(!dragState.moved) return;
+  dragState.card.style.transform = 'translate(' + dragState.dx + 'px,' + dragState.dy + 'px) rotate(' + (dragState.dx / 45) + 'deg)';
+  hintDir(dragState.card, dragState.dx, dragState.dy);
 });
 function endDrag(){
   if(!dragState) return;
-  const {card, dy, moved} = dragState;
+  const {card, dx, dy, moved} = dragState;
   dragState = null;
   card.style.transition = '';
   card.style.transform = '';
-  if(moved && dy < -80) advance(null);
+  hideHint(card);
+  if(!moved) return; /* 没有位移 → 交给 click 判定为点按翻面 */
+  suppressTap = true;
+  setTimeout(() => { suppressTap = false; }, 80);
+  const TH = 70;
+  const ax = Math.abs(dx), ay = Math.abs(dy);
+  if(ax > ay){
+    if(ax > TH) advance(dx > 0 ? 2 : 0, dx > 0 ? 'right' : 'left');
+  } else if(ay > TH){
+    advance(dy < 0 ? null : 1, dy < 0 ? 'up' : 'down');
+  }
 }
 window.addEventListener('pointerup', endDrag);
 window.addEventListener('pointercancel', endDrag);
