@@ -207,12 +207,12 @@ body{
 
 /* 后面两张卡的“厚度” */
 .stack::before,.stack::after{
-  content:'';position:absolute;background:var(--card);
-  border:3px solid var(--ink);border-radius:24px 24px 24px 10px;
+  content:'';position:absolute;background:#F7F2E8;
+  border:1px solid rgba(36,32,27,.10);border-radius:20px;
   transition:transform .3s var(--ease);
 }
-.stack::before{inset:12px -4px -12px 12px;background:#F2EBDD;box-shadow:4px 4px 0 rgba(26,21,18,.55);}
-.stack::after{inset:6px -1px -6px 6px;box-shadow:3px 3px 0 rgba(26,21,18,.7);}
+.stack::before{inset:12px -4px -12px 12px;box-shadow:0 2px 12px rgba(36,32,27,.08);}
+.stack::after{inset:6px -1px -6px 6px;box-shadow:0 2px 12px rgba(36,32,27,.10);}
 
 .swipe-card{
   position:relative;z-index:3;flex:1;min-height:0;
@@ -221,6 +221,13 @@ body{
   padding:0;
   touch-action:none;
   will-change:transform;
+  /* 精修版配色：卡片纸色/墨色/强调色都取自该词卡自身的调色 */
+  --cf:var(--mp,#FFFDF8);
+  --ci:var(--mi,#24201B);
+  --ca:var(--ma,#4E7A8A);
+  --cline:color-mix(in srgb,var(--ci) 12%,transparent);
+  --csoft:color-mix(in srgb,var(--ca) 16%,var(--cf));
+  --cmute:color-mix(in srgb,var(--ci) 55%,transparent);
 }
 .swipe-card.out-up{transition:transform .38s var(--ease),opacity .38s var(--ease);transform:translateY(-120%) rotate(-4deg);opacity:0;}
 .swipe-card.out-down{transition:transform .38s var(--ease),opacity .38s var(--ease);transform:translateY(120%) rotate(4deg);opacity:0;}
@@ -242,11 +249,12 @@ body{
 .face{
   position:absolute;inset:0;
   display:flex;flex-direction:column;
-  padding:var(--sx2) var(--sx3) var(--sx3);
-  background:var(--card);
-  border:3px solid var(--ink);
-  border-radius:24px 24px 24px 10px;
-  box-shadow:5px 5px 0 rgba(26,21,18,.85);
+  padding:.92rem 1.05rem 0;
+  background:var(--cf);
+  color:var(--ci);
+  border:1px solid var(--cline);
+  border-radius:20px;
+  box-shadow:0 2px 16px rgba(36,32,27,.07),0 0 0 1px rgba(36,32,27,.03);
   overflow:hidden;
   backface-visibility:hidden;-webkit-backface-visibility:hidden;
 }
@@ -271,27 +279,20 @@ body{
 /* 背面：沿用该词卡自己的纸色/墨色/强调色/hero 渐变/顶部条纹，正面保持统一 */
 .face.back{
   transform:rotateY(180deg);
-  background:var(--mp,var(--card));
-  border-color:var(--mi,var(--ink));
-  box-shadow:5px 5px 0 var(--mi,rgba(26,21,18,.85));
   padding:0;
 }
 .back-band{
-  flex:none;height:14px;
-  background:var(--mb,var(--ma));
-  border-bottom:2.5px solid var(--mi,var(--ink));
+  flex:none;height:4px;
+  background:var(--ca);
 }
-.back-inner{flex:1;min-height:0;display:flex;flex-direction:column;padding:.5rem .68rem .6rem;}
+.back-inner{flex:1;min-height:0;display:flex;flex-direction:column;padding:.8rem 1.05rem .9rem;}
 .back-head{
-  display:flex;align-items:center;justify-content:space-between;gap:.4rem;flex:none;
-  margin-bottom:.44rem;padding:.34rem .44rem .3rem;
-  background:var(--mh,transparent);
-  border:2px solid var(--mi,var(--ink));
-  border-radius:10px;
-  box-shadow:2px 2px 0 var(--mi,rgba(26,21,18,.7));
+  display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;flex:none;
+  margin-bottom:.4rem;padding:0;
+  background:transparent;border:0;box-shadow:none;
 }
-.back-word{font-family:var(--display);font-size:1.25rem;letter-spacing:-.02em;line-height:1.1;color:var(--mi,var(--ink));}
-.back-ipa{font-family:var(--mono);font-size:.66rem;font-weight:800;color:var(--ink-2);margin-left:.28rem;}
+.back-word{font-family:var(--display);font-size:1.4rem;letter-spacing:-.03em;line-height:1.1;color:var(--ci);}
+.back-ipa{font-family:var(--mono);font-size:.68rem;font-weight:800;color:var(--cmute);margin-left:.3rem;}
 .back-body{
   flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
   display:flex;flex-direction:column; /* 让下面的信息块按容器高度自适应撑开 */
@@ -304,55 +305,50 @@ body{
 .back-body::-webkit-scrollbar{width:5px;}
 .back-body::-webkit-scrollbar-thumb{background:transparent;}
 .back-body::-webkit-scrollbar-track{background:transparent;}
-.back-gloss{font-size:1.0625rem;font-weight:900;line-height:1.4;margin:.06rem 0 .5rem;color:var(--mi,var(--ink));flex:none;}
-/* 信息块按容器剩余高度等比撑开；矮屏放不下时仍按内容高度撑开并可滚动 */
+.back-gloss{font-size:1.0625rem;font-weight:800;line-height:1.4;margin:.05rem 0 .35rem;color:var(--ci);flex:none;}
+/* 信息块：细线分隔的批注区，按容器剩余高度自适应撑开；矮屏放不下时可滚动 */
 .back-block{
-  margin-bottom:.4rem;padding:.42rem .56rem;
-  background:#fff;
-  border:2px solid var(--mi,var(--ink));
-  border-left:5px solid var(--ma,var(--mi,var(--ink)));
-  border-radius:4px 12px 12px 4px;
-  box-shadow:2px 2px 0 var(--mi,rgba(26,21,18,.6));
+  margin:0;padding:.62rem 0 .55rem;
+  background:transparent;
+  border:0;border-top:1px solid var(--cline);
+  border-radius:0;box-shadow:none;
   flex:1 1 auto;
   display:flex;flex-direction:column;justify-content:center;
 }
-.back-block h4{font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.12em;color:rgba(26,21,18,.45);margin:0 0 .2rem;}
-.back-block p{margin:0;font-size:.8rem;line-height:1.55;color:var(--ink-2);}
-.back-block .back-ex{font-family:Georgia,serif;font-size:.84rem;color:var(--ink);}
-.bz-ans{background:var(--amber);color:var(--ink);padding:0 .16rem;border-radius:4px;font-weight:800;}
+.back-block h4{font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.14em;color:var(--cmute);margin:0 0 .3rem;text-transform:uppercase;}
+.back-block p{margin:0;font-size:.82rem;line-height:1.65;color:color-mix(in srgb,var(--ci) 82%,transparent);}
+.back-block .back-ex{font-family:Georgia,serif;font-size:.86rem;color:var(--ci);}
+.bz-ans{background:color-mix(in srgb,var(--ca) 20%,transparent);color:var(--ci);padding:0 .16rem;border-radius:3px;font-weight:800;box-shadow:0 2px 0 color-mix(in srgb,var(--ca) 45%,transparent);}
 
 /* 背面构词：复刻词卡页 .root-line 的「词素胶囊 + 括号释义 + → 释义」排版 */
 .back-root{
-  margin:.1rem 0 0;padding:.46rem .5rem;
-  background:#FFFCF5;
-  border:2px dashed var(--mi,var(--ink));
-  border-radius:10px;
-  text-align:center;
-  font-size:.78rem;line-height:1.8;color:var(--ink-2);
+  margin:.1rem 0 0;padding:0;
+  background:transparent;
+  border:0;border-radius:0;
+  text-align:left;
+  font-size:.8rem;line-height:2;color:color-mix(in srgb,var(--ci) 82%,transparent);
   overflow-wrap:anywhere;
 }
 .back-root .stem,.back-root .affix{
-  display:inline-block;margin:0 .1rem;padding:.02rem .32rem;
-  border:2px solid var(--mi,var(--ink));border-radius:999px;
-  font-family:var(--mono);font-size:.72rem;font-weight:900;line-height:1.5;
+  display:inline-block;margin:0 .08rem;padding:.04rem .3rem;
+  border:0;border-radius:5px;
+  font-family:var(--mono);font-size:.76rem;font-weight:900;line-height:1.35;
 }
 .back-root .stem{
-  /* 强调色可能是深色甚至等于墨色，用浅色混合底保证任何卡上都能看清字 */
-  background:#F3E9D2;
-  background:color-mix(in srgb, var(--ma,#F0C97E) 30%, #FFFCF5);
-  border-color:var(--ma,var(--mi,var(--ink)));
-  color:var(--mi,var(--ink));
-  transform:rotate(-1.5deg);
+  background:color-mix(in srgb, var(--ca,#F0C97E) 22%, var(--cf, #FFFCF5));
+  color:color-mix(in srgb, var(--ca,#F0C97E) 62%, var(--ci,#24201B));
 }
-.back-root .affix{background:var(--mi,var(--ink));border-color:var(--mi,var(--ink));color:#FFFCF5;transform:rotate(1.5deg);}
-.back-root em{font-style:normal;font-weight:900;color:var(--ma,var(--ink));margin:0 .12rem;}
-.back-root .sep{font-weight:900;color:var(--ma,var(--ink));margin:0 .22rem;}
-.back-root b{font-weight:900;color:var(--mi,var(--ink));}
-.back-root.plain{border-style:solid;}
+.back-root .affix{
+  background:var(--ci);color:var(--cf);
+}
+.back-root em{font-style:normal;font-weight:800;color:color-mix(in srgb,var(--ca) 70%,var(--ci));margin:0 .12rem;}
+.back-root .sep{font-weight:800;color:color-mix(in srgb,var(--ca) 70%,var(--ci));margin:0 .22rem;}
+.back-root b{font-weight:900;color:var(--ci);}
+.back-root.plain{border:0;}
 
 /* 背面拼写：一个字母一个格子 + 下方可拖动的字母块 */
 .fill-block{margin-top:.1rem;}
-.fill-q{font-size:.74rem;line-height:1.5;color:var(--ink-2);margin:0 0 .34rem;}
+.fill-q{font-size:.74rem;line-height:1.5;color:var(--cmute);margin:0 0 .4rem;}
 .spell-slots{
   display:flex;flex-direction:column;align-items:flex-start;
   gap:.26rem;width:max-content;max-width:100%;margin:0 auto;
@@ -367,53 +363,49 @@ body{
 .spell-slot{
   width:2.1rem;height:2.25rem;flex:none;
   display:grid;place-items:center;padding:0;
-  border:2px dashed var(--mi,var(--ink));
+  border:1.5px dashed var(--cline);
   border-radius:8px;
-  background:#FFFCF5;
+  background:color-mix(in srgb,var(--ci) 4%,var(--cf));
   overflow:hidden;
   transition:border-color .15s,background .15s,transform .12s var(--spring);
 }
 .spell-slot.hot{
-  border-style:solid;
-  background:#F3E9D2;
-  background:color-mix(in srgb, var(--ma,#E8C17B) 26%, #FFFCF5);
+  border-style:solid;border-color:var(--ca);
+  background:var(--csoft);
   transform:translateY(-2px);
 }
 .spell-slot.filled{
-  border-style:solid;
-  background:#F3E9D2;
-  background:color-mix(in srgb, var(--ma,#E8C17B) 30%, #FFFCF5);
+  border-style:solid;border-color:var(--ca);
+  background:var(--csoft);
 }
 .spell-tiles{
-  margin-top:.36rem;padding-top:.36rem;
-  border-top:1.5px dashed rgba(26,21,18,.2);
+  margin-top:.4rem;padding-top:.4rem;
+  border-top:1px solid var(--cline);
 }
 .spell-tiles:empty{display:none;}
 .spell-tile{
   appearance:none;cursor:grab;
   width:2.1rem;height:2.25rem;flex:none;
   display:grid;place-items:center;padding:0;
-  border:2px solid var(--mi,var(--ink));
+  border:1px solid var(--cline);
   border-radius:8px;
-  /* 强调色可能是墨色本身，浅混合底 + 墨字保证任何卡上都能看清 */
-  background:#F3E9D2;
-  background:color-mix(in srgb, var(--ma,#E8C17B) 30%, #FFFCF5);
-  color:var(--mi,var(--ink));
+  background:var(--csoft);
+  color:var(--ci);
   font-family:var(--mono);font-size:.96rem;font-weight:900;line-height:1;
-  box-shadow:2px 2px 0 var(--mi,rgba(26,21,18,.7));
+  box-shadow:none;
   touch-action:none;
   user-select:none;-webkit-user-select:none;
-  transition:transform .12s var(--spring),box-shadow .12s;
+  transition:transform .12s var(--ease),background .15s;
 }
 /* 已落格的字母块去掉自身描边，和格子合成一个整体 */
 .spell-slot.filled .spell-tile{
   width:100%;height:100%;
   border:0;border-radius:0;box-shadow:none;background:transparent;
 }
-.spell-tile:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--mi,rgba(26,21,18,.7));}
+.spell-tile:active{transform:scale(.95);}
 .spell-tile.dragging{opacity:.32;}
 .spell-ghost{position:fixed;pointer-events:none;z-index:9999;margin:0;}
-.fill-msg{font-size:.62rem;font-weight:800;line-height:1.4;margin:.26rem 0 0;min-height:1em;color:var(--ink-2);}
+.fill-msg{font-size:.66rem;font-weight:700;line-height:1.4;margin:.26rem 0 0;min-height:1em;color:var(--cmute);}
 .fill-block.ok .fill-msg{color:#2F6B45;}
 .fill-block.ok .spell-slot{border-color:#2F6B45;}
 .fill-block.bad .fill-msg{color:#B04A3A;}
@@ -421,54 +413,56 @@ body{
 .fill-block.bad{animation:fillShake .3s;}
 @keyframes fillShake{20%{transform:translateX(-4px)}55%{transform:translateX(4px)}85%{transform:translateX(-2px)}}
 
-.card-head{display:flex;align-items:center;gap:var(--sx1);flex:none;margin-bottom:var(--sx1);}
+.card-head{display:flex;align-items:center;gap:.4rem;flex:none;margin-bottom:.5rem;}
 .root-tag{
-  display:inline-flex;align-items:center;gap:.24rem;
-  font-family:var(--mono);font-size:.64rem;font-weight:900;letter-spacing:.03em;
-  padding:.16rem .5rem .18rem;border-radius:999px;
-  border:1.8px solid currentColor;background:#fff;color:var(--rc,var(--clay));
+  display:inline-flex;align-items:center;gap:.26rem;
+  font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.03em;
+  padding:.2rem .46rem;border-radius:6px;
+  border:0;background:var(--csoft);
+  color:color-mix(in srgb,var(--ca) 62%,var(--ci));
 }
-.root-tag .dot{width:7px;height:7px;border-radius:2px;background:currentColor;flex:none;}
+.root-tag .dot{width:5px;height:5px;border-radius:50%;background:var(--ca);flex:none;}
 .mst-tag{
   display:inline-flex;align-items:center;
-  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.05em;
-  padding:.16rem .46rem .18rem;border-radius:999px;
-  border:1.8px dashed currentColor;color:var(--ink-2);opacity:.75;
+  font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:.04em;
+  padding:0;border:0;background:transparent;color:var(--cmute);
 }
 .mini-card{
   margin-left:auto;flex:none;
   display:inline-flex;align-items:center;gap:.18rem;
-  font-family:var(--mono);font-size:.64rem;font-weight:900;
-  color:var(--ink);background:#fff;border:1.8px solid var(--ink);
-  border-radius:999px;padding:.16rem .5rem .18rem;text-decoration:none;
-  transition:transform .16s var(--spring),background .16s;
+  font-family:var(--mono);font-size:.66rem;font-weight:700;
+  color:var(--cmute);background:transparent;border:0;
+  border-radius:0;padding:0;text-decoration:none;
+  transition:opacity .16s;
 }
-.mini-card:active{transform:scale(.92);background:var(--paper);}
+.mini-card:active{opacity:.55;}
 
 .card-main{display:flex;flex-direction:column;flex:1;min-height:0;}
 .word-row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sx2);flex:none;}
 .word{
   font-family:var(--display);
-  font-size:clamp(1.95rem,9.2vw,2.618rem);
-  line-height:1.02;letter-spacing:-.032em;
+  font-size:clamp(2.05rem,9.6vw,2.5rem);
+  line-height:1.02;letter-spacing:-.035em;color:var(--ci);
   word-break:break-word;
 }
 .speak{
   appearance:none;cursor:pointer;flex:none;
-  width:44px;height:44px;border-radius:50%;
-  border:2.5px solid var(--ink);background:#fff;color:var(--ink);
-  box-shadow:2px 2px 0 rgba(26,21,18,.85);
+  width:40px;height:40px;border-radius:10px;
+  border:1px solid var(--cline);background:var(--csoft);color:var(--ci);
+  box-shadow:none;
   display:grid;place-items:center;
-  transition:transform .16s var(--spring),box-shadow .16s var(--spring),background .2s;
+  transition:transform .14s var(--ease),background .2s;
 }
-.speak svg{width:19px;height:19px;}
-.speak:active{transform:translate(2px,2px);box-shadow:0 0 0 rgba(26,21,18,.85);}
-.speak.speaking{background:var(--amber);animation:speakPulse .7s ease-in-out infinite;}
-@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.speak svg{width:18px;height:18px;}
+.speak:active{transform:scale(.94);}
+.speak.speaking{background:var(--csoft);animation:speakPulse .7s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
 
-.ipa{font-family:var(--mono);font-size:.8125rem;font-weight:900;color:var(--ink-2);margin-top:.236rem;letter-spacing:.01em;}
-.pos{font-family:var(--mono);font-size:.7rem;font-weight:800;color:rgba(59,50,42,.92);letter-spacing:.02em;margin-top:.16rem;}
-.gloss{font-size:1.0625rem;font-weight:900;line-height:1.35;margin-top:.3rem;color:var(--ink);transition:filter .18s var(--ease);}
+/* 词头下方一行：音标 | 词性 */
+.meta{display:flex;align-items:baseline;gap:.6rem;margin:.18rem 0 .68rem;flex:none;}
+.meta .ipa{font-family:var(--mono);font-size:.8rem;font-weight:800;color:var(--cmute);letter-spacing:.01em;}
+.meta .pos{font-family:var(--mono);font-size:.72rem;font-weight:800;color:var(--cmute);letter-spacing:.02em;padding-left:.6rem;border-left:1px solid var(--cline);}
+.gloss{font-size:1.125rem;font-weight:800;line-height:1.4;margin-top:.16rem;color:var(--ci);transition:filter .18s var(--ease);}
 /* 顶部开关打开时：正面模糊释义、背面模糊单词，字号与布局完全不变 */
 .app.hide-gloss .face.front .gloss{filter:blur(7px);user-select:none;}
 .app.hide-gloss .face.back .back-word-txt{filter:blur(7px);user-select:none;}
@@ -481,10 +475,10 @@ body{
   height:clamp(96px,min(30vh,calc((100vw - 84px) / 1.618)),200px);width:auto;
   min-height:84px;
   aspect-ratio:1.618 / 1;
-  margin:var(--sx3) auto var(--sx2);
-  border:2.5px solid var(--ink);border-radius:14px;
-  box-shadow:3px 3px 0 rgba(26,21,18,.85);
-  overflow:hidden;background:var(--ink);
+  margin:.3rem auto .55rem;
+  border:0;border-radius:12px;
+  box-shadow:none;
+  overflow:hidden;background:var(--ci);
 }
 .art-frame .di-art{
   width:100%;height:100%;
@@ -492,39 +486,42 @@ body{
 }
 .art-frame .di-art svg{display:block;width:100%;height:100%;}
 .art-frame .art-tag{
-  position:absolute;left:8px;bottom:8px;z-index:2;
-  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.06em;
-  padding:.1rem .4rem .12rem;border-radius:999px;
-  background:rgba(26,21,18,.72);color:#fff;
+  position:absolute;left:6px;bottom:6px;z-index:2;
+  font-family:var(--mono);font-size:.56rem;font-weight:700;letter-spacing:.08em;
+  padding:.1rem .38rem .12rem;border-radius:4px;
+  background:rgba(255,255,255,.14);color:#fff;backdrop-filter:blur(4px);
 }
 
 .scene{
-  margin-top:var(--sx2);font-size:.8125rem;font-weight:700;line-height:1.5;color:var(--ink-2);
+  margin-top:.5rem;padding-left:.55rem;border-left:2px solid var(--ca);
+  font-size:.8125rem;font-weight:600;line-height:1.55;color:color-mix(in srgb,var(--ci) 80%,transparent);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
 }
 .morph{
-  margin-top:var(--sx2);padding-top:.236rem;
-  border-top:1.5px dashed rgba(26,21,18,.2);
-  font-size:.72rem;line-height:1.45;color:rgba(26,21,18,.62);
+  margin-top:.45rem;padding-top:.42rem;
+  border-top:1px solid var(--cline);
+  font-size:.72rem;line-height:1.5;color:var(--cmute);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
 }
-.morph b{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:rgba(26,21,18,.4);margin-right:.2rem;}
+.morph b{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--cmute);margin-right:.2rem;}
 
 .actions{
-  display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:var(--sx1);
-  flex:none;margin-top:var(--sx2);
+  display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:.5rem;
+  flex:none;margin:.6rem -1.05rem 0;
+  padding:.7rem 1.05rem .85rem;
+  border-top:1px solid var(--cline);background:var(--cf);
 }
 .rate{
   appearance:none;cursor:pointer;
-  font-family:var(--sans);font-size:.76rem;font-weight:900;letter-spacing:.01em;
-  padding:var(--sx2) .2rem;border-radius:13px;
-  border:2.5px solid var(--ink);
-  background:#fff;color:var(--ink);
-  box-shadow:3px 3px 0 rgba(26,21,18,.85);
-  transition:transform .16s var(--spring),box-shadow .16s var(--spring),background .16s;
+  font-family:var(--sans);font-size:.82rem;font-weight:700;letter-spacing:0;
+  padding:.78rem .2rem;border-radius:10px;
+  border:0;
+  background:color-mix(in srgb,var(--ci) 6%,var(--cf));color:var(--ci);
+  box-shadow:none;
+  transition:transform .12s var(--ease),background .18s;
   position:relative;overflow:hidden;
 }
-.rate::before{content:'';position:absolute;inset:0 0 auto 0;height:6px;background:var(--rc);border-bottom:2px solid var(--ink);}
+.rate::before{display:none;}
 /* 评分压印环：点击后由语义色扩散一圈 */
 .rate::after{
   content:'';position:absolute;left:50%;top:50%;
@@ -534,10 +531,10 @@ body{
 }
 @keyframes stampRing{from{opacity:.55;transform:scale(1);}to{opacity:0;transform:scale(14);}}
 .rate.stamp::after{animation:stampRing .32s ease-out;}
-.rate:active{transform:translate(3px,3px);box-shadow:0 0 0 rgba(26,21,18,.85);}
+.rate:active{transform:scale(.97);box-shadow:none;}
 .rate.r0{--rc:var(--rose);}
-.rate.r1{--rc:var(--amber);}
-.rate.r2{--rc:var(--amber);background:var(--ink);color:#fff;}
+.rate.r1{--rc:var(--amber);background:var(--ci);color:var(--cf);}
+.rate.r2{--rc:var(--amber);background:var(--csoft);color:color-mix(in srgb,var(--ca) 62%,var(--ci));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ca) 38%,transparent);}
 
 /* ---------------- 正面分层入场 / 呼吸 / 数字 tick ---------------- */
 @keyframes rvIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
@@ -757,11 +754,11 @@ body{
   .morph{display:none;}
   /* 矮屏背面收紧留白（字号不变），尽量一屏放下 */
   .back-inner{padding:.42rem .62rem .48rem;}
-  .back-head{margin-bottom:.3rem;padding:.26rem .4rem .24rem;}
-  .back-gloss{margin:.04rem 0 .34rem;}
-  .back-block{padding:.34rem .52rem;margin-bottom:.3rem;}
-  .back-block h4{margin-bottom:.12rem;}
-  .back-root{line-height:1.72;padding:.36rem .4rem;}
+  .back-head{margin-bottom:.3rem;padding:0;}
+  .back-gloss{margin:.04rem 0 .3rem;}
+  .back-block{padding:.34rem 0 .3rem;margin-bottom:0;}
+  .back-block h4{margin-bottom:.14rem;}
+  .back-root{line-height:1.75;padding:0;}
   .fill-q{margin-bottom:.24rem;}
 }
 @media (max-height:640px){
@@ -1296,7 +1293,7 @@ function cardHtml(w){
   const qa = (w.q && w.q.length) ? w.q[0] : null;
   const ex = qa && qa.q ? qa.q.replace('<span class="qz-blank"></span>', '<span class="bz-ans">' + (qa.a || '') + '</span>') : '';
   const pal = paletteOf(w.word);
-  return '<div class="swipe-card in" data-word="' + w.word + '" style="--rc:' + rt.color + '">' +
+  return '<div class="swipe-card in" data-word="' + w.word + '" style="--rc:' + rt.color + ';' + pal.style + '">' +
       '<div class="dir-hint" aria-hidden="true"></div>' +
       '<div class="flip-inner">' +
         '<div class="face front">' +
@@ -1306,11 +1303,11 @@ function cardHtml(w){
             '<a class="mini-card" href="../' + w.file + '">词卡 ›</a>' +
           '</div>' +
           '<div class="card-main">' +
-            '<div class="word-row rv2"><div><h2 class="word">' + w.word + '</h2>' +
-              '<p class="ipa rv3">' + (w.ipa || '') + '</p></div>' +
+            '<div class="word-row rv2"><div><h2 class="word">' + w.word + '</h2></div>' +
               '<button class="speak" type="button" data-speak aria-label="朗读 ' + w.word + '">' + SPEAK_ICON + '</button></div>' +
-            '<p class="pos rv3">' + (w.pos || '') + '</p>' +
             '<p class="gloss rv3">' + (w.gloss || '') + '</p>' +
+            '<div class="meta rv3"><span class="ipa">' + (w.ipa || '') + '</span>' +
+              (w.pos ? '<span class="pos">' + w.pos + '</span>' : '') + '</div>' +
             '<div class="art-frame rv4"><div class="di-art" data-art="' + w.word + '">' + art + '</div>' +
               '<span class="art-tag">' + (w.scene ? '意象' : '词卡') + (rep ? ' · 打卡 ' + rep + '/4' : '') + '</span></div>' +
             '<p class="scene rv5">' + (w.scene || '') + '</p>' +
@@ -1322,7 +1319,7 @@ function cardHtml(w){
             '<button class="rate r2" type="button" data-rate="2">认识</button>' +
           '</div>' +
         '</div>' +
-        '<div class="face back" style="' + pal.style + '">' +
+        '<div class="face back">' +
           '<div class="back-band"></div>' +
           '<div class="back-inner">' +
             '<div class="back-head">' +
