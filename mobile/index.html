@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F1EEE7">
+<meta name="theme-color" content="#F7F8F8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="随身刷词">
@@ -22,8 +22,8 @@
   /* 外层界面：瓷白 + 石墨灰的发丝线界面，不再沿用课程表的纸墨配色 */
   --ink:#20242A;
   --ink-2:#40464E;
-  --paper:#E4E1DA;
-  --paper-2:#F1EEE7;
+  --paper:#E3E5E4;
+  --paper-2:#F7F8F8;
   --card:#FFFFFF;
 
   --rule:rgba(32,36,42,.10);
@@ -59,8 +59,8 @@
 
 body{
   background:
-    radial-gradient(1100px 640px at 18% -12%, #F7F4ED 0%, transparent 62%),
-    radial-gradient(900px 620px at 92% 112%, #DDE4E3 0%, transparent 66%),
+    radial-gradient(1100px 640px at 18% -12%, #FCFCFB 0%, transparent 62%),
+    radial-gradient(900px 620px at 92% 112%, #DEE6E7 0%, transparent 66%),
     var(--paper);
   color:var(--ink);
   font-family:var(--sans);
@@ -75,9 +75,9 @@ body{
 /* ---------------- 背景色块 ---------------- */
 .blobs{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
 .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.34;}
-.blob.b1{width:360px;height:360px;background:#DDE7E5;top:-140px;left:-140px;animation:drift1 22s ease-in-out infinite;}
-.blob.b2{width:340px;height:340px;background:#EDE3D4;bottom:-130px;right:-130px;animation:drift2 27s ease-in-out infinite;}
-.blob.b3{width:260px;height:260px;background:#E4E9E6;top:44%;left:58%;animation:drift3 31s ease-in-out infinite;}
+.blob.b1{width:360px;height:360px;background:#DCE7E7;top:-140px;left:-140px;animation:drift1 22s ease-in-out infinite;}
+.blob.b2{width:340px;height:340px;background:#E3E6EA;bottom:-130px;right:-130px;animation:drift2 27s ease-in-out infinite;}
+.blob.b3{width:260px;height:260px;background:#E6EBE9;top:44%;left:58%;animation:drift3 31s ease-in-out infinite;}
 @keyframes drift1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(46px,34px) scale(1.18);}}
 @keyframes drift2{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-40px,-30px) scale(1.12);}}
 @keyframes drift3{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-30px,40px) scale(.88);}}
@@ -239,10 +239,13 @@ body{
   padding:0;
   touch-action:none;
   will-change:transform;
-  /* 精修版配色：卡片纸色/墨色/强调色都取自该词卡自身的调色 */
-  --cf:var(--mp,#FFFDF8);
+  /* 精修版配色：纸色向该词卡自己的强调色偏一点，让每张卡都有辨识度；
+     墨色/强调色仍取自词卡自身的调色 */
+  --cf:color-mix(in srgb,var(--mp,#FFFDF8) 82%,var(--ma,#4E7A8A));
   --ci:var(--mi,#24201B);
   --ca:var(--ma,#4E7A8A);
+  /* 强调色的「落下去」版本：用作实心按钮/图标的底色，浅色强调色也能压住 */
+  --cink:color-mix(in srgb,var(--ca) 30%,var(--ci));
   --cline:color-mix(in srgb,var(--ci) 12%,transparent);
   --csoft:color-mix(in srgb,var(--ca) 16%,var(--cf));
   --cmute:color-mix(in srgb,var(--ci) 55%,transparent);
@@ -281,6 +284,11 @@ body{
   backface-visibility:hidden;-webkit-backface-visibility:hidden;
 }
 .face.back{transform:rotateY(180deg);}
+/* 正面顶部一条强调色押边：词卡自己的颜色先声夺人，和背面的色带呼应 */
+.face.front::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:5px;z-index:1;
+  background:var(--ca);pointer-events:none;
+}
 
 /* 拖动时中央的方向提示 */
 .dir-hint{
@@ -304,7 +312,7 @@ body{
   padding:0;
 }
 .back-band{
-  flex:none;height:4px;
+  flex:none;height:5px;
   background:var(--ca);
 }
 .back-inner{flex:1;min-height:0;display:flex;flex-direction:column;padding:.8rem 1.05rem .9rem;}
@@ -470,20 +478,23 @@ body{
 .speak{
   appearance:none;cursor:pointer;flex:none;
   width:40px;height:40px;border-radius:10px;
-  border:1px solid var(--cline);background:var(--csoft);color:var(--ci);
+  border:1px solid var(--cink);background:var(--cink);color:var(--cf);
   box-shadow:none;
   display:grid;place-items:center;
   transition:transform .14s var(--ease),background .2s;
 }
 .speak svg{width:18px;height:18px;}
 .speak:active{transform:scale(.94);}
-.speak.speaking{background:var(--csoft);animation:speakPulse .7s ease-in-out infinite;}
+.speak.speaking{animation:speakPulse .7s ease-in-out infinite;}
 @keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
 
 /* 词头下方一行：音标 | 词性 */
 .meta{display:flex;align-items:baseline;gap:.6rem;margin:.18rem 0 .68rem;flex:none;}
 .meta .ipa{font-family:var(--mono);font-size:.8rem;font-weight:800;color:var(--cmute);letter-spacing:.01em;}
-.meta .pos{font-family:var(--mono);font-size:.72rem;font-weight:800;color:var(--cmute);letter-spacing:.02em;padding-left:.6rem;border-left:1px solid var(--cline);}
+.meta .pos{font-family:var(--mono);font-size:.72rem;font-weight:800;letter-spacing:.02em;
+  padding:.08rem .42rem .05rem;border-radius:5px;
+  background:color-mix(in srgb,var(--ca) 18%,var(--cf));
+  color:var(--cink);}
 .gloss{font-size:1.125rem;font-weight:800;line-height:1.4;margin-top:.16rem;color:var(--ci);transition:filter .18s var(--ease);}
 /* 顶部开关打开时：正面模糊释义、背面模糊单词，字号与布局完全不变 */
 .app.hide-gloss .face.front .gloss{filter:blur(7px);user-select:none;}
@@ -515,7 +526,7 @@ body{
 }
 
 .scene{
-  margin-top:.5rem;padding-left:.55rem;border-left:2px solid var(--ca);
+  margin-top:.5rem;padding-left:.55rem;border-left:3px solid var(--ca);
   font-size:.8125rem;font-weight:600;line-height:1.55;color:color-mix(in srgb,var(--ci) 80%,transparent);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
 }
@@ -554,8 +565,8 @@ body{
 .rate.stamp::after{animation:stampRing .32s ease-out;}
 .rate:active{transform:scale(.97);box-shadow:none;}
 .rate.r0{--rc:var(--rose);}
-.rate.r1{--rc:var(--amber);background:color-mix(in srgb,var(--ci) 12%,var(--cf));color:var(--ci);}
-.rate.r2{--rc:var(--moss);background:var(--ci);color:var(--cf);}
+.rate.r1{--rc:var(--amber);background:color-mix(in srgb,var(--ca) 12%,var(--cf));color:var(--ci);}
+.rate.r2{--rc:var(--moss);background:var(--cink);color:var(--cf);}
 
 /* ---------------- 正面分层入场 / 呼吸 / 数字 tick ---------------- */
 @keyframes rvIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
