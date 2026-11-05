@@ -22,8 +22,8 @@
   /* 外层界面：瓷白 + 石墨灰的发丝线界面，不再沿用课程表的纸墨配色 */
   --ink:#20242A;
   --ink-2:#40464E;
-  --paper:#E3E5E4;
-  --paper-2:#F7F8F8;
+  --paper:#E7E9E7;
+  --paper-2:#FCFCFB;
   --card:#FFFFFF;
 
   --rule:rgba(32,36,42,.10);
@@ -59,8 +59,8 @@
 
 body{
   background:
-    radial-gradient(1100px 640px at 18% -12%, #FCFCFB 0%, transparent 62%),
-    radial-gradient(900px 620px at 92% 112%, #DEE6E7 0%, transparent 66%),
+    radial-gradient(1100px 640px at 18% -12%, #FFFFFF 0%, transparent 62%),
+    radial-gradient(900px 620px at 92% 112%, #E8ECEB 0%, transparent 66%),
     var(--paper);
   color:var(--ink);
   font-family:var(--sans);
@@ -239,9 +239,9 @@ body{
   padding:0;
   touch-action:none;
   will-change:transform;
-  /* 精修版配色：纸色向该词卡自己的强调色偏一点，让每张卡都有辨识度；
+  /* 精修版配色：纸色从纯白兑入该词卡自己的强调色，色相干净不发灰；
      墨色/强调色仍取自词卡自身的调色 */
-  --cf:color-mix(in srgb,var(--mp,#FFFDF8) 82%,var(--ma,#4E7A8A));
+  --cf:color-mix(in srgb,var(--ma,#4E7A8A) var(--ctint,20%),#FFFFFF);
   --ci:var(--mi,#24201B);
   --ca:var(--ma,#4E7A8A);
   /* 强调色的「落下去」版本：用作实心按钮/图标的底色，浅色强调色也能压住 */
@@ -286,7 +286,7 @@ body{
 .face.back{transform:rotateY(180deg);}
 /* 正面顶部一条强调色押边：词卡自己的颜色先声夺人，和背面的色带呼应 */
 .face.front::before{
-  content:'';position:absolute;left:0;right:0;top:0;height:5px;z-index:1;
+  content:'';position:absolute;left:0;right:0;top:0;height:6px;z-index:1;
   background:var(--ca);pointer-events:none;
 }
 
@@ -312,7 +312,7 @@ body{
   padding:0;
 }
 .back-band{
-  flex:none;height:5px;
+  flex:none;height:6px;
   background:var(--ca);
 }
 .back-inner{flex:1;min-height:0;display:flex;flex-direction:column;padding:.8rem 1.05rem .9rem;}
@@ -493,7 +493,7 @@ body{
 .meta .ipa{font-family:var(--mono);font-size:.8rem;font-weight:800;color:var(--cmute);letter-spacing:.01em;}
 .meta .pos{font-family:var(--mono);font-size:.72rem;font-weight:800;letter-spacing:.02em;
   padding:.08rem .42rem .05rem;border-radius:5px;
-  background:color-mix(in srgb,var(--ca) 18%,var(--cf));
+  background:color-mix(in srgb,var(--ca) 26%,#FFFFFF);
   color:var(--cink);}
 .gloss{font-size:1.125rem;font-weight:800;line-height:1.4;margin-top:.16rem;color:var(--ci);transition:filter .18s var(--ease);}
 /* 顶部开关打开时：正面模糊释义、背面模糊单词，字号与布局完全不变 */
@@ -881,12 +881,31 @@ function paletteOf(word){
   const paper = pick('paper');
   const ink = pick('ink');
   const accent = pick('accent');
+  const tint = tintOf(accent);
   const style = [
     paper ? '--mp:' + paper : '',
     ink ? '--mi:' + ink : '',
-    accent ? '--ma:' + accent : ''
+    accent ? '--ma:' + accent : '',
+    '--ctint:' + tint
   ].filter(Boolean).join(';');
-  return (palCache[word] = {paper, ink, accent, style});
+  return (palCache[word] = {paper, ink, accent, tint, style});
+}
+
+/* 纸色兑入强调色的比例：色相越鲜明兑得越多；
+   近中性或很深的强调色少兑一点，避免整张卡变成一片灰 */
+function tintOf(hex){
+  const m = /^#([0-9a-f]{6})$/i.exec(hex || '');
+  if(!m) return '16%';
+  const n = parseInt(m[1], 16);
+  const r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2, d = max - min;
+  const s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+  let t;
+  if(s < .12) t = 4;
+  else if(l < .3) t = 8;
+  else t = 16 + 14 * s;
+  return Math.round(t) + '%';
 }
 
 function esc(s){
