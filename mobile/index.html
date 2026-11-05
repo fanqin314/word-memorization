@@ -294,6 +294,7 @@ body{
 .back-ipa{font-family:var(--mono);font-size:.6rem;font-weight:800;color:var(--ink-2);margin-left:.28rem;}
 .back-body{
   flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column; /* 让下面的信息块按容器高度自适应撑开 */
   padding-right:.12rem;
   /* 与 .main 一致：隐藏可见条但保留占位，避免出现/隐藏时内容宽度跳变 */
   scrollbar-gutter:stable;
@@ -303,7 +304,8 @@ body{
 .back-body::-webkit-scrollbar{width:5px;}
 .back-body::-webkit-scrollbar-thumb{background:transparent;}
 .back-body::-webkit-scrollbar-track{background:transparent;}
-.back-gloss{font-size:1rem;font-weight:900;line-height:1.35;margin:.06rem 0 .52rem;color:var(--mi,var(--ink));}
+.back-gloss{font-size:1rem;font-weight:900;line-height:1.35;margin:.06rem 0 .52rem;color:var(--mi,var(--ink));flex:none;}
+/* 信息块按容器剩余高度等比撑开；矮屏放不下时仍按内容高度撑开并可滚动 */
 .back-block{
   margin-bottom:.46rem;padding:.48rem .6rem;
   background:#fff;
@@ -311,6 +313,8 @@ body{
   border-left:5px solid var(--ma,var(--mi,var(--ink)));
   border-radius:4px 12px 12px 4px;
   box-shadow:2px 2px 0 var(--mi,rgba(26,21,18,.6));
+  flex:1 1 auto;
+  display:flex;flex-direction:column;justify-content:center;
 }
 .back-block h4{font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.12em;color:rgba(26,21,18,.45);margin:0 0 .18rem;}
 .back-block p{margin:0;font-size:.72rem;line-height:1.55;color:var(--ink-2);}
