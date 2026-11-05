@@ -475,9 +475,11 @@ body{
 .back-word-txt{transition:filter .18s var(--ease);}
 
 .art-frame{
-  position:relative;flex:0 0 auto;
-  /* 高度同时受 30vh、200px 上限和「卡片可用内宽」约束：保证黄金矩形永不横向溢出 */
+  position:relative;flex:0 1 auto;
+  /* 高度同时受 30vh、200px 上限和「卡片可用内宽」约束：保证黄金矩形永不横向溢出
+     场景/构词多占一行时，允许图形框按比例收缩（不低于 84px），避免文字被裁切 */
   height:clamp(96px,min(30vh,calc((100vw - 84px) / 1.618)),200px);width:auto;
+  min-height:84px;
   aspect-ratio:1.618 / 1;
   margin:var(--sx3) auto var(--sx2);
   border:2.5px solid var(--ink);border-radius:14px;
@@ -498,13 +500,13 @@ body{
 
 .scene{
   margin-top:var(--sx2);font-size:.75rem;font-weight:700;line-height:1.45;color:var(--ink-2);
-  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
 .morph{
   margin-top:var(--sx2);padding-top:.236rem;
   border-top:1.5px dashed rgba(26,21,18,.2);
   font-size:.618rem;line-height:1.42;color:rgba(26,21,18,.62);
-  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
 .morph b{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;color:rgba(26,21,18,.4);margin-right:.2rem;}
 
