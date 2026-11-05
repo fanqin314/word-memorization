@@ -88,6 +88,8 @@ body{
 .hero{
   position:relative;flex-shrink:0;
   padding:.85rem 1rem .9rem;
+  /* 刘海屏 / 挖孔屏：顶部再让出状态栏高度，品牌区不被遮住 */
+  padding-top:calc(.85rem + env(safe-area-inset-top, 0px));
   background:var(--ink);
   border-radius:0 0 30px 30px;
   overflow:hidden;z-index:2;
@@ -858,8 +860,11 @@ function rootAtomHtml(seg, allowBare){
   if(!toks.length) return null;
   const morpheme = toks.pop();          /* 括号前最后一个词是词素，前面的「古英语 / 拉丁语」等作普通文字 */
   const prefix = toks.join(' ');
+  /* 括号之后的剩余文字（可能还含别的括号）原样保留，不能丢 */
+  const tail = raw.slice(m[0].length).trim();
   return (prefix ? esc(prefix) + ' ' : '') +
-    '<span class="' + (/-/.test(morpheme) ? 'affix' : 'stem') + '">' + esc(morpheme) + '</span>（' + esc(m[2]) + '）';
+    '<span class="' + (/-/.test(morpheme) ? 'affix' : 'stem') + '">' + esc(morpheme) + '</span>（' + esc(m[2]) + '）' +
+    (tail ? ' ' + esc(tail) : '');
 }
 function rootLineHtml(text){
   const raw = String(text || '').trim();
@@ -867,9 +872,11 @@ function rootLineHtml(text){
   const parts = raw.split(/→/);
   const head = (parts[0] || '').trim();
   const rest = parts.slice(1).map(s => s.trim()).filter(Boolean);
-  const atoms = head.split(/[+＋]/).map(s => rootAtomHtml(s, true));
-  if(!atoms.length || atoms.some(a => !a)) return '<div class="back-root plain">' + esc(raw) + '</div>';
-  let html = '<div class="back-root">' + atoms.join('<em>+</em>');
+  const segs = head.split(/[+＋]/).map(s => s.trim());
+  const atoms = segs.map(s => rootAtomHtml(s, true));
+  /* 只要有一段能做成胶囊就走胶囊排版，解析失败的段原样输出（不整段退回 plain） */
+  if(!atoms.some(a => a)) return '<div class="back-root plain">' + esc(raw) + '</div>';
+  let html = '<div class="back-root">' + atoms.map((a, i) => a || esc(segs[i])).join('<em>+</em>');
   if(rest.length){
     html += '<span class="sep">→</span>' +
       rest.map((s, i) => {
@@ -979,6 +986,35 @@ function bumpToday(n){
   mb.total = (mb.total || 0) + n;
   persist(MB_KEY, mb);
 }
+/* 今天已经评分过的词（刷新后排在队尾，不重复出现在最前面） */
+function ratedToday(){
+  const set = new Set(((mb.rated || {})[todayKey()]) || []);
+  return set;
+}
+function markRated(word){
+  const k = todayKey();
+  mb.rated = mb.rated || {};
+  const list = mb.rated[k] || (mb.rated[k] = []);
+  if(list.indexOf(word) < 0) list.push(word);
+  persist(MB_KEY, mb);
+}
+/* 进度存档：日期 + 当前下标 + 当时的队列词序 */
+function savePos(){
+  if(!queue.length) return;
+  mb.pos = {date: todayKey(), index: pos, queueWords: queue.map(w => w.word)};
+  persist(MB_KEY, mb);
+}
+/* 恢复进度：队列重排后用「当前词」重新定位，找不到就从头开始 */
+function restorePos(q){
+  const p = mb.pos;
+  if(!p || p.date !== todayKey() || !Array.isArray(p.queueWords) || !q.length) return 0;
+  const same = p.queueWords.length === q.length && p.queueWords.every((w, i) => q[i] && q[i].word === w);
+  if(same) return Math.min(p.index || 0, q.length);
+  const idx = Math.min(p.index || 0, p.queueWords.length - 1);
+  const at = q.findIndex(w => w.word === p.queueWords[idx]);
+  if(at >= 0) return at;
+  return 0;
+}
 
 /* ------------------------------------------------------------
    刷词队列：待复习优先，然后未学 → 学习中 → 已掌握
@@ -995,7 +1031,12 @@ function buildQueue(){
   WORDS.forEach(w => (isDue(w.word) ? due : rest).push(w));
   shuffle(due); shuffle(rest);
   rest.sort((a, b) => masteryOf(a.word) - masteryOf(b.word) || rec(a.word).opens - rec(b.word).opens);
-  return due.concat(rest);
+  const all = due.concat(rest);
+  /* 今天已评分的词排到队尾：不删掉（允许重刷），但不占队首 */
+  const rated = ratedToday();
+  const fresh = all.filter(w => !rated.has(w.word));
+  const done = all.filter(w => rated.has(w.word));
+  return fresh.concat(done);
 }
 let queue = [];
 let pos = 0;
@@ -1136,6 +1177,7 @@ function rateWord(word, level){
   else { r.pin = null; r.opens = 0; }
   r.mastery = masteryOf(word);
   persist(STORE_KEY, store);
+  markRated(word);
   bumpToday(1);
 }
 
@@ -1156,6 +1198,7 @@ function advance(level, dir){
   setTimeout(() => {
     pos += 1;
     animating = false;
+    savePos();
     renderCard();
   }, level === null ? 400 : 360);
 }
@@ -1270,9 +1313,10 @@ function renderQuizQuestion(){
     '</div>';
   const input = document.getElementById('qInput');
   if(input){
-    input.focus();
+    /* 触屏设备不自动聚焦，避免切到自测就弹键盘；桌面键盘/鼠标环境才自动聚焦 */
+    if(window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches) input.focus();
     input.addEventListener('keydown', (e) => {
-      if(e.key === 'Enter'){ e.preventDefault(); quizCheck(); }
+      if(e.key === 'Enter'){ e.preventDefault(); quiz.answered ? quizNext() : quizCheck(); }
     });
   }
 }
@@ -1464,7 +1508,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   const rateBtn = e.target.closest('[data-rate]');
   if(rateBtn){ e.preventDefault(); e.stopPropagation(); advance(Number(rateBtn.dataset.rate)); return; }
   const restart = e.target.closest('[data-restart]');
-  if(restart){ e.preventDefault(); queue = buildQueue(); pos = 0; renderDeckShell(); return; }
+  if(restart){ e.preventDefault(); queue = buildQueue(); pos = 0; savePos(); renderDeckShell(); return; }
   const sp = e.target.closest('[data-speak]');
   if(sp){
     e.preventDefault(); e.stopPropagation();
@@ -1664,28 +1708,47 @@ deckView.addEventListener('pointerdown', (e) => {
   const card = e.target.closest('.swipe-card');
   if(!card) return;
   if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]')) return;
-  /* 背面交给浏览器原生滚动，只有点按（无位移）才翻回正面 */
-  if(card.classList.contains('flipped') && e.target.closest('.face.back')) return;
-  dragState = {id:e.pointerId, card, x:e.clientX, y:e.clientY, dx:0, dy:0, moved:false};
-  card.style.transition = 'none';
+  /* 背面拼写块的拖动/点按交给 spellDrag 处理，不参与切卡手势 */
+  if(e.target.closest('.spell-tile') || e.target.closest('.spell-slot')) return;
+  /* 背面：仍记录起点，但只接管水平滑动；垂直方向留给 back-body 原生滚动 */
+  const back = card.classList.contains('flipped') && !!e.target.closest('.face.back');
+  dragState = {id:e.pointerId, card, x:e.clientX, y:e.clientY, dx:0, dy:0, moved:false, back, fired:false};
+  if(!back) card.style.transition = 'none';
 });
 deckView.addEventListener('pointermove', (e) => {
   if(!dragState || e.pointerId !== dragState.id) return;
-  dragState.dx = e.clientX - dragState.x;
-  dragState.dy = e.clientY - dragState.y;
-  if(Math.hypot(dragState.dx, dragState.dy) > 8) dragState.moved = true;
-  if(!dragState.moved) return;
-  dragState.card.style.transform = 'translate(' + dragState.dx + 'px,' + dragState.dy + 'px) rotate(' + (dragState.dx / 45) + 'deg)';
-  hintDir(dragState.card, dragState.dx, dragState.dy);
+  const st = dragState;
+  st.dx = e.clientX - st.x;
+  st.dy = e.clientY - st.y;
+  if(!st.moved && Math.hypot(st.dx, st.dy) > 8) st.moved = true;
+  if(!st.moved) return;
+  if(st.back){
+    /* 背面不做位移反馈，只在横向明显滑动时切卡；纵向交给浏览器滚动 */
+    if(!st.fired && Math.abs(st.dx) > Math.abs(st.dy) && Math.abs(st.dx) > 55){
+      st.fired = true;
+      advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
+    }
+    return;
+  }
+  st.card.style.transform = 'translate(' + st.dx + 'px,' + st.dy + 'px) rotate(' + (st.dx / 45) + 'deg)';
+  hintDir(st.card, st.dx, st.dy);
 });
 function endDrag(){
   if(!dragState) return;
-  const {card, dx, dy, moved} = dragState;
+  const {card, dx, dy, moved, back} = dragState;
   dragState = null;
-  card.style.transition = '';
-  card.style.transform = '';
-  hideHint(card);
+  if(!back){
+    card.style.transition = '';
+    card.style.transform = '';
+    hideHint(card);
+  }
   if(!moved) return; /* 没有位移 → 交给 click 判定为点按翻面 */
+  if(back){
+    /* 背面有位移就不当点按：横向已切卡，纵向是滚动，都不该翻回正面 */
+    suppressTap = true;
+    setTimeout(() => { suppressTap = false; }, 80);
+    return;
+  }
   suppressTap = true;
   setTimeout(() => { suppressTap = false; }, 80);
   const TH = 70;
@@ -1723,6 +1786,8 @@ document.getElementById('streakBtn').addEventListener('click', () => {
    启动
    ============================================================ */
 queue = buildQueue();
+pos = restorePos(queue);
+savePos();          /* 把重排后的队列与当前下标同步回存档 */
 renderDeckShell();
 refreshHeader();
 </script>
