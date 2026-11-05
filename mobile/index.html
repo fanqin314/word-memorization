@@ -217,11 +217,8 @@ body{
 .swipe-card{
   position:relative;z-index:3;flex:1;min-height:0;
   display:flex;flex-direction:column;
-  background:var(--card);
-  border:3px solid var(--ink);
-  border-radius:24px 24px 24px 10px;
-  box-shadow:5px 5px 0 rgba(26,21,18,.85);
-  padding:.62rem .72rem .68rem;
+  background:transparent;
+  padding:0;
   touch-action:none;
   will-change:transform;
 }
@@ -245,6 +242,12 @@ body{
 .face{
   position:absolute;inset:0;
   display:flex;flex-direction:column;
+  padding:.62rem .72rem .68rem;
+  background:var(--card);
+  border:3px solid var(--ink);
+  border-radius:24px 24px 24px 10px;
+  box-shadow:5px 5px 0 rgba(26,21,18,.85);
+  overflow:hidden;
   backface-visibility:hidden;-webkit-backface-visibility:hidden;
 }
 .face.back{transform:rotateY(180deg);}
