@@ -94,7 +94,7 @@ body{
   overflow:hidden;
   /* 强调色的「深一级」版本：用于浅底上的文字/图标，保证对比度。
      写在 .app 上，才能随刷词时覆盖的 --ac 一起重新计算 */
-  --ac-deep:color-mix(in srgb,var(--ac) 60%,var(--ink));
+  --ac-deep:color-mix(in srgb,var(--ac) 30%,var(--ink));
 }
 @media (min-width:520px){
   body{padding:18px 0;}
@@ -314,7 +314,7 @@ body{
   background:transparent;border:0;box-shadow:none;
 }
 .back-word{font-family:var(--display);font-size:1.4rem;letter-spacing:-.03em;line-height:1.1;color:var(--ci);}
-.back-ipa{font-family:var(--mono);font-size:.68rem;font-weight:800;color:var(--cmute);margin-left:.3rem;}
+.back-ipa{font-family:var(--mono);font-size:.72rem;font-weight:800;color:var(--cmute);margin-left:.3rem;}
 .back-body{
   flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
   display:flex;flex-direction:column; /* 让下面的信息块按容器高度自适应撑开 */
@@ -328,16 +328,16 @@ body{
 .back-body::-webkit-scrollbar-thumb{background:transparent;}
 .back-body::-webkit-scrollbar-track{background:transparent;}
 .back-gloss{font-size:1.0625rem;font-weight:800;line-height:1.4;margin:.05rem 0 .35rem;color:var(--ci);flex:none;}
-/* 信息块：细线分隔的批注区，按容器剩余高度自适应撑开；矮屏放不下时可滚动 */
+/* 信息块：细线分隔的批注区，按内容自身高度排布，不强行平分剩余高度 */
 .back-block{
   margin:0;padding:.62rem 0 .55rem;
   background:transparent;
   border:0;border-top:1px solid var(--cline);
   border-radius:0;box-shadow:none;
-  flex:1 1 auto;
-  display:flex;flex-direction:column;justify-content:center;
+  flex:0 0 auto;
+  display:block;
 }
-.back-block h4{font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.14em;color:var(--cmute);margin:0 0 .3rem;text-transform:uppercase;}
+.back-block h4{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.14em;color:var(--cmute);margin:0 0 .3rem;text-transform:uppercase;}
 .back-block p{margin:0;font-size:.82rem;line-height:1.65;color:color-mix(in srgb,var(--ci) 82%,transparent);}
 .back-block .back-ex{font-family:Georgia,serif;font-size:.86rem;color:var(--ci);}
 .bz-ans{background:color-mix(in srgb,var(--ca) 20%,transparent);color:var(--ci);padding:0 .16rem;border-radius:3px;font-weight:800;box-shadow:0 2px 0 color-mix(in srgb,var(--ca) 45%,transparent);}
@@ -370,7 +370,7 @@ body{
 
 /* 背面拼写：一个字母一个格子 + 下方可拖动的字母块 */
 .fill-block{margin-top:.1rem;}
-.fill-q{font-size:.74rem;line-height:1.5;color:var(--cmute);margin:0 0 .4rem;}
+.fill-q{font-size:.78rem;line-height:1.5;color:var(--cmute);margin:0 0 .4rem;}
 .spell-slots{
   display:flex;flex-direction:column;align-items:flex-start;
   gap:.26rem;width:max-content;max-width:100%;margin:0 auto;
@@ -427,7 +427,7 @@ body{
 .spell-tile:active{transform:scale(.95);}
 .spell-tile.dragging{opacity:.32;}
 .spell-ghost{position:fixed;pointer-events:none;z-index:9999;margin:0;}
-.fill-msg{font-size:.66rem;font-weight:700;line-height:1.4;margin:.26rem 0 0;min-height:1em;color:var(--cmute);}
+.fill-msg{font-size:.72rem;font-weight:700;line-height:1.4;margin:.26rem 0 0;min-height:1em;color:var(--cmute);}
 .fill-block.ok .fill-msg{color:#2F6B45;}
 .fill-block.ok .spell-slot{border-color:#2F6B45;}
 .fill-block.bad .fill-msg{color:#B04A3A;}
@@ -543,7 +543,6 @@ body{
   transition:transform .12s var(--ease),background .18s;
   position:relative;overflow:hidden;
 }
-.rate::before{display:none;}
 /* 评分压印环：点击后由语义色扩散一圈 */
 .rate::after{
   content:'';position:absolute;left:50%;top:50%;
@@ -555,8 +554,8 @@ body{
 .rate.stamp::after{animation:stampRing .32s ease-out;}
 .rate:active{transform:scale(.97);box-shadow:none;}
 .rate.r0{--rc:var(--rose);}
-.rate.r1{--rc:var(--amber);background:var(--ci);color:var(--cf);}
-.rate.r2{--rc:var(--amber);background:var(--csoft);color:color-mix(in srgb,var(--ca) 62%,var(--ci));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ca) 38%,transparent);}
+.rate.r1{--rc:var(--amber);background:color-mix(in srgb,var(--ci) 12%,var(--cf));color:var(--ci);}
+.rate.r2{--rc:var(--moss);background:var(--ci);color:var(--cf);}
 
 /* ---------------- 正面分层入场 / 呼吸 / 数字 tick ---------------- */
 @keyframes rvIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
@@ -569,8 +568,7 @@ body{
 .face.front .rv6{animation:rvIn .4s cubic-bezier(.16,1,.3,1) 200ms backwards;}
 
 @keyframes artIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:none;}}
-@keyframes artBreath{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
-.face.front .di-art{animation:artIn .5s cubic-bezier(.16,1,.3,1) 120ms backwards, artBreath 8s ease-in-out .7s infinite;}
+.face.front .di-art{animation:artIn .5s cubic-bezier(.16,1,.3,1) 120ms backwards;}
 
 @keyframes posTick{from{transform:scale(1.25);}to{transform:scale(1);}}
 .deck-meta b.tick{animation:posTick .28s cubic-bezier(.16,1,.3,1);}
@@ -860,7 +858,7 @@ const ART = D.art || {};
 const ARTCSS = D.artCss || {};
 const MSTCSS = D.mst || {};
 
-/* 背面用该词卡自己的配色：从卡片页 :root 收敛出的 --mst-* 里取纸色/墨色/强调色/hero 渐变/顶部条纹 */
+/* 背面用该词卡自己的配色：从卡片页 :root 收敛出的 --mst-* 里取纸色/墨色/强调色 */
 const palCache = {};
 function paletteOf(word){
   if(palCache[word]) return palCache[word];
@@ -872,16 +870,12 @@ function paletteOf(word){
   const paper = pick('paper');
   const ink = pick('ink');
   const accent = pick('accent');
-  const hero = pick('hero');
-  const band = pick('band');
   const style = [
     paper ? '--mp:' + paper : '',
     ink ? '--mi:' + ink : '',
-    accent ? '--ma:' + accent : '',
-    hero ? '--mh:' + hero : '',
-    band ? '--mb:' + band : ''
+    accent ? '--ma:' + accent : ''
   ].filter(Boolean).join(';');
-  return (palCache[word] = {paper, ink, accent, hero, band, style});
+  return (palCache[word] = {paper, ink, accent, style});
 }
 
 function esc(s){
