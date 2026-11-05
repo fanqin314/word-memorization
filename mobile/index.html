@@ -1161,19 +1161,27 @@ function sfxCtxGet(){
   }catch(e){ sfxCtx = null; sfxMaster = null; }
   return sfxCtx;
 }
-function sfxTone(freq, offset, dur, type, vol){
+function sfxTone(freq, offset, dur, type, vol, freqEnd){
   if(!sfxCtx) return;
   const t = sfxCtx.currentTime + offset;
   const o = sfxCtx.createOscillator(), g = sfxCtx.createGain();
   o.type = type || 'sine';
   o.frequency.setValueAtTime(freq, t);
+  /* 带一点滑音：从 freq 滑到 freqEnd，刷词的「嗖」感就靠它 */
+  if(freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd, t + dur);
   g.gain.setValueAtTime(0, t);
   g.gain.linearRampToValueAtTime(vol, t + .008);
   g.gain.exponentialRampToValueAtTime(.0001, t + dur);
   o.connect(g); g.connect(sfxMaster);
   o.start(t); o.stop(t + dur + .02);
 }
-function sfxNoise(offset, dur, filterType, freq, vol){
+/* 小铃铛：基音 + 两个泛音，比单纯正弦更有「叮」的质感 */
+function sfxBell(freq, offset, dur, vol){
+  sfxTone(freq, offset, dur, 'sine', vol);
+  sfxTone(freq * 2, offset, dur * .55, 'sine', vol * .34);
+  sfxTone(freq * 3, offset, dur * .3, 'sine', vol * .13);
+}
+function sfxNoise(offset, dur, filterType, freq, vol, freqEnd, q){
   if(!sfxCtx) return;
   const t = sfxCtx.currentTime + offset;
   const len = Math.max(1, Math.floor(sfxCtx.sampleRate * dur));
@@ -1183,49 +1191,93 @@ function sfxNoise(offset, dur, filterType, freq, vol){
   const src = sfxCtx.createBufferSource();
   src.buffer = buf;
   const f = sfxCtx.createBiquadFilter();
-  f.type = filterType; f.frequency.value = freq;
+  f.type = filterType;
+  f.frequency.setValueAtTime(freq, t);
+  if(freqEnd) f.frequency.exponentialRampToValueAtTime(freqEnd, t + dur); /* 扫频：翻纸/滑走的风声 */
+  if(q) f.Q.value = q;
   const g = sfxCtx.createGain();
   g.gain.setValueAtTime(vol, t);
   g.gain.exponentialRampToValueAtTime(.0001, t + dur);
   src.connect(f); f.connect(g); g.connect(sfxMaster);
   src.start(t); src.stop(t + dur);
 }
+/* 轻振一下：和音效一起开关，安卓 Chrome 支持；不支持就静默跳过 */
+function sfxHaptic(pattern){
+  if(!sfxOn()) return;
+  try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
+}
+/* 连续「认识」的连击数：音高逐张升高，连击断了就回落 */
+let sfxStreak = 0;
 function sfxPlay(name){
   if(!sfxOn()) return;
   const ctx = sfxCtxGet();
   if(!ctx) return; /* 首次手势前 ctx 不会被创建 */
   if(ctx.state === 'suspended'){ try{ ctx.resume(); }catch(e){} }
+  if(name === 'rate2') sfxStreak++;
+  else if(name === 'rate0' || name === 'skip') sfxStreak = 0;
   switch(name){
-    case 'rate2':
-      sfxTone(523.25, 0, .08, 'sine', .55);
-      sfxTone(783.99, .04, .08, 'sine', .5);
+    case 'rate2': {
+      /* 连击每多一张升高一个半音（最多 5 个），像珠子一颗颗落进碗里 */
+      const k = Math.min(Math.max(sfxStreak - 1, 0), 5);
+      const f = 523.25 * Math.pow(2, k / 12);
+      sfxBell(f, 0, .34, .5);
+      sfxNoise(0, .03, 'highpass', 2600, .18, 3200, .6);
+      if(sfxStreak >= 3) sfxBell(f * 1.5, .08, .16, .16); /* 连击 3 张起加一颗小亮片 */
+      sfxHaptic(12);
       break;
+    }
     case 'rate1':
-      sfxTone(329.63, 0, .07, 'sine', .5);
+      /* 有点印象：一声短促的软音，尾巴微微下沉，像点头 */
+      sfxTone(392, 0, .1, 'sine', .42, 356);
+      sfxNoise(0, .04, 'lowpass', 900, .12);
+      sfxHaptic(8);
       break;
     case 'rate0':
-      sfxTone(220, 0, .09, 'triangle', .5);
+      /* 不认识：低沉但不惩罚，一声闷响带点风声落地 */
+      sfxTone(196, 0, .11, 'triangle', .4, 168);
+      sfxNoise(0, .09, 'lowpass', 420, .2, 240);
+      sfxHaptic(22);
       break;
     case 'skip':
-      sfxNoise(0, .12, 'highpass', 800, .35);
+      /* 跳过：空气被划开的长「嗖」，不占评分音的记忆点 */
+      sfxNoise(0, .17, 'highpass', 700, .28, 1500, .8);
+      sfxTone(330, 0, .1, 'sine', .16, 294);
+      sfxHaptic(6);
       break;
     case 'flip':
-      sfxNoise(0, .09, 'lowpass', 1200, .3);
+      /* 翻面：两段纸声——先掀起，再落下 */
+      sfxNoise(0, .08, 'bandpass', 2200, .24, 900, 1.1);
+      sfxNoise(.07, .1, 'lowpass', 1300, .2, 700, .8);
+      sfxTone(170, .07, .07, 'sine', .1);
+      sfxHaptic(6);
       break;
     case 'drop':
-      sfxTone(1200, 0, .03, 'square', .18);
+      /* 拼写落格：一粒小扣子落进格子的「哒」 */
+      sfxNoise(0, .03, 'bandpass', 1700, .22, 2400, 2);
+      sfxTone(880, 0, .025, 'square', .1);
+      sfxHaptic(4);
       break;
     case 'ok':
-      sfxTone(660, 0, .07, 'sine', .45);
-      sfxTone(880, .07, .09, 'sine', .45);
+      /* 拼写完成：三级小铃，一声比一声亮 */
+      sfxBell(523.25, 0, .3, .42);
+      sfxBell(659.25, .06, .3, .4);
+      sfxBell(783.99, .12, .34, .4);
+      sfxHaptic([10, 24, 12]);
       break;
     case 'bad':
-      sfxTone(180, 0, .16, 'square', .3);
+      /* 拼错：两声轻闷的「嘟嘟」，音量压得很低 */
+      sfxTone(190, 0, .08, 'square', .18, 176);
+      sfxTone(150, .09, .1, 'square', .15, 140);
+      sfxHaptic(18);
       break;
     case 'goal':
-      sfxTone(523.25, 0, .1, 'sine', .5);
-      sfxTone(659.25, .09, .1, 'sine', .5);
-      sfxTone(783.99, .18, .12, 'sine', .5);
+      /* 今日达标：四音上行 + 一把细碎亮片 */
+      sfxBell(523.25, 0, .34, .42);
+      sfxBell(659.25, .08, .34, .42);
+      sfxBell(783.99, .16, .36, .4);
+      sfxBell(1046.5, .24, .46, .46);
+      sfxNoise(.1, .3, 'highpass', 2400, .16, 4200, 1.4);
+      sfxHaptic([10, 30, 10, 30, 16]);
       break;
   }
 }
@@ -1248,6 +1300,8 @@ function setSfx(on){
   } else {
     const ctx = sfxCtxGet();
     if(ctx && ctx.state === 'suspended'){ try{ ctx.resume(); }catch(e){} }
+    sfxStreak = 0;
+    sfxPlay('ok'); /* 开启时给一声确认音，顺便在当前手势里解锁音频 */
   }
   syncSfxBtn();
 }
