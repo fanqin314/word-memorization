@@ -84,98 +84,47 @@ body{
   }
 }
 
-/* ---------------- 顶部 Hero ---------------- */
+/* ---------------- 顶部状态条 ---------------- */
 .hero{
   position:relative;flex-shrink:0;
-  padding:.85rem 1rem .9rem;
-  /* 刘海屏 / 挖孔屏：顶部再让出状态栏高度，品牌区不被遮住 */
-  padding-top:calc(.85rem + env(safe-area-inset-top, 0px));
+  padding:.46rem 1rem .56rem;
+  /* 刘海屏 / 挖孔屏：顶部再让出状态栏高度，状态条不被遮住 */
+  padding-top:calc(.46rem + env(safe-area-inset-top, 0px));
   background:var(--ink);
-  border-radius:0 0 30px 30px;
+  border-radius:0 0 18px 18px;
   overflow:hidden;z-index:2;
 }
-.hero::before{
-  content:'';position:absolute;width:300px;height:300px;
-  top:-170px;right:-110px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(187,154,90,.55),transparent 68%);
-  animation:glowFloat 15s ease-in-out infinite;
+.hero-bar{
+  position:relative;z-index:1;
+  display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;
 }
-.hero::after{
-  content:'';position:absolute;width:240px;height:240px;
-  bottom:-180px;left:-90px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(110,150,143,.42),transparent 68%);
-  animation:glowFloat 19s ease-in-out infinite reverse;
+.hero-bar .hk{
+  color:#fff;font-family:var(--mono);font-size:.68rem;font-weight:900;
+  letter-spacing:.02em;white-space:nowrap;
 }
-@keyframes glowFloat{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-26px,20px) scale(1.14);}}
-
-.hero-top{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:.7rem;}
-.brand{display:flex;align-items:center;gap:.6rem;min-width:0;}
-.brand-mark{
-  width:38px;height:38px;flex:none;border-radius:12px;
-  background:var(--amber);color:var(--ink);
-  border:2.5px solid #fff;
-  box-shadow:2px 2px 0 rgba(0,0,0,.35),inset 0 -3px 0 rgba(26,21,18,.18);
-  display:grid;place-items:center;
-  font-family:var(--display);font-size:1.15rem;line-height:1;
+.hero-bar .hk b{font-family:var(--display);font-size:1.16rem;letter-spacing:-.02em;margin:0 .1rem;}
+.hero-bar .hk i{font-style:normal;color:rgba(255,255,255,.42);font-size:.72rem;}
+.hero-tip{
+  color:rgba(255,255,255,.6);font-size:.64rem;font-weight:700;text-align:right;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.brand-txt h1{
-  color:#fff;font-size:1.02rem;font-weight:900;letter-spacing:-.02em;line-height:1.15;
-  white-space:nowrap;
-}
-.brand-txt p{
-  margin-top:.18rem;color:rgba(255,255,255,.58);
-  font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.06em;
-}
-.streak{
-  appearance:none;cursor:pointer;flex:none;
-  display:inline-flex;align-items:center;gap:.32rem;
-  padding:.34rem .62rem .36rem;
-  background:rgba(255,255,255,.1);
-  border:2px solid rgba(255,255,255,.5);
-  border-radius:999px;color:#fff;
-  font-family:var(--mono);font-size:.7rem;font-weight:900;
-  transition:transform .18s var(--spring),background .2s;
-}
-.streak:active{transform:scale(.93);}
-.streak svg{width:15px;height:15px;color:var(--amber);}
-.streak b{font-size:.95rem;}
-
-.goal{position:relative;z-index:1;margin-top:.8rem;}
-.goal-row{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;margin-bottom:.42rem;}
-.goal-k{color:#fff;font-family:var(--mono);font-size:.7rem;font-weight:900;letter-spacing:.02em;}
-.goal-k b{font-family:var(--display);font-size:1.45rem;letter-spacing:-.02em;margin-right:.1rem;}
-.goal-k i{font-style:normal;color:rgba(255,255,255,.45);font-size:.78rem;}
-.goal-tip{color:rgba(255,255,255,.62);font-size:.66rem;font-weight:700;text-align:right;}
-.goal-track{
-  height:11px;border-radius:999px;background:rgba(255,255,255,.13);
-  border:2px solid rgba(255,255,255,.28);overflow:hidden;
-}
-.goal-fill{
-  display:block;height:100%;width:0;
+/* 进度条压成状态条底边的 3px 刻度线，不再单独占一行 */
+.hero-fill{
+  position:absolute;left:0;bottom:0;height:3px;width:0;
   background:repeating-linear-gradient(115deg,var(--amber) 0 12px,#D3B275 12px 22px);
-  border-radius:999px;
   transition:width .5s var(--spring);
 }
 
-/* ---------------- 近七天 ---------------- */
-.strip{
-  position:relative;z-index:2;flex-shrink:0;
-  display:flex;padding:2px;
-  margin:-.7rem .8rem 0;
-  background:var(--card);
-  border:2.5px solid var(--ink);
-  border-radius:0 0 16px 16px;
-  box-shadow:3px 3px 0 rgba(26,21,18,.85);
-  overflow:hidden;
-}
+/* ---------------- 近七天（放在数据页） ---------------- */
+.week-row{display:flex;margin:.34rem -.2rem 0;}
 .day-cell{
-  flex:1;min-width:0;padding:.34rem 0 .32rem;
+  flex:1;min-width:0;padding:.3rem 0 .28rem;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:.1rem;color:var(--ink-2);opacity:.55;
   border-left:1.5px solid rgba(26,21,18,.12);
 }
 .day-cell:first-child{border-left:none;}
-.day-cell.is-today{opacity:1;background:var(--amber);border-radius:0 0 12px 12px;
+.day-cell.is-today{opacity:1;background:var(--amber);border-radius:8px;
   box-shadow:inset 0 2px 0 rgba(26,21,18,.18);}
 .day-cell.has{opacity:.9;}
 .day-cell .dc-day{font-size:.6rem;font-weight:900;line-height:1;}
@@ -726,8 +675,7 @@ body{
 @media (max-height:640px){
   .scene{display:none;}
   .art-frame{flex:0 0 96px;}
-  .hero{padding-top:calc(.6rem + env(safe-area-inset-top, 0px));padding-bottom:.62rem;}
-  .goal{margin-top:.55rem;}
+  .hero{padding-top:calc(.4rem + env(safe-area-inset-top, 0px));padding-bottom:.48rem;}
 }
 @media (max-height:560px){
   .art-frame{display:none;}
@@ -746,29 +694,12 @@ body{
 
 <div class="app">
   <header class="hero">
-    <div class="hero-top">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true">词</span>
-        <div class="brand-txt">
-          <h1>随身刷词</h1>
-          <p id="todayLabel">今天</p>
-        </div>
-      </div>
-      <button class="streak" id="streakBtn" type="button" title="连续学习天数">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3.5 3.8 3 6.2 3 6.2S17 8.5 17 13a5 5 0 0 1-10 0c0-3.3 3-4.4 3-4.4S9.2 6.2 9 6.2 9.2 5 12 3Z"/></svg>
-        <b id="streakNum">0</b><span>天</span>
-      </button>
+    <div class="hero-bar">
+      <span class="hk">今日 <b id="todayNum">0</b><i>/10</i></span>
+      <span class="hero-tip" id="goalTip">刷一张就热身</span>
     </div>
-    <div class="goal">
-      <div class="goal-row">
-        <span class="goal-k">今日 <b id="todayNum">0</b><i>/10</i></span>
-        <span class="goal-tip" id="goalTip">刷一张就热身</span>
-      </div>
-      <div class="goal-track"><i class="goal-fill" id="goalFill"></i></div>
-    </div>
+    <i class="hero-fill" id="goalFill"></i>
   </header>
-
-  <div class="strip" id="weekStrip" aria-hidden="true"></div>
 
   <main class="main">
     <section class="view deck active" id="view-deck" aria-label="刷词"></section>
@@ -1403,6 +1334,8 @@ function renderStat(){
           '<i class="fill" style="width:' + Math.min(100, today / GOAL * 100) + '%;--bc:var(--amber);"></i></span></div>' +
         '<p class="ts">' + (today >= GOAL ? '今天已经达标，明天记得回来。' : '轻量目标：每天 10 个，刷完就收工。') + '</p>' +
       '</div>' +
+      '<div class="tile wide"><span class="tk">近七天</span>' +
+        '<div class="week-row" id="weekStrip"></div></div>' +
       '<div class="tile"><span class="tk">连续学习</span><span class="tv">' + streak + '<small>天</small></span>' +
         '<p class="ts">' + (streak > 1 ? '保持住，别断。' : '今天开个头。') + '</p></div>' +
       '<div class="tile"><span class="tk">待复习</span><span class="tv">' + due + '<small>个</small></span>' +
@@ -1424,6 +1357,7 @@ function renderStat(){
     '<div class="link-row"><a class="big-link" href="../index.html">打开电脑版工作站' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>' +
     '</a></div>';
+  renderStrip();
 }
 
 /* ============================================================
@@ -1461,7 +1395,6 @@ function refreshHeader(){
   const num = document.getElementById('todayNum');
   const fill = document.getElementById('goalFill');
   const tip = document.getElementById('goalTip');
-  const streak = document.getElementById('streakNum');
   if(num) num.textContent = today;
   if(fill) fill.style.width = Math.min(100, today / GOAL * 100) + '%';
   if(tip){
@@ -1469,10 +1402,6 @@ function refreshHeader(){
       : today >= GOAL ? '今日达成 · 继续也不亏'
       : '再刷 ' + (GOAL - today) + ' 个就收工';
   }
-  if(streak) streak.textContent = streakDays();
-  const d = new Date();
-  const label = document.getElementById('todayLabel');
-  if(label) label.textContent = (d.getMonth() + 1) + '月' + d.getDate() + '日 · 周' + '日一二三四五六'[d.getDay()];
   renderStrip();
 }
 
@@ -1769,11 +1698,6 @@ document.getElementById('view-quiz').addEventListener('click', (e) => {
   if(e.target.closest('[data-quiz-back]')){ switchTab('deck'); return; }
   const submit = e.target.closest('#qSubmit');
   if(submit){ if(quiz.answered) quizNext(); else quizCheck(); }
-});
-
-/* 连续天数：点一下看累计 */
-document.getElementById('streakBtn').addEventListener('click', () => {
-  toast('连续 ' + streakDays() + ' 天 · 累计刷词 ' + (mb.total || 0) + ' 次');
 });
 
 /* ============================================================
