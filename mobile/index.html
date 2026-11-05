@@ -1106,22 +1106,65 @@ let pos = 0;
 let animating = false;
 
 /* ------------------------------------------------------------
-   朗读
+   朗读：优先播放预生成的发音文件（WebView 壳里通常没有系统 TTS），
+   文件缺失或不支持播放时再退回系统朗读
    ------------------------------------------------------------ */
+const AUDIO_BASE = 'audio/';
+let speakAudio = null;
+let speakBtn = null;
+function stopSpeak(){
+  if(speakAudio){ try{ speakAudio.pause(); }catch(e){} }
+  if(speakBtn){ speakBtn.classList.remove('speaking'); speakBtn = null; }
+}
 let speakVO = null;
-function speakWord(word, btn){
-  if(!('speechSynthesis' in window)){ toast('当前浏览器不支持朗读'); return; }
+function speakFallback(word, btn){
+  if(!('speechSynthesis' in window)){ toast('朗读音频缺失，请检查网络'); return; }
   window.speechSynthesis.cancel();
   const u = speakVO = new SpeechSynthesisUtterance(word);
   u.lang = 'en-US';
   u.rate = 0.85;
   if(btn){
     btn.classList.add('speaking');
-    const off = () => { if(speakVO === u){ btn.classList.remove('speaking'); } };
+    speakBtn = btn;
+    const off = () => { if(speakVO === u && speakBtn === btn){ btn.classList.remove('speaking'); speakBtn = null; } };
     u.onend = off;
     u.onerror = off;
   }
   window.speechSynthesis.speak(u);
+}
+/* 预取当前卡和下一张卡的发音，滑卡后按下就能立刻出声 */
+const audioPreload = new Map();
+function preloadAudio(word){
+  if(!word || audioPreload.has(word)) return;
+  if(audioPreload.size > 6) audioPreload.clear();
+  const a = new Audio();
+  a.preload = 'auto';
+  a.src = AUDIO_BASE + encodeURIComponent(word) + '.mp3';
+  audioPreload.set(word, a);
+}
+function speakWord(word, btn){
+  if(!word) return;
+  stopSpeak();
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  if(!speakAudio){ speakAudio = new Audio(); speakAudio.preload = 'auto'; }
+  const a = speakAudio;
+  let done = false;
+  const off = () => {
+    if(btn && speakBtn === btn){ btn.classList.remove('speaking'); speakBtn = null; }
+  };
+  const fail = () => {
+    if(done) return;
+    done = true;
+    off();
+    speakFallback(word, btn); /* 音频不在或被壳拦截时，退回系统朗读 */
+  };
+  a.onended = () => { done = true; off(); };
+  a.onerror = fail;
+  a.src = AUDIO_BASE + encodeURIComponent(word) + '.mp3';
+  if(btn){ speakBtn = btn; btn.classList.add('speaking'); }
+  try{ a.currentTime = 0; }catch(e){}
+  const pr = a.play();
+  if(pr && pr.catch) pr.catch(fail);
 }
 
 /* ------------------------------------------------------------
@@ -1471,6 +1514,8 @@ function renderCard(){
   const pal = paletteOf(w.word);
   if(appEl && pal.accent) appEl.style.setProperty('--ac', pal.accent);
   host.innerHTML = cardHtml(w);
+  preloadAudio(w.word);
+  preloadAudio(queue[pos + 1] && queue[pos + 1].word);
 }
 
 /* 记录掌握度：写回 index.html 同一份 store */
