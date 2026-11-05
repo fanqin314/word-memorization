@@ -186,9 +186,14 @@ body{
   padding:.55rem .8rem 1rem;
   position:relative;
   -webkit-overflow-scrolling:touch;
+  /* 隐藏可见滚动条，但用 gutter 保留它原本占的宽度，避免隐藏后内容变宽导致重排 */
+  scrollbar-gutter:stable;
+  scrollbar-width:thin;
+  scrollbar-color:transparent transparent;
 }
 .main::-webkit-scrollbar{width:5px;}
-.main::-webkit-scrollbar-thumb{background:rgba(26,21,18,.28);border-radius:999px;}
+.main::-webkit-scrollbar-thumb{background:transparent;}
+.main::-webkit-scrollbar-track{background:transparent;}
 .view{display:none;}
 .view.active{display:block;}
 .view.deck.active{display:flex;flex-direction:column;min-height:100%;}
