@@ -368,11 +368,12 @@ body{
   justify-content:center;
 }
 .spell-slot{
-  width:1.36rem;height:1.58rem;flex:none;
+  width:1.44rem;height:1.68rem;flex:none;
   display:grid;place-items:center;padding:0;
   border:2px dashed var(--mi,var(--ink));
   border-radius:7px;
   background:#FFFCF5;
+  overflow:hidden;
   transition:border-color .15s,background .15s,transform .12s var(--spring);
 }
 .spell-slot.hot{
@@ -381,14 +382,18 @@ body{
   background:color-mix(in srgb, var(--ma,#E8C17B) 26%, #FFFCF5);
   transform:translateY(-2px);
 }
-.spell-slot.filled{border-style:solid;background:transparent;}
+.spell-slot.filled{
+  border-style:solid;
+  background:#F3E9D2;
+  background:color-mix(in srgb, var(--ma,#E8C17B) 30%, #FFFCF5);
+}
 .spell-tiles{
   margin-top:.36rem;padding-top:.36rem;
   border-top:1.5px dashed rgba(26,21,18,.2);
 }
 .spell-tile{
   appearance:none;cursor:grab;
-  width:1.36rem;height:1.58rem;flex:none;
+  width:1.44rem;height:1.68rem;flex:none;
   display:grid;place-items:center;padding:0;
   border:2px solid var(--mi,var(--ink));
   border-radius:7px;
@@ -396,13 +401,17 @@ body{
   background:#F3E9D2;
   background:color-mix(in srgb, var(--ma,#E8C17B) 30%, #FFFCF5);
   color:var(--mi,var(--ink));
-  font-family:var(--mono);font-size:.76rem;font-weight:900;line-height:1;
+  font-family:var(--mono);font-size:.78rem;font-weight:900;line-height:1;
   box-shadow:2px 2px 0 var(--mi,rgba(26,21,18,.7));
   touch-action:none;
   user-select:none;-webkit-user-select:none;
   transition:transform .12s var(--spring),box-shadow .12s;
 }
-.spell-slot.filled .spell-tile{width:100%;height:100%;}
+/* 已落格的字母块去掉自身描边，和格子合成一个整体 */
+.spell-slot.filled .spell-tile{
+  width:100%;height:100%;
+  border:0;border-radius:0;box-shadow:none;background:transparent;
+}
 .spell-tile:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--mi,rgba(26,21,18,.7));}
 .spell-tile.dragging{opacity:.32;}
 .spell-ghost{position:fixed;pointer-events:none;z-index:9999;margin:0;}
