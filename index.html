@@ -2,6 +2,19 @@
 <html lang="zh-CN"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+/* 手机访问桌面版时自动进入手机版；想留在桌面版可在地址后加 ?desktop=1 */
+(function(){
+  try{
+    if(/[?&]desktop(=|&|$)/.test(location.search)) return;
+    var ua = navigator.userAgent || '';
+    var isMobile = /Android|iPhone|iPad|iPod|Windows Phone|HarmonyOS|Mobile|Opera Mini|IEMobile/i.test(ua)
+      || (navigator.maxTouchPoints > 1 && /Macintosh/i.test(ua)); /* iPadOS 会伪装成桌面 UA */
+    if(!isMobile) return;
+    location.replace('mobile/' + location.search + location.hash);
+  }catch(e){}
+})();
+</script>
 <title>单词工作台 · 词汇学习卡整理台</title>
 <style>
 :root{
