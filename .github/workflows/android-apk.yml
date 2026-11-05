@@ -33,6 +33,13 @@ jobs:
         with:
           gradle-version: '8.7'
 
+      - name: Cache debug keystore
+        uses: actions/cache@v4
+        with:
+          # 缓存调试签名密钥，保证连续构建的 APK 签名一致，可以直接覆盖安装
+          path: ~/.android/debug.keystore
+          key: android-debug-keystore-v1
+
       - name: Build debug APK
         run: gradle -p android assembleDebug --no-daemon
 
