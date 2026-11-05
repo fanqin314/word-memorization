@@ -286,7 +286,17 @@ body{
   transition:transform .16s var(--spring);
 }
 .back-flip:active{transform:translate(2px,2px);box-shadow:none;}
-.back-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:.12rem;}
+.back-body{
+  flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding-right:.12rem;
+  /* 与 .main 一致：隐藏可见条但保留占位，避免出现/隐藏时内容宽度跳变 */
+  scrollbar-gutter:stable;
+  scrollbar-width:thin;
+  scrollbar-color:transparent transparent;
+}
+.back-body::-webkit-scrollbar{width:5px;}
+.back-body::-webkit-scrollbar-thumb{background:transparent;}
+.back-body::-webkit-scrollbar-track{background:transparent;}
 .back-gloss{font-size:1rem;font-weight:900;line-height:1.35;margin:.06rem 0 .52rem;}
 .back-block{
   margin-bottom:.46rem;padding:.48rem .6rem;
