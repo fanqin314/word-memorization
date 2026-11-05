@@ -454,7 +454,8 @@ body{
 
 .art-frame{
   position:relative;flex:0 0 auto;
-  height:clamp(96px,30vh,200px);width:auto;
+  /* 高度同时受 30vh、200px 上限和「卡片可用内宽」约束：保证黄金矩形永不横向溢出 */
+  height:clamp(96px,min(30vh,calc((100vw - 84px) / 1.618)),200px);width:auto;
   aspect-ratio:1.618 / 1;
   margin:var(--sx3) auto var(--sx2);
   border:2.5px solid var(--ink);border-radius:14px;
@@ -719,7 +720,7 @@ body{
 
 /* 窄屏：高度按可用内宽反推，保证黄金矩形不横向溢出 */
 @media (max-width:389px){
-  .art-frame{height:clamp(96px,30vh,calc((100vw - 66px) / 1.618));}
+  .art-frame{max-width:100%;}
 }
 @media (max-width:350px){
   .word{font-size:1.7rem;}
