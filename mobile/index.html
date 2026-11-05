@@ -736,7 +736,7 @@ body{
 @media (max-height:640px){
   .scene{display:none;}
   .art-frame{flex:0 0 96px;}
-  .hero{padding-top:.6rem;padding-bottom:.62rem;}
+  .hero{padding-top:calc(.6rem + env(safe-area-inset-top, 0px));padding-bottom:.62rem;}
   .goal{margin-top:.55rem;}
 }
 @media (max-height:560px){
@@ -996,6 +996,9 @@ function markRated(word){
   mb.rated = mb.rated || {};
   const list = mb.rated[k] || (mb.rated[k] = []);
   if(list.indexOf(word) < 0) list.push(word);
+  /* 只保留最近 7 天（日期键按 YYYY-MM-DD 排序即时间序），避免记录无限增长 */
+  const keys = Object.keys(mb.rated).sort();
+  while(keys.length > 7) delete mb.rated[keys.shift()];
   persist(MB_KEY, mb);
 }
 /* 进度存档：日期 + 当前下标 + 当时的队列词序 */
@@ -1021,7 +1024,7 @@ function shuffle(arr){
   }
   return arr;
 }
-function buildQueue(){
+function buildQueue(onlyFresh){
   const due = [], rest = [];
   WORDS.forEach(w => (isDue(w.word) ? due : rest).push(w));
   shuffle(due); shuffle(rest);
@@ -1031,7 +1034,8 @@ function buildQueue(){
   const rated = ratedToday();
   const fresh = all.filter(w => !rated.has(w.word));
   const done = all.filter(w => rated.has(w.word));
-  return fresh.concat(done);
+  /* onlyFresh：重开一轮只刷今天还没刷过的（方案 A） */
+  return onlyFresh ? fresh : fresh.concat(done);
 }
 let queue = [];
 let pos = 0;
@@ -1153,9 +1157,14 @@ function renderCard(){
   if(posEl) posEl.textContent = Math.min(pos + 1, queue.length);
   const w = queue[pos];
   if(!w){
-    host.innerHTML = '<div class="deck-empty"><span class="big">这轮刷完了</span>' +
-      '<small>今天 ' + todayCount() + ' 个 · 去词库或自测继续，也可以重刷一轮。</small>' +
-      '<button class="rate r2" type="button" data-restart style="padding:.55rem 1.1rem;">再来一轮</button></div>';
+    /* 只剩「未刷词」的队也空了 → 今天全部刷完；否则只是这一轮刷完，可继续刷没刷过的 */
+    const allDone = !queue.length;
+    host.innerHTML = '<div class="deck-empty"><span class="big">' + (allDone ? '今天全部刷完' : '这轮刷完了') + '</span>' +
+      '<small>' + (allDone
+        ? '今天 ' + todayCount() + ' 个 · 明天再来，或去词库、自测复习。'
+        : '今天 ' + todayCount() + ' 个 · 去词库或自测继续，也可以只刷今天没刷过的。') + '</small>' +
+      (allDone ? '' : '<button class="rate r2" type="button" data-restart style="padding:.55rem 1.1rem;">刷剩下的</button>') +
+      '</div>';
     return;
   }
   ensureArtCss(w.word);
@@ -1503,7 +1512,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   const rateBtn = e.target.closest('[data-rate]');
   if(rateBtn){ e.preventDefault(); e.stopPropagation(); advance(Number(rateBtn.dataset.rate)); return; }
   const restart = e.target.closest('[data-restart]');
-  if(restart){ e.preventDefault(); queue = buildQueue(); pos = 0; savePos(); renderDeckShell(); return; }
+  if(restart){ e.preventDefault(); queue = buildQueue(true); pos = 0; savePos(); renderDeckShell(); return; }
   const sp = e.target.closest('[data-speak]');
   if(sp){
     e.preventDefault(); e.stopPropagation();
