@@ -36,6 +36,13 @@
   --bounce:cubic-bezier(.175,.885,.32,1.275);
   --ease:cubic-bezier(.4,0,.2,1);
 
+  /* 黄金比例间距阶梯：只用于刷词卡正面 */
+  --phi:1.618;
+  --sx1:.382rem;
+  --sx2:.618rem;
+  --sx3:1rem;
+  --sx4:1.618rem;
+
   --display:'Arial Black','Cooper Black',Impact,'PingFang SC','Microsoft YaHei',sans-serif;
   --sans:'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;
   --mono:'Courier New',monospace;
@@ -113,7 +120,16 @@ body{
   position:absolute;left:0;bottom:0;height:3px;width:0;
   background:repeating-linear-gradient(115deg,var(--amber) 0 12px,#D3B275 12px 22px);
   transition:width .5s var(--spring);
+  overflow:hidden;
 }
+/* 今日达标扫光：进度线一遍高光掠过 */
+.hero-fill::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.85),transparent);
+  transform:translateX(-100%);
+}
+@keyframes heroShine{from{transform:translateX(-100%);}to{transform:translateX(100%);}}
+.hero-fill.shine::after{animation:heroShine 1.2s ease-out;}
 
 /* ---------------- 近七天（放在数据页） ---------------- */
 .week-row{display:flex;margin:.34rem -.2rem 0;}
@@ -153,11 +169,25 @@ body{
 .deck-wrap{display:flex;flex-direction:column;flex:1;min-height:0;}
 .deck-meta{
   display:flex;align-items:center;justify-content:space-between;
+  gap:.4rem;
   padding:.1rem .2rem .45rem;
   font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.08em;
   color:rgba(26,21,18,.45);flex:none;
 }
-.deck-meta b{color:var(--ink);}
+.deck-meta b{color:var(--ink);display:inline-block;}
+.deck-tip{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;}
+/* 音效开关：24px，状态只记在 wc_sound_v1 */
+.sfx-btn{
+  flex:none;width:24px;height:24px;padding:0;
+  display:grid;place-items:center;cursor:pointer;
+  border:1.5px solid var(--ink);border-radius:7px;
+  background:#fff;color:var(--ink);
+  box-shadow:1.5px 1.5px 0 rgba(26,21,18,.75);
+  transition:transform .14s var(--spring),background .16s,color .16s;
+}
+.sfx-btn svg{width:14px;height:14px;display:block;}
+.sfx-btn:active{transform:translate(1px,1px);box-shadow:none;}
+.sfx-btn.off{background:#EFE7D8;color:rgba(26,21,18,.42);border-color:rgba(26,21,18,.42);box-shadow:none;}
 .deck-stage{position:relative;flex:1;min-height:0;display:flex;}
 .stack{position:relative;flex:1;min-height:0;display:flex;}
 
@@ -198,7 +228,7 @@ body{
 .face{
   position:absolute;inset:0;
   display:flex;flex-direction:column;
-  padding:.62rem .72rem .68rem;
+  padding:var(--sx2) var(--sx3) var(--sx3);
   background:var(--card);
   border:3px solid var(--ink);
   border-radius:24px 24px 24px 10px;
@@ -373,7 +403,7 @@ body{
 .fill-block.bad{animation:fillShake .3s;}
 @keyframes fillShake{20%{transform:translateX(-4px)}55%{transform:translateX(4px)}85%{transform:translateX(-2px)}}
 
-.card-head{display:flex;align-items:center;gap:.34rem;flex:none;margin-bottom:.34rem;}
+.card-head{display:flex;align-items:center;gap:var(--sx1);flex:none;margin-bottom:var(--sx1);}
 .root-tag{
   display:inline-flex;align-items:center;gap:.24rem;
   font-family:var(--mono);font-size:.57rem;font-weight:900;letter-spacing:.03em;
@@ -398,10 +428,10 @@ body{
 .mini-card:active{transform:scale(.92);background:var(--paper);}
 
 .card-main{display:flex;flex-direction:column;flex:1;min-height:0;}
-.word-row{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;flex:none;}
+.word-row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sx2);flex:none;}
 .word{
   font-family:var(--display);
-  font-size:clamp(1.8rem,8.6vw,2.5rem);
+  font-size:clamp(1.95rem,9.2vw,2.618rem);
   line-height:1.02;letter-spacing:-.032em;
   word-break:break-word;
 }
@@ -418,14 +448,15 @@ body{
 .speak.speaking{background:var(--amber);animation:speakPulse .7s ease-in-out infinite;}
 @keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
 
-.ipa{font-family:var(--mono);font-size:.82rem;font-weight:900;color:var(--ink-2);margin-top:.18rem;letter-spacing:.01em;}
-.pos{font-family:var(--mono);font-size:.66rem;font-weight:800;color:rgba(59,50,42,.92);letter-spacing:.02em;margin-top:.12rem;}
-.gloss{font-size:.92rem;font-weight:900;line-height:1.35;margin-top:.16rem;color:var(--ink);}
+.ipa{font-family:var(--mono);font-size:.75rem;font-weight:900;color:var(--ink-2);margin-top:.236rem;letter-spacing:.01em;}
+.pos{font-family:var(--mono);font-size:.618rem;font-weight:800;color:rgba(59,50,42,.92);letter-spacing:.02em;margin-top:.146rem;}
+.gloss{font-size:1rem;font-weight:900;line-height:1.35;margin-top:.236rem;color:var(--ink);}
 
 .art-frame{
-  position:relative;flex:1 1 0;min-height:120px;max-height:250px;
-  margin:.5rem auto 0;
-  width:auto;height:auto;aspect-ratio:1 / 1;
+  position:relative;flex:0 0 auto;
+  height:clamp(96px,30vh,200px);width:auto;
+  aspect-ratio:1.618 / 1;
+  margin:var(--sx3) auto var(--sx2);
   border:2.5px solid var(--ink);border-radius:14px;
   box-shadow:3px 3px 0 rgba(26,21,18,.85);
   overflow:hidden;background:var(--ink);
@@ -443,25 +474,25 @@ body{
 }
 
 .scene{
-  margin-top:.42rem;font-size:.73rem;font-weight:700;line-height:1.45;color:var(--ink-2);
+  margin-top:var(--sx2);font-size:.75rem;font-weight:700;line-height:1.45;color:var(--ink-2);
   display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
 }
 .morph{
-  margin-top:.24rem;padding-top:.24rem;
+  margin-top:var(--sx2);padding-top:.236rem;
   border-top:1.5px dashed rgba(26,21,18,.2);
-  font-size:.66rem;line-height:1.42;color:rgba(26,21,18,.62);
+  font-size:.618rem;line-height:1.42;color:rgba(26,21,18,.62);
   display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
 }
 .morph b{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;color:rgba(26,21,18,.4);margin-right:.2rem;}
 
 .actions{
-  display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:.36rem;
-  flex:none;margin-top:.5rem;
+  display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:var(--sx1);
+  flex:none;margin-top:var(--sx2);
 }
 .rate{
   appearance:none;cursor:pointer;
   font-family:var(--sans);font-size:.76rem;font-weight:900;letter-spacing:.01em;
-  padding:.6rem .2rem .62rem;border-radius:14px;
+  padding:var(--sx2) .2rem;border-radius:13px;
   border:2.5px solid var(--ink);
   background:#fff;color:var(--ink);
   box-shadow:3px 3px 0 rgba(26,21,18,.85);
@@ -469,10 +500,36 @@ body{
   position:relative;overflow:hidden;
 }
 .rate::before{content:'';position:absolute;inset:0 0 auto 0;height:6px;background:var(--rc);border-bottom:2px solid var(--ink);}
+/* 评分压印环：点击后由语义色扩散一圈 */
+.rate::after{
+  content:'';position:absolute;left:50%;top:50%;
+  width:10px;height:10px;margin:-5px 0 0 -5px;
+  border-radius:50%;background:currentColor;opacity:0;
+  transform:scale(0);pointer-events:none;
+}
+@keyframes stampRing{from{opacity:.55;transform:scale(1);}to{opacity:0;transform:scale(14);}}
+.rate.stamp::after{animation:stampRing .32s ease-out;}
 .rate:active{transform:translate(3px,3px);box-shadow:0 0 0 rgba(26,21,18,.85);}
 .rate.r0{--rc:var(--rose);}
 .rate.r1{--rc:var(--amber);}
 .rate.r2{--rc:var(--amber);background:var(--ink);color:#fff;}
+
+/* ---------------- 正面分层入场 / 呼吸 / 数字 tick ---------------- */
+@keyframes rvIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.face.front .rv1{animation:rvIn .42s cubic-bezier(.16,1,.3,1) 0ms backwards;}
+.face.front .rv2{animation:rvIn .42s cubic-bezier(.16,1,.3,1) 40ms backwards;}
+.face.front .rv3{animation:rvIn .42s cubic-bezier(.16,1,.3,1) 80ms backwards;}
+.face.front .rv4{animation:rvIn .42s cubic-bezier(.16,1,.3,1) 120ms backwards;}
+.face.front .rv5{animation:rvIn .42s cubic-bezier(.16,1,.3,1) 160ms backwards;}
+.face.front .rv5b{animation:rvIn .42s cubic-bezier(.16,1,.3,1) 180ms backwards;}
+.face.front .rv6{animation:rvIn .42s cubic-bezier(.16,1,.3,1) 200ms backwards;}
+
+@keyframes artIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:none;}}
+@keyframes artBreath{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+.face.front .di-art{animation:artIn .5s cubic-bezier(.16,1,.3,1) 120ms backwards, artBreath 8s ease-in-out .7s infinite;}
+
+@keyframes posTick{from{transform:scale(1.25);}to{transform:scale(1);}}
+.deck-meta b.tick{animation:posTick .28s cubic-bezier(.16,1,.3,1);}
 
 .deck-empty{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;
@@ -660,9 +717,12 @@ body{
 }
 .toast.show{opacity:1;transform:translate(-50%,0);}
 
+/* 窄屏：高度按可用内宽反推，保证黄金矩形不横向溢出 */
+@media (max-width:389px){
+  .art-frame{height:clamp(96px,30vh,calc((100vw - 66px) / 1.618));}
+}
 @media (max-width:350px){
   .word{font-size:1.7rem;}
-  .art-frame{flex:0 0 112px;min-height:0;}
   .scene,.morph{display:none;}
   .rate{font-size:.7rem;padding:.52rem .1rem .54rem;}
   .brand-txt p{display:none;}
@@ -670,11 +730,9 @@ body{
 /* 矮屏逐级减负：保证一屏一张卡，不出现内部滚动 */
 @media (max-height:740px){
   .morph{display:none;}
-  .art-frame{flex:0 0 118px;min-height:0;}
 }
 @media (max-height:640px){
   .scene{display:none;}
-  .art-frame{flex:0 0 96px;}
   .hero{padding-top:calc(.4rem + env(safe-area-inset-top, 0px));padding-bottom:.48rem;}
 }
 @media (max-height:560px){
@@ -684,6 +742,9 @@ body{
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  .face.front .rv1,.face.front .rv2,.face.front .rv3,.face.front .rv4,
+  .face.front .rv5,.face.front .rv5b,.face.front .rv6,.face.front .di-art,
+  .rate.stamp::after,.deck-meta b.tick,.hero-fill.shine::after{animation:none !important;}
 }
 </style>
 </head>
@@ -994,6 +1055,147 @@ function ensureArtCss(word){
 }
 
 /* ------------------------------------------------------------
+   合成音效（WebAudio，无外部音频资源）
+   静音状态单独存 wc_sound_v1，不动既有的几个数据键
+   ------------------------------------------------------------ */
+const SFX_KEY = 'wc_sound_v1';
+let sfxCtx = null;
+let sfxMaster = null;
+const SFX_ON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></svg>';
+const SFX_OFF_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5"/><path d="M21 9.5l-5 5"/></svg>';
+
+function sfxOn(){
+  try{ return localStorage.getItem(SFX_KEY) !== '0'; }catch(e){ return true; }
+}
+function sfxCtxGet(){
+  if(sfxCtx) return sfxCtx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return null;
+  try{
+    sfxCtx = new AC();
+    sfxMaster = sfxCtx.createGain();
+    sfxMaster.gain.value = .2; /* master gain 固定在 .25 以下 */
+    sfxMaster.connect(sfxCtx.destination);
+  }catch(e){ sfxCtx = null; sfxMaster = null; }
+  return sfxCtx;
+}
+function sfxTone(freq, offset, dur, type, vol){
+  if(!sfxCtx) return;
+  const t = sfxCtx.currentTime + offset;
+  const o = sfxCtx.createOscillator(), g = sfxCtx.createGain();
+  o.type = type || 'sine';
+  o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol, t + .008);
+  g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(sfxMaster);
+  o.start(t); o.stop(t + dur + .02);
+}
+function sfxNoise(offset, dur, filterType, freq, vol){
+  if(!sfxCtx) return;
+  const t = sfxCtx.currentTime + offset;
+  const len = Math.max(1, Math.floor(sfxCtx.sampleRate * dur));
+  const buf = sfxCtx.createBuffer(1, len, sfxCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for(let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+  const src = sfxCtx.createBufferSource();
+  src.buffer = buf;
+  const f = sfxCtx.createBiquadFilter();
+  f.type = filterType; f.frequency.value = freq;
+  const g = sfxCtx.createGain();
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  src.connect(f); f.connect(g); g.connect(sfxMaster);
+  src.start(t); src.stop(t + dur);
+}
+function sfxPlay(name){
+  if(!sfxOn()) return;
+  const ctx = sfxCtxGet();
+  if(!ctx) return; /* 首次手势前 ctx 不会被创建 */
+  if(ctx.state === 'suspended'){ try{ ctx.resume(); }catch(e){} }
+  switch(name){
+    case 'rate2':
+      sfxTone(523.25, 0, .08, 'sine', .55);
+      sfxTone(783.99, .04, .08, 'sine', .5);
+      break;
+    case 'rate1':
+      sfxTone(329.63, 0, .07, 'sine', .5);
+      break;
+    case 'rate0':
+      sfxTone(220, 0, .09, 'triangle', .5);
+      break;
+    case 'skip':
+      sfxNoise(0, .12, 'highpass', 800, .35);
+      break;
+    case 'flip':
+      sfxNoise(0, .09, 'lowpass', 1200, .3);
+      break;
+    case 'drop':
+      sfxTone(1200, 0, .03, 'square', .18);
+      break;
+    case 'ok':
+      sfxTone(660, 0, .07, 'sine', .45);
+      sfxTone(880, .07, .09, 'sine', .45);
+      break;
+    case 'bad':
+      sfxTone(180, 0, .16, 'square', .3);
+      break;
+    case 'goal':
+      sfxTone(523.25, 0, .1, 'sine', .5);
+      sfxTone(659.25, .09, .1, 'sine', .5);
+      sfxTone(783.99, .18, .12, 'sine', .5);
+      break;
+  }
+}
+function sfxButtonHtml(){
+  const on = sfxOn();
+  return '<button class="sfx-btn' + (on ? '' : ' off') + '" id="sfxBtn" type="button" aria-label="音效开关" title="音效开关">' +
+    (on ? SFX_ON_ICON : SFX_OFF_ICON) + '</button>';
+}
+function syncSfxBtn(){
+  const btn = document.getElementById('sfxBtn');
+  if(!btn) return;
+  const on = sfxOn();
+  btn.classList.toggle('off', !on);
+  btn.innerHTML = on ? SFX_ON_ICON : SFX_OFF_ICON;
+}
+function setSfx(on){
+  try{ localStorage.setItem(SFX_KEY, on ? '1' : '0'); }catch(e){}
+  if(!on){
+    if(sfxCtx){ try{ sfxCtx.suspend(); }catch(e){} }
+  } else {
+    const ctx = sfxCtxGet();
+    if(ctx && ctx.state === 'suspended'){ try{ ctx.resume(); }catch(e){} }
+  }
+  syncSfxBtn();
+}
+
+/* 首次手势解锁 AudioContext；页面隐藏时挂起 */
+document.addEventListener('pointerdown', () => {
+  const ctx = sfxCtxGet();
+  if(ctx && ctx.state === 'suspended'){ try{ ctx.resume(); }catch(e){} }
+}, {once:true, passive:true});
+document.addEventListener('visibilitychange', () => {
+  if(!sfxCtx) return;
+  if(document.hidden){
+    try{ sfxCtx.suspend(); }catch(e){}
+  } else if(sfxOn() && sfxCtx.state === 'suspended'){
+    try{ sfxCtx.resume(); }catch(e){}
+  }
+});
+
+/* 音效开关：deck 会重渲染，所以用 document 级委托 */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('#sfxBtn');
+  if(!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const on = !sfxOn();
+  setSfx(on);
+  toast(on ? '音效已开启' : '音效已关闭');
+});
+
+/* ------------------------------------------------------------
    刷词卡渲染
    ------------------------------------------------------------ */
 const SPEAK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></svg>';
@@ -1007,10 +1209,11 @@ function rootOf(w){
 function renderDeckShell(){
   const view = document.getElementById('view-deck');
   view.innerHTML = '<div class="deck-wrap">' +
-      '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span><span>点按翻面 · 四向滑动</span></div>' +
+      '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span><span class="deck-tip">点按翻面 · 四向滑动</span>' + sfxButtonHtml() + '</div>' +
       '<div class="deck-stage" id="deckStage"><div class="stack" id="cardStack"></div></div>' +
     '</div>';
   renderCard(false);
+  syncSfxBtn();
 }
 
 function cardHtml(w){
@@ -1025,23 +1228,23 @@ function cardHtml(w){
       '<div class="dir-hint" aria-hidden="true"></div>' +
       '<div class="flip-inner">' +
         '<div class="face front">' +
-          '<div class="card-head">' +
+          '<div class="card-head rv1">' +
             '<span class="root-tag"><i class="dot"></i>' + rt.label + '</span>' +
             '<span class="mst-tag" style="color:' + (m === 2 ? '#4C6B52' : m === 1 ? '#9A7B34' : '#8A8378') + '">' + MST_LABEL[m] + '</span>' +
             '<a class="mini-card" href="../' + w.file + '">词卡 ›</a>' +
           '</div>' +
           '<div class="card-main">' +
-            '<div class="word-row"><div><h2 class="word">' + w.word + '</h2>' +
-              '<p class="ipa">' + (w.ipa || '') + '</p></div>' +
+            '<div class="word-row rv2"><div><h2 class="word">' + w.word + '</h2>' +
+              '<p class="ipa rv3">' + (w.ipa || '') + '</p></div>' +
               '<button class="speak" type="button" data-speak aria-label="朗读 ' + w.word + '">' + SPEAK_ICON + '</button></div>' +
-            '<p class="pos">' + (w.pos || '') + '</p>' +
-            '<p class="gloss">' + (w.gloss || '') + '</p>' +
-            '<div class="art-frame"><div class="di-art" data-art="' + w.word + '">' + art + '</div>' +
+            '<p class="pos rv3">' + (w.pos || '') + '</p>' +
+            '<p class="gloss rv3">' + (w.gloss || '') + '</p>' +
+            '<div class="art-frame rv4"><div class="di-art" data-art="' + w.word + '">' + art + '</div>' +
               '<span class="art-tag">' + (w.scene ? '意象' : '词卡') + (rep ? ' · 打卡 ' + rep + '/4' : '') + '</span></div>' +
-            '<p class="scene">' + (w.scene || '') + '</p>' +
-            '<p class="morph"><b>词根</b>' + (w.morph || '') + '</p>' +
+            '<p class="scene rv5">' + (w.scene || '') + '</p>' +
+            '<p class="morph rv5b"><b>词根</b>' + (w.morph || '') + '</p>' +
           '</div>' +
-          '<div class="actions">' +
+          '<div class="actions rv6">' +
             '<button class="rate r0" type="button" data-rate="0">不认识</button>' +
             '<button class="rate r1" type="button" data-rate="1">有点印象</button>' +
             '<button class="rate r2" type="button" data-rate="2">认识</button>' +
@@ -1104,6 +1307,30 @@ function rateWord(word, level){
   persist(STORE_KEY, store);
   markRated(word);
   bumpToday(1);
+  sfxPlay('rate' + level);
+  /* 今日首次达标：进度线扫光一次 + 达成音，当天只触发一次 */
+  if(todayCount() === GOAL){
+    shineGoal();
+    sfxPlay('goal');
+  }
+}
+
+function shineGoal(){
+  const fill = document.getElementById('goalFill');
+  if(!fill) return;
+  fill.classList.remove('shine');
+  void fill.offsetWidth;
+  fill.classList.add('shine');
+  fill.addEventListener('animationend', () => fill.classList.remove('shine'), {once:true});
+}
+
+function tickPos(){
+  const el = document.getElementById('deckPos');
+  if(!el) return;
+  el.classList.remove('tick');
+  void el.offsetWidth;
+  el.classList.add('tick');
+  el.addEventListener('animationend', () => el.classList.remove('tick'), {once:true});
 }
 
 function advance(level, dir){
@@ -1118,6 +1345,7 @@ function advance(level, dir){
     refreshHeader();
     if(todayCount() === GOAL) setTimeout(() => toast('今日 10 个达成，收工！'), 700);
   }
+  if(level === null) sfxPlay('skip'); /* 跳过单独音色，避免与评分音重复 */
   const card = document.querySelector('.swipe-card');
   if(card) card.classList.add('out-' + (dir || (level === null ? 'up' : 'right')));
   setTimeout(() => {
@@ -1125,6 +1353,7 @@ function advance(level, dir){
     animating = false;
     savePos();
     renderCard();
+    tickPos();
   }, level === null ? 400 : 360);
 }
 /* ============================================================
@@ -1429,7 +1658,14 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   if(suppressTap){ suppressTap = false; return; }
   if(spellSuppressTap){ spellSuppressTap = false; return; }
   const rateBtn = e.target.closest('[data-rate]');
-  if(rateBtn){ e.preventDefault(); e.stopPropagation(); advance(Number(rateBtn.dataset.rate)); return; }
+  if(rateBtn){
+    e.preventDefault(); e.stopPropagation();
+    rateBtn.classList.add('stamp');
+    rateBtn.addEventListener('animationend', () => rateBtn.classList.remove('stamp'), {once:true});
+    advance(Number(rateBtn.dataset.rate));
+    return;
+  }
+  if(e.target.closest('#sfxBtn')){ e.preventDefault(); e.stopPropagation(); return; }
   const restart = e.target.closest('[data-restart]');
   if(restart){ e.preventDefault(); queue = buildQueue(true); pos = 0; savePos(); renderDeckShell(); return; }
   const sp = e.target.closest('[data-speak]');
@@ -1456,7 +1692,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   if(e.target.closest('.spell-slot')){ e.preventDefault(); e.stopPropagation(); return; }
   if(e.target.closest('[data-flip]')){ e.preventDefault(); e.stopPropagation(); }
   const card = e.target.closest('.swipe-card');
-  if(card) card.classList.toggle('flipped');
+  if(card){ card.classList.toggle('flipped'); sfxPlay('flip'); }
 });
 
 /* ============================================================
@@ -1515,6 +1751,7 @@ function moveTileToSlot(tile, slot){
   }
   slot.appendChild(tile);
   syncSpellSlots(box);
+  sfxPlay('drop');
   autoCheckSpell(box);
 }
 
@@ -1542,9 +1779,11 @@ function autoCheckSpell(box){
     box.classList.add('ok');
     box.dataset.solved = '1';
     if(msg) msg.textContent = '✓ 拼写正确 · ' + word;
+    sfxPlay('ok');
   } else {
     box.classList.add('bad');
     if(msg) msg.textContent = '✗ 顺序不对 · 再调整一下';
+    sfxPlay('bad');
   }
 }
 
