@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1A1512">
+<meta name="theme-color" content="#FBF9F4">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="随身刷词">
 <title>随身刷词 · 手机版</title>
 <style>
@@ -94,7 +94,7 @@ body{
   overflow:hidden;
   /* 强调色的「深一级」版本：用于浅底上的文字/图标，保证对比度。
      写在 .app 上，才能随刷词时覆盖的 --ac 一起重新计算 */
-  --ac-deep:color-mix(in srgb,var(--ac) 68%,var(--ink));
+  --ac-deep:color-mix(in srgb,var(--ac) 60%,var(--ink));
 }
 @media (min-width:520px){
   body{padding:18px 0;}
@@ -149,7 +149,7 @@ body{
 /* 进度条压成状态条底边的 2px 强调线，不再单独占一行 */
 .hero-fill{
   position:absolute;left:0;bottom:0;height:2px;width:0;
-  background:var(--ac);
+  background:var(--ac-deep);
   border-radius:0 2px 2px 0;
   transition:width .5s var(--spring);
   overflow:hidden;
@@ -294,7 +294,7 @@ body{
 .dir-hint[data-dir="up"]{background:color-mix(in srgb,var(--ci) 8%,var(--cf));}
 .dir-hint[data-dir="down"]{background:color-mix(in srgb,#BB9A5A 24%,var(--cf));border-color:color-mix(in srgb,#BB9A5A 42%,transparent);}
 
-/* 背面：沿用该词卡自己的纸色/墨色/强调色/hero 渐变/顶部条纹，正面保持统一 */
+/* 正反面都沿用该词卡自己的纸色/墨色/强调色，不再套用外层界面的配色 */
 .face.back{
   transform:rotateY(180deg);
   padding:0;
