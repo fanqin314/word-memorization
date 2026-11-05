@@ -363,12 +363,21 @@ body{
 /* 背面拼写：一个字母一个格子 + 下方可拖动的字母块 */
 .fill-block{margin-top:.1rem;}
 .fill-q{font-size:.68rem;line-height:1.5;color:var(--ink-2);margin:0 0 .34rem;}
-.spell-slots,.spell-tiles{
+.spell-slots{
+  display:grid;
+  grid-template-columns:repeat(var(--n,10),minmax(0,1fr));
+  gap:.2rem;
+  width:100%;
+  /* 字母多的词自动收窄格子，保证一行放得下；字母少的词限制最大格宽 */
+  max-width:calc(var(--n,10) * 1.44rem + (var(--n,10) - 1) * .2rem);
+  margin:0 auto;
+}
+.spell-tiles{
   display:flex;flex-wrap:wrap;gap:.22rem;
   justify-content:center;
 }
 .spell-slot{
-  width:1.44rem;height:1.68rem;flex:none;
+  height:auto;aspect-ratio:1.44/1.68;
   display:grid;place-items:center;padding:0;
   border:2px dashed var(--mi,var(--ink));
   border-radius:7px;
@@ -1511,7 +1520,7 @@ function spellBlockHtml(word){
   const tiles = shuffleWord(w).map((ch) =>
     '<button class="spell-tile" type="button" data-ch="' + esc(ch) + '">' + esc(ch) + '</button>'
   ).join('');
-  return '<div class="spell-slots">' + slots + '</div>' +
+  return '<div class="spell-slots" style="--n:' + w.length + '">' + slots + '</div>' +
     '<div class="spell-tiles">' + tiles + '</div>' +
     '<p class="fill-msg" role="status"></p>';
 }
