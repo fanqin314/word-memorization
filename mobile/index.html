@@ -299,15 +299,6 @@ body{
 }
 .back-word{font-family:var(--display);font-size:1.12rem;letter-spacing:-.02em;line-height:1.1;color:var(--mi,var(--ink));}
 .back-ipa{font-family:var(--mono);font-size:.6rem;font-weight:800;color:var(--ink-2);margin-left:.28rem;}
-.back-flip{
-  appearance:none;cursor:pointer;flex:none;
-  font-family:var(--mono);font-size:.57rem;font-weight:900;
-  padding:.18rem .5rem .2rem;border-radius:999px;
-  border:1.8px solid var(--mi,var(--ink));background:#fff;color:var(--mi,var(--ink));
-  box-shadow:2px 2px 0 var(--ma,rgba(26,21,18,.7));
-  transition:transform .16s var(--spring);
-}
-.back-flip:active{transform:translate(2px,2px);box-shadow:none;}
 .back-body{
   flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding-right:.12rem;
@@ -432,7 +423,6 @@ body{
 .fill-block.bad .spell-slot{border-color:#B04A3A;}
 .fill-block.bad{animation:fillShake .3s;}
 @keyframes fillShake{20%{transform:translateX(-4px)}55%{transform:translateX(4px)}85%{transform:translateX(-2px)}}
-.back-link{margin-top:.1rem;align-self:flex-start;}
 
 .card-head{display:flex;align-items:center;gap:.34rem;flex:none;margin-bottom:.34rem;}
 .root-tag{
@@ -1131,7 +1121,7 @@ function cardHtml(w){
           '<div class="back-inner">' +
             '<div class="back-head">' +
               '<div class="back-word">' + w.word + '<span class="back-ipa">' + (w.ipa || '') + '</span></div>' +
-              '<button class="back-flip" type="button" data-flip>翻回正面</button>' +
+              '<a class="mini-card back-link" href="../' + w.file + '">打开完整词卡 ›</a>' +
             '</div>' +
             '<div class="back-body">' +
               '<p class="back-gloss">' + (w.gloss || '') + '</p>' +
@@ -1142,7 +1132,6 @@ function cardHtml(w){
                 '<p class="fill-q">把下面的字母拖进格子，按顺序拼出这个单词</p>' +
                 spellBlockHtml(w.word) +
               '</div>' +
-              '<a class="mini-card back-link" href="../' + w.file + '">打开完整词卡 ›</a>' +
             '</div>' +
           '</div>' +
         '</div>' +
