@@ -473,6 +473,22 @@ body::after{
   .compare-table td:first-child{width:auto!important;min-width:68px;white-space:normal!important;font-size:14px!important;}
   .compare-table td:nth-child(2){width:auto!important;}
   .compare-table .chant{font-size:12px!important;line-height:1.45!important;}
+  /* 搭配行：.pattern 原本 nowrap + flex-shrink:0，长句式会把释义挤出 .collo 的 overflow:hidden 而被裁掉 */
+  .collo{
+    flex-wrap:wrap!important;
+    align-items:flex-start!important;
+    gap:8px 12px!important;
+  }
+  .collo .pattern{
+    white-space:normal!important;flex-shrink:1!important;
+    max-width:100%!important;margin-left:0!important;
+    padding:5px 12px!important;font-size:13.5px!important;line-height:1.5;
+    overflow-wrap:anywhere;
+  }
+  .collo .meaning{
+    flex:1 1 120px!important;min-width:0;
+    font-size:13.5px!important;line-height:1.6!important;
+  }
   .collo .meaning,.fam-card .m{overflow-wrap:anywhere;}
   .word-anim{max-width:100%!important;overflow-wrap:anywhere;}
   .write-practice{padding:20px 16px!important;}
