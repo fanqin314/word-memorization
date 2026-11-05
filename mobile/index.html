@@ -360,37 +360,57 @@ body{
 .back-root b{font-weight:900;color:var(--mi,var(--ink));}
 .back-root.plain{border-style:solid;}
 
-/* 背面拼写填空 */
+/* 背面拼写：一个字母一个格子 + 下方可拖动的字母块 */
 .fill-block{margin-top:.1rem;}
-.fill-q{font-size:.68rem;line-height:1.5;color:var(--ink-2);margin:0 0 .3rem;}
-.fill-row{display:flex;align-items:center;gap:.3rem;}
-.fill-in{
-  flex:1;min-width:0;
-  font-family:var(--mono);font-size:1rem;font-weight:800;letter-spacing:.02em;
-  padding:.32rem .48rem;border:2px solid var(--mi,var(--ink));border-radius:9px;
-  background:#fff;color:var(--ink);outline:none;
-  transition:box-shadow .16s var(--spring);
+.fill-q{font-size:.68rem;line-height:1.5;color:var(--ink-2);margin:0 0 .34rem;}
+.spell-slots,.spell-tiles{
+  display:flex;flex-wrap:wrap;gap:.22rem;
+  justify-content:center;
 }
-.fill-in::placeholder{color:rgba(26,21,18,.3);font-weight:800;}
-.fill-in:focus{box-shadow:3px 3px 0 var(--ma,rgba(26,21,18,.6));}
-.fill-btn{
-  flex:none;appearance:none;cursor:pointer;
-  font-family:var(--mono);font-size:.64rem;font-weight:900;
-  padding:.22rem .58rem;border-radius:999px;
+.spell-slot{
+  width:1.36rem;height:1.58rem;flex:none;
+  display:grid;place-items:center;padding:0;
+  border:2px dashed var(--mi,var(--ink));
+  border-radius:7px;
+  background:#FFFCF5;
+  transition:border-color .15s,background .15s,transform .12s var(--spring);
+}
+.spell-slot.hot{
+  border-style:solid;
+  background:#F3E9D2;
+  background:color-mix(in srgb, var(--ma,#E8C17B) 26%, #FFFCF5);
+  transform:translateY(-2px);
+}
+.spell-slot.filled{border-style:solid;background:transparent;}
+.spell-tiles{
+  margin-top:.36rem;padding-top:.36rem;
+  border-top:1.5px dashed rgba(26,21,18,.2);
+}
+.spell-tile{
+  appearance:none;cursor:grab;
+  width:1.36rem;height:1.58rem;flex:none;
+  display:grid;place-items:center;padding:0;
   border:2px solid var(--mi,var(--ink));
-  /* 强调色可能是墨色本身，浅混合底 + 墨字才能保证按钮文字始终可读 */
+  border-radius:7px;
+  /* 强调色可能是墨色本身，浅混合底 + 墨字保证任何卡上都能看清 */
   background:#F3E9D2;
   background:color-mix(in srgb, var(--ma,#E8C17B) 30%, #FFFCF5);
   color:var(--mi,var(--ink));
+  font-family:var(--mono);font-size:.76rem;font-weight:900;line-height:1;
   box-shadow:2px 2px 0 var(--mi,rgba(26,21,18,.7));
-  transition:transform .14s var(--spring),box-shadow .14s;
+  touch-action:none;
+  user-select:none;-webkit-user-select:none;
+  transition:transform .12s var(--spring),box-shadow .12s;
 }
-.fill-btn:active{transform:translate(2px,2px);box-shadow:none;}
+.spell-slot.filled .spell-tile{width:100%;height:100%;}
+.spell-tile:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--mi,rgba(26,21,18,.7));}
+.spell-tile.dragging{opacity:.32;}
+.spell-ghost{position:fixed;pointer-events:none;z-index:9999;margin:0;}
 .fill-msg{font-size:.62rem;font-weight:800;line-height:1.4;margin:.26rem 0 0;min-height:1em;color:var(--ink-2);}
 .fill-block.ok .fill-msg{color:#2F6B45;}
-.fill-block.ok .fill-in{border-color:#2F6B45;background:#F1F8F2;}
+.fill-block.ok .spell-slot{border-color:#2F6B45;}
 .fill-block.bad .fill-msg{color:#B04A3A;}
-.fill-block.bad .fill-in{border-color:#B04A3A;}
+.fill-block.bad .spell-slot{border-color:#B04A3A;}
 .fill-block.bad{animation:fillShake .3s;}
 @keyframes fillShake{20%{transform:translateX(-4px)}55%{transform:translateX(4px)}85%{transform:translateX(-2px)}}
 .back-link{margin-top:.1rem;align-self:flex-start;}
@@ -1060,14 +1080,10 @@ function cardHtml(w){
               '<p class="back-gloss">' + (w.gloss || '') + '</p>' +
               (w.morph ? '<div class="back-block"><h4>构词</h4>' + rootLineHtml(w.morph) + '</div>' : '') +
               (ex ? '<div class="back-block"><h4>例句</h4><p class="back-ex">' + ex + '</p></div>' : '') +
-              '<div class="back-block fill-block">' +
+              '<div class="back-block fill-block spell-block" data-spell-word="' + esc(w.word.toLowerCase()) + '">' +
                 '<h4>拼写</h4>' +
-                '<p class="fill-q">按释义拼出这个单词</p>' +
-                '<div class="fill-row">' +
-                  '<input class="fill-in" type="text" inputmode="latin" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="' + (w.word.length + 2) + '" placeholder="' + esc(w.word.charAt(0)) + '…" aria-label="拼写 ' + esc(w.word) + '">' +
-                  '<button class="fill-btn" type="button" data-spell-check>检查</button>' +
-                '</div>' +
-                '<p class="fill-msg" role="status"></p>' +
+                '<p class="fill-q">把下面的字母拖进格子，按顺序拼出这个单词</p>' +
+                spellBlockHtml(w.word) +
               '</div>' +
               '<a class="mini-card back-link" href="../' + w.file + '">打开完整词卡 ›</a>' +
             '</div>' +
@@ -1427,6 +1443,7 @@ document.querySelectorAll('.tab').forEach(btn => {
 /* 刷词：朗读 / 三档反馈 / 重开一轮 / 点按翻面 */
 document.getElementById('view-deck').addEventListener('click', (e) => {
   if(suppressTap){ suppressTap = false; return; }
+  if(spellSuppressTap){ spellSuppressTap = false; return; }
   const rateBtn = e.target.closest('[data-rate]');
   if(rateBtn){ e.preventDefault(); e.stopPropagation(); advance(Number(rateBtn.dataset.rate)); return; }
   const restart = e.target.closest('[data-restart]');
@@ -1439,45 +1456,168 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
     return;
   }
   if(e.target.closest('.mini-card')) return; /* 词卡链接照常跳转 */
-  const sc = e.target.closest('[data-spell-check]');
-  if(sc){ e.preventDefault(); e.stopPropagation(); checkSpell(sc.closest('.fill-block')); return; }
-  if(e.target.closest('.fill-in')) return; /* 输入框聚焦，不翻面 */
+  const sTile = e.target.closest('.spell-tile');
+  if(sTile){
+    e.preventDefault(); e.stopPropagation();
+    const box = sTile.closest('.spell-block');
+    if(box && box.dataset.solved !== '1'){
+      if(sTile.closest('.spell-slot')) moveTileToTray(sTile);
+      else {
+        const slot = box.querySelector('.spell-slot:not(.filled)');
+        if(slot) moveTileToSlot(sTile, slot);
+      }
+    }
+    return;
+  }
+  if(e.target.closest('.spell-slot')){ e.preventDefault(); e.stopPropagation(); return; }
   if(e.target.closest('[data-flip]')){ e.preventDefault(); e.stopPropagation(); }
   const card = e.target.closest('.swipe-card');
   if(card) card.classList.toggle('flipped');
 });
 
-/* 背面拼写填空：校验并给出反馈 */
-function checkSpell(box){
-  if(!box) return;
-  const card = box.closest('.swipe-card');
-  const word = (card && card.dataset.word ? card.dataset.word : '').toLowerCase();
-  const input = box.querySelector('.fill-in');
+/* ============================================================
+   背面拼写：单词有几个字母就几个格子，下方字母块拖动/点按排布
+   ============================================================ */
+let spellSuppressTap = false;
+let spellDrag = null;
+
+function shuffleWord(word){
+  const a = word.split('');
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  if(a.join('') === word && a.length > 1){
+    const t = a[0]; a[0] = a[1]; a[1] = t;
+  }
+  return a;
+}
+
+function spellBlockHtml(word){
+  const w = word.toLowerCase();
+  const slots = Array.from({length: w.length}, () =>
+    '<span class="spell-slot"></span>'
+  ).join('');
+  const tiles = shuffleWord(w).map((ch) =>
+    '<button class="spell-tile" type="button" data-ch="' + esc(ch) + '">' + esc(ch) + '</button>'
+  ).join('');
+  return '<div class="spell-slots">' + slots + '</div>' +
+    '<div class="spell-tiles">' + tiles + '</div>' +
+    '<p class="fill-msg" role="status"></p>';
+}
+
+function syncSpellSlots(box){
+  box.querySelectorAll('.spell-slot').forEach((s) => {
+    s.classList.toggle('filled', !!s.querySelector('.spell-tile'));
+  });
+}
+
+/* 把字母块放进格子：目标格已有字母则交换（来源是托盘时，原字母退回托盘） */
+function moveTileToSlot(tile, slot){
+  const box = slot && slot.closest('.spell-block');
+  if(!box || !tile || box.dataset.solved === '1') return;
+  if(slot.querySelector('.spell-tile') === tile) return;
+  const fromSlot = tile.closest('.spell-slot');
+  const prev = slot.querySelector('.spell-tile');
+  if(prev){
+    if(fromSlot) fromSlot.appendChild(prev);
+    else box.querySelector('.spell-tiles').appendChild(prev);
+  }
+  slot.appendChild(tile);
+  syncSpellSlots(box);
+  autoCheckSpell(box);
+}
+
+function moveTileToTray(tile){
+  const box = tile && tile.closest('.spell-block');
+  if(!box || box.dataset.solved === '1') return;
+  box.querySelector('.spell-tiles').appendChild(tile);
+  syncSpellSlots(box);
+  autoCheckSpell(box);
+}
+
+function autoCheckSpell(box){
+  if(!box || box.dataset.solved === '1') return;
+  const word = (box.dataset.spellWord || '').toLowerCase();
   const msg = box.querySelector('.fill-msg');
-  if(!word || !input || !msg) return;
-  const val = (input.value || '').trim().toLowerCase();
+  const slots = Array.from(box.querySelectorAll('.spell-slot'));
   box.classList.remove('ok', 'bad');
-  void box.offsetWidth; /* 重排一次，错误抖动动画可重复触发 */
-  if(!val){
-    msg.textContent = '先拼出单词再检查';
+  if(!slots.length || slots.some((s) => !s.querySelector('.spell-tile'))){
+    if(msg) msg.textContent = '';
     return;
   }
-  if(val === word){
+  const ans = slots.map((s) => s.querySelector('.spell-tile').dataset.ch).join('');
+  void box.offsetWidth; /* 重排一次，错误抖动动画可重复触发 */
+  if(ans === word){
     box.classList.add('ok');
-    msg.textContent = '✓ 拼写正确 · ' + word;
-    input.disabled = true;
+    box.dataset.solved = '1';
+    if(msg) msg.textContent = '✓ 拼写正确 · ' + word;
   } else {
     box.classList.add('bad');
-    msg.textContent = '✗ 再试一次 · 首字母 ' + word.charAt(0) + ' · 共 ' + word.length + ' 个字母';
-    input.select();
+    if(msg) msg.textContent = '✗ 顺序不对 · 再调整一下';
   }
 }
-document.getElementById('view-deck').addEventListener('keydown', (e) => {
-  if(e.key === 'Enter' && e.target.classList.contains('fill-in')){
-    e.preventDefault();
-    checkSpell(e.target.closest('.fill-block'));
-  }
+
+function slotAtPoint(x, y, box){
+  const el = document.elementFromPoint(x, y);
+  if(!el) return null;
+  const slot = el.closest('.spell-slot');
+  return (slot && box.contains(slot)) ? slot : null;
+}
+
+/* 拖动：按下字母块生成跟随手指的幽灵块，松手落到格子或退回托盘 */
+document.addEventListener('pointerdown', (e) => {
+  const tile = e.target.closest('.spell-tile');
+  if(!tile) return;
+  const box = tile.closest('.spell-block');
+  if(!box || box.dataset.solved === '1') return;
+  if(e.pointerType === 'mouse' && e.button !== 0) return;
+  tile.setPointerCapture && tile.setPointerCapture(e.pointerId);
+  const r = tile.getBoundingClientRect();
+  const cs = getComputedStyle(tile);
+  const ghost = tile.cloneNode(true);
+  ghost.classList.add('spell-ghost');
+  ghost.classList.remove('dragging');
+  ghost.style.cssText = 'position:fixed;left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;display:grid;place-items:center;pointer-events:none;z-index:9999;' +
+    'font-family:' + cs.fontFamily + ';font-size:' + cs.fontSize + ';font-weight:' + cs.fontWeight + ';line-height:1;' +
+    'color:' + cs.color + ';background:' + cs.backgroundColor + ';border:2px solid ' + cs.borderColor + ';border-radius:' + cs.borderRadius + ';' +
+    'box-shadow:3px 3px 0 rgba(26,21,18,.45);transform:rotate(-3deg);';
+  document.body.appendChild(ghost);
+  spellDrag = {id:e.pointerId, tile, box, ghost, dx:e.clientX - r.left, dy:e.clientY - r.top, sx:e.clientX, sy:e.clientY, moved:false};
+  tile.classList.add('dragging');
 });
+
+document.addEventListener('pointermove', (e) => {
+  if(!spellDrag || e.pointerId !== spellDrag.id) return;
+  const d = spellDrag;
+  if(!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) > 6) d.moved = true;
+  if(!d.moved) return;
+  e.preventDefault();
+  d.ghost.style.left = (e.clientX - d.dx) + 'px';
+  d.ghost.style.top = (e.clientY - d.dy) + 'px';
+  const slot = slotAtPoint(e.clientX, e.clientY, d.box);
+  d.box.querySelectorAll('.spell-slot').forEach((s) => {
+    s.classList.toggle('hot', s === slot);
+  });
+}, {passive:false});
+
+function endSpellDrag(e){
+  if(!spellDrag) return;
+  if(e && e.pointerId !== undefined && e.pointerId !== spellDrag.id) return;
+  const d = spellDrag;
+  spellDrag = null;
+  d.ghost.remove();
+  d.tile.classList.remove('dragging');
+  d.box.querySelectorAll('.spell-slot.hot').forEach((s) => s.classList.remove('hot'));
+  if(!d.moved) return; /* 没有位移 → 交给 click 处理（点按填格 / 点回收回） */
+  spellSuppressTap = true;
+  setTimeout(() => { spellSuppressTap = false; }, 90);
+  const slot = e ? slotAtPoint(e.clientX, e.clientY, d.box) : null;
+  if(slot) moveTileToSlot(d.tile, slot);
+  else if(d.tile.closest('.spell-slot')) moveTileToTray(d.tile);
+}
+document.addEventListener('pointerup', endSpellDrag);
+document.addEventListener('pointercancel', endSpellDrag);
 
 /* 手势：上滑跳过 / 右滑认识 / 左滑不认识 / 下滑有点印象 / 点按翻面 */
 let dragState = null, suppressTap = false;
