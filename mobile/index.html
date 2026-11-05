@@ -465,8 +465,10 @@ body{
 .ipa{font-family:var(--mono);font-size:.75rem;font-weight:900;color:var(--ink-2);margin-top:.236rem;letter-spacing:.01em;}
 .pos{font-family:var(--mono);font-size:.618rem;font-weight:800;color:rgba(59,50,42,.92);letter-spacing:.02em;margin-top:.146rem;}
 .gloss{font-size:1rem;font-weight:900;line-height:1.35;margin-top:.236rem;color:var(--ink);transition:filter .18s var(--ease);}
-/* 顶部开关打开时：正面释义模糊遮住，字号与布局完全不变 */
+/* 顶部开关打开时：正面模糊释义、背面模糊单词，字号与布局完全不变 */
 .app.hide-gloss .face.front .gloss{filter:blur(7px);user-select:none;}
+.app.hide-gloss .face.back .back-word-txt{filter:blur(7px);user-select:none;}
+.back-word-txt{transition:filter .18s var(--ease);}
 
 .art-frame{
   position:relative;flex:0 0 auto;
@@ -1214,7 +1216,7 @@ document.addEventListener('click', (e) => {
 });
 
 /* ------------------------------------------------------------
-   顶部「隐藏释义」开关：只模糊正面释义，翻面/评分逻辑不变
+   顶部「遮答案」开关：正面模糊释义、背面模糊单词，翻面/评分不变
    状态单独存 wc_hide_gloss_v1
    ------------------------------------------------------------ */
 const GLOSS_KEY = 'wc_hide_gloss_v1';
@@ -1232,8 +1234,8 @@ function applyGloss(){
   if(!btn) return;
   btn.classList.toggle('on', hidden);
   btn.setAttribute('aria-pressed', hidden ? 'true' : 'false');
-  btn.setAttribute('aria-label', hidden ? '显示释义' : '隐藏释义');
-  btn.title = hidden ? '显示释义' : '隐藏释义';
+  btn.setAttribute('aria-label', hidden ? '显示答案' : '遮住答案');
+  btn.title = hidden ? '显示答案' : '遮住答案';
   btn.innerHTML = hidden ? GLOSS_OFF_ICON : GLOSS_ON_ICON;
 }
 function setGloss(hidden){
@@ -1247,7 +1249,7 @@ document.addEventListener('click', (e) => {
   e.stopPropagation();
   const to = !glossHidden();
   setGloss(to);
-  toast(to ? '释义已遮住' : '释义已显示');
+  toast(to ? '已遮住：正面释义 · 背面单词' : '已显示释义与单词');
 });
 applyGloss();
 
@@ -1310,7 +1312,7 @@ function cardHtml(w){
           '<div class="back-band"></div>' +
           '<div class="back-inner">' +
             '<div class="back-head">' +
-              '<div class="back-word">' + w.word + '<span class="back-ipa">' + (w.ipa || '') + '</span></div>' +
+              '<div class="back-word"><span class="back-word-txt">' + w.word + '</span><span class="back-ipa">' + (w.ipa || '') + '</span></div>' +
               '<a class="mini-card back-link" href="../' + w.file + '">打开完整词卡 ›</a>' +
             '</div>' +
             '<div class="back-body">' +
