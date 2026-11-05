@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#FBF9F4">
+<meta name="theme-color" content="#F1EEE7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="随身刷词">
@@ -22,8 +22,8 @@
   /* 外层界面：瓷白 + 石墨灰的发丝线界面，不再沿用课程表的纸墨配色 */
   --ink:#20242A;
   --ink-2:#40464E;
-  --paper:#E7E5DF;
-  --paper-2:#FBF9F4;
+  --paper:#E4E1DA;
+  --paper-2:#F1EEE7;
   --card:#FFFFFF;
 
   --rule:rgba(32,36,42,.10);
@@ -59,8 +59,8 @@
 
 body{
   background:
-    radial-gradient(1100px 640px at 18% -12%, #FDFBF6 0%, transparent 62%),
-    radial-gradient(900px 620px at 92% 112%, #E3EAE9 0%, transparent 66%),
+    radial-gradient(1100px 640px at 18% -12%, #F7F4ED 0%, transparent 62%),
+    radial-gradient(900px 620px at 92% 112%, #DDE4E3 0%, transparent 66%),
     var(--paper);
   color:var(--ink);
   font-family:var(--sans);
@@ -112,8 +112,7 @@ body{
   padding:.46rem 1rem .62rem;
   /* 刘海屏 / 挖孔屏：顶部再让出状态栏高度，状态条不被遮住 */
   padding-top:calc(.46rem + env(safe-area-inset-top, 0px));
-  background:color-mix(in srgb,var(--paper-2) 88%,transparent);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  background:var(--paper-2);
   border-bottom:1px solid var(--rule);
   overflow:hidden;z-index:2;
 }
@@ -149,7 +148,8 @@ body{
 /* 进度条压成状态条底边的 2px 强调线，不再单独占一行 */
 .hero-fill{
   position:absolute;left:0;bottom:0;height:2px;width:0;
-  background:var(--ac-deep);
+  background:#4E6B72;
+  background:var(--ac-deep,#4E6B72);
   border-radius:0 2px 2px 0;
   transition:width .5s var(--spring);
   overflow:hidden;
@@ -268,11 +268,15 @@ body{
   position:absolute;inset:0;
   display:flex;flex-direction:column;
   padding:.92rem 1.05rem 0;
-  background:var(--cf);
-  color:var(--ci);
-  border:1px solid var(--cline);
+  /* 先给一条纯色兜底，再用词卡自己的纸色/墨色覆盖（老内核不支持 color-mix 也不会变透明） */
+  background:#FFFDF8;
+  background:var(--cf,#FFFDF8);
+  color:#24201B;
+  color:var(--ci,#24201B);
+  border:1px solid rgba(36,32,27,.12);
+  border-color:var(--cline,rgba(36,32,27,.12));
   border-radius:20px;
-  box-shadow:0 2px 16px rgba(36,32,27,.07),0 0 0 1px rgba(36,32,27,.03);
+  box-shadow:0 4px 22px -6px rgba(32,36,42,.18),0 0 0 1px rgba(32,36,42,.04);
   overflow:hidden;
   backface-visibility:hidden;-webkit-backface-visibility:hidden;
 }
@@ -730,8 +734,7 @@ body{
   display:grid;grid-template-columns:repeat(4,1fr);gap:.24rem;
   flex:none;position:relative;z-index:5;
   padding:.42rem .5rem calc(.42rem + env(safe-area-inset-bottom,0px));
-  background:color-mix(in srgb,var(--paper-2) 86%,transparent);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  background:var(--paper-2);
   border-top:1px solid var(--rule);
 }
 .tab{
