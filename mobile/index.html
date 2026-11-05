@@ -1581,7 +1581,6 @@ document.addEventListener('pointerdown', (e) => {
   const box = tile.closest('.spell-block');
   if(!box || box.dataset.solved === '1') return;
   if(e.pointerType === 'mouse' && e.button !== 0) return;
-  tile.setPointerCapture && tile.setPointerCapture(e.pointerId);
   const r = tile.getBoundingClientRect();
   const cs = getComputedStyle(tile);
   const ghost = tile.cloneNode(true);
