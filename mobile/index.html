@@ -1157,8 +1157,9 @@ function renderCard(){
   if(posEl) posEl.textContent = Math.min(pos + 1, queue.length);
   const w = queue[pos];
   if(!w){
-    /* 只剩「未刷词」的队也空了 → 今天全部刷完；否则只是这一轮刷完，可继续刷没刷过的 */
-    const allDone = !queue.length;
+    /* 今天已无未刷词 → 全部刷完；否则只是这一轮刷完，可继续刷没刷过的 */
+    const rated = ratedToday();
+    const allDone = WORDS.every(w => rated.has(w.word));
     host.innerHTML = '<div class="deck-empty"><span class="big">' + (allDone ? '今天全部刷完' : '这轮刷完了') + '</span>' +
       '<small>' + (allDone
         ? '今天 ' + todayCount() + ' 个 · 明天再来，或去词库、自测复习。'
