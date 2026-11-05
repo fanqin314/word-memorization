@@ -281,7 +281,7 @@ body{
   background:var(--mb,var(--ma));
   border-bottom:2.5px solid var(--mi,var(--ink));
 }
-.back-inner{flex:1;min-height:0;display:flex;flex-direction:column;padding:.46rem .62rem .58rem;}
+.back-inner{flex:1;min-height:0;display:flex;flex-direction:column;padding:.5rem .68rem .6rem;}
 .back-head{
   display:flex;align-items:center;justify-content:space-between;gap:.4rem;flex:none;
   margin-bottom:.44rem;padding:.34rem .44rem .3rem;
@@ -290,8 +290,8 @@ body{
   border-radius:10px;
   box-shadow:2px 2px 0 var(--mi,rgba(26,21,18,.7));
 }
-.back-word{font-family:var(--display);font-size:1.12rem;letter-spacing:-.02em;line-height:1.1;color:var(--mi,var(--ink));}
-.back-ipa{font-family:var(--mono);font-size:.6rem;font-weight:800;color:var(--ink-2);margin-left:.28rem;}
+.back-word{font-family:var(--display);font-size:1.25rem;letter-spacing:-.02em;line-height:1.1;color:var(--mi,var(--ink));}
+.back-ipa{font-family:var(--mono);font-size:.66rem;font-weight:800;color:var(--ink-2);margin-left:.28rem;}
 .back-body{
   flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
   display:flex;flex-direction:column; /* 让下面的信息块按容器高度自适应撑开 */
@@ -304,7 +304,7 @@ body{
 .back-body::-webkit-scrollbar{width:5px;}
 .back-body::-webkit-scrollbar-thumb{background:transparent;}
 .back-body::-webkit-scrollbar-track{background:transparent;}
-.back-gloss{font-size:1rem;font-weight:900;line-height:1.35;margin:.06rem 0 .52rem;color:var(--mi,var(--ink));flex:none;}
+.back-gloss{font-size:1.0625rem;font-weight:900;line-height:1.4;margin:.06rem 0 .5rem;color:var(--mi,var(--ink));flex:none;}
 /* 信息块按容器剩余高度等比撑开；矮屏放不下时仍按内容高度撑开并可滚动 */
 .back-block{
   margin-bottom:.46rem;padding:.48rem .6rem;
@@ -316,9 +316,9 @@ body{
   flex:1 1 auto;
   display:flex;flex-direction:column;justify-content:center;
 }
-.back-block h4{font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.12em;color:rgba(26,21,18,.45);margin:0 0 .18rem;}
-.back-block p{margin:0;font-size:.72rem;line-height:1.55;color:var(--ink-2);}
-.back-block .back-ex{font-family:Georgia,serif;font-size:.78rem;color:var(--ink);}
+.back-block h4{font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.12em;color:rgba(26,21,18,.45);margin:0 0 .2rem;}
+.back-block p{margin:0;font-size:.8rem;line-height:1.55;color:var(--ink-2);}
+.back-block .back-ex{font-family:Georgia,serif;font-size:.84rem;color:var(--ink);}
 .bz-ans{background:var(--amber);color:var(--ink);padding:0 .16rem;border-radius:4px;font-weight:800;}
 
 /* 背面构词：复刻词卡页 .root-line 的「词素胶囊 + 括号释义 + → 释义」排版 */
@@ -328,13 +328,13 @@ body{
   border:2px dashed var(--mi,var(--ink));
   border-radius:10px;
   text-align:center;
-  font-size:.7rem;line-height:2.05;color:var(--ink-2);
+  font-size:.78rem;line-height:1.9;color:var(--ink-2);
   overflow-wrap:anywhere;
 }
 .back-root .stem,.back-root .affix{
   display:inline-block;margin:0 .1rem;padding:.02rem .32rem;
   border:2px solid var(--mi,var(--ink));border-radius:999px;
-  font-family:var(--mono);font-size:.66rem;font-weight:900;line-height:1.5;
+  font-family:var(--mono);font-size:.72rem;font-weight:900;line-height:1.5;
 }
 .back-root .stem{
   /* 强调色可能是深色甚至等于墨色，用浅色混合底保证任何卡上都能看清字 */
@@ -352,7 +352,7 @@ body{
 
 /* 背面拼写：一个字母一个格子 + 下方可拖动的字母块 */
 .fill-block{margin-top:.1rem;}
-.fill-q{font-size:.68rem;line-height:1.5;color:var(--ink-2);margin:0 0 .34rem;}
+.fill-q{font-size:.74rem;line-height:1.5;color:var(--ink-2);margin:0 0 .34rem;}
 .spell-slots{
   display:flex;flex-direction:column;align-items:flex-start;
   gap:.26rem;width:max-content;max-width:100%;margin:0 auto;
@@ -399,7 +399,7 @@ body{
   background:#F3E9D2;
   background:color-mix(in srgb, var(--ma,#E8C17B) 30%, #FFFCF5);
   color:var(--mi,var(--ink));
-  font-family:var(--mono);font-size:.92rem;font-weight:900;line-height:1;
+  font-family:var(--mono);font-size:.96rem;font-weight:900;line-height:1;
   box-shadow:2px 2px 0 var(--mi,rgba(26,21,18,.7));
   touch-action:none;
   user-select:none;-webkit-user-select:none;
@@ -424,21 +424,21 @@ body{
 .card-head{display:flex;align-items:center;gap:var(--sx1);flex:none;margin-bottom:var(--sx1);}
 .root-tag{
   display:inline-flex;align-items:center;gap:.24rem;
-  font-family:var(--mono);font-size:.57rem;font-weight:900;letter-spacing:.03em;
+  font-family:var(--mono);font-size:.64rem;font-weight:900;letter-spacing:.03em;
   padding:.16rem .5rem .18rem;border-radius:999px;
   border:1.8px solid currentColor;background:#fff;color:var(--rc,var(--clay));
 }
 .root-tag .dot{width:7px;height:7px;border-radius:2px;background:currentColor;flex:none;}
 .mst-tag{
   display:inline-flex;align-items:center;
-  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.05em;
+  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.05em;
   padding:.16rem .46rem .18rem;border-radius:999px;
   border:1.8px dashed currentColor;color:var(--ink-2);opacity:.75;
 }
 .mini-card{
   margin-left:auto;flex:none;
   display:inline-flex;align-items:center;gap:.18rem;
-  font-family:var(--mono);font-size:.57rem;font-weight:900;
+  font-family:var(--mono);font-size:.64rem;font-weight:900;
   color:var(--ink);background:#fff;border:1.8px solid var(--ink);
   border-radius:999px;padding:.16rem .5rem .18rem;text-decoration:none;
   transition:transform .16s var(--spring),background .16s;
@@ -466,9 +466,9 @@ body{
 .speak.speaking{background:var(--amber);animation:speakPulse .7s ease-in-out infinite;}
 @keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
 
-.ipa{font-family:var(--mono);font-size:.75rem;font-weight:900;color:var(--ink-2);margin-top:.236rem;letter-spacing:.01em;}
-.pos{font-family:var(--mono);font-size:.618rem;font-weight:800;color:rgba(59,50,42,.92);letter-spacing:.02em;margin-top:.146rem;}
-.gloss{font-size:1rem;font-weight:900;line-height:1.35;margin-top:.236rem;color:var(--ink);transition:filter .18s var(--ease);}
+.ipa{font-family:var(--mono);font-size:.8125rem;font-weight:900;color:var(--ink-2);margin-top:.236rem;letter-spacing:.01em;}
+.pos{font-family:var(--mono);font-size:.7rem;font-weight:800;color:rgba(59,50,42,.92);letter-spacing:.02em;margin-top:.16rem;}
+.gloss{font-size:1.0625rem;font-weight:900;line-height:1.35;margin-top:.3rem;color:var(--ink);transition:filter .18s var(--ease);}
 /* 顶部开关打开时：正面模糊释义、背面模糊单词，字号与布局完全不变 */
 .app.hide-gloss .face.front .gloss{filter:blur(7px);user-select:none;}
 .app.hide-gloss .face.back .back-word-txt{filter:blur(7px);user-select:none;}
@@ -493,22 +493,22 @@ body{
 .art-frame .di-art svg{display:block;width:100%;height:100%;}
 .art-frame .art-tag{
   position:absolute;left:8px;bottom:8px;z-index:2;
-  font-family:var(--mono);font-size:.53rem;font-weight:900;letter-spacing:.06em;
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.06em;
   padding:.1rem .4rem .12rem;border-radius:999px;
   background:rgba(26,21,18,.72);color:#fff;
 }
 
 .scene{
-  margin-top:var(--sx2);font-size:.75rem;font-weight:700;line-height:1.45;color:var(--ink-2);
+  margin-top:var(--sx2);font-size:.8125rem;font-weight:700;line-height:1.5;color:var(--ink-2);
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
 .morph{
   margin-top:var(--sx2);padding-top:.236rem;
   border-top:1.5px dashed rgba(26,21,18,.2);
-  font-size:.618rem;line-height:1.42;color:rgba(26,21,18,.62);
+  font-size:.72rem;line-height:1.45;color:rgba(26,21,18,.62);
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
-.morph b{font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;color:rgba(26,21,18,.4);margin-right:.2rem;}
+.morph b{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:rgba(26,21,18,.4);margin-right:.2rem;}
 
 .actions{
   display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:var(--sx1);
