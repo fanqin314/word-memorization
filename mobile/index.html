@@ -266,15 +266,15 @@ body{
   transform:translate(-50%,-50%) scale(.9);
   opacity:0;transition:opacity .12s,transform .12s;
   font-family:var(--mono);font-size:.72rem;font-weight:900;letter-spacing:.05em;
-  padding:.42rem .82rem;border-radius:999px;border:2.5px solid var(--ink);
-  background:var(--paper);color:var(--ink);white-space:nowrap;
-  box-shadow:3px 3px 0 rgba(26,21,18,.8);
+  padding:.42rem .82rem;border-radius:999px;border:1px solid var(--cline);
+  background:var(--cf);color:var(--ci);white-space:nowrap;
+  box-shadow:0 6px 18px rgba(36,32,27,.14);
 }
 .dir-hint.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
-.dir-hint[data-dir="right"]{background:#DCEBDD;}
-.dir-hint[data-dir="left"]{background:#F4DADA;}
-.dir-hint[data-dir="up"]{background:#E7E1D6;}
-.dir-hint[data-dir="down"]{background:#F6E7C5;}
+.dir-hint[data-dir="right"]{background:color-mix(in srgb,#6F8B74 20%,var(--cf));border-color:color-mix(in srgb,#6F8B74 42%,transparent);}
+.dir-hint[data-dir="left"]{background:color-mix(in srgb,#BC7E8A 20%,var(--cf));border-color:color-mix(in srgb,#BC7E8A 42%,transparent);}
+.dir-hint[data-dir="up"]{background:color-mix(in srgb,var(--ci) 8%,var(--cf));}
+.dir-hint[data-dir="down"]{background:color-mix(in srgb,#BB9A5A 24%,var(--cf));border-color:color-mix(in srgb,#BB9A5A 42%,transparent);}
 
 /* 背面：沿用该词卡自己的纸色/墨色/强调色/hero 渐变/顶部条纹，正面保持统一 */
 .face.back{
