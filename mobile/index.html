@@ -652,50 +652,16 @@ body{
 .wnum{font-family:var(--mono);font-size:.5rem;font-weight:900;color:color-mix(in srgb,var(--ink) 42%,transparent);}
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
-/* ---------------- 词库：Obsidian 风格树状 ---------------- */
-.wtree{display:flex;flex-direction:column;}
-.wgroup{border-top:1px solid var(--rule);}
-.wgroup:first-child{border-top:none;}
-.wghd{
-  display:flex;align-items:center;gap:.5rem;width:100%;
-  padding:.58rem .3rem .58rem .2rem;
-  background:none;border:0;cursor:pointer;color:var(--ink);
-  font:inherit;text-align:left;
-  transition:background .15s;
+/* ---------------- 词库：自由树状图谱 ---------------- */
+#view-lib.active{display:flex;flex-direction:column;height:100%;}
+.main.lib-on{overflow:hidden;padding-bottom:.55rem;}
+.lib-canvas{position:relative;flex:1;min-height:0;margin:.05rem -.3rem 0;overflow:hidden;}
+#libGraph{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;}
+.lib-hint{
+  position:absolute;left:50%;bottom:.2rem;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.53rem;font-weight:900;letter-spacing:.05em;
+  color:color-mix(in srgb,var(--ink) 34%,transparent);pointer-events:none;white-space:nowrap;
 }
-.wghd:active{background:color-mix(in srgb,var(--ink) 5%,transparent);}
-.wchev{
-  width:0;height:0;flex:none;
-  border-left:5px solid color-mix(in srgb,var(--ink) 45%,transparent);
-  border-top:4px solid transparent;border-bottom:4px solid transparent;
-  transition:transform .18s var(--ease);
-}
-.wgroup.open .wchev{transform:rotate(90deg);}
-.wgname{font-family:var(--display);font-size:.94rem;letter-spacing:.02em;line-height:1;}
-.wgnum{font-family:var(--mono);font-size:.54rem;font-weight:900;color:color-mix(in srgb,var(--ink) 42%,transparent);}
-.wgbar{margin-left:auto;width:52px;height:3px;border-radius:999px;flex:none;
-  background:color-mix(in srgb,var(--ink) 9%,transparent);overflow:hidden;}
-.wgbar i{display:block;height:100%;border-radius:999px;background:var(--ac-deep);}
-.wchildren{display:none;position:relative;padding:0 0 .34rem 1.3rem;}
-.wgroup.open .wchildren{display:block;}
-.wchildren::before{
-  content:'';position:absolute;left:.55rem;top:.1rem;bottom:.55rem;width:1px;
-  background:var(--rule-2);
-}
-/* 树里的词行：去掉卡片感，靠缩进 + 引导线读层级 */
-.wtree .wrow{
-  position:relative;
-  background:transparent;border:0;box-shadow:none;border-radius:9px;
-  padding:.42rem .5rem .42rem .55rem;margin:0;
-}
-.wtree .wrow:active{background:color-mix(in srgb,var(--ink) 6%,transparent);transform:none;box-shadow:none;}
-.wtree .wbar{
-  position:absolute;left:-.75rem;top:50%;
-  width:6px;height:6px;border-radius:50%;
-  transform:translate(-50%,-50%);
-}
-.wtree .wword b{font-size:.9rem;}
-.wtree .wnum{display:none;}
 
 /* ---------------- 自测 ---------------- */
 .quiz-wrap{display:flex;flex-direction:column;gap:.6rem;}
@@ -1697,98 +1663,335 @@ function advance(level, dir){
   }, level === null ? 400 : 360);
 }
 /* ============================================================
-   词库：搜索 + 46 词，点开原卡片页
+   词库：自由树状图谱
+   字母是枢纽节点，单词挂在各自字母枢纽上；
+   拖节点、拖背景平移、双指缩放，点词开卡。
    ============================================================ */
 let libBuilt = false;
 let libQuery = '';
-/* 展开的字母组：只记在内存里，重开应用默认全收起 */
-const libOpen = new Set();
+let libG = null;            /* 当前图 */
+let libRAF = 0;
+const libPos = new Map();   /* 节点位置记忆：切页回来不重排 */
 
 function renderLib(){
-  const view = document.getElementById('view-lib');
   if(!libBuilt){
     libBuilt = true;
+    const view = document.getElementById('view-lib');
     view.innerHTML = '<div class="lib-top"><div class="search-box">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>' +
         '<input id="libSearch" type="search" placeholder="搜单词或释义…" autocomplete="off" autocapitalize="off" spellcheck="false">' +
       '</div><span class="lib-count" id="libCount">' + WORDS.length + '</span></div>' +
-      '<div class="wtree" id="libList"></div>';
+      '<div class="lib-canvas"><canvas id="libGraph"></canvas>' +
+        '<span class="lib-hint">拖动节点 · 双指缩放 · 点词开卡</span></div>';
     document.getElementById('libSearch').addEventListener('input', (e) => {
       libQuery = e.target.value.trim().toLowerCase();
-      renderLibList();
+      applyLibQuery();
     });
-    /* 点击字母标题展开 / 收起 */
-    document.getElementById('libList').addEventListener('click', (e) => {
-      const hd = e.target.closest('.wghd');
-      if(!hd) return;
-      e.preventDefault();
-      const group = hd.parentElement;
-      const letter = group.dataset.g;
-      const open = !libOpen.has(letter);
-      if(open) libOpen.add(letter); else libOpen.delete(letter);
-      group.classList.toggle('open', open);
-      hd.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
+    bindLibGraph();
   }
-  renderLibList();
+  buildLibGraph();
+  applyLibQuery();
+  libWake();
 }
 
-function libRow(w){
-  const m = masteryOf(w.word);
-  const rt = rootOf(w);
-  const n = reviewDone(w.word);
-  return '<a class="wrow" href="../' + w.file + '" style="--rc:' + rt.color + '">' +
-      '<i class="wbar"></i>' +
-      '<div class="wbody"><div class="wword"><b>' + w.word + '</b><i>' + (w.ipa || '') + '</i></div>' +
-        '<div class="wgloss">' + (w.gloss || '') + '</div></div>' +
-      '<div class="wmeta"><span class="wmst m' + m + '">' + MST_LABEL[m] + '</span>' +
-        '<span class="wnum">' + (n ? '打卡 ' + n + '/4' : '&nbsp;') + '</span></div>' +
-    '</a>';
+/* CSS 变量在 canvas 里不生效，取出来解析成具体颜色 */
+function cssColor(v){
+  const m = /^var\((--[^)]+)\)$/.exec(String(v || ''));
+  if(!m) return String(v || '#20242A');
+  return getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim() || '#20242A';
 }
 
-function renderLibList(){
-  const host = document.getElementById('libList');
-  if(!host) return;
-  const list = WORDS.filter(w =>
-    !libQuery || w.word.toLowerCase().includes(libQuery) || (w.gloss || '').toLowerCase().includes(libQuery)
-  );
-  const count = document.getElementById('libCount');
-  if(count) count.textContent = list.length;
-  if(!list.length){
-    host.className = 'wlist';
-    host.innerHTML = '<div class="wempty">没有匹配的词，换个关键词试试</div>';
-    return;
+function buildLibGraph(){
+  const cvs = document.getElementById('libGraph');
+  if(!cvs) return;
+  /* 重建前把当前位置记下来，切 tab 回来位置不跳 */
+  if(libG){
+    libG.nodes.forEach(n => libPos.set(n.id, {x:n.x, y:n.y}));
   }
-  /* 搜索时平铺直出，结果不该藏在收起的组里 */
-  if(libQuery){
-    host.className = 'wlist';
-    host.innerHTML = list.map(libRow).join('');
-    return;
-  }
-  /* 词库：按首字母成树，字母是可展开的节点 */
-  const groups = [];
-  const map = new Map();
-  list.forEach(w => {
-    const k = (w.word[0] || '#').toUpperCase();
-    let g = map.get(k);
-    if(!g){ g = {letter:k, words:[]}; map.set(k, g); groups.push(g); }
-    g.words.push(w);
+  const hubs = new Map();
+  WORDS.forEach(w => {
+    const L = (w.word[0] || '#').toUpperCase();
+    if(!hubs.has(L)){
+      hubs.set(L, {id:'h:'+L, kind:'hub', label:L, count:0,
+        x:0, y:0, vx:0, vy:0, r:13, color:'#5F7F86', hit:false});
+    }
+    hubs.get(L).count++;
   });
-  host.className = 'wtree';
-  host.innerHTML = groups.map(g => {
-    const done = g.words.filter(w => masteryOf(w.word) === 2).length;
-    const pct = Math.round(done / g.words.length * 100);
-    const open = libOpen.has(g.letter);
-    return '<section class="wgroup' + (open ? ' open' : '') + '" data-g="' + g.letter + '">' +
-        '<button class="wghd" type="button" aria-expanded="' + (open ? 'true' : 'false') + '">' +
-          '<i class="wchev"></i>' +
-          '<span class="wgname">' + g.letter + '</span>' +
-          '<span class="wgnum">' + g.words.length + '</span>' +
-          '<span class="wgbar"><i style="width:' + pct + '%"></i></span>' +
-        '</button>' +
-        '<div class="wchildren">' + g.words.map(libRow).join('') + '</div>' +
-      '</section>';
-  }).join('');
+  const hubList = Array.from(hubs.values());
+  hubList.forEach((h, i) => {
+    const a = -Math.PI / 2 + (i / hubList.length) * Math.PI * 2;
+    h.x = Math.cos(a) * 150;
+    h.y = Math.sin(a) * 150;
+    h.r = 10 + Math.min(4, h.count * .45);
+  });
+  const nodes = hubList.slice();
+  const links = [];
+  WORDS.forEach(w => {
+    const hub = hubs.get((w.word[0] || '#').toUpperCase());
+    const node = {id:'w:' + w.word, kind:'word', word:w, label:w.word,
+      x:0, y:0, vx:0, vy:0, r:7, color:cssColor(rootOf(w).color),
+      m:masteryOf(w.word), hit:false};
+    const p = libPos.get(node.id);
+    node.x = p ? p.x : hub.x + (Math.random() - .5) * 80;
+    node.y = p ? p.y : hub.y + (Math.random() - .5) * 80;
+    nodes.push(node);
+    links.push({a:hub, b:node});
+  });
+  const box = cvs.parentElement.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cvs.width = Math.max(1, Math.round(box.width * dpr));
+  cvs.height = Math.max(1, Math.round(box.height * dpr));
+  libG = {nodes, links, hubs:hubList, cam:{x:0, y:0, scale:1},
+    w:box.width || 320, h:box.height || 420, dpr, dim:false, drag:null};
+}
+
+function applyLibQuery(){
+  if(!libG) return;
+  const q = libQuery;
+  let hits = 0;
+  libG.nodes.forEach(node => {
+    if(node.kind === 'hub'){ node.hit = false; return; }
+    node.hit = !!q && (node.word.word.toLowerCase().includes(q) ||
+      (node.word.gloss || '').toLowerCase().includes(q));
+    if(node.hit) hits++;
+  });
+  libG.dim = !!q;
+  const el = document.getElementById('libCount');
+  if(el) el.textContent = q ? hits : WORDS.length;
+  libDraw();
+  libWake();
+}
+
+/* ---------- 力导向：排斥 + 连线弹簧 + 向心 ---------- */
+function libStep(){
+  const g = libG;
+  if(!g) return 0;
+  const {nodes, links} = g;
+  let heat = 0;
+  for(let i = 0; i < nodes.length; i++){
+    const a = nodes[i];
+    for(let j = i + 1; j < nodes.length; j++){
+      const b = nodes[j];
+      let dx = b.x - a.x, dy = b.y - a.y;
+      let d2 = dx * dx + dy * dy;
+      if(d2 < 1){ dx = Math.random() - .5; dy = Math.random() - .5; d2 = 1; }
+      if(d2 > 90000) continue;
+      const d = Math.sqrt(d2);
+      const f = ((a.kind === 'hub' && b.kind === 'hub') ? 2600 : 900) / d2;
+      const ux = dx / d, uy = dy / d;
+      a.vx -= ux * f; a.vy -= uy * f;
+      b.vx += ux * f; b.vy += uy * f;
+    }
+  }
+  links.forEach(l => {
+    const dx = l.b.x - l.a.x, dy = l.b.y - l.a.y;
+    const d = Math.sqrt(dx * dx + dy * dy) || 1;
+    const f = (d - 54) * .012;
+    const ux = dx / d, uy = dy / d;
+    l.a.vx += ux * f; l.a.vy += uy * f;
+    l.b.vx -= ux * f; l.b.vy -= uy * f;
+  });
+  nodes.forEach(n => {
+    if(n === g.drag) return;
+    n.vx -= n.x * .0035;
+    n.vy -= n.y * .0035;
+    n.vx *= .86; n.vy *= .86;
+    if(Math.abs(n.vx) < .01) n.vx = 0;
+    if(Math.abs(n.vy) < .01) n.vy = 0;
+    n.x += n.vx; n.y += n.vy;
+    heat += Math.abs(n.vx) + Math.abs(n.vy);
+  });
+  return heat;
+}
+
+function libDraw(){
+  const g = libG;
+  if(!g) return;
+  const cvs = document.getElementById('libGraph');
+  if(!cvs) return;
+  const ctx = cvs.getContext('2d');
+  const s = g.cam.scale, dpr = g.dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, g.w, g.h);
+  ctx.setTransform(dpr * s, 0, 0, dpr * s,
+    dpr * (g.w / 2 - g.cam.x * s), dpr * (g.h / 2 - g.cam.y * s));
+  /* 连线 */
+  ctx.strokeStyle = '#20242A';
+  ctx.lineWidth = 1 / s;
+  g.links.forEach(l => {
+    ctx.globalAlpha = g.dim ? ((l.b.hit) ? .3 : .05) : .16;
+    ctx.beginPath();
+    ctx.moveTo(l.a.x, l.a.y);
+    ctx.lineTo(l.b.x, l.b.y);
+    ctx.stroke();
+  });
+  /* 节点 */
+  g.nodes.forEach(n => {
+    const dim = g.dim && !n.hit && n.kind !== 'hub';
+    if(n.kind === 'hub'){
+      ctx.globalAlpha = g.dim ? .3 : 1;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill();
+      ctx.strokeStyle = '#5F7F86';
+      ctx.lineWidth = 1.4 / s;
+      ctx.stroke();
+      ctx.fillStyle = g.dim ? '#8A9298' : '#20242A';
+      ctx.font = '900 ' + (11 / s) + "px 'Courier New',monospace";
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(n.label, n.x, n.y + .5 / s);
+      return;
+    }
+    ctx.globalAlpha = (dim ? .18 : 1) * (n.m === 0 ? .45 : n.m === 1 ? .8 : 1);
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    ctx.fillStyle = n.color;
+    ctx.fill();
+    if(n.hit){
+      ctx.globalAlpha = .9;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r + 3 / s, 0, Math.PI * 2);
+      ctx.strokeStyle = '#20242A';
+      ctx.lineWidth = 1.2 / s;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = dim ? .2 : .62;
+    ctx.fillStyle = '#20242A';
+    ctx.font = '700 ' + (8.5 / s) + "px 'Helvetica Neue','PingFang SC',sans-serif";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(n.label, n.x, n.y + n.r + 2 / s);
+  });
+  ctx.globalAlpha = 1;
+}
+
+function libWake(){
+  if(!libG || libRAF) return;
+  libRAF = requestAnimationFrame(libLoop);
+}
+function libSleep(){
+  if(libRAF){ cancelAnimationFrame(libRAF); libRAF = 0; }
+}
+function libLoop(){
+  libRAF = 0;
+  const heat = libStep();
+  libDraw();
+  if(heat > .04 || libG.drag) libRAF = requestAnimationFrame(libLoop);
+}
+
+/* ---------- 手势：拖节点 / 平移 / 缩放 / 点开卡 ---------- */
+function bindLibGraph(){
+  const cvs = document.getElementById('libGraph');
+  if(!cvs) return;
+  const pts = new Map();
+  let panning = false, moved = 0, last = null, pinch = null;
+
+  function toWorld(e){
+    const r = cvs.getBoundingClientRect();
+    return {x: libG.cam.x + (e.clientX - r.left - libG.w / 2) / libG.cam.scale,
+            y: libG.cam.y + (e.clientY - r.top - libG.h / 2) / libG.cam.scale};
+  }
+  function hitTest(p){
+    for(let i = libG.nodes.length - 1; i >= 0; i--){
+      const n = libG.nodes[i];
+      const R = Math.max(n.r + 3, 16 / libG.cam.scale);
+      const dx = n.x - p.x, dy = n.y - p.y;
+      if(dx * dx + dy * dy <= R * R) return n;
+    }
+    return null;
+  }
+  function clampScale(v){
+    return Math.max(.5, Math.min(2.4, v));
+  }
+
+  cvs.addEventListener('pointerdown', (e) => {
+    cvs.setPointerCapture(e.pointerId);
+    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    moved = 0;
+    last = {x: e.clientX, y: e.clientY};
+    if(pts.size === 1){
+      const p = toWorld(e);
+      const n = hitTest(p);
+      if(n){
+        libG.drag = n;
+        n.vx = 0; n.vy = 0;
+      } else {
+        panning = true;
+      }
+    } else if(pts.size === 2){
+      libG.drag = null;
+      panning = false;
+      const a = Array.from(pts.values());
+      pinch = {d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1, scale: libG.cam.scale};
+    }
+  });
+
+  cvs.addEventListener('pointermove', (e) => {
+    if(!libG) return;
+    if(pts.has(e.pointerId)) pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if(pts.size === 2 && pinch){
+      const a = Array.from(pts.values());
+      const d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1;
+      libG.cam.scale = clampScale(pinch.scale * d / pinch.d);
+      libDraw();
+      return;
+    }
+    if(!libG || !last) return;
+    const mx = e.clientX - last.x, my = e.clientY - last.y;
+    moved += Math.abs(mx) + Math.abs(my);
+    last = {x: e.clientX, y: e.clientY};
+    if(libG.drag){
+      const n = libG.drag;
+      n.x += mx / libG.cam.scale;
+      n.y += my / libG.cam.scale;
+      n.vx = 0; n.vy = 0;
+      libDraw();
+      libWake();
+    } else if(panning){
+      libG.cam.x -= mx / libG.cam.scale;
+      libG.cam.y -= my / libG.cam.scale;
+      libDraw();
+    }
+  });
+
+  function up(e){
+    if(!libG) return;
+    const was = libG.drag;
+    pts.delete(e.pointerId);
+    if(pts.size < 2) pinch = null;
+    if(pts.size === 0){
+      if(was && moved < 12 && was.kind === 'word'){
+        location.href = '../' + was.word.file;
+        return;
+      }
+      if(was) libPos.set(was.id, {x: was.x, y: was.y});
+      libG.drag = null;
+      panning = false;
+      libWake();
+    }
+  }
+  cvs.addEventListener('pointerup', up);
+  cvs.addEventListener('pointercancel', up);
+
+  cvs.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    libG.cam.scale = clampScale(libG.cam.scale * (e.deltaY > 0 ? .92 : 1.08));
+    libDraw();
+  }, {passive: false});
+
+  window.addEventListener('resize', () => {
+    if(!libG) return;
+    const box = cvs.parentElement.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cvs.width = Math.max(1, Math.round(box.width * dpr));
+    cvs.height = Math.max(1, Math.round(box.height * dpr));
+    libG.w = box.width || 320;
+    libG.h = box.height || 420;
+    libG.dpr = dpr;
+    libDraw();
+  });
 }
 
 /* ============================================================
@@ -2031,8 +2234,12 @@ function switchTab(name){
   if(name === 'lib') renderLib();
   if(name === 'quiz') renderQuiz();
   if(name === 'stat') renderStat();
+  if(name !== 'lib') libSleep();
   const main = document.querySelector('.main');
-  if(main) main.scrollTop = 0;
+  if(main){
+    main.scrollTop = 0;
+    main.classList.toggle('lib-on', name === 'lib');
+  }
 }
 
 document.querySelectorAll('.tab').forEach(btn => {
