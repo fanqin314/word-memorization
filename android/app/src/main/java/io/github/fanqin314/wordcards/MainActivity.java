@@ -3,6 +3,7 @@ package io.github.fanqin314.wordcards;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -188,7 +190,10 @@ public class MainActivity extends Activity {
 
     private void initTts() {
         tts = new TextToSpeech(getApplicationContext(), status -> {
-            if (status != TextToSpeech.SUCCESS || tts == null) return;
+            if (status != TextToSpeech.SUCCESS || tts == null) {
+                notifyTtsMissing();
+                return;
+            }
             int lang = tts.setLanguage(Locale.US);
             if (lang == TextToSpeech.LANG_MISSING_DATA
                     || lang == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -211,6 +216,7 @@ public class MainActivity extends Activity {
                     notifyTtsDone();
                 }
             });
+            if (!ttsReady) notifyTtsMissing();
             /* TTS 就绪后通知页面，避免首屏点击时还没准备好 */
             main.post(() -> {
                 if (web != null) {
@@ -227,6 +233,19 @@ public class MainActivity extends Activity {
                 web.evaluateJavascript("window.__ttsDone && window.__ttsDone()", null);
             }
         });
+    }
+
+    /**
+     * 设备没有可用的英文语音引擎时提示一次（多数是国内 ROM 未装 Google 语音服务）。
+     * 不提示的话，点朗读只会静默失败，用户会以为是应用坏了。
+     */
+    private void notifyTtsMissing() {
+        SharedPreferences sp = getSharedPreferences("wc_tts", MODE_PRIVATE);
+        if (sp.getBoolean("missing_notified", false)) return;
+        sp.edit().putBoolean("missing_notified", true).apply();
+        main.post(() -> Toast.makeText(this,
+                "未检测到英文语音引擎。可在 系统设置 中安装文字转语音引擎（如 Google 语音服务）",
+                Toast.LENGTH_LONG).show());
     }
 
     @Override

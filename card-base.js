@@ -94,6 +94,7 @@
     var SPEECH_SRC = '../../mobile/audio/' + WORD.toLowerCase() + '.mp3';
     var speakAudio = null;
     var speechMiss = false;
+    var ttsWarned = false;
     function speakFallback() {
       if (!('speechSynthesis' in window)) { alert('朗读音频缺失，请检查网络'); return; }
       window.speechSynthesis.cancel();
@@ -102,7 +103,13 @@
       u.rate = 0.85;
       u.onstart = function () { speakBtn.classList.add('speaking'); };
       u.onend = function () { speakBtn.classList.remove('speaking'); };
-      u.onerror = function () { speakBtn.classList.remove('speaking'); };
+      u.onerror = function (e) {
+        speakBtn.classList.remove('speaking');
+        var reason = e && e.error;
+        if (reason === 'interrupted' || reason === 'canceled' || ttsWarned) return;
+        ttsWarned = true;
+        alert('设备缺少英文语音引擎，请在系统设置里安装');
+      };
       window.speechSynthesis.speak(u);
     }
     function playSpeech() {

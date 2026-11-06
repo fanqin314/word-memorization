@@ -1117,19 +1117,28 @@ function stopSpeak(){
   if(speakBtn){ speakBtn.classList.remove('speaking'); speakBtn = null; }
 }
 let speakVO = null;
+let ttsWarned = false;
+/* 设备没有英文语音引擎时只提示一次，避免每点一下朗读就弹一次 */
+function warnNoTts(){
+  if(ttsWarned) return;
+  ttsWarned = true;
+  toast('设备缺少英文语音引擎，请在系统设置里安装');
+}
 function speakFallback(word, btn){
   if(!('speechSynthesis' in window)){ toast('朗读音频缺失，请检查网络'); return; }
   window.speechSynthesis.cancel();
   const u = speakVO = new SpeechSynthesisUtterance(word);
   u.lang = 'en-US';
   u.rate = 0.85;
-  if(btn){
-    btn.classList.add('speaking');
-    speakBtn = btn;
-    const off = () => { if(speakVO === u && speakBtn === btn){ btn.classList.remove('speaking'); speakBtn = null; } };
-    u.onend = off;
-    u.onerror = off;
-  }
+  const off = () => { if(btn && speakVO === u && speakBtn === btn){ btn.classList.remove('speaking'); speakBtn = null; } };
+  if(btn){ btn.classList.add('speaking'); speakBtn = btn; }
+  u.onend = off;
+  u.onerror = (e) => {
+    off();
+    const reason = e && e.error;
+    if(reason === 'interrupted' || reason === 'canceled') return;
+    warnNoTts();
+  };
   window.speechSynthesis.speak(u);
 }
 /* 预取当前卡和下一张卡的发音，滑卡后按下就能立刻出声 */
