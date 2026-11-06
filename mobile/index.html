@@ -131,19 +131,17 @@ body{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   flex:1;min-width:0;
 }
-/* 「隐藏释义」开关：绝对定位贴右上，不改变状态条高度 */
-.hero-bar{padding-right:30px;}
-.hero-btn{
-  position:absolute;right:0;top:50%;transform:translateY(-50%);
-  width:24px;height:24px;padding:0;
+/* 「遮住答案」开关：挪到刷词状态条，和撤回、音效开关排在一起 */
+.gloss-btn{
+  flex:none;width:24px;height:24px;padding:0;
   display:grid;place-items:center;cursor:pointer;
   border:1px solid var(--rule-2);border-radius:7px;
-  background:transparent;color:var(--ink);
+  background:var(--card);color:var(--ink);
   transition:transform .14s var(--spring),background .16s,border-color .16s,color .16s;
 }
-.hero-btn svg{width:14px;height:14px;display:block;}
-.hero-btn:active{transform:translateY(-50%) scale(.94);}
-.hero-btn.on{background:color-mix(in srgb,var(--ac) 20%,transparent);
+.gloss-btn svg{width:14px;height:14px;display:block;}
+.gloss-btn:active{transform:scale(.94);}
+.gloss-btn.on{background:color-mix(in srgb,var(--ac) 20%,transparent);
   border-color:color-mix(in srgb,var(--ac) 45%,transparent);color:var(--ac-deep);}
 /* 进度条压成状态条底边的 2px 强调线，不再单独占一行 */
 .hero-fill{
@@ -836,7 +834,6 @@ body{
     <div class="hero-bar">
       <span class="hk">今日 <b id="todayNum">0</b><i>/10</i></span>
       <span class="hero-tip" id="goalTip">刷一张就热身</span>
-      <button class="hero-btn" id="hideGlossBtn" type="button" aria-label="隐藏释义" aria-pressed="false" title="隐藏释义"></button>
     </div>
     <i class="hero-fill" id="goalFill"></i>
   </header>
@@ -1451,11 +1448,14 @@ function renderDeckShell(){
   const view = document.getElementById('view-deck');
   view.innerHTML = '<div class="deck-wrap">' +
       '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
-        '<span class="deck-tools"><button class="undo-btn" id="undoBtn" type="button" aria-label="撤回上一张" hidden>撤回</button>' + sfxButtonHtml() + '</span></div>' +
+        '<span class="deck-tools"><button class="undo-btn" id="undoBtn" type="button" aria-label="撤回上一张" hidden>撤回</button>' +
+        '<button class="gloss-btn" id="hideGlossBtn" type="button" aria-label="遮住答案" aria-pressed="false" title="遮住答案"></button>' +
+        sfxButtonHtml() + '</span></div>' +
       '<div class="deck-stage" id="deckStage"><div class="stack" id="cardStack"></div></div>' +
     '</div>';
   renderCard(false);
   syncSfxBtn();
+  applyGloss(); /* 按钮随 deck 一起重建，重新同步图标与状态 */
 }
 
 function cardHtml(w){
@@ -1967,6 +1967,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
     return;
   }
   if(e.target.closest('#sfxBtn')) return; /* 音效开关交给 document 级委托，不参与翻面 */
+  if(e.target.closest('#hideGlossBtn')) return; /* 遮住答案开关同样走 document 级委托 */
   const restart = e.target.closest('[data-restart]');
   if(restart){ e.preventDefault(); queue = buildQueue(true); pos = 0; savePos(); undoSnap = null; renderDeckShell(); return; }
   const sp = e.target.closest('[data-speak]');
