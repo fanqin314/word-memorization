@@ -1134,6 +1134,7 @@ function speakFallback(word, btn){
 }
 /* 预取当前卡和下一张卡的发音，滑卡后按下就能立刻出声 */
 const audioPreload = new Map();
+const audioMiss = new Set();
 function preloadAudio(word){
   if(!word || audioPreload.has(word)) return;
   if(audioPreload.size > 6) audioPreload.clear();
@@ -1145,6 +1146,7 @@ function preloadAudio(word){
 function speakWord(word, btn){
   if(!word) return;
   stopSpeak();
+  if(audioMiss.has(word)){ speakFallback(word, btn); return; }
   if('speechSynthesis' in window) window.speechSynthesis.cancel();
   if(!speakAudio){ speakAudio = new Audio(); speakAudio.preload = 'auto'; }
   const a = speakAudio;
@@ -1155,8 +1157,9 @@ function speakWord(word, btn){
   const fail = () => {
     if(done) return;
     done = true;
+    audioMiss.add(word); /* 记住缺音频的词，下次直接走朗读，不再白请求 */
     off();
-    speakFallback(word, btn); /* 音频不在或被壳拦截时，退回系统朗读 */
+    speakFallback(word, btn);
   };
   a.onended = () => { done = true; off(); };
   a.onerror = fail;

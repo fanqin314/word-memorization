@@ -93,6 +93,7 @@
   if (speakBtn) {
     var SPEECH_SRC = '../../mobile/audio/' + WORD.toLowerCase() + '.mp3';
     var speakAudio = null;
+    var speechMiss = false;
     function speakFallback() {
       if (!('speechSynthesis' in window)) { alert('朗读音频缺失，请检查网络'); return; }
       window.speechSynthesis.cancel();
@@ -105,11 +106,13 @@
       window.speechSynthesis.speak(u);
     }
     function playSpeech() {
+      if (speechMiss) { speakFallback(); return; }
       if (!speakAudio) { speakAudio = new Audio(); speakAudio.preload = 'auto'; }
       var a = speakAudio, failed = false;
       var fail = function () {
         if (failed) return;
         failed = true;
+        speechMiss = true; /* 没有该词音频时，下次直接走朗读，不再重复请求 */
         speakBtn.classList.remove('speaking');
         speakFallback();
       };
