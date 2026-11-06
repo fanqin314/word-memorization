@@ -1062,17 +1062,29 @@ body::before{
     reveals.forEach(function (el) { el.classList.add('in'); });
   }
 
-  /* ---------- 朗读 ---------- */
+  /* ---------- 朗读：优先播预生成发音文件，再退系统朗读 ---------- */
+  var wordsAudio = new Audio();
+  wordsAudio.preload = 'auto';
   function speak(text) {
-    if (!('speechSynthesis' in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(text);
-      u.lang = 'en-US';
-      u.rate = 0.9;
-      u.pitch = 1;
-      window.speechSynthesis.speak(u);
-    } catch (e) { /* 静默失败 */ }
+    var a = wordsAudio, failed = false;
+    var fail = function () {
+      if (failed) return;
+      failed = true;
+      if (!('speechSynthesis' in window)) { alert('朗读音频缺失，请检查网络'); return; }
+      try {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.rate = 0.9;
+        u.pitch = 1;
+        window.speechSynthesis.speak(u);
+      } catch (e) { /* 静默失败 */ }
+    };
+    try { a.pause(); } catch (e) {}
+    a.onerror = fail;
+    a.src = '../../mobile/audio/' + (text || word).toLowerCase() + '.mp3';
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(fail);
   }
 
   var speakBtn = document.getElementById('speakBtn');

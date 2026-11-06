@@ -88,11 +88,13 @@
     });
   });
 
-  /* ---------- 朗读 ---------- */
+  /* ---------- 朗读：优先播预生成的发音文件，壳里没有系统 TTS 也能出声 ---------- */
   var speakBtn = document.getElementById('speakBtn');
   if (speakBtn) {
-    speakBtn.addEventListener('click', function () {
-      if (!('speechSynthesis' in window)) { alert('当前浏览器不支持朗读'); return; }
+    var SPEECH_SRC = '../../mobile/audio/' + WORD.toLowerCase() + '.mp3';
+    var speakAudio = null;
+    function speakFallback() {
+      if (!('speechSynthesis' in window)) { alert('朗读音频缺失，请检查网络'); return; }
       window.speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(WORD);
       u.lang = 'en-US';
@@ -101,9 +103,27 @@
       u.onend = function () { speakBtn.classList.remove('speaking'); };
       u.onerror = function () { speakBtn.classList.remove('speaking'); };
       window.speechSynthesis.speak(u);
-    });
+    }
+    function playSpeech() {
+      if (!speakAudio) { speakAudio = new Audio(); speakAudio.preload = 'auto'; }
+      var a = speakAudio, failed = false;
+      var fail = function () {
+        if (failed) return;
+        failed = true;
+        speakBtn.classList.remove('speaking');
+        speakFallback();
+      };
+      try { a.pause(); } catch (e) {}
+      a.onended = function () { speakBtn.classList.remove('speaking'); };
+      a.onerror = fail;
+      a.src = SPEECH_SRC;
+      speakBtn.classList.add('speaking');
+      var pr = a.play();
+      if (pr && pr.catch) pr.catch(fail);
+    }
+    speakBtn.addEventListener('click', playSpeech);
     var ipaBtn = document.getElementById('ipaBtn');
-    if (ipaBtn) ipaBtn.addEventListener('click', function () { speakBtn.click(); });
+    if (ipaBtn) ipaBtn.addEventListener('click', playSpeech);
   }
 
   /* ---------- 造句：本地保存 ---------- */
