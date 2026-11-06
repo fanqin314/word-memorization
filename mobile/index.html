@@ -207,7 +207,19 @@ body{
   color:color-mix(in srgb,var(--ink) 48%,transparent);flex:none;
 }
 .deck-meta b{color:var(--ink);display:inline-block;}
-.deck-tip{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;}
+.deck-tools{display:flex;align-items:center;gap:.3rem;flex:none;}
+/* 撤回：滑走一张后才出现，与音效开关同高 */
+.undo-btn{
+  flex:none;height:24px;padding:0 .46rem;
+  display:inline-flex;align-items:center;cursor:pointer;
+  border:1px solid var(--rule-2);border-radius:7px;
+  background:var(--card);color:var(--ink);
+  font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.06em;
+  transition:transform .14s var(--spring),background .16s,color .16s;
+}
+.undo-btn:active{transform:scale(.94);}
+/* display 会盖掉 hidden 属性，这里显式还原 */
+.undo-btn[hidden]{display:none;}
 /* 音效开关：24px，状态只记在 wc_sound_v1 */
 .sfx-btn{
   flex:none;width:24px;height:24px;padding:0;
@@ -1438,7 +1450,8 @@ function rootOf(w){
 function renderDeckShell(){
   const view = document.getElementById('view-deck');
   view.innerHTML = '<div class="deck-wrap">' +
-      '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span><span class="deck-tip">点按翻面 · 四向滑动</span>' + sfxButtonHtml() + '</div>' +
+      '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
+        '<span class="deck-tools"><button class="undo-btn" id="undoBtn" type="button" aria-label="撤回上一张" hidden>撤回</button>' + sfxButtonHtml() + '</span></div>' +
       '<div class="deck-stage" id="deckStage"><div class="stack" id="cardStack"></div></div>' +
     '</div>';
   renderCard(false);
@@ -1568,11 +1581,57 @@ function tickPos(){
   el.addEventListener('animationend', () => el.classList.remove('tick'), {once:true});
 }
 
+/* ------------------------------------------------------------
+   撤回：滑走一张后状态条出现「撤回」，把这张卡与今天的记录一起退回
+   ------------------------------------------------------------ */
+let undoSnap = null;
+
+function setUndoVisible(v){
+  const btn = document.getElementById('undoBtn');
+  if(btn) btn.hidden = !v;
+}
+
+/* 在评分/跳过发生前拍快照，撤回时原样还原 */
+function takeUndoSnap(word){
+  undoSnap = {
+    word: word,
+    pos: pos,
+    wordRec: store[word] ? Object.assign({}, store[word]) : null,
+    days: Object.assign({}, mb.days || {}),
+    total: mb.total || 0,
+    rated: JSON.parse(JSON.stringify(mb.rated || {})),
+    savedPos: mb.pos ? Object.assign({}, mb.pos) : null
+  };
+}
+
+function undoLast(){
+  if(!undoSnap || animating) return;
+  const u = undoSnap;
+  undoSnap = null;
+  if(u.wordRec) store[u.word] = u.wordRec;
+  else delete store[u.word];
+  persist(STORE_KEY, store);
+  mb.days = u.days;
+  mb.total = u.total;
+  mb.rated = u.rated;
+  if(u.savedPos) mb.pos = u.savedPos;
+  else delete mb.pos;
+  persist(MB_KEY, mb);
+  pos = u.pos;
+  renderCard();
+  tickPos();
+  refreshHeader();
+  setUndoVisible(false);
+  toast('已撤回：' + u.word);
+}
+
 function advance(level, dir){
   if(animating) return;
   const w = queue[pos];
   if(!w) return;
   animating = true;
+  takeUndoSnap(w.word);
+  setUndoVisible(false);
   if(level === null) toast('已跳过');
   else {
     rateWord(w.word, level);
@@ -1589,6 +1648,7 @@ function advance(level, dir){
     savePos();
     renderCard();
     tickPos();
+    setUndoVisible(true);
   }, level === null ? 400 : 360);
 }
 /* ============================================================
@@ -1892,6 +1952,12 @@ document.querySelectorAll('.tab').forEach(btn => {
 document.getElementById('view-deck').addEventListener('click', (e) => {
   if(suppressTap){ suppressTap = false; return; }
   if(spellSuppressTap){ spellSuppressTap = false; return; }
+  const undoBtn = e.target.closest('#undoBtn');
+  if(undoBtn){
+    e.preventDefault(); e.stopPropagation();
+    undoLast();
+    return;
+  }
   const rateBtn = e.target.closest('[data-rate]');
   if(rateBtn){
     e.preventDefault(); e.stopPropagation();
@@ -1902,7 +1968,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   }
   if(e.target.closest('#sfxBtn')) return; /* 音效开关交给 document 级委托，不参与翻面 */
   const restart = e.target.closest('[data-restart]');
-  if(restart){ e.preventDefault(); queue = buildQueue(true); pos = 0; savePos(); renderDeckShell(); return; }
+  if(restart){ e.preventDefault(); queue = buildQueue(true); pos = 0; savePos(); undoSnap = null; renderDeckShell(); return; }
   const sp = e.target.closest('[data-speak]');
   if(sp){
     e.preventDefault(); e.stopPropagation();
