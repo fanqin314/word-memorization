@@ -652,6 +652,51 @@ body{
 .wnum{font-family:var(--mono);font-size:.5rem;font-weight:900;color:color-mix(in srgb,var(--ink) 42%,transparent);}
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
+/* ---------------- 词库：Obsidian 风格树状 ---------------- */
+.wtree{display:flex;flex-direction:column;}
+.wgroup{border-top:1px solid var(--rule);}
+.wgroup:first-child{border-top:none;}
+.wghd{
+  display:flex;align-items:center;gap:.5rem;width:100%;
+  padding:.58rem .3rem .58rem .2rem;
+  background:none;border:0;cursor:pointer;color:var(--ink);
+  font:inherit;text-align:left;
+  transition:background .15s;
+}
+.wghd:active{background:color-mix(in srgb,var(--ink) 5%,transparent);}
+.wchev{
+  width:0;height:0;flex:none;
+  border-left:5px solid color-mix(in srgb,var(--ink) 45%,transparent);
+  border-top:4px solid transparent;border-bottom:4px solid transparent;
+  transition:transform .18s var(--ease);
+}
+.wgroup.open .wchev{transform:rotate(90deg);}
+.wgname{font-family:var(--display);font-size:.94rem;letter-spacing:.02em;line-height:1;}
+.wgnum{font-family:var(--mono);font-size:.54rem;font-weight:900;color:color-mix(in srgb,var(--ink) 42%,transparent);}
+.wgbar{margin-left:auto;width:52px;height:3px;border-radius:999px;flex:none;
+  background:color-mix(in srgb,var(--ink) 9%,transparent);overflow:hidden;}
+.wgbar i{display:block;height:100%;border-radius:999px;background:var(--ac-deep);}
+.wchildren{display:none;position:relative;padding:0 0 .34rem 1.3rem;}
+.wgroup.open .wchildren{display:block;}
+.wchildren::before{
+  content:'';position:absolute;left:.55rem;top:.1rem;bottom:.55rem;width:1px;
+  background:var(--rule-2);
+}
+/* 树里的词行：去掉卡片感，靠缩进 + 引导线读层级 */
+.wtree .wrow{
+  position:relative;
+  background:transparent;border:0;box-shadow:none;border-radius:9px;
+  padding:.42rem .5rem .42rem .55rem;margin:0;
+}
+.wtree .wrow:active{background:color-mix(in srgb,var(--ink) 6%,transparent);transform:none;box-shadow:none;}
+.wtree .wbar{
+  position:absolute;left:-.75rem;top:50%;
+  width:6px;height:6px;border-radius:50%;
+  transform:translate(-50%,-50%);
+}
+.wtree .wword b{font-size:.9rem;}
+.wtree .wnum{display:none;}
+
 /* ---------------- 自测 ---------------- */
 .quiz-wrap{display:flex;flex-direction:column;gap:.6rem;}
 .quiz-head{display:flex;align-items:center;justify-content:space-between;gap:.5rem;
@@ -1656,6 +1701,8 @@ function advance(level, dir){
    ============================================================ */
 let libBuilt = false;
 let libQuery = '';
+/* 展开的字母组：只记在内存里，重开应用默认全收起 */
+const libOpen = new Set();
 
 function renderLib(){
   const view = document.getElementById('view-lib');
@@ -1665,13 +1712,38 @@ function renderLib(){
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>' +
         '<input id="libSearch" type="search" placeholder="搜单词或释义…" autocomplete="off" autocapitalize="off" spellcheck="false">' +
       '</div><span class="lib-count" id="libCount">' + WORDS.length + '</span></div>' +
-      '<div class="wlist" id="libList"></div>';
+      '<div class="wtree" id="libList"></div>';
     document.getElementById('libSearch').addEventListener('input', (e) => {
       libQuery = e.target.value.trim().toLowerCase();
       renderLibList();
     });
+    /* 点击字母标题展开 / 收起 */
+    document.getElementById('libList').addEventListener('click', (e) => {
+      const hd = e.target.closest('.wghd');
+      if(!hd) return;
+      e.preventDefault();
+      const group = hd.parentElement;
+      const letter = group.dataset.g;
+      const open = !libOpen.has(letter);
+      if(open) libOpen.add(letter); else libOpen.delete(letter);
+      group.classList.toggle('open', open);
+      hd.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
   }
   renderLibList();
+}
+
+function libRow(w){
+  const m = masteryOf(w.word);
+  const rt = rootOf(w);
+  const n = reviewDone(w.word);
+  return '<a class="wrow" href="../' + w.file + '" style="--rc:' + rt.color + '">' +
+      '<i class="wbar"></i>' +
+      '<div class="wbody"><div class="wword"><b>' + w.word + '</b><i>' + (w.ipa || '') + '</i></div>' +
+        '<div class="wgloss">' + (w.gloss || '') + '</div></div>' +
+      '<div class="wmeta"><span class="wmst m' + m + '">' + MST_LABEL[m] + '</span>' +
+        '<span class="wnum">' + (n ? '打卡 ' + n + '/4' : '&nbsp;') + '</span></div>' +
+    '</a>';
 }
 
 function renderLibList(){
@@ -1683,20 +1755,39 @@ function renderLibList(){
   const count = document.getElementById('libCount');
   if(count) count.textContent = list.length;
   if(!list.length){
+    host.className = 'wlist';
     host.innerHTML = '<div class="wempty">没有匹配的词，换个关键词试试</div>';
     return;
   }
-  host.innerHTML = list.map(w => {
-    const m = masteryOf(w.word);
-    const rt = rootOf(w);
-    const n = reviewDone(w.word);
-    return '<a class="wrow" href="../' + w.file + '" style="--rc:' + rt.color + '">' +
-        '<i class="wbar"></i>' +
-        '<div class="wbody"><div class="wword"><b>' + w.word + '</b><i>' + (w.ipa || '') + '</i></div>' +
-          '<div class="wgloss">' + (w.gloss || '') + '</div></div>' +
-        '<div class="wmeta"><span class="wmst m' + m + '">' + MST_LABEL[m] + '</span>' +
-          '<span class="wnum">' + (n ? '打卡 ' + n + '/4' : '&nbsp;') + '</span></div>' +
-      '</a>';
+  /* 搜索时平铺直出，结果不该藏在收起的组里 */
+  if(libQuery){
+    host.className = 'wlist';
+    host.innerHTML = list.map(libRow).join('');
+    return;
+  }
+  /* 词库：按首字母成树，字母是可展开的节点 */
+  const groups = [];
+  const map = new Map();
+  list.forEach(w => {
+    const k = (w.word[0] || '#').toUpperCase();
+    let g = map.get(k);
+    if(!g){ g = {letter:k, words:[]}; map.set(k, g); groups.push(g); }
+    g.words.push(w);
+  });
+  host.className = 'wtree';
+  host.innerHTML = groups.map(g => {
+    const done = g.words.filter(w => masteryOf(w.word) === 2).length;
+    const pct = Math.round(done / g.words.length * 100);
+    const open = libOpen.has(g.letter);
+    return '<section class="wgroup' + (open ? ' open' : '') + '" data-g="' + g.letter + '">' +
+        '<button class="wghd" type="button" aria-expanded="' + (open ? 'true' : 'false') + '">' +
+          '<i class="wchev"></i>' +
+          '<span class="wgname">' + g.letter + '</span>' +
+          '<span class="wgnum">' + g.words.length + '</span>' +
+          '<span class="wgbar"><i style="width:' + pct + '%"></i></span>' +
+        '</button>' +
+        '<div class="wchildren">' + g.words.map(libRow).join('') + '</div>' +
+      '</section>';
   }).join('');
 }
 
