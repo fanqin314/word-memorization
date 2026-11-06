@@ -190,10 +190,11 @@ public class MainActivity extends Activity {
 
     private void initTts() {
         tts = new TextToSpeech(getApplicationContext(), status -> {
-            if (status != TextToSpeech.SUCCESS || tts == null) {
+            if (status != TextToSpeech.SUCCESS) {
                 notifyTtsMissing();
                 return;
             }
+            if (tts == null) return;
             int lang = tts.setLanguage(Locale.US);
             if (lang == TextToSpeech.LANG_MISSING_DATA
                     || lang == TextToSpeech.LANG_NOT_SUPPORTED) {
