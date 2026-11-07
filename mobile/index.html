@@ -152,21 +152,51 @@ body{
 @keyframes heroShine{from{transform:translateX(-100%);}to{transform:translateX(100%);}}
 .hero-fill.shine::after{animation:heroShine 1.2s ease-out;}
 
-/* ---------------- 近七天（放在数据页） ---------------- */
-.week-row{display:flex;margin:.34rem -.2rem 0;}
-.day-cell{
-  flex:1;min-width:0;padding:.3rem 0 .28rem;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:.1rem;color:color-mix(in srgb,var(--ink) 60%,transparent);
-  border-left:1px solid var(--rule);
+/* ---------------- 刷词贡献墙（放在数据页） ---------------- */
+.cw-scroll{overflow-x:auto;overflow-y:hidden;margin:.1rem -.15rem 0;padding:0 .15rem;scrollbar-width:none;}
+.cw-scroll::-webkit-scrollbar{display:none;}
+.cw-inner{display:inline-block;min-width:100%;}
+.cw-months{position:relative;height:12px;margin-left:15px;}
+.cw-months span{
+  position:absolute;top:0;white-space:nowrap;
+  font-family:var(--mono);font-size:.44rem;font-weight:900;letter-spacing:.02em;
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
 }
-.day-cell:first-child{border-left:none;}
-.day-cell.is-today{opacity:1;background:color-mix(in srgb,var(--ac) 16%,transparent);border-radius:8px;
-  box-shadow:none;color:var(--ink);}
-.day-cell.has{opacity:.9;}
-.day-cell .dc-day{font-size:.6rem;font-weight:900;line-height:1;}
-.day-cell .dc-num{font-family:var(--mono);font-size:.56rem;font-weight:900;line-height:1;opacity:.7;}
-.day-cell.is-today .dc-num{opacity:1;}
+.cw-body{display:flex;align-items:flex-start;gap:5px;}
+.cw-days{flex:none;display:flex;flex-direction:column;gap:3px;width:10px;}
+.cw-days span{
+  height:10px;line-height:10px;text-align:right;
+  font-family:var(--mono);font-size:.4rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 38%,transparent);
+}
+/* 每列一周、每格一天，颜色深浅按当天刷词量 */
+.cw-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,10px);grid-auto-columns:10px;gap:3px;}
+.cw-cell{
+  width:10px;height:10px;border-radius:3px;flex:none;
+  background:color-mix(in srgb,var(--ink) 5%,var(--paper-2));
+  transition:transform .14s var(--spring);
+}
+.cw-cell.lv1{background:color-mix(in srgb,var(--ac) 20%,var(--paper-2));}
+.cw-cell.lv2{background:color-mix(in srgb,var(--ac) 42%,var(--paper-2));}
+.cw-cell.lv3{background:color-mix(in srgb,var(--ac) 66%,var(--paper-2));}
+.cw-cell.lv4{background:color-mix(in srgb,var(--ac) 92%,var(--paper-2));}
+.cw-cell.today{box-shadow:0 0 0 1px color-mix(in srgb,var(--ink) 45%,transparent);}
+.cw-cell.future{visibility:hidden;}
+.cw-cell:active{transform:scale(.86);}
+.cw-tile .tk{position:relative;margin-bottom:.34rem;}
+.cw-win{position:absolute;right:0;top:0;font-style:normal;color:color-mix(in srgb,var(--ink) 40%,transparent);}
+.cw-foot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:.46rem;}
+.cw-sum{
+  font-family:var(--mono);font-size:.5rem;font-weight:900;letter-spacing:.02em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.cw-sum b{color:var(--ink);}
+.cw-legend{
+  display:inline-flex;align-items:center;gap:3px;
+  font-family:var(--mono);font-size:.42rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 40%,transparent);
+}
+.cw-legend .cw-cell{width:8px;height:8px;border-radius:2px;}
 /* ---------------- 主区与视图 ---------------- */
 .main{
   flex:1;min-height:0;
@@ -2809,8 +2839,20 @@ function renderStat(){
           '<i class="fill" style="width:' + Math.min(100, today / GOAL * 100) + '%;--bc:var(--ac);"></i></span></div>' +
         '<p class="ts">' + (today >= GOAL ? '今天已经达标，明天记得回来。' : '轻量目标：每天 10 个，刷完就收工。') + '</p>' +
       '</div>' +
-      '<div class="tile wide"><span class="tk">近七天</span>' +
-        '<div class="week-row" id="weekStrip"></div></div>' +
+      '<div class="tile wide cw-tile">' +
+        '<span class="tk">刷词贡献墙<em class="cw-win">近 ' + CW_WEEKS + ' 周</em></span>' +
+        '<div class="cw-scroll" id="cwScroll"><div class="cw-inner">' +
+          '<div class="cw-months" id="cwMonths"></div>' +
+          '<div class="cw-body">' +
+            '<div class="cw-days"><span></span><span>一</span><span></span><span>三</span><span></span><span>五</span><span></span></div>' +
+            '<div class="cw-grid" id="cwGrid"></div>' +
+          '</div>' +
+        '</div></div>' +
+        '<div class="cw-foot">' +
+          '<span class="cw-sum" id="cwSum"></span>' +
+          '<span class="cw-legend">少<i class="cw-cell lv0"></i><i class="cw-cell lv1"></i><i class="cw-cell lv2"></i><i class="cw-cell lv3"></i><i class="cw-cell lv4"></i>多</span>' +
+        '</div>' +
+      '</div>' +
       '<div class="tile"><span class="tk">连续学习</span><span class="tv">' + streak + '<small>天</small></span>' +
         '<p class="ts">' + (streak > 1 ? '保持住，别断。' : '今天开个头。') + '</p></div>' +
       '<div class="tile"><span class="tk">待复习</span><span class="tv">' + due + '<small>个</small></span>' +
@@ -2832,11 +2874,11 @@ function renderStat(){
     '<div class="link-row"><a class="big-link" href="../index.html">打开电脑版工作站' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>' +
     '</a></div>';
-  renderStrip();
+  renderWall();
 }
 
 /* ============================================================
-   顶栏 / 近七天 / 轻提示
+   顶栏 / 贡献墙 / 轻提示
    ============================================================ */
 let toastTimer = null;
 function toast(msg){
@@ -2848,21 +2890,58 @@ function toast(msg){
   toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
 }
 
-function renderStrip(){
-  const host = document.getElementById('weekStrip');
+/* 贡献墙：近 26 周，每列一周、每格一天；颜色深浅按当天刷词量 */
+const CW_WEEKS = 26;
+const CW_STEP = 13; /* 10px 方块 + 3px 间隔 */
+function cwLevel(n){
+  if(!n) return 0;
+  if(n < 5) return 1;
+  if(n < 10) return 2;
+  if(n < 20) return 3;
+  return 4;
+}
+function renderWall(){
+  const host = document.getElementById('cwGrid');
   if(!host) return;
-  const week = '日一二三四五六';
-  let html = '';
-  for(let i = 6; i >= 0; i--){
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const k = keyOf(d);
-    const n = mb.days[k] || 0;
-    html += '<div class="day-cell' + (i === 0 ? ' is-today' : '') + (n ? ' has' : '') + '">' +
-        '<span class="dc-day">' + week[d.getDay()] + '</span>' +
-        '<span class="dc-num">' + (n || '·') + '</span></div>';
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = new Date(today);
+  start.setDate(start.getDate() - start.getDay() - (CW_WEEKS - 1) * 7);
+  const todayK = keyOf(today);
+  let cells = '', active = 0, total = 0;
+  const marks = [];
+  let lastMonth = -1, lastCol = -99;
+  for(let c = 0; c < CW_WEEKS; c++){
+    const col = new Date(start);
+    col.setDate(start.getDate() + c * 7);
+    const mth = col.getMonth();
+    /* 月份标：同月只在首次出现处标一次，且与上一个标至少隔 3 列 */
+    if(mth !== lastMonth && c - lastCol >= 3){
+      marks.push({col: c, label: String(mth + 1) + '月'});
+      lastMonth = mth; lastCol = c;
+    }
+    for(let r = 0; r < 7; r++){
+      const d = new Date(start);
+      d.setDate(start.getDate() + c * 7 + r);
+      if(d > today){ cells += '<i class="cw-cell future"></i>'; continue; }
+      const k = keyOf(d);
+      const n = mb.days[k] || 0;
+      if(n){ active++; total += n; }
+      cells += '<i class="cw-cell lv' + cwLevel(n) + (k === todayK ? ' today' : '') +
+          '" data-day="' + k + '" data-n="' + n + '" title="' + k + ' · ' + n + ' 个"></i>';
+    }
   }
-  host.innerHTML = html;
+  host.innerHTML = cells;
+  const monthHost = document.getElementById('cwMonths');
+  if(monthHost){
+    monthHost.style.width = (CW_WEEKS * CW_STEP - 3) + 'px';
+    monthHost.innerHTML = marks.map(m =>
+      '<span style="left:' + (m.col * CW_STEP) + 'px">' + m.label + '</span>').join('');
+  }
+  const sum = document.getElementById('cwSum');
+  if(sum) sum.innerHTML = '共 <b>' + active + '</b> 天 · <b>' + total + '</b> 次';
+  const scroller = document.getElementById('cwScroll');
+  if(scroller) scroller.scrollLeft = scroller.scrollWidth; /* 默认停在最近这一周 */
 }
 
 function refreshHeader(){
@@ -2877,7 +2956,7 @@ function refreshHeader(){
       : today >= GOAL ? '今日达成 · 继续也不亏'
       : '再刷 ' + (GOAL - today) + ' 个就收工';
   }
-  renderStrip();
+  renderWall();
 }
 
 /* ============================================================
@@ -2902,6 +2981,15 @@ function switchTab(name){
 
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+/* 贡献墙：点一格看当天的刷词记录 */
+document.getElementById('view-stat').addEventListener('click', (e) => {
+  const cell = e.target.closest('.cw-cell[data-day]');
+  if(!cell) return;
+  const n = Number(cell.dataset.n || 0);
+  const p = cell.dataset.day.split('-');
+  toast(Number(p[1]) + '月' + Number(p[2]) + '日 · ' + (n ? '刷了 ' + n + ' 个词' : '没有记录'));
 });
 
 /* 刷词：朗读 / 三档反馈 / 重开一轮 / 点按翻面 */
