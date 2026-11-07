@@ -870,6 +870,8 @@ body{
   background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--ink);
 }
 .tab.active svg{color:var(--ac-deep);}
+/* 键入时键盘占住下半屏：底栏收起，不跟着键盘一起上浮 */
+.app.kb-typing .tabbar{display:none;}
 
 /* ---------------- 轻提示 ---------------- */
 .toast{
@@ -2395,6 +2397,7 @@ function switchTab(name){
     main.scrollTop = 0;
     main.classList.toggle('lib-on', name === 'lib');
   }
+  syncKeyboardBar();
 }
 
 document.querySelectorAll('.tab').forEach(btn => {
@@ -2703,6 +2706,24 @@ document.getElementById('view-quiz').addEventListener('click', (e) => {
   const submit = e.target.closest('#qSubmit');
   if(submit){ if(quiz.answered) quizNext(); else quizCheck(); }
 });
+
+/* ============================================================
+   手机键盘：键入时收起底栏
+   键盘弹出会让可视高度变矮，底栏会被一起顶到键盘上方；
+   这里在输入框获得焦点（键盘弹出）时收起底栏，失焦后恢复
+   ============================================================ */
+function syncKeyboardBar(){
+  const app = document.querySelector('.app');
+  if(!app) return;
+  const phoneLike = window.innerWidth < 520 ||
+    (window.matchMedia && window.matchMedia('(pointer:coarse)').matches);
+  const ae = document.activeElement;
+  const typing = phoneLike && !!ae &&
+    (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable);
+  app.classList.toggle('kb-typing', typing);
+}
+document.addEventListener('focusin', syncKeyboardBar, true);
+document.addEventListener('focusout', () => setTimeout(syncKeyboardBar, 0), true);
 
 /* ============================================================
    启动
