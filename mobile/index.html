@@ -201,16 +201,36 @@ body{
 /* 当前卡组：点开切换牌组；固定墨色，不跟词卡强调色变 */
 .deck-scope{
   justify-self:center;min-width:0;max-width:100%;
-  display:inline-flex;align-items:center;gap:4px;
-  padding:2px 6px 2px 7px;border-radius:6px;border:1px solid transparent;
-  font-family:var(--mono);font-size:.52rem;font-weight:900;letter-spacing:.04em;
-  color:var(--ink);
-  background:color-mix(in srgb,var(--ink) 7%,transparent);
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:3px 10px 3px 6px;border-radius:9px;
+  border:1px solid color-mix(in srgb,var(--ink) 14%,transparent);
+  font-family:var(--mono);font-size:.53rem;font-weight:900;letter-spacing:.05em;
+  color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent;
+  /* 淡石墨波点底纹：只在按钮内部，不压过文字 */
+  background-color:color-mix(in srgb,var(--ink) 5%,var(--card));
+  background-image:radial-gradient(circle,color-mix(in srgb,var(--ink) 8%,transparent) 1px,transparent 1.3px);
+  background-size:6px 6px;background-position:1px 1px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 1px 2px rgba(32,36,42,.04);
+  transition:transform .14s var(--spring),background-color .16s,border-color .16s;
 }
-.deck-scope span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.deck-scope svg{width:9px;height:9px;flex:none;opacity:.5;transition:transform .18s var(--ease);}
-.deck-scope.open svg{transform:rotate(180deg);opacity:.8;}
+.deck-scope:active{transform:scale(.95);}
+.deck-scope.open{
+  background-color:color-mix(in srgb,var(--ink) 9%,var(--card));
+  border-color:color-mix(in srgb,var(--ink) 28%,transparent);
+}
+.deck-scope .scope-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* 左侧四点「牌堆」小标：点开时四点变实墨 */
+.deck-scope .deck-dots{
+  flex:none;display:grid;grid-template-columns:repeat(2,4px);grid-auto-rows:4px;gap:2px;
+  padding:3px;border-radius:6px;
+  background:color-mix(in srgb,var(--ink) 7%,transparent);
+}
+.deck-scope .deck-dots i{
+  border-radius:50%;background:color-mix(in srgb,var(--ink) 30%,transparent);
+  transition:background .16s,transform .18s var(--spring);
+}
+.deck-scope .deck-dots i:nth-child(1),.deck-scope .deck-dots i:nth-child(4){transform:scale(.72);}
+.deck-scope.open .deck-dots i{background:var(--ink);transform:scale(1);}
 /* 牌组选择：遮罩 + 词卡收成右上角的小卡 + 从下方上浮的牌架 */
 .deck-mask{
   position:absolute;inset:0;z-index:1;
@@ -1800,8 +1820,8 @@ function renderDeckShell(){
       '<div class="deck-meta">' +
         '<span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
         '<button class="deck-scope" id="deckScope" type="button" aria-haspopup="true" aria-expanded="false" title="切换牌组">' +
-          '<span>' + esc(scopeName()) + '</span>' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5L12 15l5.5-5.5"/></svg>' +
+          '<span class="deck-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' +
+          '<span class="scope-name">' + esc(scopeName()) + '</span>' +
         '</button>' +
         '<span class="deck-tools">' +
         (deckScoped ? '<button class="undo-btn" id="scopeExitBtn" type="button" aria-label="退出分组">退出</button>' : '') +
