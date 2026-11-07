@@ -1662,6 +1662,8 @@ let deckBackup = null;      /* 进入分组前的 {queue, pos, undoSnap} */
 let deckScopeLabel = '';    /* 当前分组字母，如 'C' */
 let deckPickOpen = false;   /* 牌组选择面板是否展开 */
 let deckPickDirty = true;   /* 面板里的计数是否过期（评分后掌握度会变） */
+let pickHistory = false;    /* 面板打开时压了一条历史记录，供手机返回键收回 */
+let pickIgnorePop = 0;      /* 自己发起的 back() 会触发 popstate，用计数把它忽略掉 */
 
 /* ------------------------------------------------------------
    朗读：优先播放预生成的发音文件（WebView 壳里通常没有系统 TTS），
@@ -2034,7 +2036,7 @@ function syncMiniCard(){
 
 function renderDeckShell(){
   const view = document.getElementById('view-deck');
-  deckPickOpen = false;
+  closeDeckPick(); /* 重建外壳时若面板还开着，顺手把那条历史记录也退掉 */
   view.innerHTML = '<div class="deck-wrap">' +
       '<div class="deck-meta">' +
         '<button class="deck-scope" id="deckScope" type="button" aria-haspopup="true" aria-expanded="false" title="切换牌组">' +
@@ -2763,7 +2765,21 @@ function deckPickPrebuild(){
   deckPickDirty = false;
 }
 
+/* 面板打开时压一条历史记录：手机的返回键就能把面板收回去。
+   用自己点遮罩/选牌组关掉时再退掉这条记录，不留空条目 */
+function pushPickHistory(){
+  if(pickHistory) return;
+  try{ history.pushState({ deckPick: 1 }, ''); pickHistory = true; }catch(e){}
+}
+function popPickHistory(){
+  if(!pickHistory) return;
+  pickHistory = false;
+  pickIgnorePop++;   /* 这次后退是我们自己发的，popstate 里不要再去关一次 */
+  try{ history.back(); }catch(e){}
+}
+
 function closeDeckPick(){
+  const wasOpen = deckPickOpen;
   deckPickOpen = false;
   const stage = document.getElementById('deckStage');
   const btn = document.getElementById('deckScope');
@@ -2772,6 +2788,7 @@ function closeDeckPick(){
     btn.classList.remove('open');
     btn.setAttribute('aria-expanded', 'false');
   }
+  if(wasOpen) popPickHistory();
 }
 
 function toggleDeckPick(){
@@ -2787,6 +2804,7 @@ function toggleDeckPick(){
   syncMiniCard();
   box.scrollTop = 0;
   deckPickOpen = true;
+  pushPickHistory();
   btn.classList.add('open');
   btn.setAttribute('aria-expanded', 'true');
   sfxPlay('panelOpen');
@@ -3530,6 +3548,18 @@ function endDrag(){
 }
 window.addEventListener('pointerup', endDrag);
 window.addEventListener('pointercancel', endDrag);
+
+/* 手机返回键 / 浏览器后退：面板开着就先收面板，不直接退出页面。
+   这条历史记录是我们压的，返回键已经把它吃掉，所以这里只关面板、不再 back() */
+window.addEventListener('popstate', () => {
+  /* 自己点遮罩/选牌组关闭时退记录，这一次 popstate 不处理，
+     否则快速再点开会被它顺手关掉 */
+  if(pickIgnorePop){ pickIgnorePop--; return; }
+  if(!deckPickOpen) return;
+  pickHistory = false;
+  closeDeckPick();
+  sfxPlay('panelClose');
+});
 
 /* 自测 */
 document.getElementById('view-quiz').addEventListener('click', (e) => {
