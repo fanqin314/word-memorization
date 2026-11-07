@@ -582,13 +582,15 @@ body{
   0%{transform:scale(1);opacity:.7;}
   72%,100%{transform:scale(2.1);opacity:0;}
 }
-/* 首字母：六列圆 tile */
-.letters-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+/* 首字母球：直径按该字母的词量变化（--s 由脚本按数量写入），大小不一的球自然成团 */
+.letters-grid{display:flex;flex-wrap:wrap;gap:7px;align-content:flex-start;}
 .letter-tile{
-  appearance:none;cursor:pointer;position:relative;aspect-ratio:1;
+  appearance:none;cursor:pointer;position:relative;flex:none;
+  width:var(--s,48px);height:var(--s,48px);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:var(--paper-2);border:1px solid var(--rule);border-radius:50%;
-  color:var(--ink);font-family:var(--display);font-size:.86rem;font-weight:900;
+  color:var(--ink);font-family:var(--display);
+  font-size:calc(var(--s,48px) * .28);font-weight:900;
   letter-spacing:-.02em;line-height:1;
   transition:transform .15s var(--spring),background .15s,border-color .15s,color .15s;
 }
@@ -610,6 +612,17 @@ body{
   0%{transform:scale(1);opacity:.68;}
   70%,100%{transform:scale(1.18);opacity:0;}
 }
+/* 小球入场：按顺序错拍落进牌架，带过冲回弹；只用 backwards，
+   动画结束后回到常态，按下的 :active 缩放才不会被压掉 */
+.deck-stage.pick-open .letter-tile{
+  animation:ballIn .5s cubic-bezier(.2,.9,.3,1) calc(var(--i,0) * .026s + .18s) backwards;
+}
+@keyframes ballIn{
+  0%{transform:scale(.36);opacity:.25;}
+  58%{transform:scale(1.14);opacity:1;}
+  78%{transform:scale(.94);}
+  100%{transform:scale(1);}
+}
 @media (prefers-reduced-motion:reduce){
   .deck-shelf,.deck-shelf .sect,.deck-mini,.stack{transition:none !important;}
   .deck-stage.pick-open .deck-mini,
@@ -618,6 +631,7 @@ body{
   .deck-stage.pick-open .deck-icon i,
   .deck-stage.pick-open .mst-tile.current .dot::after,
   .deck-stage.pick-open .letter-tile.current::after,
+  .deck-stage.pick-open .letter-tile,
   .deck-scope.open .deck-dots,
   .deck-scope.open::after{animation:none !important;}
 }
@@ -2775,10 +2789,15 @@ function deckPickHtml(){
       '</div></div>' +
     '<div class="sect sect-ltr">' + sectHead('首字母', letters.size + ' 个') +
       '<div class="letters-grid">' +
-        Array.from(letters.keys()).sort().map(L =>
-          '<button class="letter-tile' + (cur === 'l' + L ? ' current' : '') + '" type="button" data-deck="l' + L + '">' +
-            '<span class="lt">' + L + '</span><span class="n">' + letters.get(L) + '</span>' +
-          '</button>').join('') +
+        Array.from(letters.keys()).sort().map((L, i) => {
+          const n = letters.get(L);
+          /* 词越多球越大：1 个词 38px，封顶 9 个词 58px */
+          const s = Math.round(38 + Math.min(n, 9) * 2.2);
+          return '<button class="letter-tile' + (cur === 'l' + L ? ' current' : '') + '" type="button" data-deck="l' + L + '"' +
+            ' style="--s:' + s + 'px;--i:' + i + '">' +
+            '<span class="lt">' + L + '</span><span class="n">' + n + '</span>' +
+          '</button>';
+        }).join('') +
       '</div></div>';
 }
 
