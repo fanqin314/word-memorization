@@ -275,7 +275,8 @@ body{
   transform-origin:right 16px top 14px;
   transition:opacity .3s var(--ease),transform .45s var(--spring);
 }
-.deck-stage.pick-open .stack{opacity:0;transform:scale(.26) rotate(3deg);pointer-events:none;}
+/* 打开牌架后，正卡退成一张虚化的底片，给抽屉让出景深 */
+.deck-stage.pick-open .stack{opacity:.34;transform:scale(.92) translateY(-4px);filter:blur(4px);pointer-events:none;}
 /* 收起来的当前词卡 */
 .deck-mini{
   position:absolute;right:16px;top:14px;z-index:3;
@@ -287,7 +288,14 @@ body{
   transform:rotate(0) scale(.74);transform-origin:100% 0;
   transition:opacity .28s var(--ease),transform .48s var(--spring);
 }
-.deck-stage.pick-open .deck-mini{opacity:1;pointer-events:auto;transform:rotate(3deg) scale(1);}
+.deck-stage.pick-open .deck-mini{
+  opacity:1;pointer-events:auto;transform:rotate(3deg) scale(1);
+  animation:miniFloat 5.6s ease-in-out .5s infinite;
+}
+@keyframes miniFloat{
+  0%,100%{transform:rotate(3deg) scale(1);}
+  50%{transform:rotate(2.4deg) scale(1) translateY(-5px);}
+}
 .deck-mini .wm{
   font-family:var(--display);font-size:1.05rem;font-weight:900;letter-spacing:-.02em;line-height:1.05;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -305,10 +313,22 @@ body{
 }
 .deck-mini .bm::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--ac);flex:none;}
 .deck-mini .bm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-/* 牌架：三节牌组/掌握度/首字母，整体上浮 */
+/* 牌架：从下方抽出的抽屉面板，三节牌组/掌握度/首字母 */
 .deck-shelf{
-  position:absolute;inset:0;z-index:2;
-  padding:142px 16px 20px;
+  position:absolute;left:0;right:0;bottom:0;top:118px;z-index:2;
+  padding:30px 16px calc(18px + env(safe-area-inset-bottom,0px));
+  border-radius:22px 22px 0 0;
+  border:1px solid color-mix(in srgb,var(--ink) 9%,transparent);
+  border-bottom:0;
+  /* 抽屉表面：波点纸纹 + 三层雾色晕染 */
+  background-color:var(--card);
+  background-image:
+    radial-gradient(circle,color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1.35px),
+    radial-gradient(82% 40% at 8% 0%,color-mix(in srgb,var(--ac) 15%,transparent),transparent 68%),
+    radial-gradient(68% 38% at 98% 6%,color-mix(in srgb,var(--rose) 12%,transparent),transparent 70%),
+    radial-gradient(92% 52% at 50% 112%,color-mix(in srgb,var(--amber) 12%,transparent),transparent 72%);
+  background-size:10px 10px,auto,auto,auto;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 -22px 52px -30px rgba(32,36,42,.32);
   overflow-y:auto;overscroll-behavior:contain;
   opacity:0;pointer-events:none;transform:translateY(28px);
   transition:opacity .3s var(--ease),transform .5s var(--spring);
@@ -316,16 +336,62 @@ body{
 }
 .deck-shelf::-webkit-scrollbar{display:none;}
 .deck-stage.pick-open .deck-shelf{opacity:1;pointer-events:auto;transform:translateY(0);}
+/* 抽屉里缓慢游走的雾色光斑：只动 transform/opacity，滚动时不掉帧 */
+.shelf-aura{position:sticky;top:0;height:0;display:block;z-index:0;pointer-events:none;}
+.shelf-aura i{position:absolute;display:block;border-radius:50%;filter:blur(24px);opacity:.5;}
+.shelf-aura i:nth-child(1){width:190px;height:190px;left:-56px;top:-66px;
+  background:color-mix(in srgb,var(--ac) 26%,transparent);}
+.shelf-aura i:nth-child(2){width:168px;height:168px;right:-58px;top:16px;
+  background:color-mix(in srgb,var(--rose) 20%,transparent);}
+.shelf-aura i:nth-child(3){width:200px;height:158px;left:36%;top:104px;
+  background:color-mix(in srgb,var(--amber) 16%,transparent);}
+.deck-stage.pick-open .shelf-aura i:nth-child(1){animation:auraA 9s ease-in-out infinite;}
+.deck-stage.pick-open .shelf-aura i:nth-child(2){animation:auraB 11s ease-in-out infinite;}
+.deck-stage.pick-open .shelf-aura i:nth-child(3){animation:auraC 13s ease-in-out infinite;}
+@keyframes auraA{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(20px,14px) scale(1.14);}}
+@keyframes auraB{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-16px,18px) scale(.92);}}
+@keyframes auraC{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-14px,-12px) scale(1.1);}}
+/* 顶部提示：一颗呼吸小点 */
+.shelf-tip{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  margin:0 0 14px;font-family:var(--mono);font-size:.46rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 40%,transparent);
+}
+.shelf-tip i{width:5px;height:5px;border-radius:50%;background:var(--ac);}
+.deck-stage.pick-open .shelf-tip i{animation:tipPulse 2.4s ease-out infinite;}
+@keyframes tipPulse{
+  0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ac) 34%,transparent);}
+  70%,100%{box-shadow:0 0 0 7px transparent;}
+}
 .deck-shelf .sect{
+  position:relative;z-index:1;
   margin-bottom:18px;opacity:0;transform:translateY(10px);
   transition:opacity .3s var(--ease),transform .4s var(--spring);
 }
 .deck-shelf .sect:last-child{margin-bottom:0;}
 .deck-stage.pick-open .deck-shelf .sect{opacity:1;transform:translateY(0);}
-.deck-stage.pick-open .deck-shelf .sect:nth-child(1){transition-delay:.06s;}
-.deck-stage.pick-open .deck-shelf .sect:nth-child(2){transition-delay:.14s;}
-.deck-stage.pick-open .deck-shelf .sect:nth-child(3){transition-delay:.22s;}
-.deck-shelf .sect-head{display:flex;align-items:baseline;justify-content:space-between;margin:0 4px 8px;}
+.deck-stage.pick-open .deck-shelf .sect-deck{transition-delay:.06s;}
+.deck-stage.pick-open .deck-shelf .sect-mst{transition-delay:.14s;}
+.deck-stage.pick-open .deck-shelf .sect-ltr{transition-delay:.22s;}
+/* 每节一个自己的主题色：牌组雾青、掌握度琥珀、首字母靛蓝 */
+.deck-shelf .sect-deck{--sect:var(--ac);}
+.deck-shelf .sect-mst{--sect:var(--amber);}
+.deck-shelf .sect-ltr{--sect:var(--indigo);}
+.deck-shelf .sect-head{
+  position:relative;display:flex;align-items:baseline;justify-content:space-between;
+  gap:.5rem;margin:0 4px 10px;padding-bottom:7px;
+}
+/* 标题下的渐隐发丝线，让三节有各自的节拍 */
+.deck-shelf .sect-head::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--sect,var(--ac)) 38%,transparent),
+    color-mix(in srgb,var(--sect,var(--ac)) 8%,transparent) 58%,transparent);
+}
+.deck-shelf .sect-title::before{
+  content:'';display:inline-block;width:5px;height:5px;margin-right:6px;border-radius:50%;
+  vertical-align:1px;background:var(--sect,var(--ac));
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--sect,var(--ac)) 14%,transparent);
+}
 .deck-shelf .sect-title{
   font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.16em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
@@ -371,6 +437,18 @@ body{
   background:color-mix(in srgb,var(--accent,var(--ac)) 22%,var(--card));
   color:color-mix(in srgb,var(--accent,var(--ac)) 78%,var(--ink));
   font-family:var(--display);font-size:.66rem;font-weight:900;
+}
+/* 抽屉开着的这段时间，牌堆图标像被轻捏住一样慢慢扇动 */
+.deck-stage.pick-open .deck-icon i:nth-child(1){animation:iconFanA 4.6s ease-in-out infinite;}
+.deck-stage.pick-open .deck-icon i:nth-child(2){animation:iconFanB 4.6s ease-in-out infinite;}
+.decks-grid .deck-tile:nth-child(2) .deck-icon i{animation-delay:-2.1s;}
+@keyframes iconFanA{
+  0%,100%{transform:rotate(-6deg) translate(-1px,2px);}
+  50%{transform:rotate(-9.5deg) translate(-2px,3px);}
+}
+@keyframes iconFanB{
+  0%,100%{transform:rotate(3deg) translate(1px,0);}
+  50%{transform:rotate(7.5deg) translate(2px,-1px);}
 }
 .deck-tile .name{
   flex:1;min-width:0;font-size:.9rem;font-weight:800;line-height:1.2;
@@ -420,6 +498,11 @@ body{
   border-color:color-mix(in srgb,var(--dot,#8F9296) 34%,transparent);
 }
 .mst-tile.current .dot{box-shadow:0 0 0 5px color-mix(in srgb,var(--dot,#8F9296) 22%,transparent);}
+.deck-stage.pick-open .mst-tile.current .dot{animation:dotBreath 3.4s ease-in-out infinite;}
+@keyframes dotBreath{
+  0%,100%{box-shadow:0 0 0 5px color-mix(in srgb,var(--dot,#8F9296) 22%,transparent);}
+  50%{box-shadow:0 0 0 9px color-mix(in srgb,var(--dot,#8F9296) 8%,transparent);}
+}
 /* 首字母：六列圆 tile */
 .letters-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
 .letter-tile{
@@ -437,8 +520,19 @@ body{
 .letter-tile:active{transform:scale(.9);}
 .letter-tile.current{background:var(--ink);border-color:var(--ink);color:var(--card);}
 .letter-tile.current .n{color:color-mix(in srgb,var(--card) 70%,transparent);}
+.deck-stage.pick-open .letter-tile.current{animation:letterHalo 4.2s ease-in-out infinite;}
+@keyframes letterHalo{
+  0%,100%{box-shadow:0 0 0 0 transparent;}
+  50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--ink) 9%,transparent);}
+}
 @media (prefers-reduced-motion:reduce){
   .deck-shelf,.deck-shelf .sect,.deck-mini,.stack{transition:none !important;}
+  .deck-stage.pick-open .deck-mini,
+  .deck-stage.pick-open .shelf-aura i,
+  .deck-stage.pick-open .shelf-tip i,
+  .deck-stage.pick-open .deck-icon i,
+  .deck-stage.pick-open .mst-tile.current .dot,
+  .deck-stage.pick-open .letter-tile.current{animation:none !important;}
 }
 .deck-tools{display:flex;align-items:center;gap:.32rem;flex:none;}
 /* 状态条右侧的四个小控件：共用同一套高度/圆角/描边/按压反馈，
@@ -1731,6 +1825,23 @@ function sfxPlay(name){
       sfxNoise(.1, .3, 'highpass', 2400, .16, 4200, 1.4);
       sfxHaptic([10, 30, 10, 30, 16]);
       break;
+    case 'panelOpen':
+      /* 牌架拉开：一段纸滑声 + 一声轻铃 */
+      sfxNoise(0, .16, 'bandpass', 780, .2, 1700, .9);
+      sfxBell(440, .03, .26, .2);
+      sfxHaptic(8);
+      break;
+    case 'panelClose':
+      /* 牌架收回：比拉开低一档、短一截 */
+      sfxNoise(0, .12, 'lowpass', 900, .14, 420, .8);
+      sfxHaptic(4);
+      break;
+    case 'pick':
+      /* 选中一档：一粒小扣子落定 */
+      sfxNoise(0, .03, 'bandpass', 1700, .2, 2400, 2);
+      sfxTone(700, 0, .07, 'sine', .26, 620);
+      sfxHaptic(8);
+      break;
   }
 }
 function sfxButtonHtml(){
@@ -2542,16 +2653,18 @@ function deckPickHtml(){
   ];
   const mColors = ['#8F9296', 'var(--amber)', 'var(--moss)'];
 
-  return '<div class="sect">' + sectHead('牌组', decks.length + ' 组') +
+  return '<div class="shelf-aura" aria-hidden="true"><i></i><i></i><i></i></div>' +
+    '<div class="shelf-tip"><i></i>点选牌组，立即开刷</div>' +
+    '<div class="sect sect-deck">' + sectHead('牌组', decks.length + ' 组') +
       '<div class="decks-grid">' + decks.map(tile).join('') + '</div></div>' +
-    '<div class="sect">' + sectHead('掌握度', '3 类') +
+    '<div class="sect sect-mst">' + sectHead('掌握度', '3 类') +
       '<div class="mst-grid">' +
         [0, 1, 2].map(i =>
           '<button class="mst-tile' + (cur === 'm' + i ? ' current' : '') + '" type="button" data-deck="m' + i + '" style="--dot:' + mColors[i] + '">' +
             '<span class="dot"></span><span class="name">' + MST_LABEL[i] + '</span><span class="num">' + mCount[i] + '</span>' +
           '</button>').join('') +
       '</div></div>' +
-    '<div class="sect">' + sectHead('首字母', letters.size + ' 个') +
+    '<div class="sect sect-ltr">' + sectHead('首字母', letters.size + ' 个') +
       '<div class="letters-grid">' +
         Array.from(letters.keys()).sort().map(L =>
           '<button class="letter-tile' + (cur === 'l' + L ? ' current' : '') + '" type="button" data-deck="l' + L + '">' +
@@ -2576,7 +2689,7 @@ function toggleDeckPick(){
   const btn = document.getElementById('deckScope');
   const stage = document.getElementById('deckStage');
   if(!box || !btn || !stage) return;
-  if(deckPickOpen){ closeDeckPick(); return; }
+  if(deckPickOpen){ closeDeckPick(); sfxPlay('panelClose'); return; }
   box.innerHTML = deckPickHtml();
   box.scrollTop = 0;
   void box.offsetHeight; /* 先让内容落地，再加类才会播放入场过渡 */
@@ -2584,12 +2697,14 @@ function toggleDeckPick(){
   stage.classList.add('pick-open');
   btn.classList.add('open');
   btn.setAttribute('aria-expanded', 'true');
+  sfxPlay('panelOpen');
 }
 
 /* 选中某个牌组：从头开始刷这一组 */
 function pickDeck(key){
   if(animating) return;
   closeDeckPick();
+  sfxPlay('pick');
   if(key === 'all'){
     deckScoped = false;
     deckBackup = null;
@@ -3003,7 +3118,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   }
   if(e.target.closest('#deckMini') || e.target.closest('#deckMask')){
     e.preventDefault(); e.stopPropagation();
-    closeDeckPick();
+    if(deckPickOpen){ closeDeckPick(); sfxPlay('panelClose'); }
     return;
   }
   const dChip = e.target.closest('[data-deck]');
