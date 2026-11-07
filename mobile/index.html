@@ -599,8 +599,16 @@ body{
   text-align:center;color:var(--ink-2);padding:1.2rem;
 }
 .deck-empty .big{font-family:var(--display);font-size:1.6rem;letter-spacing:-.02em;}
-/* ---------------- 词库 ---------------- */
-.lib-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.55rem;}
+/* ---------------- 词库：字母方块 + 分组详情 ---------------- */
+#view-lib.active{display:flex;flex-direction:column;height:100%;}
+.main.lib-on{overflow:hidden;padding-bottom:.55rem;}
+.lib-stat{
+  flex:none;display:flex;align-items:baseline;gap:.3rem;margin:0 .12rem .42rem;
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.06em;
+  color:color-mix(in srgb,var(--ink) 48%,transparent);
+}
+.lib-stat b{color:var(--ink);}
+.lib-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;}
 .search-box{position:relative;flex:1;min-width:0;}
 .search-box svg{
   position:absolute;left:12px;top:50%;transform:translateY(-50%);
@@ -610,57 +618,129 @@ body{
   width:100%;height:42px;
   font-family:var(--sans);font-size:.82rem;font-weight:700;color:var(--ink);
   background:var(--card);border:1px solid var(--rule-2);border-radius:12px;
-  padding:0 14px 0 34px;outline:none;
+  padding:0 38px 0 34px;outline:none;
   box-shadow:var(--soft);
   transition:border-color .16s,box-shadow .16s;
 }
 .search-box input::placeholder{color:color-mix(in srgb,var(--ink) 38%,transparent);font-weight:700;}
 .search-box input:focus{background:#fff;border-color:color-mix(in srgb,var(--ac) 45%,transparent);
   box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 18%,transparent);}
-.lib-count{
-  flex:none;font-family:var(--mono);font-size:.6rem;font-weight:900;
-  padding:.24rem .5rem .26rem;border-radius:8px;
-  background:color-mix(in srgb,var(--ink) 6%,transparent);color:color-mix(in srgb,var(--ink) 62%,transparent);
+.search-box .clear{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  width:22px;height:22px;padding:0;border:0;border-radius:50%;
+  background:rgba(32,36,42,.10);color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;font-size:13px;line-height:1;font-weight:700;
+  transition:background .16s;
 }
-.wlist{display:flex;flex-direction:column;}
-.wrow{
-  display:flex;align-items:center;gap:.55rem;
-  padding:.52rem .6rem;margin-bottom:.42rem;
-  background:var(--card);border:1px solid var(--rule);
-  border-radius:14px;
-  box-shadow:var(--soft);
-  text-decoration:none;color:inherit;
-  transition:transform .16s var(--spring),box-shadow .16s var(--ease);
+.search-box .clear:active{background:rgba(32,36,42,.18);}
+.search-box .clear[hidden]{display:none;}
+
+.lib-stage{position:relative;flex:1;min-height:0;overflow:hidden;margin-top:.1rem;}
+.lib-grid{
+  position:absolute;inset:0;padding-bottom:.4rem;
+  display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;justify-content:center;
+  --cols:5;
+  transition:opacity .28s var(--ease),transform .28s var(--ease);
 }
-.wrow:active{transform:scale(.985);box-shadow:0 1px 2px rgba(32,36,42,.05);}
-.wbar{width:6px;height:34px;border-radius:999px;background:color-mix(in srgb,var(--rc,var(--clay)) 78%,#fff);border:0;flex:none;}
-.wbody{min-width:0;flex:1;}
-.wword{display:flex;align-items:baseline;gap:.34rem;}
-.wword b{font-family:var(--display);font-size:1rem;letter-spacing:-.01em;line-height:1.2;}
-.wword i{font-family:var(--mono);font-style:normal;font-size:.55rem;font-weight:900;color:color-mix(in srgb,var(--ink) 50%,transparent);}
-.wgloss{font-size:.66rem;font-weight:700;color:color-mix(in srgb,var(--ink) 60%,transparent);line-height:1.35;margin-top:.1rem;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.wmeta{flex:none;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:.16rem;}
-.wmst{
-  font-family:var(--mono);font-size:.52rem;font-weight:900;letter-spacing:.04em;
-  padding:.1rem .36rem .12rem;border-radius:6px;border:0;
-  background:color-mix(in srgb,currentColor 12%,transparent);
+.lib-grid.fade-out{opacity:0;transform:scale(.94);pointer-events:none;}
+.cell{
+  position:relative;appearance:none;border:0;cursor:pointer;
+  flex:0 0 calc((100% - (var(--cols) - 1) * 6px) / var(--cols));
+  max-width:80px;aspect-ratio:1;
+  border-radius:12px;
+  background:color-mix(in srgb,var(--lc) 12%,#FFFFFF);
+  color:color-mix(in srgb,var(--lc) 72%,var(--ink));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:8px 8px 12px;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--lc) 18%,transparent);
+  transition:transform .14s var(--spring),background .2s,box-shadow .2s;
 }
-.wmst.m0{color:#7C7972;}
-.wmst.m1{color:#9A7B34;}
-.wmst.m2{color:#4C6B52;}
-.wnum{font-family:var(--mono);font-size:.5rem;font-weight:900;color:color-mix(in srgb,var(--ink) 42%,transparent);}
+.cell:active{transform:scale(.92);}
+.cell-letter{font-family:var(--display);font-size:22px;font-weight:900;line-height:1;letter-spacing:-.02em;}
+.cell-count{font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.02em;opacity:.7;}
+.cell-progress{
+  position:absolute;left:8px;right:8px;bottom:7px;height:3px;
+  border-radius:99px;overflow:hidden;display:flex;
+  background:rgba(0,0,0,.04);
+}
+.cell-progress i{display:block;height:100%;}
+.cell-progress .p0{background:#C8CBCE;}
+.cell-progress .p1{background:#BB9A5A;}
+.cell-progress .p2{background:#6F8B74;}
+.cell.hide{visibility:hidden;}
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
-/* ---------------- 词库：思维导图 ---------------- */
-#view-lib.active{display:flex;flex-direction:column;height:100%;}
-.main.lib-on{overflow:hidden;padding-bottom:.55rem;}
-.lib-canvas{position:relative;flex:1;min-height:0;margin:.05rem -.3rem 0;overflow:hidden;}
-#libGraph{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;}
-.lib-hint{
-  position:absolute;left:50%;bottom:.2rem;transform:translateX(-50%);
-  font-family:var(--mono);font-size:.53rem;font-weight:900;letter-spacing:.05em;
-  color:color-mix(in srgb,var(--ink) 34%,transparent);pointer-events:none;white-space:nowrap;
+/* 详情层 */
+.lib-detail{position:absolute;inset:0;display:none;flex-direction:column;}
+.lib-detail.show{display:flex;}
+.detail-top{flex:none;display:flex;align-items:center;gap:.5rem;padding:.1rem 0 0;}
+.back-btn{
+  appearance:none;border:1px solid var(--rule-2);cursor:pointer;flex:none;
+  width:34px;height:34px;border-radius:10px;
+  background:var(--card);color:var(--ink);
+  display:grid;place-items:center;
+  transition:transform .14s,background .16s;
+}
+.back-btn:active{transform:scale(.94);}
+.back-btn svg{width:16px;height:16px;display:block;}
+.detail-title{
+  flex:1;text-align:center;min-width:0;
+  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 50%,transparent);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.bulk-btn{
+  appearance:none;border:0;cursor:pointer;flex:none;
+  font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.04em;
+  padding:7px 10px;border-radius:8px;
+  background:var(--ink);color:#fff;
+  transition:transform .14s,background .16s;
+}
+.bulk-btn:active{transform:scale(.94);}
+.badge{
+  width:84px;height:84px;flex:none;
+  margin:.7rem auto .85rem;border-radius:16px;
+  display:grid;place-items:center;
+  font-family:var(--display);font-size:38px;font-weight:900;letter-spacing:-.03em;
+  color:#FFFFFF;visibility:hidden;
+}
+.detail-scroll{flex:1;min-height:0;overflow-y:auto;padding-bottom:.6rem;scrollbar-width:none;}
+.detail-scroll::-webkit-scrollbar{display:none;}
+.w-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+.w-card{
+  background:var(--card);border-radius:12px;
+  border-left:4px solid var(--rc,#BC7E8A);
+  padding:.68rem .72rem .72rem;
+  box-shadow:0 1px 2px rgba(32,36,42,.05),0 8px 18px -10px rgba(32,36,42,.18);
+  cursor:pointer;opacity:0;transform:translateY(14px) scale(.96);
+}
+.w-card.in{animation:cardIn .42s cubic-bezier(.34,1.3,.64,1) both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
+.w-word{font-family:var(--display);font-size:.94rem;font-weight:900;letter-spacing:-.01em;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.w-ipa{font-family:var(--mono);font-size:.55rem;font-weight:700;color:color-mix(in srgb,var(--ink) 48%,transparent);
+  margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.w-gloss{font-size:.64rem;font-weight:700;line-height:1.35;margin-top:.36rem;
+  color:color-mix(in srgb,var(--ink) 60%,transparent);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.w-meta{display:flex;align-items:center;gap:.34rem;margin-top:.46rem;}
+.w-mst{
+  font-family:var(--mono);font-size:.5rem;font-weight:900;letter-spacing:.04em;
+  padding:1px 6px;border-radius:5px;border:0;
+  background:color-mix(in srgb,currentColor 12%,transparent);
+}
+.w-mst.m0{color:#7C7972;}
+.w-mst.m1{color:#9A7B34;}
+.w-mst.m2{color:#4C6B52;}
+.w-chk{font-family:var(--mono);font-size:.5rem;font-weight:900;color:color-mix(in srgb,var(--ink) 42%,transparent);}
+
+.flyer{
+  position:fixed;z-index:999;pointer-events:none;
+  display:grid;place-items:center;
+  font-family:var(--display);font-weight:900;letter-spacing:-.02em;
+  border-radius:12px;transform-origin:top left;will-change:transform;
+  box-shadow:0 14px 32px -12px rgba(32,36,42,.42);
 }
 
 /* ---------------- 自测 ---------------- */
@@ -1087,7 +1167,7 @@ function markRated(word){
 }
 /* 进度存档：日期 + 当前下标 + 当时的队列词序 */
 function savePos(){
-  if(!queue.length) return;
+  if(!queue.length || deckScoped) return;
   mb.pos = {date: todayKey(), index: pos, queueWords: queue.map(w => w.word)};
   persist(MB_KEY, mb);
 }
@@ -1124,6 +1204,8 @@ function buildQueue(onlyFresh){
 let queue = [];
 let pos = 0;
 let animating = false;
+/* 词库「刷这组」：临时队列，不写全局进度存档 */
+let deckScoped = false;
 
 /* ------------------------------------------------------------
    朗读：优先播放预生成的发音文件（WebView 壳里通常没有系统 TTS），
@@ -1663,402 +1745,304 @@ function advance(level, dir){
   }, level === null ? 400 : 360);
 }
 /* ============================================================
-   词库：思维导图
-   中心「词库」→ 字母分支 → 单词；点字母手风琴式展开一支，
-   词多了也不会挤成一团。拖动平移、双指缩放，点词开卡。
+   词库：字母方块 + 分组详情
+   字母方块按掌握度聚合上色；点开飞入详情，词卡两列；
+   搜索按单词/释义过滤；「刷这组」把刷词队列临时换成该组。
    ============================================================ */
 let libBuilt = false;
-let libQuery = '';
-let libG = null;            /* 当前图 */
-let libRAF = 0;
-const libPos = new Map();   /* 节点位置记忆：切页回来不重排 */
-const libOpen = new Set();  /* 展开的字母分支（手风琴式，一次一个） */
-let libSearchPrev = new Set();
-let libSearchOn = false;
+let libFilter = '';
+let libGroups = new Map();      /* 当前过滤结果：字母 → 词[] */
+let libCurrent = null;          /* 已展开的字母 */
+let libAnimating = false;
+let libTimer = null;
 
 function renderLib(){
+  const view = document.getElementById('view-lib');
   if(!libBuilt){
     libBuilt = true;
-    const view = document.getElementById('view-lib');
-    view.innerHTML = '<div class="lib-top"><div class="search-box">' +
+    view.innerHTML =
+      '<div class="lib-stat"><b id="libStatCount">' + WORDS.length + '</b> 个词 · ' +
+        '<b id="libStatLetters">0</b> 个字母</div>' +
+      '<div class="lib-top"><div class="search-box">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>' +
         '<input id="libSearch" type="search" placeholder="搜单词或释义…" autocomplete="off" autocapitalize="off" spellcheck="false">' +
-      '</div><span class="lib-count" id="libCount">' + WORDS.length + '</span></div>' +
-      '<div class="lib-canvas"><canvas id="libGraph"></canvas>' +
-        '<span class="lib-hint">点字母展开 · 拖动平移 · 双指缩放</span></div>';
-    document.getElementById('libSearch').addEventListener('input', (e) => {
-      libQuery = e.target.value.trim().toLowerCase();
-      applyLibQuery();
+        '<button class="clear" id="libClear" type="button" aria-label="清空" hidden>×</button>' +
+      '</div></div>' +
+      '<div class="lib-stage"><div class="lib-grid" id="libGrid"></div>' +
+        '<div class="lib-detail" id="libDetail"></div></div>';
+
+    const qEl = document.getElementById('libSearch');
+    const clearBtn = document.getElementById('libClear');
+    qEl.addEventListener('input', (e) => {
+      clearBtn.hidden = !e.target.value;
+      const v = e.target.value;
+      clearTimeout(libTimer);
+      libTimer = setTimeout(() => {
+        if(libCurrent) hardCloseLib();
+        renderLibGrid(v.trim().toLowerCase());
+      }, 140);
     });
-    bindLibGraph();
+    clearBtn.addEventListener('click', () => {
+      qEl.value = '';
+      clearBtn.hidden = true;
+      libFilter = '';
+      if(libCurrent) hardCloseLib();
+      renderLibGrid('');
+      qEl.focus();
+    });
+
+    /* 下滑关闭详情层；列表已滚动时不拦 */
+    const detail = document.getElementById('libDetail');
+    let touchY = 0, touchBlocked = false;
+    detail.addEventListener('touchstart', (e) => {
+      if(!libCurrent) return;
+      const scroller = detail.querySelector('.detail-scroll');
+      touchBlocked = !!(scroller && scroller.scrollTop > 0);
+      touchY = e.touches[0].clientY;
+    }, {passive: true});
+    detail.addEventListener('touchmove', (e) => {
+      if(!libCurrent || touchBlocked) return;
+      if(e.touches[0].clientY - touchY > 80){ closeLibLetter(); touchBlocked = true; }
+    }, {passive: true});
+
+    document.getElementById('libGrid').addEventListener('click', (e) => {
+      const cell = e.target.closest('.cell');
+      if(!cell) return;
+      openLibLetter(cell.dataset.letter);
+    });
   }
-  buildLibGraph();
-  applyLibQuery();
-  libWake();
+  if(libCurrent) hardCloseLib();
+  renderLibGrid(libFilter);
 }
 
-/* CSS 变量在 canvas 里不生效，取出来解析成具体颜色 */
-function cssColor(v){
-  const m = /^var\((--[^)]+)\)$/.exec(String(v || ''));
-  if(!m) return String(v || '#20242A');
-  return getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim() || '#20242A';
-}
-
-function buildLibGraph(){
-  const cvs = document.getElementById('libGraph');
-  if(!cvs) return;
-  if(libG) libG.nodes.forEach(n => libPos.set(n.id, {x:n.x, y:n.y, a:n.a}));
-  const hubs = new Map();
+/* 按首字母分组；q 非空时按单词/释义过滤 */
+function libGroupsOf(q){
+  const map = new Map();
   WORDS.forEach(w => {
+    if(q && !(w.word.toLowerCase().includes(q) || (w.gloss || '').toLowerCase().includes(q))) return;
     const L = (w.word[0] || '#').toUpperCase();
-    if(!hubs.has(L)) hubs.set(L, {id:'h:'+L, kind:'hub', label:L, hit:false,
-      x:0, y:0, tx:0, ty:0, r:13, a:0, targetA:1, color:'#5F7F86', angle:0});
+    if(!map.has(L)) map.set(L, []);
+    map.get(L).push(w);
   });
-  const hubList = Array.from(hubs.values());
-  hubList.sort((a, b) => a.label.localeCompare(b.label));
-  const root = {id:'root', kind:'root', label:'词库', hubList,
-    x:0, y:0, tx:0, ty:0, r:24, a:0, targetA:1, hit:false, color:'#5F7F86'};
-  const nodes = [root];
-  const links = [];
-  hubList.forEach(h => {
-    nodes.push(h);
-    links.push({a:root, b:h});
-  });
-  WORDS.forEach(w => {
-    const hub = hubs.get((w.word[0] || '#').toUpperCase());
-    const node = {id:'w:' + w.word, kind:'word', word:w, label:w.word, hub,
-      x:0, y:0, tx:0, ty:0, r:7, a:0, targetA:0, hit:false,
-      color:cssColor(rootOf(w).color), m:masteryOf(w.word)};
-    nodes.push(node);
-    links.push({a:hub, b:node});
-  });
-  /* 切页回来沿用上次的位置和透明度，不重排、不闪 */
-  nodes.forEach(n => {
-    const p = libPos.get(n.id);
-    if(p){ n.x = p.x; n.y = p.y; n.a = p.a; }
-  });
-  const box = cvs.parentElement.getBoundingClientRect();
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  cvs.width = Math.max(1, Math.round(box.width * dpr));
-  cvs.height = Math.max(1, Math.round(box.height * dpr));
-  libG = {nodes, links, hubs:hubList, root, cam:{x:0, y:0, scale:1},
-    w:box.width || 320, h:box.height || 420, dpr, drag:null};
-  libLayout();
+  map.forEach(list => list.sort((a, b) => a.word.localeCompare(b.word)));
+  return map;
 }
 
-/* ---------- 思维导图布局：中心 → 字母 → 词，确定性排布，不糊 ---------- */
-function libLayout(){
-  const g = libG;
-  if(!g) return;
-  const N = g.hubs.length;
-  const short = Math.min(g.w, g.h);
-  const RMAX = Math.max(120, short / 2 - 22);   /* 整张图必须落进画布 */
-  const R1 = Math.max(74, Math.min(118, short * .27));
-  const R2 = Math.min(R1 + Math.max(46, Math.min(80, short * .17)), RMAX * .8);
-  const STEP = Math.min(Math.max(36, short * .11), RMAX - R2);
-  g.hubs.forEach((h, i) => {
-    const a = -Math.PI / 2 + (i / N) * Math.PI * 2;
-    h.angle = a;
-    h.tx = Math.cos(a) * R1;
-    h.ty = Math.sin(a) * R1;
-    h.targetA = 1;
-  });
-  g.root.x = g.root.x || 0;
-  g.root.tx = 0;
-  g.root.ty = 0;
-  g.root.targetA = 1;
-  g.hubs.forEach(h => {
-    const kids = g.nodes.filter(n => n.kind === 'word' && n.hub === h);
-    const show = kids.filter(n => n.hit || libOpen.has(h.label));
-    kids.forEach(n => { n.targetA = show.indexOf(n) >= 0 ? 1 : 0; });
-    show.forEach((n, i) => {
-      const k = show.length;
-      const span = Math.min(1.3, Math.max(.28, k * .26));
-      const a = k === 1 ? h.angle : h.angle + ((i / (k - 1)) - .5) * span;
-      const ring = Math.floor(i / 5);
-      const r = R2 + ring * STEP;
-      n.tx = Math.cos(a) * r;
-      n.ty = Math.sin(a) * r;
+/* 方块颜色 = 该组掌握状态的聚合：全灰 / 琥珀 / 苔绿 */
+function libGroupColor(list){
+  const n = list.length;
+  const m1 = list.filter(w => masteryOf(w.word) === 1).length;
+  const m2 = list.filter(w => masteryOf(w.word) === 2).length;
+  if(n > 0 && m2 === n) return '#6F8B74';
+  if(m1 + m2 === 0) return '#8F9296';
+  return '#BB9A5A';
+}
+
+/* 列数按字母数量自适应 */
+function libBestCols(n){
+  if(n <= 2) return Math.max(n, 1);
+  if(n === 3) return 3;
+  if(n === 4) return 2;
+  if(n <= 6) return 3;
+  if(n <= 8) return 4;
+  return 5;
+}
+
+function libSorted(list){
+  return list.slice().sort((a, b) =>
+    masteryOf(a.word) - masteryOf(b.word) || a.word.localeCompare(b.word));
+}
+
+function renderLibGrid(q){
+  libFilter = q || '';
+  libGroups = libGroupsOf(libFilter);
+  const used = Array.from(libGroups.keys()).sort();
+  const total = used.reduce((n, L) => n + libGroups.get(L).length, 0);
+  const cEl = document.getElementById('libStatCount');
+  const lEl = document.getElementById('libStatLetters');
+  if(cEl) cEl.textContent = total;
+  if(lEl) lEl.textContent = used.length;
+
+  const grid = document.getElementById('libGrid');
+  if(!grid) return;
+  if(!used.length){
+    grid.innerHTML = '<div class="wempty">没有匹配的词，换个关键词试试</div>';
+    return;
+  }
+  grid.style.setProperty('--cols', libBestCols(used.length));
+  grid.innerHTML = used.map(L => {
+    const list = libGroups.get(L);
+    const hex = libGroupColor(list);
+    const m0 = list.filter(w => masteryOf(w.word) === 0).length;
+    const m1 = list.filter(w => masteryOf(w.word) === 1).length;
+    const m2 = list.filter(w => masteryOf(w.word) === 2).length;
+    const bars = [];
+    if(m0) bars.push('<i class="p0" style="flex:' + m0 + '"></i>');
+    if(m1) bars.push('<i class="p1" style="flex:' + m1 + '"></i>');
+    if(m2) bars.push('<i class="p2" style="flex:' + m2 + '"></i>');
+    return '<button class="cell" type="button" data-letter="' + esc(L) + '" style="--lc:' + hex + '">' +
+      '<span class="cell-letter">' + esc(L) + '</span>' +
+      '<span class="cell-count">' + list.length + ' 词</span>' +
+      '<span class="cell-progress">' + bars.join('') + '</span>' +
+    '</button>';
+  }).join('');
+}
+
+function renderLibDetail(L, list, hex){
+  const detail = document.getElementById('libDetail');
+  const cards = libSorted(list).map(w => {
+    const m = masteryOf(w.word);
+    const n = reviewDone(w.word);
+    return '<div class="w-card" data-word="' + esc(w.word) + '" style="--rc:' + rootOf(w).color + '">' +
+      '<div class="w-word">' + esc(w.word) + '</div>' +
+      (w.ipa ? '<div class="w-ipa">' + esc(w.ipa) + '</div>' : '') +
+      '<div class="w-gloss">' + esc(w.gloss) + '</div>' +
+      '<div class="w-meta">' +
+        '<span class="w-mst m' + m + '">' + MST_LABEL[m] + '</span>' +
+        '<span class="w-chk">' + (n ? '打卡 ' + n + '/4' : '') + '</span>' +
+      '</div></div>';
+  }).join('');
+
+  detail.innerHTML =
+    '<div class="detail-top">' +
+      '<button class="back-btn" id="libBack" type="button" aria-label="返回字母">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>' +
+      '</button>' +
+      '<span class="detail-title">' + esc(L) + ' · ' + list.length + ' 个词</span>' +
+      '<button class="bulk-btn" id="libBulk" type="button">刷这组</button>' +
+    '</div>' +
+    '<div class="badge" id="libBadge" style="background:color-mix(in srgb,' + hex + ' 62%,#FFFFFF);box-shadow:0 14px 30px -12px color-mix(in srgb,' + hex + ' 60%,transparent);">' + esc(L) + '</div>' +
+    '<div class="detail-scroll"><div class="w-grid">' + cards + '</div></div>';
+
+  document.getElementById('libBack').addEventListener('click', closeLibLetter);
+  document.getElementById('libBadge').addEventListener('click', closeLibLetter);
+  document.getElementById('libBulk').addEventListener('click', () => queueLibLetter(L, libGroups.get(L)));
+  detail.querySelectorAll('.w-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const w = list.find(x => x.word === card.dataset.word);
+      if(w) location.href = '../' + w.file;
     });
-    if(!show.length){
-      kids.forEach(n => { n.tx = h.tx; n.ty = h.ty; });
-    }
   });
 }
 
-/* ---------- 缓动：不用物理，节点朝目标位漂过去 ---------- */
-function libStep(){
-  const g = libG;
-  if(!g) return 0;
-  let heat = 0;
-  g.nodes.forEach(n => {
-    if(n === g.drag) return;
-    const dx = n.tx - n.x, dy = n.ty - n.y;
-    const da = n.targetA - n.a;
-    n.x += dx * .18;
-    n.y += dy * .18;
-    n.a += da * .16;
-    if(Math.abs(dx) < .3) n.x = n.tx;
-    if(Math.abs(dy) < .3) n.y = n.ty;
-    if(Math.abs(da) < .01) n.a = n.targetA;
-    heat += Math.abs(dx) + Math.abs(dy) + Math.abs(da) * 12;
+/* 飞行动画：从 fromRect 飞到 toRect；toStrong 指目标态（实心大徽章） */
+function libFly(fromRect, toRect, L, hex, toStrong){
+  const f = document.createElement('div');
+  f.className = 'flyer';
+  f.textContent = L;
+  f.style.left = fromRect.left + 'px';
+  f.style.top = fromRect.top + 'px';
+  f.style.width = fromRect.width + 'px';
+  f.style.height = fromRect.height + 'px';
+  f.style.fontSize = Math.round(fromRect.width * .38) + 'px';
+  f.style.background = 'color-mix(in srgb,' + hex + (toStrong ? ' 12%,#FFFFFF)' : ' 62%,#FFFFFF)');
+  f.style.color = toStrong ? 'color-mix(in srgb,' + hex + ' 72%,#20242A)' : '#FFFFFF';
+  f.style.borderRadius = toStrong ? '12px' : '16px';
+  document.body.appendChild(f);
+
+  const dx = toRect.left - fromRect.left, dy = toRect.top - fromRect.top;
+  const sx = toRect.width / fromRect.width, sy = toRect.height / fromRect.height;
+  requestAnimationFrame(() => {
+    f.style.transition = 'transform .42s cubic-bezier(.34,1.15,.64,1),background .3s ease,color .3s ease,border-radius .3s ease';
+    f.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+    f.style.background = 'color-mix(in srgb,' + hex + (toStrong ? ' 62%,#FFFFFF)' : ' 12%,#FFFFFF)');
+    f.style.color = toStrong ? '#FFFFFF' : 'color-mix(in srgb,' + hex + ' 72%,#20242A)';
+    f.style.borderRadius = toStrong ? '16px' : '12px';
   });
-  return heat;
+  return f;
 }
 
-function applyLibQuery(){
-  if(!libG) return;
-  const q = libQuery;
-  let hits = 0;
-  const hitHubs = new Set();
-  libG.nodes.forEach(node => {
-    if(node.kind !== 'word') return;
-    node.hit = !!q && (node.word.word.toLowerCase().includes(q) ||
-      (node.word.gloss || '').toLowerCase().includes(q));
-    if(node.hit){ hits++; hitHubs.add(node.hub.label); }
-  });
-  /* 搜索时临时展开命中的字母分支，清空后还原之前展开的那支 */
-  if(q && !libSearchOn){
-    libSearchPrev = new Set(libOpen);
-    libSearchOn = true;
+function openLibLetter(L){
+  if(libAnimating) return;
+  const list = libGroups.get(L);
+  if(!list || !list.length) return;
+  const grid = document.getElementById('libGrid');
+  const detail = document.getElementById('libDetail');
+  const src = grid.querySelector('[data-letter="' + L + '"]');
+  if(!src) return;
+  libAnimating = true;
+  libCurrent = L;
+  const hex = libGroupColor(list);
+
+  const fromRect = src.getBoundingClientRect();
+  src.classList.add('hide');
+  grid.classList.add('fade-out');
+
+  renderLibDetail(L, list, hex);
+  detail.classList.add('show');
+  detail.style.opacity = '0';
+  const badge = document.getElementById('libBadge');
+  const toRect = badge.getBoundingClientRect();
+
+  libFly(fromRect, toRect, L, hex, true);
+
+  setTimeout(() => {
+    document.querySelectorAll('.flyer').forEach(el => el.remove());
+    badge.style.visibility = 'visible';
+    detail.style.transition = 'opacity .18s ease';
+    detail.style.opacity = '1';
+    detail.querySelectorAll('.w-card').forEach((el, i) => {
+      el.style.animationDelay = (i * 26) + 'ms';
+      el.classList.add('in');
+    });
+    setTimeout(() => { libAnimating = false; }, 380);
+  }, 430);
+}
+
+function closeLibLetter(){
+  if(libAnimating || !libCurrent) return;
+  const L = libCurrent;
+  const list = libGroups.get(L);
+  if(!list){ hardCloseLib(); return; }
+  const grid = document.getElementById('libGrid');
+  const detail = document.getElementById('libDetail');
+  const badge = document.getElementById('libBadge');
+  const src = grid.querySelector('[data-letter="' + L + '"]');
+  if(!badge || !src){ hardCloseLib(); return; }
+
+  libAnimating = true;
+  const hex = libGroupColor(list);
+  const fromRect = badge.getBoundingClientRect();
+  src.classList.remove('hide');
+  const toRect = src.getBoundingClientRect();
+  badge.style.visibility = 'hidden';
+  grid.classList.remove('fade-out');
+  detail.style.transition = 'opacity .2s ease';
+  detail.style.opacity = '0';
+
+  libFly(fromRect, toRect, L, hex, false);
+  setTimeout(hardCloseLib, 420);
+}
+
+function hardCloseLib(){
+  document.querySelectorAll('.flyer').forEach(el => el.remove());
+  const detail = document.getElementById('libDetail');
+  if(detail){
+    detail.classList.remove('show');
+    detail.innerHTML = '';
+    detail.style.opacity = '';
+    detail.style.transition = '';
   }
-  if(q){
-    libOpen.clear();
-    hitHubs.forEach(L => libOpen.add(L));
-  } else if(libSearchOn){
-    libOpen.clear();
-    libSearchPrev.forEach(L => libOpen.add(L));
-    libSearchOn = false;
+  const grid = document.getElementById('libGrid');
+  if(grid){
+    grid.classList.remove('fade-out');
+    grid.querySelectorAll('.cell.hide').forEach(el => el.classList.remove('hide'));
   }
-  const el = document.getElementById('libCount');
-  if(el) el.textContent = q ? hits : WORDS.length;
-  libLayout();
-  libDraw();
-  libWake();
+  libCurrent = null;
+  libAnimating = false;
 }
 
-function libDraw(){
-  const g = libG;
-  if(!g) return;
-  const cvs = document.getElementById('libGraph');
-  if(!cvs) return;
-  const ctx = cvs.getContext('2d');
-  const s = g.cam.scale, dpr = g.dpr;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, g.w, g.h);
-  ctx.setTransform(dpr * s, 0, 0, dpr * s,
-    dpr * (g.w / 2 - g.cam.x * s), dpr * (g.h / 2 - g.cam.y * s));
-  /* 连线：两端淡出取较小值，子节点收起时线跟着消失 */
-  g.links.forEach(l => {
-    const al = Math.min(l.a.a, l.b.a);
-    if(al < .02) return;
-    const leaf = l.b.kind === 'word';
-    ctx.strokeStyle = leaf ? l.b.color : '#5F7F86';
-    ctx.globalAlpha = (leaf ? .3 : .55) * al;
-    ctx.lineWidth = (leaf ? 1.2 : 1.8) / s;
-    ctx.beginPath();
-    ctx.moveTo(l.a.x, l.a.y);
-    ctx.lineTo(l.b.x, l.b.y);
-    ctx.stroke();
-  });
-  /* 节点 */
-  g.nodes.forEach(n => {
-    if(n.a < .02) return;
-    if(n.kind === 'root'){
-      ctx.globalAlpha = n.a;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      ctx.fillStyle = '#20242A';
-      ctx.fill();
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 ' + (12 / s) + "px 'PingFang SC','Microsoft YaHei',sans-serif";
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(n.label, n.x, n.y + .5 / s);
-      return;
-    }
-    if(n.kind === 'hub'){
-      const open = libOpen.has(n.label);
-      const r = n.r + (open ? 2 : 0);
-      ctx.globalAlpha = n.a;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fill();
-      ctx.strokeStyle = open ? '#20242A' : '#5F7F86';
-      ctx.lineWidth = (open ? 2.2 : 1.4) / s;
-      ctx.stroke();
-      ctx.fillStyle = '#20242A';
-      ctx.font = '900 ' + (11 / s) + "px 'Courier New',monospace";
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(n.label, n.x, n.y + .5 / s);
-      return;
-    }
-    /* 单词：颜色来自词卡调色，掌握度决定深浅 */
-    ctx.globalAlpha = n.a * (n.m === 0 ? .45 : n.m === 1 ? .85 : 1);
-    ctx.beginPath();
-    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-    ctx.fillStyle = n.color;
-    ctx.fill();
-    if(n.hit){
-      ctx.globalAlpha = n.a * .9;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r + 3 / s, 0, Math.PI * 2);
-      ctx.strokeStyle = '#20242A';
-      ctx.lineWidth = 1.2 / s;
-      ctx.stroke();
-    }
-    ctx.globalAlpha = n.a * .62;
-    ctx.fillStyle = '#20242A';
-    ctx.font = '700 ' + (8.5 / s) + "px 'Helvetica Neue','PingFang SC',sans-serif";
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    ctx.fillText(n.label, n.x, n.y + n.r + 2 / s);
-  });
-  ctx.globalAlpha = 1;
-}
-
-function libWake(){
-  if(!libG || libRAF) return;
-  libRAF = requestAnimationFrame(libLoop);
-}
-function libSleep(){
-  if(libRAF){ cancelAnimationFrame(libRAF); libRAF = 0; }
-}
-function libLoop(){
-  libRAF = 0;
-  const heat = libStep();
-  libDraw();
-  if(heat > .8 || libG.drag) libRAF = requestAnimationFrame(libLoop);
-}
-
-/* ---------- 手势：拖节点 / 平移 / 缩放 / 点开卡 ---------- */
-function bindLibGraph(){
-  const cvs = document.getElementById('libGraph');
-  if(!cvs) return;
-  const pts = new Map();
-  let panning = false, moved = 0, last = null, pinch = null;
-
-  function toWorld(e){
-    const r = cvs.getBoundingClientRect();
-    return {x: libG.cam.x + (e.clientX - r.left - libG.w / 2) / libG.cam.scale,
-            y: libG.cam.y + (e.clientY - r.top - libG.h / 2) / libG.cam.scale};
-  }
-  function hitTest(p){
-    for(let i = libG.nodes.length - 1; i >= 0; i--){
-      const n = libG.nodes[i];
-      if(n.a < .25) continue;
-      const min = (n.kind === 'word') ? 16 : 20;
-      const R = Math.max(n.r + 3, min / libG.cam.scale);
-      const dx = n.x - p.x, dy = n.y - p.y;
-      if(dx * dx + dy * dy <= R * R) return n;
-    }
-    return null;
-  }
-  function clampScale(v){
-    return Math.max(.5, Math.min(2.4, v));
-  }
-
-  cvs.addEventListener('pointerdown', (e) => {
-    cvs.setPointerCapture(e.pointerId);
-    pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
-    moved = 0;
-    last = {x: e.clientX, y: e.clientY};
-    if(pts.size === 1){
-      const p = toWorld(e);
-      const n = hitTest(p);
-      if(n){
-        libG.drag = n;
-      } else {
-        panning = true;
-      }
-    } else if(pts.size === 2){
-      libG.drag = null;
-      panning = false;
-      const a = Array.from(pts.values());
-      pinch = {d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1, scale: libG.cam.scale};
-    }
-  });
-
-  cvs.addEventListener('pointermove', (e) => {
-    if(!libG) return;
-    if(pts.has(e.pointerId)) pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
-    if(pts.size === 2 && pinch){
-      const a = Array.from(pts.values());
-      const d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1;
-      libG.cam.scale = clampScale(pinch.scale * d / pinch.d);
-      libDraw();
-      return;
-    }
-    if(!libG || !last) return;
-    const mx = e.clientX - last.x, my = e.clientY - last.y;
-    moved += Math.abs(mx) + Math.abs(my);
-    last = {x: e.clientX, y: e.clientY};
-    if(libG.drag){
-      const n = libG.drag;
-      n.x += mx / libG.cam.scale;
-      n.y += my / libG.cam.scale;
-      libDraw();
-      libWake();
-    } else if(panning){
-      libG.cam.x -= mx / libG.cam.scale;
-      libG.cam.y -= my / libG.cam.scale;
-      libDraw();
-    }
-  });
-
-  function up(e){
-    if(!libG) return;
-    const was = libG.drag;
-    pts.delete(e.pointerId);
-    if(pts.size < 2) pinch = null;
-    if(pts.size === 0){
-      libG.drag = null;
-      panning = false;
-      if(was && moved < 12){
-        if(was.kind === 'word'){
-          location.href = '../' + was.word.file;
-          return;
-        }
-        if(was.kind === 'hub'){
-          /* 手风琴：点开的字母独占一支，再点收起 */
-          const opened = libOpen.has(was.label);
-          libOpen.clear();
-          if(!opened) libOpen.add(was.label);
-          libSearchOn = false;
-          libLayout();
-        } else if(was.kind === 'root'){
-          libOpen.clear();
-          libSearchOn = false;
-          libLayout();
-        }
-      }
-      if(was && was.kind === 'word') libPos.set(was.id, {x: was.x, y: was.y});
-      libWake();
-    }
-  }
-  cvs.addEventListener('pointerup', up);
-  cvs.addEventListener('pointercancel', up);
-
-  cvs.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    libG.cam.scale = clampScale(libG.cam.scale * (e.deltaY > 0 ? .92 : 1.08));
-    libDraw();
-  }, {passive: false});
-
-  window.addEventListener('resize', () => {
-    if(!libG) return;
-    const box = cvs.parentElement.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    cvs.width = Math.max(1, Math.round(box.width * dpr));
-    cvs.height = Math.max(1, Math.round(box.height * dpr));
-    libG.w = box.width || 320;
-    libG.h = box.height || 420;
-    libG.dpr = dpr;
-    libLayout();
-    libDraw();
-  });
+/* 刷这组：临时替换刷词队列，不写全局进度存档 */
+function queueLibLetter(L, list){
+  if(!list || !list.length) return;
+  deckScoped = true;
+  queue = libSorted(list);
+  pos = 0;
+  undoSnap = null;
+  hardCloseLib();
+  renderDeckShell();
+  switchTab('deck');
+  toast('已切到 ' + L + ' 组 · ' + queue.length + ' 个词');
 }
 
 /* ============================================================
@@ -2301,7 +2285,7 @@ function switchTab(name){
   if(name === 'lib') renderLib();
   if(name === 'quiz') renderQuiz();
   if(name === 'stat') renderStat();
-  if(name !== 'lib') libSleep();
+  if(name !== 'lib') hardCloseLib();
   const main = document.querySelector('.main');
   if(main){
     main.scrollTop = 0;
@@ -2334,7 +2318,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   if(e.target.closest('#sfxBtn')) return; /* 音效开关交给 document 级委托，不参与翻面 */
   if(e.target.closest('#hideGlossBtn')) return; /* 遮住答案开关同样走 document 级委托 */
   const restart = e.target.closest('[data-restart]');
-  if(restart){ e.preventDefault(); queue = buildQueue(true); pos = 0; savePos(); undoSnap = null; renderDeckShell(); return; }
+  if(restart){ e.preventDefault(); deckScoped = false; queue = buildQueue(true); pos = 0; savePos(); undoSnap = null; renderDeckShell(); return; }
   const sp = e.target.closest('[data-speak]');
   if(sp){
     e.preventDefault(); e.stopPropagation();
