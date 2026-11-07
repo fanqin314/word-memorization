@@ -205,12 +205,12 @@ body{
   color:color-mix(in srgb,var(--ink) 48%,transparent);flex:none;
 }
 .deck-meta b{color:var(--ink);display:inline-block;}
-/* 分组标记：与统计小字同高 */
+/* 分组标记：与统计小字同高；固定墨色，不跟着当前词卡的强调色变 */
 .deck-meta b.deck-tag{
   font-family:var(--mono);font-size:.52rem;font-weight:900;letter-spacing:.04em;
   padding:1px 5px;margin-right:3px;border-radius:5px;
-  color:var(--ac-deep);
-  background:color-mix(in srgb,var(--ac) 16%,transparent);
+  color:var(--ink);
+  background:color-mix(in srgb,var(--ink) 7%,transparent);
 }
 .deck-tools{display:flex;align-items:center;gap:.3rem;flex:none;}
 /* 撤回：滑走一张后才出现，与音效开关同高 */
@@ -1207,11 +1207,24 @@ function savePos(){
   mb.pos = {date: todayKey(), index: pos, queueWords: queue.map(w => w.word)};
   persist(MB_KEY, mb);
 }
-/* 恢复进度：已刷过的词已被排到队尾，直接按“今天已刷到第几张”续上即可 */
-function restorePos(q){
+/* 恢复队列：优先按存档的词序重建（顺序一致，刷新后停在同一张）；没有存档再新建。
+   buildQueue() 每次都 shuffle，只认下标会让刷新后的位置跳到另一个词上。 */
+function restoreQueue(){
   const p = mb.pos;
-  if(!p || p.date !== todayKey() || !q.length) return 0;
-  return Math.min(Math.max(0, p.index || 0), q.length);
+  if(p && p.date === todayKey() && Array.isArray(p.queueWords) && p.queueWords.length){
+    const byWord = new Map(WORDS.map(w => [w.word, w]));
+    const q = p.queueWords.map(n => byWord.get(n)).filter(Boolean);
+    if(q.length){
+      let idx = Math.min(Math.max(0, p.index || 0), q.length);
+      const curWord = p.queueWords[p.index || 0];
+      if(curWord){
+        const i = q.findIndex(w => w.word === curWord);
+        if(i >= 0) idx = i;
+      }
+      return {queue: q, pos: idx};
+    }
+  }
+  return {queue: buildQueue(), pos: 0};
 }
 
 /* ------------------------------------------------------------
@@ -1970,7 +1983,11 @@ function renderLibGrid(q){
   if(!grid) return;
   if(!used.length){
     grid.innerHTML = '<div class="wempty">' +
-      (libMst === 'all' ? '没有匹配的词，换个关键词试试' : '这一类还没有词，换个掌握度试试') + '</div>';
+      (libMst === 'all'
+        ? '没有匹配的词，换个关键词试试'
+        : (libFilter
+          ? '「' + esc(libFilter) + '」里没有' + MST_LABEL[Number(libMst)] + '的词'
+          : '这一类还没有词，换个掌握度试试')) + '</div>';
     return;
   }
   grid.style.setProperty('--cols', libBestCols(used.length));
@@ -2187,7 +2204,7 @@ function hardCloseLib(){
 /* 刷这一组：临时替换刷词队列，不写全局进度存档 */
 function queueWords(label, list){
   if(!list || !list.length || animating) return;
-  if(!deckScoped) deckBackup = {queue: queue, pos: pos, undoSnap: undoSnap};
+  if(!deckScoped) deckBackup = {queue: queue.slice(), pos: pos, undoSnap: undoSnap};
   deckScoped = true;
   deckScopeLabel = label;
   queue = libSorted(list);
@@ -2240,8 +2257,9 @@ function exitDeckScope(){
     undoSnap = deckBackup.undoSnap;
   } else {
     /* 兜底：没有备份时按今天的存档重建 */
-    queue = buildQueue(false);
-    pos = restorePos(queue);
+    const restored = restoreQueue();
+    queue = restored.queue;
+    pos = restored.pos;
     undoSnap = null;
   }
   deckBackup = null;
@@ -2848,9 +2866,10 @@ document.addEventListener('focusout', () => setTimeout(syncKeyboardBar, 0), true
 /* ============================================================
    启动
    ============================================================ */
-queue = buildQueue();
-pos = restorePos(queue);
-savePos();          /* 把重排后的队列与当前下标同步回存档 */
+const restored = restoreQueue();
+queue = restored.queue;
+pos = restored.pos;
+savePos();          /* 把队列与当前下标同步回存档 */
 renderDeckShell();
 refreshHeader();
 </script>
