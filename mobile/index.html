@@ -648,9 +648,9 @@ body{
   position:absolute;inset:0;padding-bottom:.4rem;
   display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;justify-content:center;
   --cols:5;
-  transition:opacity .28s var(--ease),transform .28s var(--ease);
+  transition:opacity .26s var(--ease);
 }
-.lib-grid.fade-out{opacity:0;transform:scale(.94);pointer-events:none;}
+.lib-grid.fade-out{opacity:0;pointer-events:none;}
 .cell{
   position:relative;appearance:none;border:0;cursor:pointer;
   flex:0 0 calc((100% - (var(--cols) - 1) * 6px) / var(--cols));
@@ -1950,31 +1950,72 @@ function renderLibDetail(L, list, hex){
   });
 }
 
-/* 飞行动画：从 fromRect 飞到 toRect；toStrong 指目标态（实心大徽章） */
-function libFly(fromRect, toRect, L, hex, toStrong){
+/* 不受 transform 影响的布局矩形：方块按下时的 scale(.92) 不会污染起点 */
+function libRect(el){
+  const r = el.getBoundingClientRect();
+  const w = el.offsetWidth || r.width, h = el.offsetHeight || r.height;
+  return {left:r.left + r.width / 2 - w / 2, top:r.top + r.height / 2 - h / 2, width:w, height:h};
+}
+
+/* 字母字号：方块取 .cell-letter，徽章取自身 */
+function libFontOf(el){
+  const t = el.querySelector ? el.querySelector('.cell-letter') : null;
+  return parseFloat(getComputedStyle(t || el).fontSize) || 22;
+}
+
+/* 字母中心相对元素中心的偏移：方块字母偏上，徽章居中 */
+function libLetterOffset(el){
+  const t = el.querySelector ? el.querySelector('.cell-letter') : null;
+  if(!t) return 0;
+  const r = t.getBoundingClientRect(), b = el.getBoundingClientRect();
+  return (r.top + r.height / 2) - (b.top + b.height / 2);
+}
+
+/* 飞行动画：矩形、字号、字母位置两端对齐；缓动不过冲，落地不回弹 */
+function libFly(fromRect, toRect, L, hex, fromEl, toEl){
+  const toStrong = toEl.id === 'libBadge';
   const f = document.createElement('div');
   f.className = 'flyer';
-  f.textContent = L;
+  const letter = document.createElement('span');
+  letter.textContent = L;
+  f.appendChild(letter);
   f.style.left = fromRect.left + 'px';
   f.style.top = fromRect.top + 'px';
   f.style.width = fromRect.width + 'px';
   f.style.height = fromRect.height + 'px';
-  f.style.fontSize = Math.round(fromRect.width * .38) + 'px';
+  /* 起点贴出发元素字号；缩放后的视觉字号 = font-size × sy，故终点写 dstFont / sy */
+  const srcFont = libFontOf(fromEl), dstFont = libFontOf(toEl);
+  f.style.fontSize = srcFont + 'px';
   f.style.background = 'color-mix(in srgb,' + hex + (toStrong ? ' 12%,#FFFFFF)' : ' 62%,#FFFFFF)');
   f.style.color = toStrong ? 'color-mix(in srgb,' + hex + ' 72%,#20242A)' : '#FFFFFF';
   f.style.borderRadius = toStrong ? '12px' : '16px';
+  letter.style.transform = 'translateY(' + libLetterOffset(fromEl) + 'px)';
   document.body.appendChild(f);
 
   const dx = toRect.left - fromRect.left, dy = toRect.top - fromRect.top;
   const sx = toRect.width / fromRect.width, sy = toRect.height / fromRect.height;
+  const offD = libLetterOffset(toEl);
+  const ease = 'cubic-bezier(.22,.61,.36,1)';
   requestAnimationFrame(() => {
-    f.style.transition = 'transform .42s cubic-bezier(.34,1.15,.64,1),background .3s ease,color .3s ease,border-radius .3s ease';
+    f.style.transition = 'transform .36s ' + ease + ',font-size .36s ' + ease +
+      ',background .3s ease,color .3s ease,border-radius .3s ease';
     f.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+    f.style.fontSize = (dstFont / sy) + 'px';
+    letter.style.transition = 'transform .36s ' + ease;
+    letter.style.transform = 'translateY(' + (offD / sy) + 'px)';
     f.style.background = 'color-mix(in srgb,' + hex + (toStrong ? ' 62%,#FFFFFF)' : ' 12%,#FFFFFF)');
     f.style.color = toStrong ? '#FFFFFF' : 'color-mix(in srgb,' + hex + ' 72%,#20242A)';
     f.style.borderRadius = toStrong ? '16px' : '12px';
   });
   return f;
+}
+
+/* 等 transform 真正到终点再交接，避免提前一帧造成落点错位 */
+function libFlyEnd(f, done){
+  let fired = false;
+  const fire = () => { if(fired) return; fired = true; done(); };
+  f.addEventListener('transitionend', (e) => { if(e.propertyName === 'transform') fire(); });
+  setTimeout(fire, 480);
 }
 
 function openLibLetter(L){
@@ -1989,7 +2030,7 @@ function openLibLetter(L){
   libCurrent = L;
   const hex = libGroupColor(list);
 
-  const fromRect = src.getBoundingClientRect();
+  const fromRect = libRect(src);
   src.classList.add('hide');
   grid.classList.add('fade-out');
 
@@ -1997,21 +2038,27 @@ function openLibLetter(L){
   detail.classList.add('show');
   detail.style.opacity = '0';
   const badge = document.getElementById('libBadge');
-  const toRect = badge.getBoundingClientRect();
+  const toRect = libRect(badge);
 
-  libFly(fromRect, toRect, L, hex, true);
+  const f = libFly(fromRect, toRect, L, hex, src, badge);
 
+  /* 快落地时卡片层先淡入，落地那一刻再显出徽章，交接不闪 */
   setTimeout(() => {
-    document.querySelectorAll('.flyer').forEach(el => el.remove());
-    badge.style.visibility = 'visible';
-    detail.style.transition = 'opacity .18s ease';
+    if(!libCurrent || libCurrent !== L) return;
+    detail.style.transition = 'opacity .26s ease';
     detail.style.opacity = '1';
     detail.querySelectorAll('.w-card').forEach((el, i) => {
-      el.style.animationDelay = (i * 26) + 'ms';
+      el.style.animationDelay = (i * 24) + 'ms';
       el.classList.add('in');
     });
-    setTimeout(() => { libAnimating = false; }, 380);
-  }, 430);
+  }, 210);
+
+  libFlyEnd(f, () => {
+    if(!libCurrent || libCurrent !== L) return;
+    f.remove();
+    badge.style.visibility = 'visible';
+    libAnimating = false;
+  });
 }
 
 function closeLibLetter(){
@@ -2027,16 +2074,17 @@ function closeLibLetter(){
 
   libAnimating = true;
   const hex = libGroupColor(list);
-  const fromRect = badge.getBoundingClientRect();
+  const fromRect = libRect(badge);
+  /* 目标和网格一起回场：飞行途中就能看到落点，落地时不会出现空位或整屏跳变 */
   src.classList.remove('hide');
-  const toRect = src.getBoundingClientRect();
-  badge.style.visibility = 'hidden';
   grid.classList.remove('fade-out');
+  const toRect = libRect(src);
+  badge.style.visibility = 'hidden';
   detail.style.transition = 'opacity .2s ease';
   detail.style.opacity = '0';
 
-  libFly(fromRect, toRect, L, hex, false);
-  setTimeout(hardCloseLib, 420);
+  const f = libFly(fromRect, toRect, L, hex, badge, src);
+  libFlyEnd(f, hardCloseLib);
 }
 
 function hardCloseLib(){
