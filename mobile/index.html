@@ -133,18 +133,7 @@ body{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   flex:1;min-width:0;
 }
-/* 「遮住答案」开关：挪到刷词状态条，和撤回、音效开关排在一起 */
-.gloss-btn{
-  flex:none;width:24px;height:24px;padding:0;
-  display:grid;place-items:center;cursor:pointer;
-  border:1px solid var(--rule-2);border-radius:7px;
-  background:var(--card);color:var(--ink);
-  transition:transform .14s var(--spring),background .16s,border-color .16s,color .16s;
-}
-.gloss-btn svg{width:14px;height:14px;display:block;}
-.gloss-btn:active{transform:scale(.94);}
-.gloss-btn.on{background:color-mix(in srgb,var(--ac) 20%,transparent);
-  border-color:color-mix(in srgb,var(--ac) 45%,transparent);color:var(--ac-deep);}
+/* 「遮住答案」开关：与撤回、音效开关同一规格，样式统一写在 .deck-tools 那段 */
 /* 进度条压成状态条底边的 2px 强调线，不再单独占一行 */
 .hero-fill{
   position:absolute;left:0;bottom:0;height:2px;width:0;
@@ -216,31 +205,29 @@ body{
   color:var(--ink);
   background:color-mix(in srgb,var(--ink) 7%,transparent);
 }
-.deck-tools{display:flex;align-items:center;gap:.3rem;flex:none;}
-/* 撤回：滑走一张后才出现，与音效开关同高 */
-.undo-btn{
-  flex:none;height:24px;padding:0 .46rem;
-  display:inline-flex;align-items:center;cursor:pointer;
-  border:1px solid var(--rule-2);border-radius:7px;
+.deck-tools{display:flex;align-items:center;gap:.32rem;flex:none;}
+/* 状态条右侧的四个小控件：共用同一套高度/圆角/描边/按压反馈，
+   文字钮与图标钮只差挨宽度，看起来才是一排东西 */
+.undo-btn,.gloss-btn,.sfx-btn{
+  flex:none;height:28px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  border:1px solid var(--rule-2);border-radius:8px;
   background:var(--card);color:var(--ink);
-  font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.06em;
-  transition:transform .14s var(--spring),background .16s,color .16s;
+  transition:transform .14s var(--spring),background .16s,border-color .16s,color .16s;
 }
-.undo-btn:active{transform:scale(.94);}
+.undo-btn{padding:0 .52rem;font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.05em;line-height:1;}
+/* 图标钮：与文字钮同高，做成正方形 */
+.gloss-btn,.sfx-btn{width:28px;}
+.gloss-btn svg,.sfx-btn svg{width:15px;height:15px;display:block;}
+.undo-btn:active,.gloss-btn:active,.sfx-btn:active{transform:scale(.94);}
 /* display 会盖掉 hidden 属性，这里显式还原 */
 .undo-btn[hidden]{display:none;}
-/* 音效开关：24px，状态只记在 wc_sound_v1 */
-.sfx-btn{
-  flex:none;width:24px;height:24px;padding:0;
-  display:grid;place-items:center;cursor:pointer;
-  border:1px solid var(--rule-2);border-radius:7px;
-  background:var(--card);color:var(--ink);
-  box-shadow:none;
-  transition:transform .14s var(--spring),background .16s,color .16s;
+/* 两个图标开关共用一套状态语言：偏离默认才上淡墨底；关闭的音效再灰一档 */
+.gloss-btn.on,.sfx-btn.off{
+  background:color-mix(in srgb,var(--ink) 8%,var(--paper-2));
+  border-color:var(--rule-2);
 }
-.sfx-btn svg{width:14px;height:14px;display:block;}
-.sfx-btn:active{transform:scale(.94);}
-.sfx-btn.off{background:color-mix(in srgb,var(--ink) 5%,var(--paper-2));color:color-mix(in srgb,var(--ink) 40%,transparent);border-color:var(--rule);}
+.sfx-btn.off{color:color-mix(in srgb,var(--ink) 55%,transparent);}
 .deck-stage{position:relative;flex:1;min-height:0;display:flex;}
 .stack{position:relative;flex:1;min-height:0;display:flex;}
 
@@ -1565,8 +1552,8 @@ document.addEventListener('click', (e) => {
    状态单独存 wc_hide_gloss_v1
    ------------------------------------------------------------ */
 const GLOSS_KEY = 'wc_hide_gloss_v1';
-const GLOSS_ON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
-const GLOSS_OFF_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg>';
+const GLOSS_ON_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const GLOSS_OFF_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg>';
 
 function glossHidden(){
   try{ return localStorage.getItem(GLOSS_KEY) === '1'; }catch(e){ return false; }
