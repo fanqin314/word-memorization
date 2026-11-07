@@ -316,11 +316,18 @@ body{
   position:absolute;left:50%;top:50%;z-index:5;pointer-events:none;
   transform:translate(-50%,-50%) scale(.9);
   opacity:0;transition:opacity .12s,transform .12s;
+  display:inline-flex;align-items:center;gap:.3rem;
   font-family:var(--mono);font-size:.72rem;font-weight:900;letter-spacing:.05em;
   padding:.42rem .82rem;border-radius:999px;border:1px solid var(--cline);
   background:var(--cf);color:var(--ci);white-space:nowrap;
   box-shadow:0 6px 18px rgba(36,32,27,.14);
 }
+/* 方向用描边箭头图标（不用「→」这类字符），整支箭头按方向旋转 */
+.dir-hint .dh-ico{display:inline-flex;width:15px;height:15px;flex:none;}
+.dir-hint .dh-ico svg{width:15px;height:15px;display:block;}
+.dir-hint[data-dir="up"] .dh-ico{transform:rotate(-90deg);}
+.dir-hint[data-dir="down"] .dh-ico{transform:rotate(90deg);}
+.dir-hint[data-dir="left"] .dh-ico{transform:rotate(180deg);}
 .dir-hint.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
 .dir-hint[data-dir="right"]{background:color-mix(in srgb,#6F8B74 20%,var(--cf));border-color:color-mix(in srgb,#6F8B74 42%,transparent);}
 .dir-hint[data-dir="left"]{background:color-mix(in srgb,#BC7E8A 20%,var(--cf));border-color:color-mix(in srgb,#BC7E8A 42%,transparent);}
@@ -2771,7 +2778,8 @@ document.addEventListener('pointercancel', endSpellDrag);
 
 /* 手势：上滑跳过 / 右滑认识 / 左滑不认识 / 下滑有点印象 / 点按翻面 */
 let dragState = null, suppressTap = false;
-const DIR_LABEL = {up:'↑ 跳过', right:'→ 认识', left:'← 不认识', down:'↓ 有点印象'};
+const HINT_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg>';
+const DIR_LABEL = {up:'跳过', right:'认识', left:'不认识', down:'有点印象'};
 
 function hintDir(card, dx, dy){
   const h = card.querySelector('.dir-hint');
@@ -2779,7 +2787,10 @@ function hintDir(card, dx, dy){
   const ax = Math.abs(dx), ay = Math.abs(dy);
   if(Math.max(ax, ay) < 16){ h.classList.remove('show'); return; }
   const dir = ax > ay ? (dx > 0 ? 'right' : 'left') : (dy < 0 ? 'up' : 'down');
-  if(h.dataset.dir !== dir){ h.dataset.dir = dir; h.textContent = DIR_LABEL[dir]; }
+  if(h.dataset.dir !== dir){
+    h.dataset.dir = dir;
+    h.innerHTML = '<span class="dh-ico">' + HINT_ARROW + '</span>' + DIR_LABEL[dir];
+  }
   h.classList.add('show');
 }
 function hideHint(card){
