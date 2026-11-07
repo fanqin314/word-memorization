@@ -191,19 +191,21 @@ body{
 /* ---------------- 刷词卡 ---------------- */
 .deck-wrap{display:flex;flex-direction:column;flex:1;min-height:0;}
 .deck-meta{
-  display:flex;align-items:center;justify-content:space-between;
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
   gap:.4rem;
   padding:.1rem .2rem .45rem;
   font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.08em;
   color:color-mix(in srgb,var(--ink) 48%,transparent);flex:none;
 }
 .deck-meta b{color:var(--ink);display:inline-block;}
-/* 分组标记：与统计小字同高；固定墨色，不跟着当前词卡的强调色变 */
-.deck-meta b.deck-tag{
+/* 当前卡组：夹在张数与小工具中间，长名字自动省略；固定墨色，不跟词卡强调色变 */
+.deck-scope{
+  justify-self:center;min-width:0;max-width:100%;
+  padding:2px 7px;border-radius:6px;
   font-family:var(--mono);font-size:.52rem;font-weight:900;letter-spacing:.04em;
-  padding:1px 5px;margin-right:3px;border-radius:5px;
   color:var(--ink);
   background:color-mix(in srgb,var(--ink) 7%,transparent);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .deck-tools{display:flex;align-items:center;gap:.32rem;flex:none;}
 /* 状态条右侧的四个小控件：共用同一套高度/圆角/描边/按压反馈，
@@ -1213,7 +1215,7 @@ function markRated(word){
 /* 进度存档：日期 + 当前下标 + 当时的队列词序 */
 function savePos(){
   if(!queue.length || deckScoped) return;
-  mb.pos = {date: todayKey(), index: pos, queueWords: queue.map(w => w.word)};
+  mb.pos = {date: todayKey(), index: pos, queueWords: queue.map(w => w.word), label: deckScopeLabel};
   persist(MB_KEY, mb);
 }
 /* 恢复队列：优先按存档的词序重建（顺序一致，刷新后停在同一张）；没有存档再新建。
@@ -1230,10 +1232,10 @@ function restoreQueue(){
         const i = q.findIndex(w => w.word === curWord);
         if(i >= 0) idx = i;
       }
-      return {queue: q, pos: idx};
+      return {queue: q, pos: idx, label: p.label || ''};
     }
   }
-  return {queue: buildQueue(), pos: 0};
+  return {queue: buildQueue(), pos: 0, label: ''};
 }
 
 /* ------------------------------------------------------------
@@ -1599,9 +1601,9 @@ function rootOf(w){
 function renderDeckShell(){
   const view = document.getElementById('view-deck');
   view.innerHTML = '<div class="deck-wrap">' +
-      '<div class="deck-meta"><span>' +
-        (deckScoped ? '<b class="deck-tag">' + esc(deckScopeLabel) + '</b>' : '') +
-        '第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
+      '<div class="deck-meta">' +
+        '<span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
+        '<span class="deck-scope" id="deckScope" title="' + esc(scopeName()) + '">' + esc(scopeName()) + '</span>' +
         '<span class="deck-tools">' +
         (deckScoped ? '<button class="undo-btn" id="scopeExitBtn" type="button" aria-label="退出分组">退出</button>' : '') +
         '<button class="undo-btn" id="undoBtn" type="button" aria-label="撤回上一张" hidden>撤回</button>' +
@@ -2223,7 +2225,7 @@ function hardCloseLib(){
 /* 刷这一组：临时替换刷词队列，不写全局进度存档 */
 function queueWords(label, list){
   if(!list || !list.length || animating) return;
-  if(!deckScoped) deckBackup = {queue: queue.slice(), pos: pos, undoSnap: undoSnap};
+  if(!deckScoped) deckBackup = {queue: queue.slice(), pos: pos, undoSnap: undoSnap, label: deckScopeLabel};
   deckScoped = true;
   deckScopeLabel = label;
   queue = libSorted(list);
@@ -2233,6 +2235,11 @@ function queueWords(label, list){
   renderDeckShell();
   switchTab('deck');
   toast('已切到 ' + label + ' · ' + queue.length + ' 个词');
+}
+
+/* 标题栏中间显示的当前卡组名：没有分组时就是全部词 */
+function scopeName(){
+  return deckScopeLabel || '全部词';
 }
 
 /* 字母方块里的「刷这组」 */
@@ -2245,7 +2252,7 @@ function queueLibMst(){
   const list = libSorted(libMstWords(libFilter));
   if(!list.length) return;
   const label = libMst === 'all'
-    ? (libFilter ? '搜索' : '全部词')
+    ? (libFilter ? '含 “' + libFilter + '”' : '全部词')
     : MST_LABEL[Number(libMst)];
   queueWords(label, list);
 }
@@ -2258,7 +2265,7 @@ function startReviewToday(){
   if(!list.length){ toast('今天还没有刷过的词'); return; }
   deckScoped = false;
   deckBackup = null;
-  deckScopeLabel = '';
+  deckScopeLabel = '今天复习';
   queue = libSorted(list);
   pos = 0;
   undoSnap = null;
@@ -2274,18 +2281,19 @@ function exitDeckScope(){
     queue = deckBackup.queue;
     pos = deckBackup.pos;
     undoSnap = deckBackup.undoSnap;
+    deckScopeLabel = deckBackup.label || '';   /* 回到进入分组前的卡组名 */
   } else {
     /* 兜底：没有备份时按今天的存档重建 */
     const restored = restoreQueue();
     queue = restored.queue;
     pos = restored.pos;
     undoSnap = null;
+    deckScopeLabel = restored.label || '';
   }
   deckBackup = null;
   deckScoped = false;
-  deckScopeLabel = '';
   renderDeckShell();
-  toast('已回到全部单词');
+  toast('已回到 ' + (deckScopeLabel || '全部单词'));
 }
 
 /* 再刷一遍这组：位置归零，词序不变 */
@@ -2892,6 +2900,7 @@ document.addEventListener('focusout', () => setTimeout(syncKeyboardBar, 0), true
 const restored = restoreQueue();
 queue = restored.queue;
 pos = restored.pos;
+deckScopeLabel = restored.label || '';   /* 复习模式等非分组的卡组名跟着存档回来 */
 savePos();          /* 把队列与当前下标同步回存档 */
 renderDeckShell();
 refreshHeader();
