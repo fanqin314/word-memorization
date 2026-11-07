@@ -192,21 +192,51 @@ body{
 .deck-wrap{display:flex;flex-direction:column;flex:1;min-height:0;}
 .deck-meta{
   display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
-  gap:.4rem;
+  gap:.4rem;position:relative;z-index:5;
   padding:.1rem .2rem .45rem;
   font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.08em;
   color:color-mix(in srgb,var(--ink) 48%,transparent);flex:none;
 }
 .deck-meta b{color:var(--ink);display:inline-block;}
-/* 当前卡组：夹在张数与小工具中间，长名字自动省略；固定墨色，不跟词卡强调色变 */
+/* 当前卡组：点开切换牌组；固定墨色，不跟词卡强调色变 */
 .deck-scope{
   justify-self:center;min-width:0;max-width:100%;
-  padding:2px 7px;border-radius:6px;
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 6px 2px 7px;border-radius:6px;border:1px solid transparent;
   font-family:var(--mono);font-size:.52rem;font-weight:900;letter-spacing:.04em;
   color:var(--ink);
   background:color-mix(in srgb,var(--ink) 7%,transparent);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
+.deck-scope span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.deck-scope svg{width:9px;height:9px;flex:none;opacity:.5;transition:transform .18s var(--ease);}
+.deck-scope.open svg{transform:rotate(180deg);opacity:.8;}
+/* 牌组选择：从卡组名下面展开的小面板 */
+.deck-pick{
+  position:absolute;left:0;right:0;top:calc(100% + 2px);z-index:6;
+  padding:.5rem .55rem .42rem;
+  border:1px solid var(--rule-2);border-radius:12px;
+  background:var(--card);box-shadow:var(--soft);
+}
+.deck-pick[hidden]{display:none;}
+.deck-pick .pick-lab{
+  display:block;margin:.06rem 0 .22rem;
+  font-family:var(--mono);font-size:.5rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.deck-pick .pick-row{display:flex;flex-wrap:wrap;gap:.28rem;margin-bottom:.34rem;}
+.deck-pick .pick-row:last-child{margin-bottom:0;}
+.deck-pick .deck-chip{
+  height:26px;padding:0 .5rem;
+  display:inline-flex;align-items:center;gap:3px;
+  border:1px solid var(--rule-2);border-radius:7px;background:var(--paper-2);
+  color:var(--ink);cursor:pointer;
+  font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.03em;
+}
+.deck-pick .deck-chip b{font-size:.5rem;font-weight:900;opacity:.45;}
+.deck-pick .deck-chip.on{background:color-mix(in srgb,var(--ink) 9%,var(--card));
+  border-color:color-mix(in srgb,var(--ink) 30%,transparent);}
+.deck-pick .deck-chip.on b{opacity:.7;}
 .deck-tools{display:flex;align-items:center;gap:.32rem;flex:none;}
 /* 状态条右侧的四个小控件：共用同一套高度/圆角/描边/按压反馈，
    文字钮与图标钮只差挨宽度，看起来才是一排东西 */
@@ -1267,6 +1297,7 @@ let animating = false;
 let deckScoped = false;
 let deckBackup = null;      /* 进入分组前的 {queue, pos, undoSnap} */
 let deckScopeLabel = '';    /* 当前分组字母，如 'C' */
+let deckPickOpen = false;   /* 牌组选择面板是否展开 */
 
 /* ------------------------------------------------------------
    朗读：优先播放预生成的发音文件（WebView 壳里通常没有系统 TTS），
@@ -1600,15 +1631,21 @@ function rootOf(w){
 
 function renderDeckShell(){
   const view = document.getElementById('view-deck');
+  deckPickOpen = false;
   view.innerHTML = '<div class="deck-wrap">' +
       '<div class="deck-meta">' +
         '<span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
-        '<span class="deck-scope" id="deckScope" title="' + esc(scopeName()) + '">' + esc(scopeName()) + '</span>' +
+        '<button class="deck-scope" id="deckScope" type="button" aria-haspopup="true" aria-expanded="false" title="切换牌组">' +
+          '<span>' + esc(scopeName()) + '</span>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5L12 15l5.5-5.5"/></svg>' +
+        '</button>' +
         '<span class="deck-tools">' +
         (deckScoped ? '<button class="undo-btn" id="scopeExitBtn" type="button" aria-label="退出分组">退出</button>' : '') +
         '<button class="undo-btn" id="undoBtn" type="button" aria-label="撤回上一张" hidden>撤回</button>' +
         '<button class="gloss-btn" id="hideGlossBtn" type="button" aria-label="遮住答案" aria-pressed="false" title="遮住答案"></button>' +
-        sfxButtonHtml() + '</span></div>' +
+        sfxButtonHtml() + '</span>' +
+        '<div class="deck-pick" id="deckPick" hidden></div>' +
+        '</div>' +
       '<div class="deck-stage" id="deckStage"><div class="stack" id="cardStack"></div></div>' +
     '</div>';
   renderCard(false);
@@ -2242,6 +2279,92 @@ function scopeName(){
   return deckScopeLabel || '全部词';
 }
 
+/* 点卡组名 → 切换牌组 */
+function currentDeckKey(){
+  if(deckScopeLabel === '今天复习') return 'review';
+  if(!deckScoped) return 'all';
+  const mi = MST_LABEL.indexOf(deckScopeLabel);
+  if(mi >= 0) return 'm' + mi;
+  if(deckScopeLabel.slice(-2) === ' 组') return 'l' + deckScopeLabel.charAt(0);
+  return 'all';
+}
+
+function deckPickHtml(){
+  const cur = currentDeckKey();
+  const rated = ratedToday();
+  const mCount = [0, 1, 2].map(lv => WORDS.filter(w => masteryOf(w.word) === lv).length);
+  const letters = new Map();
+  WORDS.forEach(w => {
+    const L = (w.word[0] || '#').toUpperCase();
+    letters.set(L, (letters.get(L) || 0) + 1);
+  });
+  const chip = (key, name, n) =>
+    '<button class="deck-chip' + (cur === key ? ' on' : '') + '" type="button" data-deck="' + key + '">' +
+    esc(name) + '<b>' + n + '</b></button>';
+  return '<span class="pick-lab">牌组</span><div class="pick-row">' +
+      chip('all', '全部词', WORDS.length) + chip('review', '今天复习', rated.size) +
+    '</div><span class="pick-lab">掌握度</span><div class="pick-row">' +
+      [0, 1, 2].map(i => chip('m' + i, MST_LABEL[i], mCount[i])).join('') +
+    '</div><span class="pick-lab">首字母</span><div class="pick-row">' +
+      Array.from(letters.keys()).sort().map(L => chip('l' + L, L, letters.get(L))).join('') +
+    '</div>';
+}
+
+function closeDeckPick(){
+  deckPickOpen = false;
+  const box = document.getElementById('deckPick');
+  const btn = document.getElementById('deckScope');
+  if(box) box.hidden = true;
+  if(btn){
+    btn.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+}
+
+function toggleDeckPick(){
+  const box = document.getElementById('deckPick');
+  const btn = document.getElementById('deckScope');
+  if(!box || !btn) return;
+  if(deckPickOpen){ closeDeckPick(); return; }
+  box.innerHTML = deckPickHtml();
+  box.hidden = false;
+  deckPickOpen = true;
+  btn.classList.add('open');
+  btn.setAttribute('aria-expanded', 'true');
+}
+
+/* 选中某个牌组：从头开始刷这一组 */
+function pickDeck(key){
+  if(animating) return;
+  closeDeckPick();
+  if(key === 'all'){
+    deckScoped = false;
+    deckBackup = null;
+    deckScopeLabel = '';
+    queue = buildQueue();
+    pos = 0;
+    undoSnap = null;
+    savePos();
+    renderDeckShell();
+    return;
+  }
+  if(key === 'review'){ startReviewToday(); return; }
+  const kind = key.charAt(0);
+  if(kind === 'm'){
+    const lv = Number(key.slice(1));
+    const list = WORDS.filter(w => masteryOf(w.word) === lv);
+    if(!list.length){ toast(MST_LABEL[lv] + ' 还没有词'); return; }
+    queueWords(MST_LABEL[lv], list);
+    return;
+  }
+  if(kind === 'l'){
+    const L = key.slice(1);
+    const list = WORDS.filter(w => (w.word[0] || '#').toUpperCase() === L);
+    if(!list.length){ toast('没有 ' + L + ' 开头的词'); return; }
+    queueWords(L + ' 组', list);
+  }
+}
+
 /* 字母方块里的「刷这组」 */
 function queueLibLetter(L, list){
   queueWords(L + ' 组', list);
@@ -2562,6 +2685,18 @@ document.querySelectorAll('.tab').forEach(btn => {
 document.getElementById('view-deck').addEventListener('click', (e) => {
   if(suppressTap){ suppressTap = false; return; }
   if(spellSuppressTap){ spellSuppressTap = false; return; }
+  if(e.target.closest('#deckScope')){
+    e.preventDefault(); e.stopPropagation();
+    toggleDeckPick();
+    return;
+  }
+  const dChip = e.target.closest('[data-deck]');
+  if(dChip){
+    e.preventDefault(); e.stopPropagation();
+    pickDeck(dChip.dataset.deck);
+    return;
+  }
+  if(e.target.closest('#deckPick')) return; /* 面板留白处不翻面 */
   const undoBtn = e.target.closest('#undoBtn');
   if(undoBtn){
     e.preventDefault(); e.stopPropagation();
@@ -2626,6 +2761,13 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   if(e.target.closest('[data-flip]')){ e.preventDefault(); e.stopPropagation(); }
   const card = e.target.closest('.swipe-card');
   if(card){ card.classList.toggle('flipped'); sfxPlay('flip'); }
+});
+
+/* 点面板与卡组名以外的地方，收起牌组选择 */
+document.addEventListener('click', (e) => {
+  if(!deckPickOpen) return;
+  if(e.target.closest('#deckPick') || e.target.closest('#deckScope')) return;
+  closeDeckPick();
 });
 
 /* ============================================================
