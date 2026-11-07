@@ -343,11 +343,9 @@ body{
   position:absolute;left:0;right:0;bottom:0;top:118px;z-index:2;
   overflow:hidden;pointer-events:none;
   border-radius:22px 22px 0 0;
-  transition:box-shadow .2s var(--ease);
-}
-.deck-stage.pick-open .shelf-clip{
-  box-shadow:0 -26px 46px -32px rgba(32,36,42,.34);
-  transition:box-shadow .4s .06s;
+  /* 把抽屉的布局与绘制圈在这一层里：内部重绘不外溢，
+     也不再给整块加投影过渡（阴影过渡每帧都要重绘，正是开面板时顿一下的来源） */
+  contain:layout paint;
 }
 .deck-shelf{
   position:absolute;left:0;right:0;top:0;bottom:0;
@@ -370,8 +368,12 @@ body{
   pointer-events:none;
   transform:translate3d(0,100%,0);
   transition:transform .46s cubic-bezier(.19,1,.3,1);
-  will-change:transform;
+  /* 不再常驻 will-change：面板一直挂在页面上，常驻会长期占用一大块合成纹理；
+     translate3d 本身已经能把它提为合成层 */
   backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  -webkit-overflow-scrolling:touch;
+  /* 只允许纵向滑动：手指一下去浏览器就敢直接滚，不用先等手势判定 */
+  touch-action:pan-y;
   scrollbar-width:none;
 }
 .deck-shelf::-webkit-scrollbar{display:none;}
@@ -379,33 +381,37 @@ body{
 /* 抽屉里缓慢游走的雾色光斑：只动 transform/opacity，滚动时不掉帧 */
 .shelf-aura{position:sticky;top:0;height:0;display:block;z-index:0;pointer-events:none;}
 /* 光斑直接用径向渐变做柔边，不用 filter:blur：模糊滤镜会强制整块重绘 */
-.shelf-aura i{
-  position:absolute;display:block;border-radius:50%;opacity:.7;
-  will-change:transform;
-}
+.shelf-aura i{position:absolute;display:block;border-radius:50%;opacity:.7;}
 .shelf-aura i:nth-child(1){width:220px;height:220px;left:-64px;top:-78px;
   background:radial-gradient(closest-side,color-mix(in srgb,var(--ac) 30%,transparent),transparent 100%);}
 .shelf-aura i:nth-child(2){width:196px;height:196px;right:-66px;top:6px;
   background:radial-gradient(closest-side,color-mix(in srgb,var(--rose) 24%,transparent),transparent 100%);}
 .shelf-aura i:nth-child(3){width:236px;height:186px;left:32%;top:96px;
   background:radial-gradient(closest-side,color-mix(in srgb,var(--amber) 20%,transparent),transparent 100%);}
-.deck-stage.pick-open .shelf-aura i:nth-child(1){animation:auraA 9s ease-in-out infinite;}
-.deck-stage.pick-open .shelf-aura i:nth-child(2){animation:auraB 11s ease-in-out infinite;}
-.deck-stage.pick-open .shelf-aura i:nth-child(3){animation:auraC 13s ease-in-out infinite;}
-@keyframes auraA{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(20px,14px) scale(1.14);}}
-@keyframes auraB{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-16px,18px) scale(.92);}}
-@keyframes auraC{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-14px,-12px) scale(1.1);}}
+/* 三个光斑整组一起漂移：一个合成层就够了，比三个各自动画省两级合成开销 */
+.deck-stage.pick-open .shelf-aura{animation:auraDrift 12s ease-in-out infinite;}
+@keyframes auraDrift{
+  0%,100%{transform:translate3d(0,0,0) scale(1);}
+  50%{transform:translate3d(-12px,9px,0) scale(1.05);}
+}
 /* 顶部提示：一颗呼吸小点 */
 .shelf-tip{
   display:flex;align-items:center;justify-content:center;gap:6px;
   margin:0 0 14px;font-family:var(--mono);font-size:.46rem;font-weight:900;letter-spacing:.08em;
   color:color-mix(in srgb,var(--ink) 40%,transparent);
 }
-.shelf-tip i{width:5px;height:5px;border-radius:50%;background:var(--ac);}
-.deck-stage.pick-open .shelf-tip i{animation:tipPulse 2.4s ease-out infinite;}
+/* 呼吸点用「一层会扩散的环」来做：只动 transform/opacity，
+   不用动 box-shadow（阴影动画每帧都要重绘，手机上最容易掉帧） */
+.shelf-tip i{position:relative;width:5px;height:5px;border-radius:50%;background:var(--ac);}
+.shelf-tip i::after{
+  content:'';position:absolute;inset:-1px;border-radius:50%;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--ac) 40%,transparent);
+  opacity:0;pointer-events:none;
+}
+.deck-stage.pick-open .shelf-tip i::after{animation:tipPulse 2.4s ease-out infinite;}
 @keyframes tipPulse{
-  0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ac) 34%,transparent);}
-  70%,100%{box-shadow:0 0 0 7px transparent;}
+  0%{transform:scale(1);opacity:.75;}
+  70%,100%{transform:scale(2.6);opacity:0;}
 }
 /* 三节跟着抽屉的抽出节奏依次落位：抽屉先上来，内容再一层层贴上去 */
 .deck-shelf .sect{
@@ -543,10 +549,17 @@ body{
   border-color:color-mix(in srgb,var(--dot,#8F9296) 34%,transparent);
 }
 .mst-tile.current .dot{box-shadow:0 0 0 5px color-mix(in srgb,var(--dot,#8F9296) 22%,transparent);}
-.deck-stage.pick-open .mst-tile.current .dot{animation:dotBreath 3.4s ease-in-out infinite;}
+/* 当前档位的圆点往外呼一口气：扩散环只动 transform/opacity */
+.mst-tile .dot{position:relative;}
+.mst-tile .dot::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--dot,#8F9296) 30%,transparent);
+  opacity:0;pointer-events:none;
+}
+.deck-stage.pick-open .mst-tile.current .dot::after{animation:dotBreath 3.4s ease-out infinite;}
 @keyframes dotBreath{
-  0%,100%{box-shadow:0 0 0 5px color-mix(in srgb,var(--dot,#8F9296) 22%,transparent);}
-  50%{box-shadow:0 0 0 9px color-mix(in srgb,var(--dot,#8F9296) 8%,transparent);}
+  0%{transform:scale(1);opacity:.7;}
+  72%,100%{transform:scale(2.1);opacity:0;}
 }
 /* 首字母：六列圆 tile */
 .letters-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
@@ -565,19 +578,27 @@ body{
 .letter-tile:active{transform:scale(.9);}
 .letter-tile.current{background:var(--ink);border-color:var(--ink);color:var(--card);}
 .letter-tile.current .n{color:color-mix(in srgb,var(--card) 70%,transparent);}
-.deck-stage.pick-open .letter-tile.current{animation:letterHalo 4.2s ease-in-out infinite;}
+/* 当前字母的光晕同样用扩散环，避免 box-shadow 动画每帧重绘 */
+.letter-tile::after{
+  content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 15%,transparent);
+  opacity:0;
+}
+.deck-stage.pick-open .letter-tile.current::after{animation:letterHalo 4.2s ease-out infinite;}
 @keyframes letterHalo{
-  0%,100%{box-shadow:0 0 0 0 transparent;}
-  50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--ink) 9%,transparent);}
+  0%{transform:scale(1);opacity:.68;}
+  70%,100%{transform:scale(1.18);opacity:0;}
 }
 @media (prefers-reduced-motion:reduce){
   .deck-shelf,.deck-shelf .sect,.deck-mini,.stack{transition:none !important;}
   .deck-stage.pick-open .deck-mini,
-  .deck-stage.pick-open .shelf-aura i,
-  .deck-stage.pick-open .shelf-tip i,
+  .deck-stage.pick-open .shelf-aura,
+  .deck-stage.pick-open .shelf-tip i::after,
   .deck-stage.pick-open .deck-icon i,
-  .deck-stage.pick-open .mst-tile.current .dot,
-  .deck-stage.pick-open .letter-tile.current{animation:none !important;}
+  .deck-stage.pick-open .mst-tile.current .dot::after,
+  .deck-stage.pick-open .letter-tile.current::after,
+  .deck-scope.open .deck-dots,
+  .deck-scope.open::after{animation:none !important;}
 }
 .deck-tools{display:flex;align-items:center;gap:.32rem;flex:none;}
 /* 状态条右侧的四个小控件：共用同一套高度/圆角/描边/按压反馈，
