@@ -211,32 +211,185 @@ body{
 .deck-scope span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .deck-scope svg{width:9px;height:9px;flex:none;opacity:.5;transition:transform .18s var(--ease);}
 .deck-scope.open svg{transform:rotate(180deg);opacity:.8;}
-/* 牌组选择：从卡组名下面展开的小面板 */
-.deck-pick{
-  position:absolute;left:0;right:0;top:calc(100% + 2px);z-index:6;
-  padding:.5rem .55rem .42rem;
-  border:1px solid var(--rule-2);border-radius:12px;
-  background:var(--card);box-shadow:var(--soft);
+/* 牌组选择：遮罩 + 词卡收成右上角的小卡 + 从下方上浮的牌架 */
+.deck-mask{
+  position:absolute;inset:0;z-index:1;
+  background:rgba(32,36,42,.16);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+  opacity:0;pointer-events:none;
+  transition:opacity .3s var(--ease);
 }
-.deck-pick[hidden]{display:none;}
-.deck-pick .pick-lab{
-  display:block;margin:.06rem 0 .22rem;
-  font-family:var(--mono);font-size:.5rem;font-weight:900;letter-spacing:.08em;
+.deck-stage.pick-open .deck-mask{opacity:1;pointer-events:auto;}
+/* 打开牌架时，正卡朝右上角收拢并淡出，由小卡接住 */
+.stack{
+  transform-origin:right 16px top 14px;
+  transition:opacity .3s var(--ease),transform .45s var(--spring);
+}
+.deck-stage.pick-open .stack{opacity:0;transform:scale(.26) rotate(3deg);pointer-events:none;}
+/* 收起来的当前词卡 */
+.deck-mini{
+  position:absolute;right:16px;top:14px;z-index:3;
+  width:92px;height:124px;padding:10px;
+  display:flex;flex-direction:column;cursor:pointer;
+  background:var(--card);border:1px solid var(--rule);border-radius:12px;
+  box-shadow:-3px -3px 0 rgba(32,36,42,.05),-6px -6px 0 rgba(32,36,42,.03),0 4px 22px -6px rgba(32,36,42,.18);
+  opacity:0;pointer-events:none;
+  transform:rotate(0) scale(.74);transform-origin:100% 0;
+  transition:opacity .28s var(--ease),transform .48s var(--spring);
+}
+.deck-stage.pick-open .deck-mini{opacity:1;pointer-events:auto;transform:rotate(3deg) scale(1);}
+.deck-mini .wm{
+  font-family:var(--display);font-size:1.05rem;font-weight:900;letter-spacing:-.02em;line-height:1.05;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.deck-mini .gm{
+  margin-top:5px;font-size:.55rem;font-weight:700;line-height:1.3;
+  color:color-mix(in srgb,var(--ink) 72%,transparent);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.deck-mini .bm{
+  margin-top:auto;align-self:flex-start;max-width:100%;
+  display:inline-flex;align-items:center;gap:3px;
+  padding:1px 5px;border-radius:99px;background:rgba(32,36,42,.06);
+  font-family:var(--mono);font-size:.42rem;font-weight:900;color:var(--ink-2);
+}
+.deck-mini .bm::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--ac);flex:none;}
+.deck-mini .bm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* 牌架：三节牌组/掌握度/首字母，整体上浮 */
+.deck-shelf{
+  position:absolute;inset:0;z-index:2;
+  padding:142px 16px 20px;
+  overflow-y:auto;overscroll-behavior:contain;
+  opacity:0;pointer-events:none;transform:translateY(28px);
+  transition:opacity .3s var(--ease),transform .5s var(--spring);
+  scrollbar-width:none;
+}
+.deck-shelf::-webkit-scrollbar{display:none;}
+.deck-stage.pick-open .deck-shelf{opacity:1;pointer-events:auto;transform:translateY(0);}
+.deck-shelf .sect{
+  margin-bottom:18px;opacity:0;transform:translateY(10px);
+  transition:opacity .3s var(--ease),transform .4s var(--spring);
+}
+.deck-shelf .sect:last-child{margin-bottom:0;}
+.deck-stage.pick-open .deck-shelf .sect{opacity:1;transform:translateY(0);}
+.deck-stage.pick-open .deck-shelf .sect:nth-child(1){transition-delay:.06s;}
+.deck-stage.pick-open .deck-shelf .sect:nth-child(2){transition-delay:.14s;}
+.deck-stage.pick-open .deck-shelf .sect:nth-child(3){transition-delay:.22s;}
+.deck-shelf .sect-head{display:flex;align-items:baseline;justify-content:space-between;margin:0 4px 8px;}
+.deck-shelf .sect-title{
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.16em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
-.deck-pick .pick-row{display:flex;flex-wrap:wrap;gap:.28rem;margin-bottom:.34rem;}
-.deck-pick .pick-row:last-child{margin-bottom:0;}
-.deck-pick .deck-chip{
-  height:26px;padding:0 .5rem;
-  display:inline-flex;align-items:center;gap:3px;
-  border:1px solid var(--rule-2);border-radius:7px;background:var(--paper-2);
-  color:var(--ink);cursor:pointer;
-  font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.03em;
+.deck-shelf .sect-count{
+  font-family:var(--mono);font-size:.52rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 38%,transparent);
 }
-.deck-pick .deck-chip b{font-size:.5rem;font-weight:900;opacity:.45;}
-.deck-pick .deck-chip.on{background:color-mix(in srgb,var(--ink) 9%,var(--card));
-  border-color:color-mix(in srgb,var(--ink) 30%,transparent);}
-.deck-pick .deck-chip.on b{opacity:.7;}
+/* 牌组：两列大卡，卡片底下压两层错位纸 */
+.decks-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.deck-tile{
+  appearance:none;cursor:pointer;position:relative;isolation:isolate;
+  border:0;background:transparent;padding:0;text-align:left;
+  font-family:var(--sans);color:var(--ink);
+}
+.deck-tile::before,.deck-tile::after{
+  content:'';position:absolute;inset:0;z-index:-1;
+  background:var(--paper-2);border:1px solid var(--rule);border-radius:14px;
+  transition:transform .3s var(--spring);
+}
+.deck-tile::before{transform:rotate(-1.8deg) translate(-2px,3px);}
+.deck-tile::after{transform:rotate(1deg) translate(3px,2px);}
+.deck-tile:active::before{transform:rotate(-2.4deg) translate(-3px,4px);}
+.deck-tile:active::after{transform:rotate(1.5deg) translate(4px,3px);}
+.deck-tile-inner{
+  position:relative;min-height:100%;
+  display:flex;flex-direction:column;gap:9px;
+  padding:12px 13px 13px;
+  background:var(--card);border:1px solid var(--rule);border-radius:14px;
+}
+.deck-tile .row-top{display:flex;align-items:center;gap:8px;}
+.deck-icon{position:relative;width:30px;height:34px;flex:none;}
+.deck-icon i{
+  position:absolute;inset:0;border-radius:4px;
+  background:var(--card);border:1px solid var(--accent,var(--ac));
+}
+.deck-icon i:nth-child(1){transform:rotate(-6deg) translate(-1px,2px);opacity:.35;
+  background:color-mix(in srgb,var(--accent,var(--ac)) 8%,var(--card));}
+.deck-icon i:nth-child(2){transform:rotate(3deg) translate(1px,0);opacity:.6;
+  background:color-mix(in srgb,var(--accent,var(--ac)) 14%,var(--card));}
+.deck-icon i:nth-child(3){
+  z-index:1;display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--accent,var(--ac)) 22%,var(--card));
+  color:color-mix(in srgb,var(--accent,var(--ac)) 78%,var(--ink));
+  font-family:var(--display);font-size:.66rem;font-weight:900;
+}
+.deck-tile .name{
+  flex:1;min-width:0;font-size:.9rem;font-weight:800;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.deck-tile .line-meta{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  padding-top:9px;border-top:1px dashed var(--rule);
+}
+.deck-tile .count{
+  font-family:var(--mono);font-size:.55rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);white-space:nowrap;
+}
+.deck-tile .count b{font-size:.72rem;letter-spacing:-.02em;margin-right:1px;color:var(--ink);}
+.deck-tile .status{
+  display:inline-flex;align-items:center;gap:4px;white-space:nowrap;
+  font-family:var(--mono);font-size:.5rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 50%,transparent);
+}
+.deck-tile .status i{flex:none;width:5px;height:5px;border-radius:50%;background:var(--accent,var(--ac));}
+.deck-tile.current .deck-tile-inner{
+  background:color-mix(in srgb,var(--accent,var(--ac)) 8%,var(--card));
+  border-color:color-mix(in srgb,var(--accent,var(--ac)) 34%,transparent);
+}
+.deck-tile.current .name{position:relative;padding-left:9px;}
+.deck-tile.current .name::before{content:'';position:absolute;left:0;top:1px;bottom:1px;width:2px;
+  border-radius:2px;background:var(--accent,var(--ac));}
+/* 掌握度：三列竖卡 */
+.mst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.mst-tile{
+  appearance:none;cursor:pointer;padding:12px 8px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:var(--card);border:1px solid var(--rule);border-radius:12px;
+  color:var(--ink);font-family:var(--sans);
+  transition:transform .18s var(--spring),background .18s,border-color .18s;
+}
+.mst-tile:active{transform:scale(.96);}
+.mst-tile .dot{
+  width:16px;height:16px;border-radius:50%;background:var(--dot,#8F9296);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--dot,#8F9296) 15%,transparent);
+  transition:box-shadow .2s;
+}
+.mst-tile .name{font-size:.72rem;font-weight:800;line-height:1.2;white-space:nowrap;}
+.mst-tile .num{font-family:var(--display);font-size:1.05rem;font-weight:900;letter-spacing:-.03em;line-height:1;}
+.mst-tile.current{
+  background:color-mix(in srgb,var(--dot,#8F9296) 10%,var(--card));
+  border-color:color-mix(in srgb,var(--dot,#8F9296) 34%,transparent);
+}
+.mst-tile.current .dot{box-shadow:0 0 0 5px color-mix(in srgb,var(--dot,#8F9296) 22%,transparent);}
+/* 首字母：六列圆 tile */
+.letters-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+.letter-tile{
+  appearance:none;cursor:pointer;position:relative;aspect-ratio:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--paper-2);border:1px solid var(--rule);border-radius:50%;
+  color:var(--ink);font-family:var(--display);font-size:.86rem;font-weight:900;
+  letter-spacing:-.02em;line-height:1;
+  transition:transform .15s var(--spring),background .15s,border-color .15s,color .15s;
+}
+.letter-tile .n{
+  margin-top:2px;font-family:var(--mono);font-size:.44rem;font-weight:900;letter-spacing:0;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.letter-tile:active{transform:scale(.9);}
+.letter-tile.current{background:var(--ink);border-color:var(--ink);color:var(--card);}
+.letter-tile.current .n{color:color-mix(in srgb,var(--card) 70%,transparent);}
+@media (prefers-reduced-motion:reduce){
+  .deck-shelf,.deck-shelf .sect,.deck-mini,.stack{transition:none !important;}
+}
 .deck-tools{display:flex;align-items:center;gap:.32rem;flex:none;}
 /* 状态条右侧的四个小控件：共用同一套高度/圆角/描边/按压反馈，
    文字钮与图标钮只差挨宽度，看起来才是一排东西 */
@@ -1629,6 +1782,17 @@ function rootOf(w){
   return {label: roots.map(r => (ROOT_META[r] || ROOT_META.other).label).join(' / '), color: meta.color};
 }
 
+/* 牌组面板打开时右上角收起来的小卡：显示当前词 */
+function miniCardHtml(){
+  const w = queue[pos] || queue[queue.length - 1];
+  if(!w) return '<div class="deck-mini" id="deckMini" hidden></div>';
+  return '<div class="deck-mini" id="deckMini" title="收起牌组面板">' +
+      '<div class="wm">' + esc(w.word) + '</div>' +
+      '<div class="gm">' + esc(w.gloss || '') + '</div>' +
+      '<div class="bm"><span>' + esc(scopeName()) + '</span></div>' +
+    '</div>';
+}
+
 function renderDeckShell(){
   const view = document.getElementById('view-deck');
   deckPickOpen = false;
@@ -1644,9 +1808,13 @@ function renderDeckShell(){
         '<button class="undo-btn" id="undoBtn" type="button" aria-label="撤回上一张" hidden>撤回</button>' +
         '<button class="gloss-btn" id="hideGlossBtn" type="button" aria-label="遮住答案" aria-pressed="false" title="遮住答案"></button>' +
         sfxButtonHtml() + '</span>' +
-        '<div class="deck-pick" id="deckPick" hidden></div>' +
         '</div>' +
-      '<div class="deck-stage" id="deckStage"><div class="stack" id="cardStack"></div></div>' +
+      '<div class="deck-stage" id="deckStage">' +
+        '<div class="deck-mask" id="deckMask" aria-hidden="true"></div>' +
+        '<div class="stack" id="cardStack"></div>' +
+        miniCardHtml() +
+        '<div class="deck-shelf" id="deckPick" role="dialog" aria-label="选择牌组"></div>' +
+      '</div>' +
     '</div>';
   renderCard(false);
   syncSfxBtn();
@@ -2286,7 +2454,7 @@ function currentDeckKey(){
   const mi = MST_LABEL.indexOf(deckScopeLabel);
   if(mi >= 0) return 'm' + mi;
   if(deckScopeLabel.slice(-2) === ' 组') return 'l' + deckScopeLabel.charAt(0);
-  return 'all';
+  return ''; /* 搜索等自定义分组不属于任何一格，不高亮 */
 }
 
 function deckPickHtml(){
@@ -2298,23 +2466,55 @@ function deckPickHtml(){
     const L = (w.word[0] || '#').toUpperCase();
     letters.set(L, (letters.get(L) || 0) + 1);
   });
-  const chip = (key, name, n) =>
-    '<button class="deck-chip' + (cur === key ? ' on' : '') + '" type="button" data-deck="' + key + '">' +
-    esc(name) + '<b>' + n + '</b></button>';
-  return '<span class="pick-lab">牌组</span><div class="pick-row">' +
-      chip('all', '全部词', WORDS.length) + chip('review', '今天复习', rated.size) +
-    '</div><span class="pick-lab">掌握度</span><div class="pick-row">' +
-      [0, 1, 2].map(i => chip('m' + i, MST_LABEL[i], mCount[i])).join('') +
-    '</div><span class="pick-lab">首字母</span><div class="pick-row">' +
-      Array.from(letters.keys()).sort().map(L => chip('l' + L, L, letters.get(L))).join('') +
-    '</div>';
+
+  const sectHead = (title, count) =>
+    '<div class="sect-head"><span class="sect-title">' + title + '</span>' +
+    '<span class="sect-count">' + count + '</span></div>';
+
+  /* 两张大牌组卡：一摞错位纸 + 小牌堆图标 + 数量/状态 */
+  const tile = d =>
+    '<button class="deck-tile' + (cur === d.key ? ' current' : '') + '" type="button" data-deck="' + d.key + '" style="--accent:' + d.accent + '">' +
+      '<span class="deck-tile-inner">' +
+        '<span class="row-top">' +
+          '<span class="deck-icon" aria-hidden="true"><i></i><i></i><i>' + d.icon + '</i></span>' +
+          '<span class="name">' + esc(d.name) + '</span>' +
+        '</span>' +
+        '<span class="line-meta">' +
+          '<span class="count"><b>' + d.n + '</b> 个词</span>' +
+          '<span class="status"><i></i>' + d.status + '</span>' +
+        '</span>' +
+      '</span>' +
+    '</button>';
+
+  const decks = [
+    {key:'all', name:'全部词', n:WORDS.length, accent:'var(--ac)', icon:'全', status:'掌握度混合'},
+    {key:'review', name:'今天复习', n:rated.size, accent:'var(--rose)', icon:'复', status:rated.size ? '今日已评' : '今日未评'}
+  ];
+  const mColors = ['#8F9296', 'var(--amber)', 'var(--moss)'];
+
+  return '<div class="sect">' + sectHead('牌组', decks.length + ' 组') +
+      '<div class="decks-grid">' + decks.map(tile).join('') + '</div></div>' +
+    '<div class="sect">' + sectHead('掌握度', '3 类') +
+      '<div class="mst-grid">' +
+        [0, 1, 2].map(i =>
+          '<button class="mst-tile' + (cur === 'm' + i ? ' current' : '') + '" type="button" data-deck="m' + i + '" style="--dot:' + mColors[i] + '">' +
+            '<span class="dot"></span><span class="name">' + MST_LABEL[i] + '</span><span class="num">' + mCount[i] + '</span>' +
+          '</button>').join('') +
+      '</div></div>' +
+    '<div class="sect">' + sectHead('首字母', letters.size + ' 个') +
+      '<div class="letters-grid">' +
+        Array.from(letters.keys()).sort().map(L =>
+          '<button class="letter-tile' + (cur === 'l' + L ? ' current' : '') + '" type="button" data-deck="l' + L + '">' +
+            '<span class="lt">' + L + '</span><span class="n">' + letters.get(L) + '</span>' +
+          '</button>').join('') +
+      '</div></div>';
 }
 
 function closeDeckPick(){
   deckPickOpen = false;
-  const box = document.getElementById('deckPick');
+  const stage = document.getElementById('deckStage');
   const btn = document.getElementById('deckScope');
-  if(box) box.hidden = true;
+  if(stage) stage.classList.remove('pick-open');
   if(btn){
     btn.classList.remove('open');
     btn.setAttribute('aria-expanded', 'false');
@@ -2324,11 +2524,14 @@ function closeDeckPick(){
 function toggleDeckPick(){
   const box = document.getElementById('deckPick');
   const btn = document.getElementById('deckScope');
-  if(!box || !btn) return;
+  const stage = document.getElementById('deckStage');
+  if(!box || !btn || !stage) return;
   if(deckPickOpen){ closeDeckPick(); return; }
   box.innerHTML = deckPickHtml();
-  box.hidden = false;
+  box.scrollTop = 0;
+  void box.offsetHeight; /* 先让内容落地，再加类才会播放入场过渡 */
   deckPickOpen = true;
+  stage.classList.add('pick-open');
   btn.classList.add('open');
   btn.setAttribute('aria-expanded', 'true');
 }
@@ -2688,6 +2891,11 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   if(e.target.closest('#deckScope')){
     e.preventDefault(); e.stopPropagation();
     toggleDeckPick();
+    return;
+  }
+  if(e.target.closest('#deckMini') || e.target.closest('#deckMask')){
+    e.preventDefault(); e.stopPropagation();
+    closeDeckPick();
     return;
   }
   const dChip = e.target.closest('[data-deck]');
