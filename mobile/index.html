@@ -582,23 +582,40 @@ body{
   0%{transform:scale(1);opacity:.7;}
   72%,100%{transform:scale(2.1);opacity:0;}
 }
-/* 首字母球：直径按该字母的词量变化（--s 由脚本按数量写入），大小不一的球自然成团 */
-.letters-grid{display:flex;flex-wrap:wrap;gap:7px;align-content:flex-start;}
+/* 首字母：向上漂的球阵。球是绝对定位的，位置每帧由脚本写成 transform；
+   球径按该字母的词量变化（--s） */
+.letters-grid{
+  position:relative;height:196px;
+  margin:.1rem -.05rem 0;
+  border-radius:15px;border:1px solid var(--rule);
+  background:
+    radial-gradient(120% 62% at 50% 0%, rgba(32,36,42,.028), transparent 62%),
+    var(--paper-2);
+  box-shadow:inset 0 -26px 36px -30px rgba(32,36,42,.10);
+  overflow:hidden;touch-action:none;isolation:isolate;
+}
 .letter-tile{
-  appearance:none;cursor:pointer;position:relative;flex:none;
+  appearance:none;cursor:grab;position:absolute;left:0;top:0;
   width:var(--s,48px);height:var(--s,48px);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:var(--paper-2);border:1px solid var(--rule);border-radius:50%;
-  color:var(--ink);font-family:var(--display);
-  font-size:calc(var(--s,48px) * .28);font-weight:900;
+  color:var(--ink);font-family:var(--display);font-weight:900;
   letter-spacing:-.02em;line-height:1;
-  transition:transform .15s var(--spring),background .15s,border-color .15s,color .15s;
+  box-shadow:0 1px 2px rgba(32,36,42,.06),0 6px 14px -8px rgba(32,36,42,.18);
+  will-change:transform;contain:layout style;
+  transition:background .15s,border-color .15s,color .15s,box-shadow .2s;
 }
+.letter-tile .lt{font-size:calc(var(--s,48px) * .32);}
 .letter-tile .n{
-  margin-top:2px;font-family:var(--mono);font-size:.44rem;font-weight:900;letter-spacing:0;
-  color:color-mix(in srgb,var(--ink) 45%,transparent);
+  margin-top:1px;font-family:var(--mono);font-weight:900;letter-spacing:0;line-height:1;
+  font-size:calc(var(--s,48px) * .16);
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
 }
-.letter-tile:active{transform:scale(.9);}
+/* 抓起时抬高一层：影子变实、层级压过其它球 */
+.letter-tile.dragging{
+  cursor:grabbing;z-index:5;background:var(--card);
+  box-shadow:0 2px 4px rgba(32,36,42,.10),0 16px 30px -12px rgba(32,36,42,.32);
+}
 .letter-tile.current{background:var(--ink);border-color:var(--ink);color:var(--card);}
 .letter-tile.current .n{color:color-mix(in srgb,var(--card) 70%,transparent);}
 /* 当前字母的光晕同样用扩散环，避免 box-shadow 动画每帧重绘 */
@@ -612,17 +629,6 @@ body{
   0%{transform:scale(1);opacity:.68;}
   70%,100%{transform:scale(1.18);opacity:0;}
 }
-/* 小球入场：按顺序错拍落进牌架，带过冲回弹；只用 backwards，
-   动画结束后回到常态，按下的 :active 缩放才不会被压掉 */
-.deck-stage.pick-open .letter-tile{
-  animation:ballIn .5s cubic-bezier(.2,.9,.3,1) calc(var(--i,0) * .026s + .18s) backwards;
-}
-@keyframes ballIn{
-  0%{transform:scale(.36);opacity:.25;}
-  58%{transform:scale(1.14);opacity:1;}
-  78%{transform:scale(.94);}
-  100%{transform:scale(1);}
-}
 @media (prefers-reduced-motion:reduce){
   .deck-shelf,.deck-shelf .sect,.deck-mini,.stack{transition:none !important;}
   .deck-stage.pick-open .deck-mini,
@@ -631,7 +637,6 @@ body{
   .deck-stage.pick-open .deck-icon i,
   .deck-stage.pick-open .mst-tile.current .dot::after,
   .deck-stage.pick-open .letter-tile.current::after,
-  .deck-stage.pick-open .letter-tile,
   .deck-scope.open .deck-dots,
   .deck-scope.open::after{animation:none !important;}
 }
@@ -2788,17 +2793,244 @@ function deckPickHtml(){
           '</button>').join('') +
       '</div></div>' +
     '<div class="sect sect-ltr">' + sectHead('首字母', letters.size + ' 个') +
-      '<div class="letters-grid">' +
-        Array.from(letters.keys()).sort().map((L, i) => {
+      '<div class="letters-grid" id="letterStage">' +
+        Array.from(letters.keys()).sort().map(L => {
           const n = letters.get(L);
-          /* 词越多球越大：1 个词 38px，封顶 9 个词 58px */
-          const s = Math.round(38 + Math.min(n, 9) * 2.2);
+          /* 球径按词数开方缩放：1 个词 40px，9 个词 58px（面积更接近词量） */
+          const t = Math.min(n, 9) / 9;
+          const s = Math.round(40 + 18 * Math.sqrt(t));
           return '<button class="letter-tile' + (cur === 'l' + L ? ' current' : '') + '" type="button" data-deck="l' + L + '"' +
-            ' style="--s:' + s + 'px;--i:' + i + '">' +
+            ' style="--s:' + s + 'px" aria-label="' + esc(L + ' 组，' + n + ' 个词') + '">' +
             '<span class="lt">' + L + '</span><span class="n">' + n + '</span>' +
           '</button>';
         }).join('') +
       '</div></div>';
+}
+
+/* ------------------------------------------------------------
+   首字母球阵：向上漂的浮力球
+   向上有浮力，撞边界/彼此轻弹，可以抓起甩出去，松手继续往上飘。
+   只在面板打开时跑 rAF，收起立刻停，不白耗电。
+   ------------------------------------------------------------ */
+const BALL_G = -150;      /* 浮力加速度 px/s²（负值向上） */
+const BALL_DAMP = .45;    /* 速度半衰：每秒保留比例，越小越快停 */
+const BALL_WALL = .45;    /* 撞墙保留速度 */
+const BALL_PAIR = .30;    /* 球撞球保留速度 */
+const BALL_STEP = 1 / 60;
+
+let ballScene = null;
+
+function ballSceneInit(){
+  ballSceneStop();
+  const stage = document.getElementById('letterStage');
+  if(!stage){ ballScene = null; return; }
+  const w = stage.clientWidth || 320;
+  const h = stage.clientHeight || 196;
+  const els = Array.from(stage.querySelectorAll('.letter-tile'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const balls = els.map((el, i) => {
+    const r = el.offsetWidth / 2 || 24;
+    const b = {
+      el, r, m: r * r, x: 0, y: 0, vx: 0, vy: 0, held: false,
+      phase: Math.random() * Math.PI * 2
+    };
+    if(reduce){
+      /* 减少动效：直接摆成整齐几行，不再跑物理 */
+      const cols = Math.max(1, Math.floor((w + 7) / (r * 2 + 7)));
+      b.x = r + (i % cols) * (r * 2 + 7);
+      b.y = r + Math.floor(i / cols) * (r * 2 + 7);
+    }else{
+      /* 从底部一片区域里出发，浮上来 */
+      b.x = r + Math.random() * Math.max(1, w - r * 2);
+      b.y = h - r - Math.random() * (h * .6);
+      b.vx = (Math.random() - .5) * 60;
+      b.vy = -50 - Math.random() * 80;
+    }
+    return b;
+  });
+  /* 随机落点会叠在一起，先就地推开再开始浮：开局不会有一团球黏在一起 */
+  if(!reduce) ballSceneSettle(balls, w, h);
+  ballScene = {
+    stage, w, h, balls, raf: 0, last: 0, acc: 0, t: 0,
+    held: null, gx: 0, gy: 0, lx: 0, ly: 0, lt: 0, svx: 0, svy: 0, moved: false
+  };
+  if(!stage.__ballBound){ ballSceneBind(stage); stage.__ballBound = true; }
+  ballSceneRender();
+  if(!reduce) ballSceneStart();
+}
+
+/* 开局把叠在一起的球就地推开（只修正位置，不加冲量） */
+function ballSceneSettle(balls, w, h){
+  for(let it = 0; it < 16; it++){
+    for(let i = 0; i < balls.length; i++){
+      const a = balls[i];
+      for(let j = i + 1; j < balls.length; j++){
+        const b = balls[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        const rr = a.r + b.r;
+        const d2 = dx * dx + dy * dy;
+        if(d2 >= rr * rr) continue;
+        let d = Math.sqrt(d2);
+        if(d < .001){ dx = 1; dy = 0; d = 1; }
+        const nx = dx / d, ny = dy / d;
+        const pen = (rr - Math.sqrt(d2)) * .5;
+        a.x -= nx * pen; a.y -= ny * pen;
+        b.x += nx * pen; b.y += ny * pen;
+        a.x = Math.max(a.r, Math.min(w - a.r, a.x));
+        a.y = Math.max(a.r, Math.min(h - a.r, a.y));
+        b.x = Math.max(b.r, Math.min(w - b.r, b.x));
+        b.y = Math.max(b.r, Math.min(h - b.r, b.y));
+      }
+    }
+  }
+}
+
+function ballSceneBind(stage){
+  stage.addEventListener('pointerdown', e => {
+    const s = ballScene; if(!s) return;
+    const el = e.target.closest('.letter-tile'); if(!el) return;
+    const b = s.balls.find(x => x.el === el); if(!b) return;
+    const rect = stage.getBoundingClientRect();
+    b.held = true; s.held = b; s.moved = false;
+    s.gx = e.clientX - rect.left - b.x;
+    s.gy = e.clientY - rect.top - b.y;
+    s.lx = e.clientX; s.ly = e.clientY; s.lt = performance.now();
+    s.svx = 0; s.svy = 0;
+    el.classList.add('dragging');
+    ballSceneStart();
+    try{ el.setPointerCapture(e.pointerId); }catch(err){}
+  });
+
+  stage.addEventListener('pointermove', e => {
+    const s = ballScene; if(!s || !s.held) return;
+    const b = s.held;
+    const rect = stage.getBoundingClientRect();
+    const nx = Math.max(b.r, Math.min(s.w - b.r, e.clientX - rect.left - s.gx));
+    const ny = Math.max(b.r, Math.min(s.h - b.r, e.clientY - rect.top - s.gy));
+    /* 带时间窗指数平滑：甩出去才有手感，又不会飞得太夸张 */
+    const now = performance.now();
+    const dtp = Math.max(1, now - s.lt) / 1000;
+    s.svx = s.svx * .55 + ((e.clientX - s.lx) / dtp) * .45;
+    s.svy = s.svy * .55 + ((e.clientY - s.ly) / dtp) * .45;
+    s.lx = e.clientX; s.ly = e.clientY; s.lt = now;
+    if(Math.abs(nx - b.x) + Math.abs(ny - b.y) > 2) s.moved = true;
+    b.x = nx; b.y = ny; b.vx = 0; b.vy = 0;
+    ballSceneRender();
+  });
+
+  const release = () => {
+    const s = ballScene; if(!s || !s.held) return;
+    const b = s.held;
+    s.held = null; b.held = false;
+    b.el.classList.remove('dragging');
+    const cap = 1600;
+    b.vx = Math.max(-cap, Math.min(cap, s.svx * .85));
+    b.vy = Math.max(-cap, Math.min(cap, s.svy * .85));
+    /* 甩到容器外先拉回来 */
+    if(b.x - b.r < 0){ b.x = b.r; b.vx = Math.abs(b.vx) * .4; }
+    if(b.x + b.r > s.w){ b.x = s.w - b.r; b.vx = -Math.abs(b.vx) * .4; }
+    if(b.y - b.r < 0){ b.y = b.r; b.vy = Math.abs(b.vy) * .4; }
+    if(b.y + b.r > s.h){ b.y = s.h - b.r; b.vy = -Math.abs(b.vy) * .4; }
+  };
+  stage.addEventListener('pointerup', release);
+  stage.addEventListener('pointercancel', release);
+
+  /* 拖动结束的那一下不算「选牌组」；轻点才算 */
+  stage.addEventListener('click', e => {
+    const s = ballScene; if(!s) return;
+    if(s.moved){ e.preventDefault(); e.stopPropagation(); s.moved = false; }
+  }, true);
+}
+
+function ballSceneStep(dt){
+  const s = ballScene; if(!s) return;
+  const damp = Math.pow(BALL_DAMP, dt);
+  /* 贴边：撞到四壁按 BALL_WALL 弹回，并把球推回框内 */
+  const walls = () => {
+    for(const b of s.balls){
+      if(b.held) continue;
+      if(b.x - b.r < 0){ b.x = b.r; if(b.vx < 0) b.vx = -b.vx * BALL_WALL; }
+      if(b.x + b.r > s.w){ b.x = s.w - b.r; if(b.vx > 0) b.vx = -b.vx * BALL_WALL; }
+      if(b.y - b.r < 0){ b.y = b.r; if(b.vy < 0) b.vy = -b.vy * BALL_WALL; }
+      if(b.y + b.r > s.h){ b.y = s.h - b.r; if(b.vy > 0) b.vy = -b.vy * BALL_WALL; }
+    }
+  };
+  for(const b of s.balls){
+    if(b.held) continue;
+    b.vy += BALL_G * dt;
+    /* 缓慢横向摇摆：让贴在顶上的球也一直轻轻挪动，不显得死板 */
+    b.vx += Math.sin(s.t * .9 + b.phase) * 30 * dt;
+    b.x += b.vx * dt;
+    b.y += b.vy * dt;
+    b.vx *= damp;
+    b.vy *= damp;
+  }
+  walls();
+  /* 球与球：位置修正 + 冲量，质量按半径平方，大球推小球 */
+  for(let it = 0; it < 2; it++){
+    for(let i = 0; i < s.balls.length; i++){
+      const a = s.balls[i];
+      for(let j = i + 1; j < s.balls.length; j++){
+        const b = s.balls[j];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const rr = a.r + b.r;
+        const d2 = dx * dx + dy * dy;
+        if(d2 >= rr * rr) continue;
+        const d = Math.sqrt(d2);
+        /* 完全重合时法线取不到，给一个默认方向，否则这对球永远分不开 */
+        let nx = 1, ny = 0;
+        if(d > .001){ nx = dx / d; ny = dy / d; }
+        const pen = rr - d;
+        const ia = a.held ? 0 : 1 / a.m;
+        const ib = b.held ? 0 : 1 / b.m;
+        if(ia + ib > 0){
+          const tot = ia + ib;
+          if(ia > 0){ a.x -= nx * pen * (ia / tot) * .7; a.y -= ny * pen * (ia / tot) * .7; }
+          if(ib > 0){ b.x += nx * pen * (ib / tot) * .7; b.y += ny * pen * (ib / tot) * .7; }
+        }
+        const rvx = b.vx - a.vx, rvy = b.vy - a.vy;
+        const vn = rvx * nx + rvy * ny;
+        if(vn >= 0 || ia + ib === 0) continue;
+        const J = (1 + BALL_PAIR) * vn / (ia + ib);
+        if(ia > 0){ a.vx += J * nx * ia; a.vy += J * ny * ia; }
+        if(ib > 0){ b.vx -= J * nx * ib; b.vy -= J * ny * ib; }
+      }
+    }
+  }
+  /* 挤在一起的球会被推得穿出边界，再贴一次边，别让球压到框外 */
+  walls();
+}
+
+function ballSceneRender(){
+  const s = ballScene; if(!s) return;
+  for(const b of s.balls){
+    b.el.style.transform = 'translate3d(' + (b.x - b.r) + 'px,' + (b.y - b.r) + 'px,0)';
+  }
+}
+
+function ballSceneFrame(now){
+  const s = ballScene; if(!s) return;
+  if(!deckPickOpen){ s.raf = 0; return; }   /* 面板收起就停 */
+  if(!s.last) s.last = now;
+  let dt = (now - s.last) / 1000;
+  s.last = now;
+  if(dt > .1) dt = .1;
+  s.acc += dt; s.t += dt;
+  let guard = 0;
+  while(s.acc >= BALL_STEP && guard < 4){ ballSceneStep(BALL_STEP); s.acc -= BALL_STEP; guard++; }
+  if(s.acc > BALL_STEP) s.acc = 0;
+  ballSceneRender();
+  s.raf = requestAnimationFrame(ballSceneFrame);
+}
+
+function ballSceneStart(){
+  const s = ballScene; if(!s || s.raf) return;
+  s.last = 0; s.acc = 0;
+  s.raf = requestAnimationFrame(ballSceneFrame);
+}
+function ballSceneStop(){
+  const s = ballScene; if(!s || !s.raf) return;
+  cancelAnimationFrame(s.raf); s.raf = 0;
 }
 
 /* 面板内容提前渲染好（面板此时是隐藏的），点开时只切类，省掉打开瞬间的排版 */
@@ -2833,6 +3065,7 @@ function closeDeckPick(){
     btn.setAttribute('aria-expanded', 'false');
   }
   if(wasOpen) popPickHistory();
+  ballSceneStop();
 }
 
 function toggleDeckPick(){
@@ -2849,6 +3082,8 @@ function toggleDeckPick(){
   box.scrollTop = 0;
   deckPickOpen = true;
   pushPickHistory();
+  ballSceneInit();
+  ballSceneStart();
   btn.classList.add('open');
   btn.setAttribute('aria-expanded', 'true');
   sfxPlay('panelOpen');
