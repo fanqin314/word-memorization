@@ -604,6 +604,7 @@ body{
 .deck-empty{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;
   text-align:center;color:var(--ink-2);padding:1.2rem;
+  position:relative;z-index:4;   /* 压在 .stack 的两张装饰卡上，按钮才点得到 */
 }
 .deck-empty .big{font-family:var(--display);font-size:1.6rem;letter-spacing:-.02em;}
 .deck-empty .empty-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.2rem;}
@@ -642,6 +643,31 @@ body{
 }
 .search-box .clear:active{background:rgba(32,36,42,.18);}
 .search-box .clear[hidden]{display:none;}
+
+/* 掌握度分类栏：按掌握度筛选词库，并可只刷这一类 */
+.lib-mst{display:flex;align-items:center;gap:6px;margin:-.1rem .1rem .55rem;flex:none;}
+.lib-mst .m-chip{
+  flex:1;min-width:0;height:28px;padding:0 4px;
+  display:inline-flex;align-items:center;justify-content:center;gap:.18rem;cursor:pointer;
+  border:1px solid var(--rule-2);border-radius:8px;background:var(--card);color:var(--ink);
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.03em;
+  transition:transform .14s var(--spring),background .16s,border-color .16s,color .16s;
+}
+.lib-mst .m-chip b{font-weight:900;opacity:.5;}
+.lib-mst .m-chip:active{transform:scale(.95);}
+.lib-mst .m-chip.on{
+  background:color-mix(in srgb,var(--ac) 16%,transparent);
+  border-color:color-mix(in srgb,var(--ac) 42%,transparent);color:var(--ac-deep);
+}
+.lib-mst .m-chip.on b{opacity:1;}
+.lib-mst .m-brush{
+  flex:none;height:28px;padding:0 .5rem;cursor:pointer;
+  border:1px solid var(--rule-2);border-radius:8px;background:var(--card);color:var(--ink);
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.03em;
+  transition:transform .14s var(--spring),background .16s,color .16s;
+}
+.lib-mst .m-brush:active{transform:scale(.95);}
+.lib-mst .m-brush[hidden]{display:none;}
 
 .lib-stage{position:relative;flex:1;min-height:0;overflow:hidden;margin-top:.1rem;}
 .lib-grid{
@@ -1553,7 +1579,7 @@ function renderDeckShell(){
   const view = document.getElementById('view-deck');
   view.innerHTML = '<div class="deck-wrap">' +
       '<div class="deck-meta"><span>' +
-        (deckScoped ? '<b class="deck-tag">' + esc(deckScopeLabel) + ' 组</b>' : '') +
+        (deckScoped ? '<b class="deck-tag">' + esc(deckScopeLabel) + '</b>' : '') +
         '第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
         '<span class="deck-tools">' +
         (deckScoped ? '<button class="undo-btn" id="scopeExitBtn" type="button" aria-label="退出分组">退出</button>' : '') +
@@ -1634,7 +1660,7 @@ function renderCard(){
     /* 分组刷词：本组刷完，停在组内完成页 */
     if(deckScoped){
       host.innerHTML = '<div class="deck-empty">' +
-        '<span class="big">' + esc(deckScopeLabel) + ' 组刷完了</span>' +
+        '<span class="big">' + esc(deckScopeLabel) + '刷完了</span>' +
         '<small>共 ' + queue.length + ' 个 · 这一组已经过了一遍</small>' +
         '<div class="empty-actions">' +
           '<button class="rate r2" type="button" data-scope-exit style="padding:.55rem 1.1rem;">回到全部</button>' +
@@ -1645,12 +1671,18 @@ function renderCard(){
     /* 今天已无未刷词 → 全部刷完；否则只是这一轮刷完，可继续刷没刷过的 */
     const rated = ratedToday();
     const allDone = WORDS.every(w => rated.has(w.word));
+    const actions = allDone
+      ? '<div class="empty-actions">' +
+          '<button class="rate r2" type="button" data-review style="padding:.55rem 1.1rem;">复习今天刷过的</button>' +
+          '<button class="rate r0" type="button" data-tabgo="quiz" style="padding:.55rem 1.1rem;">去自测</button>' +
+          '<button class="rate r0" type="button" data-tabgo="lib" style="padding:.55rem 1.1rem;">回词库</button>' +
+        '</div>'
+      : '<button class="rate r2" type="button" data-restart style="padding:.55rem 1.1rem;">刷剩下的</button>';
     host.innerHTML = '<div class="deck-empty"><span class="big">' + (allDone ? '今天全部刷完' : '这轮刷完了') + '</span>' +
       '<small>' + (allDone
-        ? '今天 ' + todayCount() + ' 个 · 明天再来，或去词库、自测复习。'
+        ? '今天 ' + todayCount() + ' 个 · 复习一遍、做个自测，或回词库挑掌握度弱的刷。'
         : '今天 ' + todayCount() + ' 个 · 去词库或自测继续，也可以只刷今天没刷过的。') + '</small>' +
-      (allDone ? '' : '<button class="rate r2" type="button" data-restart style="padding:.55rem 1.1rem;">刷剩下的</button>') +
-      '</div>';
+      actions + '</div>';
     return;
   }
   ensureArtCss(w.word);
@@ -1778,6 +1810,7 @@ function advance(level, dir){
    ============================================================ */
 let libBuilt = false;
 let libFilter = '';
+let libMst = 'all';             /* 掌握度筛选：all / '0' 未学 / '1' 学习中 / '2' 已掌握 */
 let libGroups = new Map();      /* 当前过滤结果：字母 → 词[] */
 let libCurrent = null;          /* 已展开的字母 */
 let libAnimating = false;
@@ -1795,6 +1828,7 @@ function renderLib(){
         '<input id="libSearch" type="search" placeholder="搜单词或释义…" autocomplete="off" autocapitalize="off" spellcheck="false">' +
         '<button class="clear" id="libClear" type="button" aria-label="清空" hidden>×</button>' +
       '</div></div>' +
+      '<div class="lib-mst" id="libMst"></div>' +
       '<div class="lib-stage"><div class="lib-grid" id="libGrid"></div>' +
         '<div class="lib-detail" id="libDetail"></div></div>';
 
@@ -1816,6 +1850,20 @@ function renderLib(){
       if(libCurrent) hardCloseLib();
       renderLibGrid('');
       qEl.focus();
+    });
+
+    /* 掌握度分类：切换筛选，或直接按这一类开刷 */
+    document.getElementById('libMst').addEventListener('click', (e) => {
+      const chip = e.target.closest('.m-chip');
+      if(chip){
+        const v = chip.dataset.mst;
+        if(v === libMst) return;
+        libMst = v;
+        if(libCurrent) hardCloseLib();
+        renderLibGrid(libFilter);
+        return;
+      }
+      if(e.target.closest('#libMstBrush')) queueLibMst();
     });
 
     /* 下滑关闭详情层；列表已滚动时不拦 */
@@ -1842,16 +1890,28 @@ function renderLib(){
   renderLibGrid(libFilter);
 }
 
-/* 按首字母分组；q 非空时按单词/释义过滤 */
+/* 关键词过滤（匹配单词或释义） */
+function libSearchWords(q){
+  const s = (q || '').toLowerCase();
+  if(!s) return WORDS.slice();
+  return WORDS.filter(w => w.word.toLowerCase().includes(s) || (w.gloss || '').toLowerCase().includes(s));
+}
+
+/* 关键词 + 掌握度过滤后的全部词 */
+function libMstWords(q){
+  const base = libSearchWords(q);
+  return libMst === 'all' ? base : base.filter(w => String(masteryOf(w.word)) === libMst);
+}
+
+/* 按首字母分组 */
 function libGroupsOf(q){
   const map = new Map();
-  WORDS.forEach(w => {
-    if(q && !(w.word.toLowerCase().includes(q) || (w.gloss || '').toLowerCase().includes(q))) return;
+  libMstWords(q).forEach(w => {
     const L = (w.word[0] || '#').toUpperCase();
     if(!map.has(L)) map.set(L, []);
     map.get(L).push(w);
   });
-  map.forEach(list => list.sort((a, b) => a.word.localeCompare(b.word)));
+  map.forEach(list => list.sort((a, b) => a.word.localeCompare(b)));
   return map;
 }
 
@@ -1890,10 +1950,27 @@ function renderLibGrid(q){
   if(cEl) cEl.textContent = total;
   if(lEl) lEl.textContent = used.length;
 
+  /* 掌握度分类栏：数字按当前关键词过滤后的口径统计 */
+  const base = libSearchWords(libFilter);
+  const mrow = document.getElementById('libMst');
+  if(mrow){
+    const chips = [
+      ['all', '全部', base.length],
+      ['0', '未学', base.filter(w => masteryOf(w.word) === 0).length],
+      ['1', '学习中', base.filter(w => masteryOf(w.word) === 1).length],
+      ['2', '已掌握', base.filter(w => masteryOf(w.word) === 2).length]
+    ];
+    mrow.innerHTML = chips.map(c =>
+      '<button class="m-chip' + (libMst === c[0] ? ' on' : '') + '" type="button" data-mst="' + c[0] + '">' +
+        c[1] + '<b>' + c[2] + '</b></button>').join('') +
+      '<button class="m-brush" type="button" id="libMstBrush"' + (total ? '' : ' hidden') + '>刷这些</button>';
+  }
+
   const grid = document.getElementById('libGrid');
   if(!grid) return;
   if(!used.length){
-    grid.innerHTML = '<div class="wempty">没有匹配的词，换个关键词试试</div>';
+    grid.innerHTML = '<div class="wempty">' +
+      (libMst === 'all' ? '没有匹配的词，换个关键词试试' : '这一类还没有词，换个掌握度试试') + '</div>';
     return;
   }
   grid.style.setProperty('--cols', libBestCols(used.length));
@@ -2107,19 +2184,51 @@ function hardCloseLib(){
   libAnimating = false;
 }
 
-/* 刷这组：临时替换刷词队列，不写全局进度存档 */
-function queueLibLetter(L, list){
+/* 刷这一组：临时替换刷词队列，不写全局进度存档 */
+function queueWords(label, list){
   if(!list || !list.length || animating) return;
   if(!deckScoped) deckBackup = {queue: queue, pos: pos, undoSnap: undoSnap};
   deckScoped = true;
-  deckScopeLabel = L;
+  deckScopeLabel = label;
   queue = libSorted(list);
   pos = 0;
   undoSnap = null;
   hardCloseLib();
   renderDeckShell();
   switchTab('deck');
-  toast('已切到 ' + L + ' 组 · ' + queue.length + ' 个词');
+  toast('已切到 ' + label + ' · ' + queue.length + ' 个词');
+}
+
+/* 字母方块里的「刷这组」 */
+function queueLibLetter(L, list){
+  queueWords(L + ' 组', list);
+}
+
+/* 按当前筛选（关键词 + 掌握度）整批刷 */
+function queueLibMst(){
+  const list = libSorted(libMstWords(libFilter));
+  if(!list.length) return;
+  const label = libMst === 'all'
+    ? (libFilter ? '搜索' : '全部词')
+    : MST_LABEL[Number(libMst)];
+  queueWords(label, list);
+}
+
+/* 复习今天刷过的：把今天已评分的词按掌握度重排一遍（掌握度照常更新） */
+function startReviewToday(){
+  if(animating) return;
+  const rated = ratedToday();
+  const list = WORDS.filter(w => rated.has(w.word));
+  if(!list.length){ toast('今天还没有刷过的词'); return; }
+  deckScoped = false;
+  deckBackup = null;
+  deckScopeLabel = '';
+  queue = libSorted(list);
+  pos = 0;
+  undoSnap = null;
+  savePos();
+  renderDeckShell();
+  toast('复习今天刷过的 ' + queue.length + ' 个词');
 }
 
 /* 退出分组：原样回到进入前那张 */
@@ -2148,7 +2257,7 @@ function replayDeckScope(){
   pos = 0;
   undoSnap = null;
   renderDeckShell();
-  toast('再刷一遍 ' + deckScopeLabel + ' 组');
+  toast('再刷一遍 ' + deckScopeLabel);
 }
 
 /* ============================================================
@@ -2434,6 +2543,17 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   }
   if(e.target.closest('#sfxBtn')) return; /* 音效开关交给 document 级委托，不参与翻面 */
   if(e.target.closest('#hideGlossBtn')) return; /* 遮住答案开关同样走 document 级委托 */
+  if(e.target.closest('[data-review]')){
+    e.preventDefault(); e.stopPropagation();
+    startReviewToday();
+    return;
+  }
+  const tabGo = e.target.closest('[data-tabgo]');
+  if(tabGo){
+    e.preventDefault(); e.stopPropagation();
+    switchTab(tabGo.dataset.tabgo);
+    return;
+  }
   const restart = e.target.closest('[data-restart]');
   if(restart){ e.preventDefault(); deckScoped = false; deckBackup = null; deckScopeLabel = ''; queue = buildQueue(true); pos = 0; savePos(); undoSnap = null; renderDeckShell(); return; }
   const sp = e.target.closest('[data-speak]');
