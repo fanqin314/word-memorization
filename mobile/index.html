@@ -1149,6 +1149,7 @@ function rec(word){
   if(r.note === undefined) r.note = '';
   if(r.opens === undefined) r.opens = 0;
   if(r.lastOpened === undefined) r.lastOpened = 0;
+  if(r.dueAt === undefined) r.dueAt = 0;   /* 0 = 从未排期，视为已到期 */
   return r;
 }
 function daysSince(ts){ return ts ? (Date.now() - ts) / 86400000 : Infinity; }
@@ -1179,11 +1180,6 @@ function reviewDone(word){
   const v = reviewMap()[word];
   return v ? REVIEW_DAYS.filter(k => v[k]).length : 0;
 }
-function isDue(word){
-  const n = reviewDone(word);
-  return n > 0 && n < REVIEW_DAYS.length && masteryOf(word) !== 2;
-}
-
 /* ------------------------------------------------------------
    日期与统计
    ------------------------------------------------------------ */
@@ -1191,6 +1187,11 @@ function keyOf(d){
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 function todayKey(){ return keyOf(new Date()); }
+function startOfDay(ts){
+  const d = new Date(ts);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
 function todayCount(){ return mb.days[todayKey()] || 0; }
 function streakDays(){
   const days = mb.days || {};
@@ -1249,7 +1250,7 @@ function restoreQueue(){
 }
 
 /* ------------------------------------------------------------
-   刷词队列：待复习优先，然后未学 → 学习中 → 已掌握
+   刷词队列：按到期日排序（到期早的先刷），同日按掌握度，再按字母序
    ------------------------------------------------------------ */
 function shuffle(arr){
   for(let i = arr.length - 1; i > 0; i--){
@@ -1259,13 +1260,12 @@ function shuffle(arr){
   return arr;
 }
 function buildQueue(onlyFresh){
-  const due = [], rest = [];
-  WORDS.forEach(w => (isDue(w.word) ? due : rest).push(w));
-  shuffle(due); shuffle(rest);
-  rest.sort((a, b) => masteryOf(a.word) - masteryOf(b.word) || rec(a.word).opens - rec(b.word).opens);
-  const all = due.concat(rest);
-  /* 今天已评分的词排到队尾：不删掉（允许重刷），但不占队首 */
   const rated = ratedToday();
+  const all = WORDS.slice().sort((a, b) =>
+    rec(a.word).dueAt - rec(b.word).dueAt ||      /* 到期早的先刷 */
+    masteryOf(a.word) - masteryOf(b.word) ||       /* 同一到期日按掌握度 */
+    a.word.localeCompare(b.word));                 /* 并列时稳定可复现 */
+  /* 今天已评分的词排到队尾：不删掉（允许重刷），但不占队首 */
   const fresh = all.filter(w => !rated.has(w.word));
   const done = all.filter(w => rated.has(w.word));
   /* onlyFresh：重开一轮只刷今天还没刷过的（方案 A） */
@@ -1729,6 +1729,14 @@ function renderCard(plainInner){
   preloadAudio(queue[pos + 1] && queue[pos + 1].word);
 }
 
+/* 间隔按「天」算，统一落到当天 0 点 */
+function dueAfter(level){
+  const today = startOfDay(Date.now());
+  if(level === 0) return today;                   /* 不认识 → 次日回到到期队列前排 */
+  if(level === 1) return today + 86400000;        /* 有点印象 → 明天 0 点 */
+  return today + 3 * 86400000;                    /* 认识 → 3 天后 0 点 */
+}
+
 /* 记录掌握度：写回 index.html 同一份 store */
 function rateWord(word, level){
   const r = rec(word);
@@ -1738,6 +1746,7 @@ function rateWord(word, level){
   else if(level === 1) r.pin = 1;
   else { r.pin = null; r.opens = 0; }
   r.mastery = masteryOf(word);
+  r.dueAt = dueAfter(level);
   persist(STORE_KEY, store);
   markRated(word);
   bumpToday(1);
@@ -2443,7 +2452,7 @@ function renderStat(){
   const view = document.getElementById('view-stat');
   const today = todayCount();
   const streak = streakDays();
-  const due = WORDS.filter(w => isDue(w.word)).length;
+  const due = WORDS.filter(w => rec(w.word).dueAt <= startOfDay(Date.now())).length;
   const m = [0,0,0];
   WORDS.forEach(w => m[masteryOf(w.word)]++);
   const stat = quizStat();
