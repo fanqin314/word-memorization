@@ -261,26 +261,42 @@ body{
   0%{opacity:.85;box-shadow:0 0 0 0 color-mix(in srgb,var(--ink) 24%,transparent);}
   100%{opacity:0;box-shadow:0 0 0 12px transparent;}
 }
-.deck-scope .scope-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-/* 左侧四点「牌堆」小标：点开时四点变亮，整枚徽标弹一下 */
+/* 文案区：平时是牌组名，点开后原地淡出换成「返回」；
+   两层叠在同一个位置，按钮宽度不会跳 */
+.deck-scope .scope-name{position:relative;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.deck-scope .scope-name .nm{display:inline-block;transition:opacity .16s var(--ease);}
+.deck-scope .scope-name .bk{
+  position:absolute;left:0;top:0;display:inline-block;white-space:nowrap;
+  opacity:0;transition:opacity .16s var(--ease);
+}
+.deck-scope.open .scope-name .nm{opacity:0;}
+.deck-scope.open .scope-name .bk{opacity:1;}
+/* 左侧四点「牌堆」小标：点开后淡出，把位置让给返回箭头 */
 .deck-scope .deck-dots{
   flex:none;display:grid;grid-template-columns:repeat(2,4px);grid-auto-rows:4px;gap:2px;
   padding:3px;border-radius:6px;
   background:rgba(255,255,255,.1);
-  transition:transform .2s var(--spring);
+  transition:transform .2s var(--spring),opacity .16s var(--ease);
 }
 .deck-scope .deck-dots i{
   border-radius:50%;background:rgba(255,255,255,.34);
   transition:background .16s,transform .18s var(--spring);
 }
 .deck-scope .deck-dots i:nth-child(1),.deck-scope .deck-dots i:nth-child(4){transform:scale(.72);}
-.deck-scope.open .deck-dots{animation:dotsSnap .46s var(--spring);}
-.deck-scope.open .deck-dots i{background:#F7F8F6;transform:scale(1);}
-@keyframes dotsSnap{
-  0%{transform:scale(.84) rotate(-10deg);}
-  55%{transform:scale(1.08) rotate(3deg);}
-  100%{transform:scale(1) rotate(0);}
+.deck-scope.open .deck-dots{opacity:0;transform:scale(.6);}
+/* 返回箭头：和四点共用同一块位置，点开时从右侧转进来 */
+.deck-scope .scope-back{
+  position:absolute;left:6px;top:50%;width:16px;height:16px;margin-top:-8px;
+  pointer-events:none;opacity:0;
+  transform:translateX(6px) scale(.7);
+  transition:opacity .16s var(--ease),transform .26s var(--spring);
 }
+.deck-scope .scope-back::before{
+  content:'';position:absolute;left:5px;top:50%;width:7px;height:7px;margin-top:-3.5px;
+  border-left:1.6px solid #F5F6F4;border-bottom:1.6px solid #F5F6F4;
+  border-radius:1px;transform:rotate(45deg);
+}
+.deck-scope.open .scope-back{opacity:1;transform:none;}
 /* 牌组选择：遮罩 + 词卡收成右上角的小卡 + 从下方上浮的牌架 */
 /* 遮罩只用纯色：全屏 backdrop-filter 在手机上每帧都要重算，面板被拖慢 */
 .deck-mask{
@@ -2040,8 +2056,12 @@ function renderDeckShell(){
   view.innerHTML = '<div class="deck-wrap">' +
       '<div class="deck-meta">' +
         '<button class="deck-scope" id="deckScope" type="button" aria-haspopup="true" aria-expanded="false" title="切换牌组">' +
+          '<span class="scope-back" aria-hidden="true"></span>' +
           '<span class="deck-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' +
-          '<span class="scope-name">' + esc(scopeName()) + '</span>' +
+          '<span class="scope-name">' +
+            '<span class="nm">' + esc(scopeName()) + '</span>' +
+            '<span class="bk" aria-hidden="true">返回</span>' +
+          '</span>' +
         '</button>' +
         '<span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
         '<span class="deck-tools">' +
