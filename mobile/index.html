@@ -263,7 +263,12 @@ body{
 }
 /* 文案区：平时是牌组名，点开后原地淡出换成「返回」；
    两层叠在同一个位置，按钮宽度不会跳 */
-.deck-scope .scope-name{position:relative;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* 卡组名用正排轻字重、字距拉开：比等宽粗体安静，压得住深色底又不吵 */
+.deck-scope .scope-name{
+  position:relative;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--sans);font-size:.56rem;font-weight:700;
+  letter-spacing:.18em;margin-right:-.18em;
+}
 .deck-scope .scope-name .nm{display:inline-block;transition:opacity .16s var(--ease);}
 .deck-scope .scope-name .bk{
   position:absolute;left:0;top:0;display:inline-block;white-space:nowrap;
