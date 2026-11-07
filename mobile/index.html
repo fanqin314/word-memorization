@@ -205,6 +205,13 @@ body{
   color:color-mix(in srgb,var(--ink) 48%,transparent);flex:none;
 }
 .deck-meta b{color:var(--ink);display:inline-block;}
+/* 分组标记：与统计小字同高 */
+.deck-meta b.deck-tag{
+  font-family:var(--mono);font-size:.52rem;font-weight:900;letter-spacing:.04em;
+  padding:1px 5px;margin-right:3px;border-radius:5px;
+  color:var(--ac-deep);
+  background:color-mix(in srgb,var(--ac) 16%,transparent);
+}
 .deck-tools{display:flex;align-items:center;gap:.3rem;flex:none;}
 /* 撤回：滑走一张后才出现，与音效开关同高 */
 .undo-btn{
@@ -599,6 +606,7 @@ body{
   text-align:center;color:var(--ink-2);padding:1.2rem;
 }
 .deck-empty .big{font-family:var(--display);font-size:1.6rem;letter-spacing:-.02em;}
+.deck-empty .empty-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.2rem;}
 /* ---------------- 词库：字母方块 + 分组详情 ---------------- */
 #view-lib.active{display:flex;flex-direction:column;height:100%;}
 .main.lib-on{overflow:hidden;padding-bottom:.55rem;}
@@ -1206,6 +1214,8 @@ let pos = 0;
 let animating = false;
 /* 词库「刷这组」：临时队列，不写全局进度存档 */
 let deckScoped = false;
+let deckBackup = null;      /* 进入分组前的 {queue, pos, undoSnap} */
+let deckScopeLabel = '';    /* 当前分组字母，如 'C' */
 
 /* ------------------------------------------------------------
    朗读：优先播放预生成的发音文件（WebView 壳里通常没有系统 TTS），
@@ -1540,8 +1550,12 @@ function rootOf(w){
 function renderDeckShell(){
   const view = document.getElementById('view-deck');
   view.innerHTML = '<div class="deck-wrap">' +
-      '<div class="deck-meta"><span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
-        '<span class="deck-tools"><button class="undo-btn" id="undoBtn" type="button" aria-label="撤回上一张" hidden>撤回</button>' +
+      '<div class="deck-meta"><span>' +
+        (deckScoped ? '<b class="deck-tag">' + esc(deckScopeLabel) + ' 组</b>' : '') +
+        '第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
+        '<span class="deck-tools">' +
+        (deckScoped ? '<button class="undo-btn" id="scopeExitBtn" type="button" aria-label="退出分组">退出</button>' : '') +
+        '<button class="undo-btn" id="undoBtn" type="button" aria-label="撤回上一张" hidden>撤回</button>' +
         '<button class="gloss-btn" id="hideGlossBtn" type="button" aria-label="遮住答案" aria-pressed="false" title="遮住答案"></button>' +
         sfxButtonHtml() + '</span></div>' +
       '<div class="deck-stage" id="deckStage"><div class="stack" id="cardStack"></div></div>' +
@@ -1615,6 +1629,17 @@ function renderCard(){
   if(posEl) posEl.textContent = Math.min(pos + 1, queue.length);
   const w = queue[pos];
   if(!w){
+    /* 分组刷词：本组刷完，停在组内完成页 */
+    if(deckScoped){
+      host.innerHTML = '<div class="deck-empty">' +
+        '<span class="big">' + esc(deckScopeLabel) + ' 组刷完了</span>' +
+        '<small>共 ' + queue.length + ' 个 · 这一组已经过了一遍</small>' +
+        '<div class="empty-actions">' +
+          '<button class="rate r2" type="button" data-scope-exit style="padding:.55rem 1.1rem;">回到全部</button>' +
+          '<button class="rate r0" type="button" data-scope-again style="padding:.55rem 1.1rem;">再刷一遍</button>' +
+        '</div></div>';
+      return;
+    }
     /* 今天已无未刷词 → 全部刷完；否则只是这一轮刷完，可继续刷没刷过的 */
     const rated = ratedToday();
     const allDone = WORDS.every(w => rated.has(w.word));
@@ -2034,8 +2059,10 @@ function hardCloseLib(){
 
 /* 刷这组：临时替换刷词队列，不写全局进度存档 */
 function queueLibLetter(L, list){
-  if(!list || !list.length) return;
+  if(!list || !list.length || animating) return;
+  if(!deckScoped) deckBackup = {queue: queue, pos: pos, undoSnap: undoSnap};
   deckScoped = true;
+  deckScopeLabel = L;
   queue = libSorted(list);
   pos = 0;
   undoSnap = null;
@@ -2043,6 +2070,35 @@ function queueLibLetter(L, list){
   renderDeckShell();
   switchTab('deck');
   toast('已切到 ' + L + ' 组 · ' + queue.length + ' 个词');
+}
+
+/* 退出分组：原样回到进入前那张 */
+function exitDeckScope(){
+  if(!deckScoped || animating) return;
+  if(deckBackup){
+    queue = deckBackup.queue;
+    pos = deckBackup.pos;
+    undoSnap = deckBackup.undoSnap;
+  } else {
+    /* 兜底：没有备份时按今天的存档重建 */
+    queue = buildQueue(false);
+    pos = restorePos(queue);
+    undoSnap = null;
+  }
+  deckBackup = null;
+  deckScoped = false;
+  deckScopeLabel = '';
+  renderDeckShell();
+  toast('已回到全部单词');
+}
+
+/* 再刷一遍这组：位置归零，词序不变 */
+function replayDeckScope(){
+  if(!deckScoped || animating) return;
+  pos = 0;
+  undoSnap = null;
+  renderDeckShell();
+  toast('再刷一遍 ' + deckScopeLabel + ' 组');
 }
 
 /* ============================================================
@@ -2307,6 +2363,16 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
     undoLast();
     return;
   }
+  if(e.target.closest('#scopeExitBtn') || e.target.closest('[data-scope-exit]')){
+    e.preventDefault(); e.stopPropagation();
+    exitDeckScope();
+    return;
+  }
+  if(e.target.closest('[data-scope-again]')){
+    e.preventDefault(); e.stopPropagation();
+    replayDeckScope();
+    return;
+  }
   const rateBtn = e.target.closest('[data-rate]');
   if(rateBtn){
     e.preventDefault(); e.stopPropagation();
@@ -2318,7 +2384,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   if(e.target.closest('#sfxBtn')) return; /* 音效开关交给 document 级委托，不参与翻面 */
   if(e.target.closest('#hideGlossBtn')) return; /* 遮住答案开关同样走 document 级委托 */
   const restart = e.target.closest('[data-restart]');
-  if(restart){ e.preventDefault(); deckScoped = false; queue = buildQueue(true); pos = 0; savePos(); undoSnap = null; renderDeckShell(); return; }
+  if(restart){ e.preventDefault(); deckScoped = false; deckBackup = null; deckScopeLabel = ''; queue = buildQueue(true); pos = 0; savePos(); undoSnap = null; renderDeckShell(); return; }
   const sp = e.target.closest('[data-speak]');
   if(sp){
     e.preventDefault(); e.stopPropagation();
