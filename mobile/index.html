@@ -1115,33 +1115,87 @@ body{
 .lib-stage{position:relative;flex:1;min-height:0;overflow:hidden;margin-top:.1rem;}
 .lib-grid{
   position:absolute;inset:0;padding-bottom:.4rem;
-  display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;justify-content:center;
+  display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;justify-content:center;
   --cols:5;
   transition:opacity .26s var(--ease);
 }
 .lib-grid.fade-out{opacity:0;pointer-events:none;}
+/* 搜索时每次按键都会重排，此时不再重放入场，免得一直在闪 */
+.lib-grid.no-anim .cell{animation:none;}
+
+/* 字母方块：一枚纸片。顶部受光、底部沉一点色，
+   右上角压着放大的淡字母做底纹，底边一条掌握度进度；
+   数一多就铺成一小片色块墙，不再是一排白方块 */
 .cell{
-  position:relative;appearance:none;border:0;cursor:pointer;
-  flex:0 0 calc((100% - (var(--cols) - 1) * 6px) / var(--cols));
+  position:relative;overflow:hidden;appearance:none;border:0;cursor:pointer;
+  flex:0 0 calc((100% - (var(--cols) - 1) * 8px) / var(--cols));
   max-width:80px;aspect-ratio:1;
-  border-radius:12px;
-  background:color-mix(in srgb,var(--lc) 12%,#FFFFFF);
-  color:color-mix(in srgb,var(--lc) 72%,var(--ink));
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:2px;padding:8px 8px 12px;
-  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--lc) 18%,transparent);
-  transition:transform .14s var(--spring),background .2s,box-shadow .2s;
+  gap:3px;padding:9px 8px 15px;
+  border-radius:14px;
+  background:
+    radial-gradient(90% 66% at 50% -12%,rgba(255,255,255,.94) 0%,rgba(255,255,255,0) 60%),
+    radial-gradient(124% 92% at 50% 116%,color-mix(in srgb,var(--lc) 40%,#FFFFFF) 0%,rgba(255,255,255,0) 74%),
+    color-mix(in srgb,var(--lc) 19%,#FFFFFF);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb,var(--lc) 32%,transparent),
+    inset 0 -10px 14px -12px color-mix(in srgb,var(--lc) 46%,transparent),
+    0 1px 2px rgba(32,36,42,.05),
+    0 10px 16px -14px color-mix(in srgb,var(--lc) 66%,transparent);
+  transition:transform .16s var(--spring),box-shadow .2s var(--ease);
+  animation:cellIn .34s var(--ease) backwards;
+  animation-delay:calc(min(var(--i,0),8) * 18ms);
 }
-.cell:active{transform:scale(.92);}
-.cell-letter{font-family:var(--display);font-size:22px;font-weight:900;line-height:1;letter-spacing:-.02em;}
-.cell-count{font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.02em;opacity:.7;}
+/* 右上角溢出的放大字母：给方块一点层次，不抢主字母 */
+.cell::before{
+  content:attr(data-letter);
+  position:absolute;right:-7px;top:-13px;pointer-events:none;
+  font-family:var(--display);font-size:38px;font-weight:900;line-height:1;
+  color:color-mix(in srgb,var(--lc) 74%,transparent);opacity:.16;
+}
+/* 极淡的波点纸纹 */
+.cell::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(255,255,255,.9) 1px,transparent 1.5px);
+  background-size:8px 8px;background-position:1px 1px;opacity:.16;
+}
+.cell:active{transform:scale(.93);}
+@media (hover:hover){
+  .cell:hover{
+    transform:translateY(-2px);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb,var(--lc) 36%,transparent),
+      0 2px 4px rgba(32,36,42,.06),
+      0 16px 24px -14px color-mix(in srgb,var(--lc) 66%,transparent);
+  }
+  .cell:hover::before{opacity:.2;}
+}
+@keyframes cellIn{from{opacity:0;transform:translateY(7px) scale(.94);}to{opacity:1;transform:none;}}
+
+.cell-letter{
+  position:relative;z-index:1;
+  font-family:var(--display);font-weight:900;line-height:1;letter-spacing:-.02em;
+  /* 词多的字母字号略大，铺开看有起伏，不再是一墙同样大小的字 */
+  font-size:calc(19px + min(var(--n,1),9) * .7px);
+  color:color-mix(in srgb,var(--lc) 62%,var(--ink));
+}
+/* 词数做成小药丸，压在主字母下面，比裸文字更像一枚标签 */
+.cell-count{
+  position:relative;z-index:1;
+  font-family:var(--mono);font-size:9px;font-weight:900;letter-spacing:.02em;
+  color:color-mix(in srgb,var(--ink) 48%,transparent);
+  padding:1px 5px 2px;border-radius:99px;
+  background:rgba(255,255,255,.68);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.8);
+}
 .cell-progress{
-  position:absolute;left:8px;right:8px;bottom:7px;height:3px;
-  border-radius:99px;overflow:hidden;display:flex;
-  background:rgba(0,0,0,.04);
+  position:absolute;left:9px;right:9px;bottom:8px;height:4px;
+  border-radius:99px;overflow:hidden;display:flex;gap:1px;
+  background:color-mix(in srgb,var(--ink) 7%,transparent);
+  box-shadow:inset 0 1px 1px rgba(32,36,42,.05);
 }
-.cell-progress i{display:block;height:100%;}
-.cell-progress .p0{background:#C8CBCE;}
+.cell-progress i{display:block;height:100%;border-radius:99px;}
+.cell-progress .p0{background:#C6CACE;}
 .cell-progress .p1{background:#BB9A5A;}
 .cell-progress .p2{background:#6F8B74;}
 .cell.hide{visibility:hidden;}
@@ -2506,7 +2560,8 @@ function renderLibGrid(q){
     return;
   }
   grid.style.setProperty('--cols', libBestCols(used.length));
-  grid.innerHTML = used.map(L => {
+  grid.classList.toggle('no-anim', !!libFilter);
+  grid.innerHTML = used.map((L, i) => {
     const list = libGroups.get(L);
     const hex = libGroupColor(list);
     const m0 = list.filter(w => masteryOf(w.word) === 0).length;
@@ -2516,7 +2571,7 @@ function renderLibGrid(q){
     if(m0) bars.push('<i class="p0" style="flex:' + m0 + '"></i>');
     if(m1) bars.push('<i class="p1" style="flex:' + m1 + '"></i>');
     if(m2) bars.push('<i class="p2" style="flex:' + m2 + '"></i>');
-    return '<button class="cell" type="button" data-letter="' + esc(L) + '" style="--lc:' + hex + '">' +
+    return '<button class="cell" type="button" data-letter="' + esc(L) + '" style="--lc:' + hex + ';--i:' + i + ';--n:' + list.length + '">' +
       '<span class="cell-letter">' + esc(L) + '</span>' +
       '<span class="cell-count">' + list.length + ' 词</span>' +
       '<span class="cell-progress">' + bars.join('') + '</span>' +
