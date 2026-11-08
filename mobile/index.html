@@ -1156,9 +1156,13 @@ body{
   display:flex;align-items:flex-end;justify-content:center;
   font-size:var(--fs);line-height:1;color:var(--ink);
 }
-.spec .gl{
-  display:inline-block;font-weight:900;letter-spacing:-.04em;
-  transition:opacity .22s var(--ease);
+/* 字形本体：内联 SVG 轮廓，不再依赖设备上是否装了那款字体。
+   高度 = 大写字母高度，宽高比由字体轮廓自己决定 */
+.gl{
+  display:block;box-sizing:content-box;
+  height:calc(var(--fs) * .72);width:auto;
+  overflow:visible;
+  transition:opacity .22s var(--ease),color .3s var(--ease);
   transform-origin:center bottom;
   user-select:none;-webkit-user-select:none;
 }
@@ -1207,28 +1211,25 @@ body{
 
 @keyframes specIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
 
-/* 17 种字体：每个字母一副面孔 */
-.spec[data-style="a"] .gl{font-family:var(--display);font-weight:900;transform:scaleX(.88);}
-.spec[data-style="b"] .gl{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;}
-.spec[data-style="c"] .gl{font-family:'Impact','Arial Narrow',var(--display);transform:scaleX(.82);}
-.spec[data-style="d"] .gl{color:transparent;-webkit-text-stroke:2px var(--ink);}
-.spec[data-style="e"] .gl{font-family:var(--display);transform:scaleX(1.3);}
-.spec[data-style="f"] .gl{font-family:'Brush Script MT','Snell Roundhand',cursive;font-weight:400;font-style:italic;transform:rotate(-4deg);}
-.spec[data-style="h"] .gl{font-family:var(--display);text-shadow:4px 4px 0 rgba(20,18,16,.35),8px 8px 0 rgba(20,18,16,.16);}
-.spec[data-style="i"] .gl{font-family:var(--display);transform:scaleX(.5);}
-.spec[data-style="l"] .gl{font-family:var(--display);font-style:italic;transform:skewX(-14deg);}
-.spec[data-style="n"] .gl{
-  font-family:var(--display);color:transparent;
-  background:radial-gradient(circle,var(--ink) 38%,transparent 40%) 0 0/6px 6px;
-  -webkit-background-clip:text;background-clip:text;
+/* 17 种字体：每个字母一副面孔。用 data-style 统一编排，字母墙 / 详情徽章 / 飞行动画共用一套 */
+[data-style="a"] .gl{transform:scaleX(.88);}
+[data-style="c"] .gl{transform:scaleX(.94);}
+[data-style="d"] .gl path{fill:none;stroke:currentColor;stroke-width:4.4;}
+[data-style="e"] .gl{transform:scaleX(1.28);}
+[data-style="f"] .gl{transform:rotate(-4deg);}
+[data-style="h"] .gl{
+  filter:drop-shadow(3px 3px 0 color-mix(in srgb,currentColor 32%,transparent))
+         drop-shadow(6px 6px 0 color-mix(in srgb,currentColor 14%,transparent));
 }
-.spec[data-style="o"] .gl{font-family:'Helvetica Neue',Helvetica,var(--sans);font-weight:800;}
-.spec[data-style="p"] .gl{font-family:var(--display);text-decoration:underline;text-decoration-thickness:5px;text-underline-offset:.12em;text-decoration-color:var(--ink);}
-.spec[data-style="r"] .gl{font-family:var(--display);transform:scaleX(-1);}
-.spec[data-style="s"] .gl{font-family:var(--display);background:var(--ink);color:#FFFFFF;padding:0 .06em;letter-spacing:0;}
-.spec[data-style="t"] .gl{font-family:var(--serif);font-weight:700;border:2px solid var(--ink);padding:.02em .12em;letter-spacing:0;}
-.spec[data-style="u"] .gl{font-family:var(--display);border-bottom:4px double var(--ink);padding-bottom:.04em;}
-.spec[data-style="w"] .gl{font-family:var(--display);transform:scaleX(1.7);}
+[data-style="i"] .gl{transform:scaleX(.5);}
+[data-style="l"] .gl{transform:skewX(-14deg);}
+[data-style="p"] .gl{border-bottom:5px solid currentColor;padding-bottom:2px;}
+[data-style="r"] .gl{transform:scaleX(-1);}
+[data-style="s"] .gl{background:currentColor;padding:0 3px;}
+[data-style="s"] .gl path{fill:#FFFFFF;}
+[data-style="t"] .gl{border:2px solid currentColor;padding:1px 4px;}
+[data-style="u"] .gl{border-bottom:4px double currentColor;padding-bottom:2px;}
+[data-style="w"] .gl{transform:scaleX(1.5);}
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
 /* 详情层：与字母墙同一张白纸的内页 */
@@ -1292,7 +1293,7 @@ body{
 }
 .badge::before{top:4px;left:4px;border-top:1px solid rgba(255,255,255,.55);border-left:1px solid rgba(255,255,255,.55);}
 .badge::after{bottom:4px;right:4px;border-bottom:1px solid rgba(255,255,255,.55);border-right:1px solid rgba(255,255,255,.55);}
-.badge .badge-gl{display:inline-block;font-weight:900;letter-spacing:-.03em;line-height:1;}
+.badge .gl{height:43px;}
 .badge-meta{
   flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;justify-content:center;
   padding-left:8px;border-left:2px solid var(--ink);
@@ -1309,37 +1310,18 @@ body{
 .bm-bar{margin-top:4px;height:2px;background:var(--rule-2);position:relative;}
 .bm-bar i{position:absolute;left:0;top:0;bottom:0;display:block;}
 
-/* 17 种字体：徽章字形与字母墙 data-style 一一对应 */
-.lib-detail[data-style="a"] .badge-gl{font-family:var(--display);font-weight:900;transform:scaleX(.88);}
-.lib-detail[data-style="b"] .badge-gl{font-family:var(--serif);font-weight:400;}
-.lib-detail[data-style="c"] .badge-gl{font-family:'Impact','Arial Narrow',var(--display);transform:scaleX(.82);}
-.lib-detail[data-style="d"] .badge{background:#FFFFFF;color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule);}
-.lib-detail[data-style="d"] .badge::before{border-color:rgba(32,36,42,.3);}
-.lib-detail[data-style="d"] .badge::after{border-color:rgba(32,36,42,.3);}
-.lib-detail[data-style="d"] .badge-gl{color:transparent;-webkit-text-stroke:2px var(--ink);}
-.lib-detail[data-style="e"] .badge-gl{font-family:var(--display);transform:scaleX(1.25);}
-.lib-detail[data-style="f"] .badge-gl{font-family:'Brush Script MT','Snell Roundhand',cursive;font-weight:400;font-style:italic;transform:rotate(-4deg);}
-.lib-detail[data-style="h"] .badge-gl{font-family:var(--display);text-shadow:5px 5px 0 rgba(255,255,255,.28),10px 10px 0 rgba(255,255,255,.12);}
-.lib-detail[data-style="i"] .badge-gl{font-family:var(--display);transform:scaleX(.55);}
-.lib-detail[data-style="l"] .badge-gl{font-family:var(--display);font-style:italic;transform:skewX(-14deg);}
-.lib-detail[data-style="n"] .badge-gl{
-  color:transparent;
-  background:radial-gradient(circle,#FFFFFF 38%,transparent 40%) 0 0/8px 8px;
-  -webkit-background-clip:text;background-clip:text;
+/* 描边、反白、方框这三种字形会把徽章反白成白底墨字，字形的墨色从 currentColor 继承 */
+.lib-detail[data-style="d"] .badge,
+.lib-detail[data-style="s"] .badge,
+.lib-detail[data-style="t"] .badge{
+  background:#FFFFFF;color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule);
 }
-.lib-detail[data-style="o"] .badge-gl{font-family:'Helvetica Neue',Helvetica,var(--sans);font-weight:800;}
-.lib-detail[data-style="p"] .badge-gl{font-family:var(--display);text-decoration:underline;text-decoration-thickness:5px;text-underline-offset:.12em;text-decoration-color:#FFFFFF;}
-.lib-detail[data-style="r"] .badge-gl{font-family:var(--display);transform:scaleX(-1);}
-.lib-detail[data-style="s"] .badge{background:#FFFFFF;color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule);}
-.lib-detail[data-style="s"] .badge::before{border-color:rgba(32,36,42,.3);}
-.lib-detail[data-style="s"] .badge::after{border-color:rgba(32,36,42,.3);}
-.lib-detail[data-style="s"] .badge-gl{font-family:var(--display);background:var(--ink);color:#FFFFFF;padding:0 .06em;}
-.lib-detail[data-style="t"] .badge{background:#FFFFFF;color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule);}
-.lib-detail[data-style="t"] .badge::before{border-color:rgba(32,36,42,.3);}
+.lib-detail[data-style="d"] .badge::before,
+.lib-detail[data-style="d"] .badge::after,
+.lib-detail[data-style="s"] .badge::before,
+.lib-detail[data-style="s"] .badge::after,
+.lib-detail[data-style="t"] .badge::before,
 .lib-detail[data-style="t"] .badge::after{border-color:rgba(32,36,42,.3);}
-.lib-detail[data-style="t"] .badge-gl{font-family:var(--serif);color:var(--ink);border:2px solid var(--ink);padding:.02em .12em;}
-.lib-detail[data-style="u"] .badge-gl{font-family:var(--display);border-bottom:4px double #FFFFFF;padding-bottom:.04em;}
-.lib-detail[data-style="w"] .badge-gl{font-family:var(--display);transform:scaleX(1.5);}
 
 /* 词卡：统一的编辑版式 */
 .detail-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:22px;scrollbar-width:none;}
@@ -1406,11 +1388,10 @@ body{
   color:color-mix(in srgb,var(--ink) 35%,transparent);
 }
 
+/* 飞行体只搬字形本体：透明底，不再画一个方块跟着变 */
 .flyer{
   position:fixed;z-index:999;pointer-events:none;
-  display:grid;place-items:center;
-  font-weight:900;letter-spacing:-.02em;line-height:1;
-  transform-origin:top left;will-change:transform;
+  transform-origin:50% 50%;will-change:transform;
 }
 
 /* ---------------- 自测 ---------------- */
@@ -2660,6 +2641,44 @@ function libFaceKey(L){
   return /^[A-Z]$/.test(L) ? L.toLowerCase() : 'o';
 }
 
+/* 17 副面孔的矢量轮廓：从系统字体里抽出的字形，归一化到 cap-height = 100。
+   手机上没装对应字体也不会变样，缩放/旋转都不会发糊 */
+const LIB_GLYPH = {
+  a:{w:108.9,d:'M71.6 83.5H36.4L31.6 100H0L37.6 0H71.3L108.9 100H76.5ZM65.1 61.9 54.1 25.9 43.1 61.9Z'},
+  b:{w:81.3,d:'M71.1 53.4Q75.5 56.4 78.4 61.2Q81.3 66 81.3 72.8Q81.3 79.8 78.2 84.9Q75.2 90.1 70.3 93.4Q65.6 96.6 59.7 98.3Q53.7 100 47.4 100H0V95Q1.7 94.9 4.9 94.4Q8.2 93.9 9.6 93.3Q11.8 92.3 12.7 90.7Q13.6 89 13.6 86.4V14.5Q13.6 12.1 12.8 10.3Q12 8.5 9.6 7.3Q7.5 6.3 4.9 5.7Q2.3 5.1 0.5 5V0H46.7Q52 0 56.9 1.1Q61.8 2.1 66.2 4.8Q70.4 7.3 73.1 11.5Q75.8 15.7 75.8 21.8Q75.8 27.1 73.9 31.2Q72 35.3 68.5 38.3Q65.3 41.1 61.1 43Q56.9 45 52 46V46.7Q56.3 47.1 61.6 48.8Q66.9 50.5 71.1 53.4ZM54.1 38.3Q56.7 35.3 57.8 31.7Q58.8 28.1 58.8 23.2Q58.8 14.9 54.3 10.3Q49.8 5.6 40 5.6Q37.8 5.6 34.4 5.7Q30.9 5.8 28.6 5.8V44.3H37.6Q43.3 44.3 47.5 42.8Q51.6 41.3 54.1 38.3ZM63.8 70.3Q63.8 61.4 57.9 55.7Q51.9 50 40.9 50Q36.4 50 33.3 50.1Q30.2 50.2 28.6 50.2V85.5Q28.6 89.9 32.2 92.2Q35.8 94.4 42.2 94.4Q52.7 94.4 58.3 88.3Q63.8 82.2 63.8 70.3Z'},
+  c:{w:59,d:'M59 43.9H34V27.1Q34 19.9 33.2 18Q32.4 16.2 29.7 16.2Q26.6 16.2 25.8 18.4Q25 20.6 25 27.9V72.5Q25 79.5 25.8 81.6Q26.6 83.8 29.5 83.8Q32.3 83.8 33.2 81.6Q34 79.5 34 71.6V59.6H59V63.3Q59 78.2 56.9 84.4Q54.8 90.6 47.6 95.3Q40.4 100 29.8 100Q18.9 100 11.7 96Q4.6 92.1 2.3 85Q0 78 0 63.9V35.9Q0 25.5 0.7 20.3Q1.4 15.1 4.9 10.3Q8.5 5.5 14.7 2.8Q21 0 29.1 0Q40.1 0 47.3 4.3Q54.5 8.5 56.7 14.9Q59 21.3 59 34.7Z'},
+  d:{w:92,d:'M0 0H45.9Q59.5 0 67.8 3.7Q76.2 7.4 81.7 14.3Q87.1 21.1 89.6 30.3Q92 39.4 92 49.7Q92 65.7 88.4 74.5Q84.7 83.4 78.2 89.3Q71.8 95.3 64.3 97.3Q54.2 100 45.9 100H0ZM30.9 22.6V77.3H38.5Q48.2 77.3 52.3 75.1Q56.3 73 58.7 67.6Q61 62.3 61 50.3Q61 34.4 55.8 28.5Q50.6 22.6 38.6 22.6Z'},
+  e:{w:84.3,d:'M0 0H82.8V21.4H31V37.2H79.1V57.6H31V77.4H84.3V100H0Z'},
+  f:{w:79.9,d:'M41.6 49H51.1Q59.4 37.9 63.7 29.7Q68 21.4 68 18.8Q68 15.2 61.8 15.2Q58.2 15.6 49.1 16.8Q39.9 18 31.4 19.7Q23.7 21.2 19.1 22.7Q14.4 24.3 12.5 25.3Q10.6 26.3 10.2 26.7Q14.9 26.5 18.1 26.5Q23.1 26.5 23.1 27.6Q23.1 28.1 19.6 28.9Q16.1 29.7 12.9 30.6Q9.8 31.4 6.9 32.6Q4 33.8 3.3 33.8Q1.9 33.8 0.9 32.7Q0 31.6 0 30.1Q0 29 1.7 24.5Q3.5 20 6.6 15.4Q9.8 10.8 14.4 8.6Q16.1 7.8 25.3 5.7Q34.5 3.5 46 1.8Q57.5 0 67.1 0Q72.9 0 76.4 1.6Q79.9 3.2 79.9 8.5Q79.9 10.2 78.6 13.8Q77.4 17.3 74.6 22.9Q71.9 28.4 68 35Q64 41.7 59 49H68.7L60.3 61.1Q58.6 61.2 56 61.2Q53.5 61.3 50.5 61.4Q42.7 71.5 33.7 80.4Q24.6 89.3 17.3 94.6Q10 100 7 100Q5.8 100 4.9 99.2Q4 98.4 4 97.2Q4 96.1 6.8 91.7Q9.6 87.3 14.6 83.4Q19.6 79.6 26 79.1Q28.5 76.4 30.4 74.3Q32.3 72.2 35.7 68.2Q39.1 64.2 40.9 62.1L21.9 63Q18.8 63.1 17.7 62.7Q16.5 62.3 16.5 60.7Q16.5 60.7 17.1 59.1Q17.8 57.5 18.5 56.3Q19.5 54.4 20.1 54.1Q20.7 53.7 23.5 53.1L35.1 50.2Q39.8 49 41.6 49Z'},
+  h:{w:95.7,d:'M0 0H30.9V35H64.7V0H95.7V100H64.7V59.5H30.9V100H0Z'},
+  i:{w:31,d:'M0 0H31V100H0Z'},
+  l:{w:79.1,d:'M0 0H30.9V75.4H79.1V100H0Z'},
+  n:{w:95.6,d:'M0 0H28.9L66.5 55.3V0H95.6V100H66.5L29.1 45.1V100H0Z'},
+  o:{w:93.8,d:'M0 50.6Q0 35.8 4.4 25.8Q7.7 18.4 13.4 12.5Q19.1 6.7 25.9 3.8Q35 0 46.8 0Q68.1 0 81 13.3Q93.8 26.5 93.8 50.1Q93.8 73.5 81.1 86.8Q68.3 100 47 100Q25.5 100 12.7 86.8Q0 73.7 0 50.6ZM20.1 49.9Q20.1 66.4 27.7 74.8Q35.3 83.3 47 83.3Q58.6 83.3 66.1 74.9Q73.6 66.5 73.6 49.7Q73.6 33 66.3 24.9Q59 16.7 47 16.7Q34.9 16.7 27.5 25Q20.1 33.2 20.1 49.9Z'},
+  p:{w:84.9,d:'M0 0H51.4Q68.1 0 76.5 8Q84.9 16 84.9 30.7Q84.9 45.8 75.8 54.4Q66.6 62.9 48 62.9H31V100H0ZM31 42.6H38.6Q47.5 42.6 51.2 39.5Q54.8 36.4 54.8 31.6Q54.8 26.9 51.6 23.6Q48.5 20.3 39.8 20.3H31Z'},
+  r:{w:98.4,d:'M0 100V0H51.5Q65.8 0 73.4 2.5Q81 4.9 85.6 11.6Q90.2 18.2 90.2 27.8Q90.2 36.1 86.7 42.1Q83.2 48.2 76.9 51.9Q73 54.3 66.1 55.9Q71.6 57.7 74.1 59.5Q75.9 60.8 79.1 64.8Q82.3 68.8 83.4 71L98.4 100H63.4L46.9 69.4Q43.8 63.5 41.3 61.7Q38 59.4 33.8 59.4H31V100ZM31 40.5H44.1Q46.2 40.5 52.3 39.2Q55.3 38.5 57.3 36Q59.2 33.5 59.2 30.2Q59.2 25.4 56.1 22.8Q53.1 20.2 44.6 20.2H31Z'},
+  s:{w:87.7,d:'M0 66.4 28.4 64.6Q29.4 71.5 32.2 75.1Q36.8 81 45.4 81Q51.8 81 55.2 78Q58.7 75 58.7 71Q58.7 67.3 55.4 64.3Q52.1 61.3 40.1 58.7Q20.4 54.3 12.1 47Q3.6 39.6 3.6 28.3Q3.6 20.8 7.9 14.2Q12.3 7.6 20.9 3.8Q29.6 0 44.7 0Q63.3 0 73 6.9Q82.7 13.8 84.6 28.8L56.4 30.5Q55.3 23.9 51.7 21Q48.1 18 41.8 18Q36.5 18 33.9 20.2Q31.3 22.4 31.3 25.6Q31.3 27.9 33.4 29.7Q35.6 31.7 43.5 33.3Q63.1 37.5 71.5 41.9Q80 46.2 83.9 52.6Q87.7 59 87.7 66.9Q87.7 76.2 82.6 84Q77.4 91.9 68.2 95.9Q59 100 44.9 100Q20.3 100 10.8 90.5Q1.3 81 0 66.4Z'},
+  t:{w:96.9,d:'M96.9 28.6H91.5Q89.3 22.2 84.5 14.9Q79.6 7.5 75.5 7Q73.3 6.7 70 6.5Q66.7 6.3 64.3 6.3H61V84.7Q61 87.2 61.9 89.2Q62.8 91.1 65.5 92.2Q67.1 92.9 70.5 93.6Q73.9 94.2 76.3 94.5V100H20.6V94.5Q22.6 94.3 26.3 93.9Q30 93.5 31.4 93Q34.1 91.8 35 89.9Q35.9 88 35.9 85.4V6.3H32.6Q30.2 6.3 26.9 6.5Q23.6 6.7 21.4 7Q17.3 7.5 12.4 14.9Q7.6 22.2 5.4 28.6H0V0H96.9Z'},
+  u:{w:94.2,d:'M63.9 0H94.2V58.6Q94.2 67.3 91.5 75Q88.7 82.8 82.9 88.6Q77.1 94.4 70.8 96.7Q61.9 100 49.5 100Q42.4 100 33.9 99Q25.4 98 19.7 95Q14 92 9.3 86.5Q4.6 81 2.8 75.2Q0 65.8 0 58.6V0H30.3V60Q30.3 68 34.8 72.6Q39.2 77.1 47.1 77.1Q55 77.1 59.4 72.6Q63.9 68.2 63.9 60Z'},
+  w:{w:139.8,d:'M0 0H29.3L39.9 55.9L55.3 0H84.6L100.1 55.9L110.6 0H139.8L117.8 100H87.5L70 37L52.5 100H22.2Z'}
+};
+
+let libGlyphSeq = 0;
+/* 内联 SVG 字形：颜色全部走 currentColor，尺寸交给 .gl 的 CSS，
+   halftone 那副面孔用点阵 pattern，id 每次自增避免重复 */
+function libGlyph(sty){
+  const g = LIB_GLYPH[sty] || LIB_GLYPH.a;
+  let defs = '', fill = 'currentColor';
+  if(sty === 'n'){
+    const id = 'ht' + (++libGlyphSeq);
+    defs = '<defs><pattern id="' + id + '" width="7" height="7" patternUnits="userSpaceOnUse">' +
+      '<circle cx="1.8" cy="1.8" r="1.55" fill="currentColor"/></pattern></defs>';
+    fill = 'url(#' + id + ')';
+  }
+  return '<svg class="gl" viewBox="0 0 ' + g.w + ' 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">' +
+    defs + '<path d="' + g.d + '" fill="' + fill + '"/></svg>';
+}
+
 /* 字号与卡面尺寸随词量长大：1 词 56px 宽，9 词 128px 宽 */
 function libSpecSize(n){
   const w = 56 + (Math.min(Math.max(n, 1), 9) - 1) * 9;
@@ -2723,7 +2742,7 @@ function renderLibGrid(q){
       ' data-state="' + state + '"' +
       ' style="--w:' + sz.w + 'px;--h:' + sz.h + 'px;--fs:' + sz.fs + 'px;--i:' + i + '"' +
       ' aria-label="' + esc(L + ' 组，' + n + ' 个词，' + stateLabel + ' ' + done + '/' + n) + '">' +
-      '<span class="glyph"><span class="gl">' + esc(L) + '</span></span>' +
+      '<span class="glyph">' + libGlyph(sty) + '</span>' +
       '<span class="meta">' +
         '<span class="spec-letter">' + esc(L) + ' · ' + sz.fs + ' PT</span>' +
         '<span class="spec-font">' + (LIB_FACE[sty] || LIB_FACE.o) + '</span>' +
@@ -2776,9 +2795,7 @@ function renderLibDetail(L, list, hex){
       '<button class="bulk-btn" id="libBulk" type="button">刷这组</button>' +
     '</div>' +
     '<div class="badge-wrap">' +
-      '<div class="badge" id="libBadge">' +
-        '<span class="badge-gl gl">' + esc(L) + '</span>' +
-      '</div>' +
+      '<div class="badge" id="libBadge">' + libGlyph(sty) + '</div>' +
       '<div class="badge-meta">' +
         '<div class="bm-row"><span class="bm-k">Letter</span><span class="bm-v">' + esc(L + ' · ' + n + ' W') + '</span></div>' +
         '<div class="bm-row"><span class="bm-k">Face</span><span class="bm-v">' + esc(LIB_FACE[sty] || LIB_FACE.o) + '</span></div>' +
@@ -2816,96 +2833,52 @@ function libRect(el){
   return {left:r.left + r.width / 2 - w / 2, top:r.top + r.height / 2 - h / 2, width:w, height:h};
 }
 
-/* 字母字号：字母墙取 .gl，徽章取自身 */
-function libFontOf(el){
-  const t = el.querySelector ? el.querySelector('.gl') : null;
-  return parseFloat(getComputedStyle(t || el).fontSize) || 22;
-}
-
-/* 字母中心相对元素中心的偏移：墙面字母贴着基线，徽章居中 */
-function libLetterOffset(el){
-  const t = el.querySelector ? el.querySelector('.gl') : null;
-  if(!t) return 0;
-  const r = t.getBoundingClientRect(), b = el.getBoundingClientRect();
-  return (r.top + r.height / 2) - (b.top + b.height / 2);
-}
-
-/* 飞行动画：矩形、字号、字母位置两端对齐；缓动不过冲，落地不回弹 */
+/* 飞行动画：搬的是字形本体（内联 SVG），起落两端都取字形的真实盒子，
+   缩放由外层统一做，克隆体自己保留原字形的倾斜/拉伸，落地不会变形 */
 function libFly(fromRect, toRect, L, hex, fromEl, toEl){
-  const toBadge = toEl.id === 'libBadge';
-  const fromBadge = fromEl.id === 'libBadge';
+  const srcG = fromEl.querySelector ? fromEl.querySelector('.gl') : null;
+  const dstG = toEl.querySelector ? toEl.querySelector('.gl') : null;
+  if(!srcG || !dstG) return null;
+
+  const sR = srcG.getBoundingClientRect(), dR = dstG.getBoundingClientRect();
+  const sCS = getComputedStyle(srcG), dCS = getComputedStyle(dstG);
+  /* 未变形的布局盒：CSS 变体（拉伸/镜像）留在克隆体上，外层只做位移动画 */
+  const lw = srcG.offsetWidth || Math.round(sR.width);
+  const lh = srcG.offsetHeight || Math.round(sR.height);
+
   const f = document.createElement('div');
   f.className = 'flyer';
-  const letter = document.createElement('span');
-  letter.textContent = L;
-  f.appendChild(letter);
-  f.style.left = fromRect.left + 'px';
-  f.style.top = fromRect.top + 'px';
-  f.style.width = fromRect.width + 'px';
-  f.style.height = fromRect.height + 'px';
-  /* 起点贴出发元素字号；缩放后的视觉字号 = font-size × sy，故终点写 dstFont / sy */
-  /* 从字母墙起飞：起点是裸墨字，飞到徽章才染上颜色 */
-  const fromInk = fromEl.classList && fromEl.classList.contains('spec');
-  const srcFont = libFontOf(fromEl), dstFont = libFontOf(toEl);
-  f.style.fontSize = srcFont + 'px';
+  f.dataset.style = libFaceKey(L);
+  f.style.color = sCS.color;
+  f.style.left = (sR.left + sR.width / 2 - lw / 2) + 'px';
+  f.style.top = (sR.top + sR.height / 2 - lh / 2) + 'px';
+  f.style.width = lw + 'px';
+  f.style.height = lh + 'px';
 
-  /* 徽章不写死配色：底色、圆角、字色、字形都取真实计算样式 */
-  const badgeEl = toBadge ? toEl : (fromBadge ? fromEl : null);
-  let badgeBg = '#FFFFFF', badgeRadius = '0px', badgeColor = 'var(--ink)';
-  if(badgeEl){
-    const bs = getComputedStyle(badgeEl);
-    const gs = getComputedStyle(badgeEl.querySelector('.badge-gl'));
-    badgeBg = bs.backgroundColor;
-    badgeRadius = bs.borderRadius;
-    badgeColor = gs.color;
-    /* 反白字(s)这类整块墨底的字形，飞行体直接用字形自己的底色 */
-    if(!/rgba\(0, 0, 0, 0\)|transparent/i.test(gs.backgroundColor)) badgeBg = gs.backgroundColor;
-    /* 描边字(d)、网点字(n)等字色是透明的，飞行体回退到墨色 */
-    if(!badgeColor || /rgba\(0, 0, 0, 0\)|transparent/i.test(badgeColor)) badgeColor = 'var(--ink)';
-  }
-
-  /* 起点的字形：字母墙取裸墨字，徽章取真实字形 */
-  let srcGlyph = null;
-  try{ srcGlyph = fromEl.querySelector ? fromEl.querySelector('.gl') : null; }catch(e){ srcGlyph = null; }
-  const srcCS = getComputedStyle(srcGlyph || fromEl);
-  f.style.fontFamily = srcCS.fontFamily;
-  f.style.fontWeight = srcCS.fontWeight;
-  f.style.fontStyle = srcCS.fontStyle;
-  f.style.background = fromInk ? 'transparent' : badgeBg;
-  f.style.color = fromInk ? 'var(--ink)' : badgeColor;
-  f.style.borderRadius = fromInk ? '0px' : badgeRadius;
-
-  letter.style.transform = 'translateY(' + libLetterOffset(fromEl) + 'px)';
+  const c = srcG.cloneNode(true);
+  c.style.width = lw + 'px';
+  c.style.height = lh + 'px';
+  c.style.boxSizing = 'border-box';
+  f.appendChild(c);
   document.body.appendChild(f);
 
-  const dx = toRect.left - fromRect.left, dy = toRect.top - fromRect.top;
-  const sx = toRect.width / fromRect.width, sy = toRect.height / fromRect.height;
-  const offD = libLetterOffset(toEl);
+  const dx = (dR.left + dR.width / 2) - (sR.left + sR.width / 2);
+  const dy = (dR.top + dR.height / 2) - (sR.top + sR.height / 2);
+  const sx = dR.width / sR.width, sy = dR.height / sR.height;
   const ease = 'cubic-bezier(.22,.61,.36,1)';
 
-  /* 终点的字形：落在徽章换徽章字形，反向飞回字母墙换墙上的字形 */
-  const dstGlyph = toEl.querySelector ? toEl.querySelector('.gl') : null;
-  const dstCS = getComputedStyle(dstGlyph || toEl);
-
   requestAnimationFrame(() => {
-    f.style.transition = 'transform .36s ' + ease + ',font-size .36s ' + ease +
-      ',background .3s ease,color .3s ease,border-radius .3s ease';
+    f.style.transition = 'transform .38s ' + ease + ',color .3s ease';
     f.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
-    f.style.fontSize = (dstFont / sy) + 'px';
-    f.style.fontFamily = dstCS.fontFamily;
-    f.style.fontWeight = dstCS.fontWeight;
-    f.style.fontStyle = dstCS.fontStyle;
-    letter.style.transition = 'transform .36s ' + ease;
-    letter.style.transform = 'translateY(' + (offD / sy) + 'px)';
-    f.style.background = toBadge ? badgeBg : 'transparent';
-    f.style.color = toBadge ? badgeColor : 'var(--ink)';
-    f.style.borderRadius = toBadge ? badgeRadius : '0px';
+    /* 颜色只写 color：字形填充、描边、点阵都跟着 currentColor 一起过渡 */
+    f.style.color = dCS.color;
   });
   return f;
 }
 
 /* 等 transform 真正到终点再交接，避免提前一帧造成落点错位 */
 function libFlyEnd(f, done){
+  if(!f){ done(); return; }
   let fired = false;
   const fire = () => { if(fired) return; fired = true; done(); };
   f.addEventListener('transitionend', (e) => { if(e.propertyName === 'transform') fire(); });
