@@ -57,6 +57,10 @@ button,input{touch-action:manipulation;}
   --display:'Arial Black','Cooper Black',Impact,'PingFang SC','Microsoft YaHei',sans-serif;
   --sans:'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;
   --mono:'Courier New',monospace;
+  /* 词库页的新闻纸：米色底 + 墨色，只在字母墙那一页用 */
+  --serif:'Times New Roman',Georgia,'Songti SC',serif;
+  --news:#EFE8D6;
+  --news-ink:#141210;
 }
 
 body{
@@ -1112,93 +1116,95 @@ body{
 .lib-mst .m-brush:active{transform:scale(.95);}
 .lib-mst .m-brush[hidden]{display:none;}
 
-.lib-stage{position:relative;flex:1;min-height:0;overflow:hidden;margin-top:.1rem;}
+.lib-stage{
+  position:relative;flex:1;min-height:0;overflow:hidden;margin-top:.1rem;
+  /* 词库这一页单独铺一张新闻纸，和外面的瓷白界面分层 */
+  background:var(--news);
+  background-image:
+    repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(20,18,16,.012) 2px,rgba(20,18,16,.012) 3px),
+    radial-gradient(circle at 18% 22%,rgba(20,18,16,.03),transparent 22%),
+    radial-gradient(circle at 78% 78%,rgba(20,18,16,.024),transparent 24%);
+}
+/* 字母墙：像字体样本册一样一张张排开，字号与宽度随词量变化 */
 .lib-grid{
-  position:absolute;inset:0;padding-bottom:.4rem;
-  display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;justify-content:center;
-  --cols:5;
+  position:absolute;inset:0;
+  overflow-y:auto;overflow-x:hidden;
+  padding:16px 14px 26px;
+  display:flex;flex-wrap:wrap;align-content:flex-start;
+  gap:16px 14px;
+  scrollbar-width:none;
+  overscroll-behavior:contain;
   transition:opacity .26s var(--ease);
 }
+.lib-grid::-webkit-scrollbar{display:none;}
 .lib-grid.fade-out{opacity:0;pointer-events:none;}
+.lib-grid .wempty{flex:0 0 100%;color:rgba(20,18,16,.45);}
 /* 搜索时每次按键都会重排，此时不再重放入场，免得一直在闪 */
-.lib-grid.no-anim .cell{animation:none;}
+.lib-grid.no-anim .spec{animation:none;}
 
-/* 字母方块：一枚纸片。顶部受光、底部沉一点色，
-   右上角压着放大的淡字母做底纹，底边一条掌握度进度；
-   数一多就铺成一小片色块墙，不再是一排白方块 */
-.cell{
-  position:relative;overflow:hidden;appearance:none;border:0;cursor:pointer;
-  flex:0 0 calc((100% - (var(--cols) - 1) * 8px) / var(--cols));
-  max-width:80px;aspect-ratio:1;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;padding:9px 8px 15px;
-  border-radius:14px;
-  background:
-    radial-gradient(90% 66% at 50% -12%,rgba(255,255,255,.94) 0%,rgba(255,255,255,0) 60%),
-    radial-gradient(124% 92% at 50% 116%,color-mix(in srgb,var(--lc) 40%,#FFFFFF) 0%,rgba(255,255,255,0) 74%),
-    color-mix(in srgb,var(--lc) 19%,#FFFFFF);
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb,var(--lc) 32%,transparent),
-    inset 0 -10px 14px -12px color-mix(in srgb,var(--lc) 46%,transparent),
-    0 1px 2px rgba(32,36,42,.05),
-    0 10px 16px -14px color-mix(in srgb,var(--lc) 66%,transparent);
-  transition:transform .16s var(--spring),box-shadow .2s var(--ease);
-  animation:cellIn .34s var(--ease) backwards;
-  animation-delay:calc(min(var(--i,0),8) * 18ms);
+.spec{
+  appearance:none;border:0;background:transparent;cursor:pointer;padding:0;
+  flex:none;position:relative;
+  width:var(--w);height:var(--h);
+  display:flex;flex-direction:column;
+  transition:transform .2s var(--ease);
+  animation:specIn .4s var(--ease) backwards;
+  animation-delay:calc(min(var(--i,0),8) * 22ms);
+  -webkit-tap-highlight-color:transparent;
 }
-/* 右上角溢出的放大字母：给方块一点层次，不抢主字母 */
-.cell::before{
-  content:attr(data-letter);
-  position:absolute;right:-7px;top:-13px;pointer-events:none;
-  font-family:var(--display);font-size:38px;font-weight:900;line-height:1;
-  color:color-mix(in srgb,var(--lc) 74%,transparent);opacity:.16;
+.spec:active{transform:scale(.94);}
+.spec.hide{visibility:hidden;}
+.spec:hover .gl{opacity:.72;}
+.spec .glyph{
+  flex:1;min-height:0;
+  display:flex;align-items:flex-end;justify-content:center;
+  font-size:var(--fs);line-height:1;color:var(--news-ink);
 }
-/* 极淡的波点纸纹 */
-.cell::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background-image:radial-gradient(circle,rgba(255,255,255,.9) 1px,transparent 1.5px);
-  background-size:8px 8px;background-position:1px 1px;opacity:.16;
+.spec .gl{
+  display:inline-block;font-weight:900;letter-spacing:-.04em;
+  transition:opacity .22s var(--ease);
+  transform-origin:center bottom;
+  user-select:none;-webkit-user-select:none;
 }
-.cell:active{transform:scale(.93);}
-@media (hover:hover){
-  .cell:hover{
-    transform:translateY(-2px);
-    box-shadow:
-      inset 0 0 0 1px color-mix(in srgb,var(--lc) 36%,transparent),
-      0 2px 4px rgba(32,36,42,.06),
-      0 16px 24px -14px color-mix(in srgb,var(--lc) 66%,transparent);
-  }
-  .cell:hover::before{opacity:.2;}
+.spec .meta{
+  flex:none;padding-top:5px;
+  display:flex;flex-direction:column;gap:2px;
+  text-align:center;
+  font-family:var(--mono);letter-spacing:.10em;text-transform:uppercase;
+  line-height:1.2;white-space:nowrap;
 }
-@keyframes cellIn{from{opacity:0;transform:translateY(7px) scale(.94);}to{opacity:1;transform:none;}}
+.spec .meta .spec-letter{font-size:7.5px;font-weight:900;color:rgba(20,18,16,.68);}
+.spec .meta .spec-font{
+  font-size:6px;font-weight:700;letter-spacing:.06em;
+  color:rgba(20,18,16,.5);
+  overflow:hidden;text-overflow:ellipsis;
+}
+.spec .meta .spec-num{font-size:6px;font-weight:700;letter-spacing:.04em;color:rgba(20,18,16,.34);}
 
-.cell-letter{
-  position:relative;z-index:1;
-  font-family:var(--display);font-weight:900;line-height:1;letter-spacing:-.02em;
-  /* 词多的字母字号略大，铺开看有起伏，不再是一墙同样大小的字 */
-  font-size:calc(19px + min(var(--n,1),9) * .7px);
-  color:color-mix(in srgb,var(--lc) 62%,var(--ink));
+@keyframes specIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+/* 17 种字体：每个字母一副面孔 */
+.spec[data-style="a"] .gl{font-family:var(--display);font-weight:900;transform:scaleX(.88);}
+.spec[data-style="b"] .gl{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;}
+.spec[data-style="c"] .gl{font-family:'Impact','Arial Narrow',var(--display);transform:scaleX(.82);}
+.spec[data-style="d"] .gl{color:transparent;-webkit-text-stroke:2px var(--news-ink);}
+.spec[data-style="e"] .gl{font-family:var(--display);transform:scaleX(1.3);}
+.spec[data-style="f"] .gl{font-family:'Brush Script MT','Snell Roundhand',cursive;font-weight:400;font-style:italic;transform:rotate(-4deg);}
+.spec[data-style="h"] .gl{font-family:var(--display);text-shadow:4px 4px 0 rgba(20,18,16,.35),8px 8px 0 rgba(20,18,16,.16);}
+.spec[data-style="i"] .gl{font-family:var(--display);transform:scaleX(.5);}
+.spec[data-style="l"] .gl{font-family:var(--display);font-style:italic;transform:skewX(-14deg);}
+.spec[data-style="n"] .gl{
+  font-family:var(--display);color:transparent;
+  background:radial-gradient(circle,var(--news-ink) 38%,transparent 40%) 0 0/6px 6px;
+  -webkit-background-clip:text;background-clip:text;
 }
-/* 词数做成小药丸，压在主字母下面，比裸文字更像一枚标签 */
-.cell-count{
-  position:relative;z-index:1;
-  font-family:var(--mono);font-size:9px;font-weight:900;letter-spacing:.02em;
-  color:color-mix(in srgb,var(--ink) 48%,transparent);
-  padding:1px 5px 2px;border-radius:99px;
-  background:rgba(255,255,255,.68);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.8);
-}
-.cell-progress{
-  position:absolute;left:9px;right:9px;bottom:8px;height:4px;
-  border-radius:99px;overflow:hidden;display:flex;gap:1px;
-  background:color-mix(in srgb,var(--ink) 7%,transparent);
-  box-shadow:inset 0 1px 1px rgba(32,36,42,.05);
-}
-.cell-progress i{display:block;height:100%;border-radius:99px;}
-.cell-progress .p0{background:#C6CACE;}
-.cell-progress .p1{background:#BB9A5A;}
-.cell-progress .p2{background:#6F8B74;}
-.cell.hide{visibility:hidden;}
+.spec[data-style="o"] .gl{font-family:'Helvetica Neue',Helvetica,var(--sans);font-weight:800;}
+.spec[data-style="p"] .gl{font-family:var(--display);text-decoration:underline;text-decoration-thickness:5px;text-underline-offset:.12em;text-decoration-color:var(--news-ink);}
+.spec[data-style="r"] .gl{font-family:var(--display);transform:scaleX(-1);}
+.spec[data-style="s"] .gl{font-family:var(--display);background:var(--news-ink);color:var(--news);padding:0 .06em;letter-spacing:0;}
+.spec[data-style="t"] .gl{font-family:var(--serif);font-weight:700;border:2px solid var(--news-ink);padding:.02em .12em;letter-spacing:0;}
+.spec[data-style="u"] .gl{font-family:var(--display);border-bottom:4px double var(--news-ink);padding-bottom:.04em;}
+.spec[data-style="w"] .gl{font-family:var(--display);transform:scaleX(1.7);}
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
 /* 详情层 */
@@ -2463,9 +2469,9 @@ function renderLib(){
     }, {passive: true});
 
     document.getElementById('libGrid').addEventListener('click', (e) => {
-      const cell = e.target.closest('.cell');
-      if(!cell) return;
-      openLibLetter(cell.dataset.letter);
+      const spec = e.target.closest('.spec');
+      if(!spec) return;
+      openLibLetter(spec.dataset.letter);
     });
   }
   if(libCurrent) hardCloseLib();
@@ -2507,14 +2513,20 @@ function libGroupColor(list){
   return '#BB9A5A';
 }
 
-/* 列数按字母数量自适应 */
-function libBestCols(n){
-  if(n <= 2) return Math.max(n, 1);
-  if(n === 3) return 3;
-  if(n === 4) return 2;
-  if(n <= 6) return 3;
-  if(n <= 8) return 4;
-  return 5;
+/* 字体样本册：每个字母一副面孔，名字印在字脚下 */
+const LIB_FACE = {
+  a:'Helvetica Black', b:'Georgia Regular', c:'Impact Condensed', d:'Outline 2pt',
+  e:'Helvetica Extended', f:'Brush Script', h:'Drop Shadow', i:'Helvetica Narrow',
+  l:'Italic Slant', n:'Halftone Dot', o:'Helvetica Round', p:'Rule Underline',
+  r:'Mirror Reverse', s:'Inverse Block', t:'Georgia Boxed', u:'Double Rule',
+  w:'Helvetica Wide'
+};
+
+/* 字号与卡面尺寸随词量长大：1 词 56px 宽，9 词 128px 宽 */
+function libSpecSize(n){
+  const w = 56 + (Math.min(Math.max(n, 1), 9) - 1) * 9;
+  const fs = Math.round(w * .86);
+  return {w, fs, h: Math.round(fs * 1.08) + 40};
 }
 
 function libSorted(list){
@@ -2559,22 +2571,23 @@ function renderLibGrid(q){
           : '这一类还没有词，换个掌握度试试')) + '</div>';
     return;
   }
-  grid.style.setProperty('--cols', libBestCols(used.length));
   grid.classList.toggle('no-anim', !!libFilter);
   grid.innerHTML = used.map((L, i) => {
     const list = libGroups.get(L);
-    const hex = libGroupColor(list);
-    const m0 = list.filter(w => masteryOf(w.word) === 0).length;
-    const m1 = list.filter(w => masteryOf(w.word) === 1).length;
-    const m2 = list.filter(w => masteryOf(w.word) === 2).length;
-    const bars = [];
-    if(m0) bars.push('<i class="p0" style="flex:' + m0 + '"></i>');
-    if(m1) bars.push('<i class="p1" style="flex:' + m1 + '"></i>');
-    if(m2) bars.push('<i class="p2" style="flex:' + m2 + '"></i>');
-    return '<button class="cell" type="button" data-letter="' + esc(L) + '" style="--lc:' + hex + ';--i:' + i + ';--n:' + list.length + '">' +
-      '<span class="cell-letter">' + esc(L) + '</span>' +
-      '<span class="cell-count">' + list.length + ' 词</span>' +
-      '<span class="cell-progress">' + bars.join('') + '</span>' +
+    const n = list.length;
+    const done = list.filter(w => masteryOf(w.word) === 2).length;
+    const sz = libSpecSize(n);
+    const sty = /^[A-Z]$/.test(L) ? L.toLowerCase() : 'o';
+    const w2 = n < 10 ? '0' + n : n;
+    return '<button class="spec" type="button" data-letter="' + esc(L) + '" data-style="' + sty + '"' +
+      ' style="--w:' + sz.w + 'px;--h:' + sz.h + 'px;--fs:' + sz.fs + 'px;--i:' + i + '"' +
+      ' aria-label="' + esc(L + ' 组，' + n + ' 个词，已掌握 ' + done) + '">' +
+      '<span class="glyph"><span class="gl">' + esc(L) + '</span></span>' +
+      '<span class="meta">' +
+        '<span class="spec-letter">' + esc(L) + ' · ' + sz.fs + ' PT</span>' +
+        '<span class="spec-font">' + (LIB_FACE[sty] || LIB_FACE.o) + '</span>' +
+        '<span class="spec-num">' + w2 + ' W · ' + done + '/' + n + '</span>' +
+      '</span>' +
     '</button>';
   }).join('');
 }
@@ -2623,15 +2636,15 @@ function libRect(el){
   return {left:r.left + r.width / 2 - w / 2, top:r.top + r.height / 2 - h / 2, width:w, height:h};
 }
 
-/* 字母字号：方块取 .cell-letter，徽章取自身 */
+/* 字母字号：字母墙取 .gl，徽章取自身 */
 function libFontOf(el){
-  const t = el.querySelector ? el.querySelector('.cell-letter') : null;
+  const t = el.querySelector ? el.querySelector('.gl') : null;
   return parseFloat(getComputedStyle(t || el).fontSize) || 22;
 }
 
-/* 字母中心相对元素中心的偏移：方块字母偏上，徽章居中 */
+/* 字母中心相对元素中心的偏移：墙面字母贴着基线，徽章居中 */
 function libLetterOffset(el){
-  const t = el.querySelector ? el.querySelector('.cell-letter') : null;
+  const t = el.querySelector ? el.querySelector('.gl') : null;
   if(!t) return 0;
   const r = t.getBoundingClientRect(), b = el.getBoundingClientRect();
   return (r.top + r.height / 2) - (b.top + b.height / 2);
@@ -2650,11 +2663,13 @@ function libFly(fromRect, toRect, L, hex, fromEl, toEl){
   f.style.width = fromRect.width + 'px';
   f.style.height = fromRect.height + 'px';
   /* 起点贴出发元素字号；缩放后的视觉字号 = font-size × sy，故终点写 dstFont / sy */
+  /* 从字母墙起飞：起点是裸墨字，飞到徽章才染上颜色 */
+  const fromInk = fromEl.classList && fromEl.classList.contains('spec');
   const srcFont = libFontOf(fromEl), dstFont = libFontOf(toEl);
   f.style.fontSize = srcFont + 'px';
-  f.style.background = 'color-mix(in srgb,' + hex + (toStrong ? ' 12%,#FFFFFF)' : ' 62%,#FFFFFF)');
-  f.style.color = toStrong ? 'color-mix(in srgb,' + hex + ' 72%,#20242A)' : '#FFFFFF';
-  f.style.borderRadius = toStrong ? '12px' : '16px';
+  f.style.background = fromInk ? 'transparent' : 'color-mix(in srgb,' + hex + (toStrong ? ' 12%,#FFFFFF)' : ' 62%,#FFFFFF)');
+  f.style.color = fromInk ? 'var(--news-ink)' : (toStrong ? 'color-mix(in srgb,' + hex + ' 72%,#20242A)' : '#FFFFFF');
+  f.style.borderRadius = fromInk ? '0px' : (toStrong ? '12px' : '16px');
   letter.style.transform = 'translateY(' + libLetterOffset(fromEl) + 'px)';
   document.body.appendChild(f);
 
@@ -2765,7 +2780,7 @@ function hardCloseLib(){
   const grid = document.getElementById('libGrid');
   if(grid){
     grid.classList.remove('fade-out');
-    grid.querySelectorAll('.cell.hide').forEach(el => el.classList.remove('hide'));
+    grid.querySelectorAll('.spec.hide').forEach(el => el.classList.remove('hide'));
   }
   libCurrent = null;
   libAnimating = false;
@@ -3531,7 +3546,12 @@ function switchTab(name){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const view = document.getElementById('view-' + name);
   if(view) view.classList.add('active');
-  if(name === 'lib') renderLib();
+  if(name === 'lib'){
+    renderLib();
+    /* 从别的页回到字母墙，从第一张样本看起 */
+    const lg = document.getElementById('libGrid');
+    if(lg) lg.scrollTop = 0;
+  }
   if(name === 'quiz') renderQuiz();
   if(name === 'stat') renderStat();
   if(name !== 'lib') hardCloseLib();
