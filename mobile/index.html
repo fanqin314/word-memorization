@@ -1244,11 +1244,13 @@ body{
 [data-style="w"] .gl{transform:scaleX(1.5);}
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
-/* 详情层：与字母墙同一张白纸的内页 */
+/* 详情层：与字母墙同一张白纸的内页。
+   左右顶到 section 的两边（.main 的水平内边距就是 .8rem），内容再按同一内边距收进来，
+   所以这一页和上面的搜索框一样宽，不再比外面窄一圈 */
 .lib-detail{
-  position:absolute;inset:0;z-index:3;display:none;flex-direction:column;
-  padding:12px 14px 0;
-  /* 和整体界面同一张白纸：详情层不再沿用字母墙的米色新闻纸 */
+  position:absolute;top:0;bottom:0;left:-.8rem;right:-.8rem;z-index:3;
+  display:none;flex-direction:column;
+  padding:0 .8rem 0;
   background:var(--paper-2);
 }
 .lib-detail.show{display:flex;}
@@ -1258,6 +1260,14 @@ body{
   flex:none;display:flex;align-items:center;gap:10px;
   padding:0 0 9px;
   border-bottom:1px solid var(--rule-2);
+}
+/* 只在第一次翻开时演一遍：比整页慢半拍抬起，接住从字母墙飞来的字形；
+   换分类重排时不再重播，免得顶部条闪一下。起点落在原位下方，
+   动画过程中不会碰到搜索框的下边缘 */
+.detail-top.intro{animation:libTopIn .4s var(--ease) .16s both;}
+@keyframes libTopIn{
+  from{opacity:0;transform:translateY(7px);}
+  to{opacity:1;transform:translateY(0);}
 }
 .back-btn{
   appearance:none;cursor:pointer;flex:none;
@@ -2816,7 +2826,7 @@ function renderLibDetail(L, list, hex, keepBadge){
 
   detail.dataset.style = sty;
   detail.innerHTML =
-    '<div class="detail-top">' +
+    '<div class="detail-top' + (keepBadge ? '' : ' intro') + '">' +
       '<button class="back-btn" id="libBack" type="button" aria-label="返回字母">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>' +
       '</button>' +
@@ -2946,14 +2956,14 @@ function libFlyEnd(f, done){
   setTimeout(fire, 480);
 }
 
-/* 详情层顶到外面那行分类条的位置：内容上沿和那一行对齐，
-   打开后那一行就被同一张白纸盖住，位置正好交还给顶部条里的索引条 */
+/* 详情层顶到外面那行分类条的位置：上沿和那一行齐平，
+   打开后那一行就被同一张白纸盖住，位置正好交还给顶部条里的索引条；
+   再往上就压到搜索框的下边缘了，所以只到这一行为止 */
 function libDetailTopAtMst(detail){
   const row = document.getElementById('libMst');
   const stage = detail.parentElement;
   if(!row || !stage) return;
-  const pad = parseFloat(getComputedStyle(detail).paddingTop) || 0;
-  detail.style.top = (row.getBoundingClientRect().top - stage.getBoundingClientRect().top - pad) + 'px';
+  detail.style.top = (row.getBoundingClientRect().top - stage.getBoundingClientRect().top) + 'px';
 }
 
 function openLibLetter(L){
