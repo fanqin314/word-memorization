@@ -1263,23 +1263,13 @@ body{
 .lib-detail.show{display:flex;}
 
 /* 顶部条：和下面那排分类条用同一套规格——30px 高的方角发丝线块、7px 间隔。
-   返回、四个分类、刷这组都落在同一条基线上，不会一高一矮 */
+   这一条只放本字母的分类索引和刷这组，返回交给下面标本牌左边那道折线箭头 */
 .detail-top{
   flex:none;display:flex;align-items:center;gap:7px;
   padding:0 0 9px;
   border-bottom:1px solid var(--rule-2);
 }
-.back-btn{
-  appearance:none;cursor:pointer;flex:none;
-  width:30px;height:30px;border-radius:2px;
-  border:1px solid var(--rule-2);
-  background:transparent;color:var(--ink);
-  display:grid;place-items:center;
-  transition:background .16s,color .16s,transform .14s;
-}
-.back-btn:active{transform:scale(.94);background:var(--ink);color:#FFFFFF;}
-.back-btn svg{width:14px;height:14px;display:block;}
-/* 详情层顶部：返回 + 本字母自己的分类索引条 + 刷这组 */
+/* 详情层顶部：本字母自己的分类索引条 + 刷这组 */
 .detail-mst{
   flex:1;min-width:0;display:flex;align-items:center;gap:0;
 }
@@ -1300,15 +1290,25 @@ body{
   border-bottom:1px solid var(--rule);
 }
 .badge{
-  position:relative;flex:none;
+  position:relative;flex:none;cursor:pointer;
   width:84px;height:84px;border-radius:2px;
   /* 白底墨字：和整页同一张纸，只有反白字(S)仍保留墨底 */
   background:#FFFFFF;color:var(--ink);
-  box-shadow:inset 0 0 0 1px var(--rule);
+  /* 左边不画直线，那一道边界交给下面那道折线箭头 */
+  border-top:1px solid var(--rule);
+  border-right:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
   display:grid;place-items:center;
   font-size:60px;line-height:1;
   visibility:hidden;
 }
+/* 左边框的折线箭头：整块标本牌就是返回键，点它（或箭头）就翻回字母墙 */
+.badge-back{
+  position:absolute;left:-11px;top:50%;width:12px;height:34px;
+  transform:translateY(-50%);pointer-events:none;
+  transition:transform .16s var(--ease);
+}
+.badge:active .badge-back{transform:translate(-2px,-50%);}
 .badge::before,.badge::after{
   content:'';position:absolute;width:7px;height:7px;pointer-events:none;
 }
@@ -1333,7 +1333,7 @@ body{
 
 /* 反白字(S)：整个徽章就是那块墨底，字形不再自己铺底 */
 .lib-detail[data-style="s"] .badge{
-  background:var(--ink);color:#FFFFFF;box-shadow:none;
+  background:var(--ink);color:#FFFFFF;border-color:rgba(255,255,255,.34);
 }
 .lib-detail[data-style="s"] .badge::before{border-color:rgba(255,255,255,.55);}
 .lib-detail[data-style="s"] .badge::after{border-color:rgba(255,255,255,.55);}
@@ -2823,9 +2823,6 @@ function renderLibDetail(L, list, hex, keepBadge){
   detail.dataset.style = sty;
   detail.innerHTML =
     '<div class="detail-top">' +
-      '<button class="back-btn" id="libBack" type="button" aria-label="返回字母">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>' +
-      '</button>' +
       '<div class="detail-mst" id="libDetailMst">' +
         chips.map(c =>
           '<button class="m-chip' + (libLetterMst === c[0] ? ' on' : '') + '" type="button" data-lmst="' + c[0] + '">' +
@@ -2834,7 +2831,9 @@ function renderLibDetail(L, list, hex, keepBadge){
       '<button class="bulk-btn" id="libBulk" type="button"' + (shown.length ? '' : ' disabled') + '>刷这组</button>' +
     '</div>' +
     '<div class="badge-wrap">' +
-      '<div class="badge" id="libBadge">' + libGlyph(sty) + '</div>' +
+      '<div class="badge" id="libBadge" role="button" tabindex="0" aria-label="返回字母">' + libGlyph(sty) +
+        '<svg class="badge-back" viewBox="0 0 12 34" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M11 1L1 17L11 33"/></svg>' +
+      '</div>' +
       '<div class="badge-meta">' +
         '<div class="bm-row"><span class="bm-k">Letter</span><span class="bm-v">' + esc(L + ' · ' + n + ' W') + '</span></div>' +
         '<div class="bm-row"><span class="bm-k">Face</span><span class="bm-v">' + esc(LIB_FACE[sty] || LIB_FACE.o) + '</span></div>' +
@@ -2861,11 +2860,13 @@ function renderLibDetail(L, list, hex, keepBadge){
     });
   }
 
-  document.getElementById('libBack').addEventListener('click', (e) => {
+  /* 标本牌就是返回键：招牌左边那道折线箭头是它，点整块牌子也一样翻回去 */
+  document.getElementById('libBadge').addEventListener('click', (e) => {
     e.preventDefault(); e.stopPropagation();
     closeLibLetter();
   });
-  document.getElementById('libBadge').addEventListener('click', (e) => {
+  document.getElementById('libBadge').addEventListener('keydown', (e) => {
+    if(e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault(); e.stopPropagation();
     closeLibLetter();
   });
