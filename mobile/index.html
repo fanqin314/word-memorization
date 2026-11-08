@@ -57,10 +57,8 @@ button,input{touch-action:manipulation;}
   --display:'Arial Black','Cooper Black',Impact,'PingFang SC','Microsoft YaHei',sans-serif;
   --sans:'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;
   --mono:'Courier New',monospace;
-  /* 词库页的新闻纸：米色底 + 墨色，只在字母墙那一页用 */
+  /* 衬线字体：字母墙与词库详情页的样本字形用 */
   --serif:'Times New Roman',Georgia,'Songti SC',serif;
-  --news:#EFE8D6;
-  --news-ink:#141210;
 }
 
 body{
@@ -1118,12 +1116,8 @@ body{
 
 .lib-stage{
   position:relative;flex:1;min-height:0;overflow:hidden;margin-top:.1rem;
-  /* 词库这一页单独铺一张新闻纸，和外面的瓷白界面分层 */
-  background:var(--news);
-  background-image:
-    repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(20,18,16,.012) 2px,rgba(20,18,16,.012) 3px),
-    radial-gradient(circle at 18% 22%,rgba(20,18,16,.03),transparent 22%),
-    radial-gradient(circle at 78% 78%,rgba(20,18,16,.024),transparent 24%);
+  /* 和整体界面同一张白纸：字母墙不再单独铺米色新闻纸 */
+  background:var(--paper-2);
 }
 /* 字母墙：像字体样本册一样一张张排开，字号与宽度随词量变化 */
 .lib-grid{
@@ -1138,7 +1132,7 @@ body{
 }
 .lib-grid::-webkit-scrollbar{display:none;}
 .lib-grid.fade-out{opacity:0;pointer-events:none;}
-.lib-grid .wempty{flex:0 0 100%;color:rgba(20,18,16,.45);}
+.lib-grid .wempty{flex:0 0 100%;color:color-mix(in srgb,var(--ink) 45%,transparent);}
 /* 搜索时每次按键都会重排，此时不再重放入场，免得一直在闪 */
 .lib-grid.no-anim .spec{animation:none;}
 
@@ -1158,7 +1152,7 @@ body{
 .spec .glyph{
   flex:1;min-height:0;
   display:flex;align-items:flex-end;justify-content:center;
-  font-size:var(--fs);line-height:1;color:var(--news-ink);
+  font-size:var(--fs);line-height:1;color:var(--ink);
 }
 .spec .gl{
   display:inline-block;font-weight:900;letter-spacing:-.04em;
@@ -1173,13 +1167,13 @@ body{
   font-family:var(--mono);letter-spacing:.10em;text-transform:uppercase;
   line-height:1.2;white-space:nowrap;
 }
-.spec .meta .spec-letter{font-size:7.5px;font-weight:900;color:rgba(20,18,16,.68);}
+.spec .meta .spec-letter{font-size:7.5px;font-weight:900;color:color-mix(in srgb,var(--ink) 68%,transparent);}
 .spec .meta .spec-font{
   font-size:6px;font-weight:700;letter-spacing:.06em;
-  color:rgba(20,18,16,.5);
+  color:color-mix(in srgb,var(--ink) 50%,transparent);
   overflow:hidden;text-overflow:ellipsis;
 }
-.spec .meta .spec-num{font-size:6px;font-weight:700;letter-spacing:.04em;color:rgba(20,18,16,.34);}
+.spec .meta .spec-num{font-size:6px;font-weight:700;letter-spacing:.04em;color:color-mix(in srgb,var(--ink) 34%,transparent);}
 
 @keyframes specIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
 
@@ -1187,7 +1181,7 @@ body{
 .spec[data-style="a"] .gl{font-family:var(--display);font-weight:900;transform:scaleX(.88);}
 .spec[data-style="b"] .gl{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;}
 .spec[data-style="c"] .gl{font-family:'Impact','Arial Narrow',var(--display);transform:scaleX(.82);}
-.spec[data-style="d"] .gl{color:transparent;-webkit-text-stroke:2px var(--news-ink);}
+.spec[data-style="d"] .gl{color:transparent;-webkit-text-stroke:2px var(--ink);}
 .spec[data-style="e"] .gl{font-family:var(--display);transform:scaleX(1.3);}
 .spec[data-style="f"] .gl{font-family:'Brush Script MT','Snell Roundhand',cursive;font-weight:400;font-style:italic;transform:rotate(-4deg);}
 .spec[data-style="h"] .gl{font-family:var(--display);text-shadow:4px 4px 0 rgba(20,18,16,.35),8px 8px 0 rgba(20,18,16,.16);}
@@ -1195,19 +1189,19 @@ body{
 .spec[data-style="l"] .gl{font-family:var(--display);font-style:italic;transform:skewX(-14deg);}
 .spec[data-style="n"] .gl{
   font-family:var(--display);color:transparent;
-  background:radial-gradient(circle,var(--news-ink) 38%,transparent 40%) 0 0/6px 6px;
+  background:radial-gradient(circle,var(--ink) 38%,transparent 40%) 0 0/6px 6px;
   -webkit-background-clip:text;background-clip:text;
 }
 .spec[data-style="o"] .gl{font-family:'Helvetica Neue',Helvetica,var(--sans);font-weight:800;}
-.spec[data-style="p"] .gl{font-family:var(--display);text-decoration:underline;text-decoration-thickness:5px;text-underline-offset:.12em;text-decoration-color:var(--news-ink);}
+.spec[data-style="p"] .gl{font-family:var(--display);text-decoration:underline;text-decoration-thickness:5px;text-underline-offset:.12em;text-decoration-color:var(--ink);}
 .spec[data-style="r"] .gl{font-family:var(--display);transform:scaleX(-1);}
-.spec[data-style="s"] .gl{font-family:var(--display);background:var(--news-ink);color:var(--news);padding:0 .06em;letter-spacing:0;}
-.spec[data-style="t"] .gl{font-family:var(--serif);font-weight:700;border:2px solid var(--news-ink);padding:.02em .12em;letter-spacing:0;}
-.spec[data-style="u"] .gl{font-family:var(--display);border-bottom:4px double var(--news-ink);padding-bottom:.04em;}
+.spec[data-style="s"] .gl{font-family:var(--display);background:var(--ink);color:#FFFFFF;padding:0 .06em;letter-spacing:0;}
+.spec[data-style="t"] .gl{font-family:var(--serif);font-weight:700;border:2px solid var(--ink);padding:.02em .12em;letter-spacing:0;}
+.spec[data-style="u"] .gl{font-family:var(--display);border-bottom:4px double var(--ink);padding-bottom:.04em;}
 .spec[data-style="w"] .gl{font-family:var(--display);transform:scaleX(1.7);}
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
-/* 详情层：与字母墙同一张新闻纸的内页 */
+/* 详情层：与字母墙同一张白纸的内页 */
 .lib-detail{
   position:absolute;inset:0;display:none;flex-direction:column;
   padding:12px 14px 0;
@@ -2841,7 +2835,7 @@ function libFly(fromRect, toRect, L, hex, fromEl, toEl){
   f.style.fontWeight = srcCS.fontWeight;
   f.style.fontStyle = srcCS.fontStyle;
   f.style.background = fromInk ? 'transparent' : badgeBg;
-  f.style.color = fromInk ? 'var(--news-ink)' : badgeColor;
+  f.style.color = fromInk ? 'var(--ink)' : badgeColor;
   f.style.borderRadius = fromInk ? '0px' : badgeRadius;
 
   letter.style.transform = 'translateY(' + libLetterOffset(fromEl) + 'px)';
@@ -2867,7 +2861,7 @@ function libFly(fromRect, toRect, L, hex, fromEl, toEl){
     letter.style.transition = 'transform .36s ' + ease;
     letter.style.transform = 'translateY(' + (offD / sy) + 'px)';
     f.style.background = toBadge ? badgeBg : 'transparent';
-    f.style.color = toBadge ? badgeColor : 'var(--news-ink)';
+    f.style.color = toBadge ? badgeColor : 'var(--ink)';
     f.style.borderRadius = toBadge ? badgeRadius : '0px';
   });
   return f;
