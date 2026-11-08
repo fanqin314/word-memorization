@@ -1096,9 +1096,10 @@ body{
 .search-box .clear:active{background:var(--ink);color:#FFFFFF;border-color:var(--ink);}
 .search-box .clear[hidden]{display:none;}
 
-/* 掌握度分类栏：一条方角的分段索引条，中间用发丝线隔开，选中像盖了一枚墨块 */
+/* 掌握度分类栏：一条方角的分段索引条，中间用发丝线隔开，选中像盖了一枚墨块。
+   字母墙外面用一整行；打开某个字母后，同样的索引条缩进详情层顶部 */
 .lib-mst{display:flex;align-items:center;gap:0;margin:-.1rem .1rem .55rem;flex:none;}
-.lib-mst .m-chip{
+.m-chip{
   flex:1;min-width:0;height:30px;padding:0 4px;
   display:inline-flex;align-items:center;justify-content:center;gap:.18rem;cursor:pointer;
   border:1px solid var(--rule-2);border-radius:0;margin-left:-1px;
@@ -1106,14 +1107,14 @@ body{
   font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.05em;
   transition:background .16s,border-color .16s,color .16s;
 }
-.lib-mst .m-chip:first-child{margin-left:0;border-radius:2px 0 0 2px;}
-.lib-mst .m-chip:nth-child(4){border-radius:0 2px 2px 0;}
-.lib-mst .m-chip b{font-weight:900;opacity:.42;}
-.lib-mst .m-chip:active{background:color-mix(in srgb,var(--ink) 8%,#FFFFFF);}
-.lib-mst .m-chip.on{
+.m-chip:first-child{margin-left:0;border-radius:2px 0 0 2px;}
+.m-chip:nth-child(4){border-radius:0 2px 2px 0;}
+.m-chip b{font-weight:900;opacity:.42;}
+.m-chip:active{background:color-mix(in srgb,var(--ink) 8%,#FFFFFF);}
+.m-chip.on{
   background:var(--ink);border-color:var(--ink);color:#FFFFFF;z-index:2;
 }
-.lib-mst .m-chip.on b{opacity:.72;}
+.m-chip.on b{opacity:.72;}
 .lib-mst .m-brush{
   flex:none;height:30px;padding:0 .62rem;cursor:pointer;margin-left:7px;
   border:1px solid var(--ink);border-radius:2px;background:var(--ink);color:#FFFFFF;
@@ -1124,7 +1125,9 @@ body{
 .lib-mst .m-brush[hidden]{display:none;}
 
 .lib-stage{
-  position:relative;flex:1;min-height:0;overflow:hidden;margin-top:.1rem;
+  position:relative;flex:1;min-height:0;
+  /* 详情层要从分类条那一行的位置展开、把它盖住，所以这一层不裁切上方 */
+  margin-top:.1rem;
   /* 和整体界面同一张白纸：字母墙不再单独铺米色新闻纸 */
   background:var(--paper-2);
 }
@@ -1266,13 +1269,12 @@ body{
 }
 .back-btn:active{transform:scale(.94);background:var(--ink);color:#FFFFFF;}
 .back-btn svg{width:14px;height:14px;display:block;}
-.detail-title{
-  flex:1;text-align:center;min-width:0;
-  font-family:var(--mono);font-size:8px;font-weight:800;
-  letter-spacing:.18em;text-transform:uppercase;
-  color:color-mix(in srgb,var(--ink) 55%,transparent);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+/* 详情层顶部：返回 + 本字母自己的分类索引条 + 刷这组。
+   打开字母后外面那行分类条收起，就由这一条接手，只筛这个字母的词 */
+.detail-mst{
+  flex:1;min-width:0;display:flex;align-items:center;gap:0;margin:0 2px;
 }
+.detail-mst .m-chip{height:26px;font-size:7px;letter-spacing:.03em;gap:.12rem;}
 .bulk-btn{
   appearance:none;cursor:pointer;flex:none;
   font-family:var(--mono);font-size:8px;font-weight:800;
@@ -1282,6 +1284,8 @@ body{
   transition:background .16s,color .16s,transform .14s;
 }
 .bulk-btn:active{transform:scale(.94);}
+.bulk-btn[disabled]{opacity:.32;cursor:default;}
+.bulk-btn[disabled]:active{transform:none;}
 
 /* 标本牌 + 标本标签栏 */
 .badge-wrap{
@@ -2521,6 +2525,7 @@ let libFilter = '';
 let libMst = 'all';             /* 掌握度筛选：all / '0' 未学 / '1' 学习中 / '2' 已掌握 */
 let libGroups = new Map();      /* 当前过滤结果：字母 → 词[] */
 let libCurrent = null;          /* 已展开的字母 */
+let libLetterMst = 'all';       /* 详情层里该字母自己的分类：all / '0' / '1' / '2' */
 let libAnimating = false;
 let libTimer = null;
 
@@ -2609,6 +2614,12 @@ function libSearchWords(q){
 function libMstWords(q){
   const base = libSearchWords(q);
   return libMst === 'all' ? base : base.filter(w => String(masteryOf(w.word)) === libMst);
+}
+
+/* 某个字母的全部词：只跟关键词走，不套外面那行的掌握度筛选——
+   详情层有自己的分类条，打开一个字母就是翻开它自己那一页 */
+function libLetterWords(L){
+  return libSearchWords(libFilter).filter(w => ((w.word[0] || '#').toUpperCase()) === L);
 }
 
 /* 按首字母分组 */
@@ -2762,15 +2773,27 @@ function renderLibGrid(q){
   }).join('');
 }
 
-function renderLibDetail(L, list, hex){
+function renderLibDetail(L, list, hex, keepBadge){
   const detail = document.getElementById('libDetail');
   const sty = libFaceKey(L);
   const n = list.length;
   const done = list.filter(w => masteryOf(w.word) === 2).length;
   const pct = n ? Math.round(done / n * 100) : 0;
-  const withLead = n >= 3;
 
-  const cards = libSorted(list).map((w, i) => {
+  /* 这个字母自己的分类：计数只看这一组，切换后只重排这一组的词卡 */
+  const mCounts = [0, 1, 2].map(m => list.filter(w => masteryOf(w.word) === m).length);
+  const chips = [
+    ['all', '全部', n],
+    ['0', '未学', mCounts[0]],
+    ['1', '学习中', mCounts[1]],
+    ['2', '已掌握', mCounts[2]]
+  ];
+  const shown = libLetterMst === 'all'
+    ? libSorted(list)
+    : libSorted(list.filter(w => String(masteryOf(w.word)) === libLetterMst));
+  const withLead = shown.length >= 3;
+
+  const cards = shown.map((w, i) => {
     const m = masteryOf(w.word);
     const chk = reviewDone(w.word);
     const isLead = withLead && i === 0;
@@ -2797,8 +2820,12 @@ function renderLibDetail(L, list, hex){
       '<button class="back-btn" id="libBack" type="button" aria-label="返回字母">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>' +
       '</button>' +
-      '<span class="detail-title">' + esc(L + ' · ' + n + ' 个词') + '</span>' +
-      '<button class="bulk-btn" id="libBulk" type="button">刷这组</button>' +
+      '<div class="detail-mst" id="libDetailMst">' +
+        chips.map(c =>
+          '<button class="m-chip' + (libLetterMst === c[0] ? ' on' : '') + '" type="button" data-lmst="' + c[0] + '">' +
+            c[1] + '<b>' + c[2] + '</b></button>').join('') +
+      '</div>' +
+      '<button class="bulk-btn" id="libBulk" type="button"' + (shown.length ? '' : ' disabled') + '>刷这组</button>' +
     '</div>' +
     '<div class="badge-wrap">' +
       '<div class="badge" id="libBadge">' + libGlyph(sty) + '</div>' +
@@ -2809,7 +2836,24 @@ function renderLibDetail(L, list, hex){
         '<div class="bm-bar"><i style="width:' + pct + '%;background:var(--ink)"></i></div>' +
       '</div>' +
     '</div>' +
-    '<div class="detail-scroll"><div class="w-grid">' + cards + '</div></div>';
+    '<div class="detail-scroll">' +
+      (cards
+        ? '<div class="w-grid">' + cards + '</div>'
+        : '<div class="wempty">' + (libLetterMst === 'all'
+          ? '这个词母下还没有词'
+          : '这个字母里没有' + MST_LABEL[Number(libLetterMst)] + '的词') + '</div>') +
+    '</div>';
+
+  /* 从字母墙飞进来时徽章要等落地才现身；在详情层里换分类时它已经在台上，保持可见 */
+  if(keepBadge){
+    const badge = document.getElementById('libBadge');
+    if(badge) badge.style.visibility = 'visible';
+    /* 换分类后重排的词卡直接入场，不必再等飞行动画那一拍 */
+    detail.querySelectorAll('.w-card').forEach((el, i) => {
+      el.style.animationDelay = (i * 24) + 'ms';
+      el.classList.add('in');
+    });
+  }
 
   document.getElementById('libBack').addEventListener('click', (e) => {
     e.preventDefault(); e.stopPropagation();
@@ -2821,12 +2865,21 @@ function renderLibDetail(L, list, hex){
   });
   document.getElementById('libBulk').addEventListener('click', (e) => {
     e.preventDefault(); e.stopPropagation();
-    queueLibLetter(L, libGroups.get(L));
+    queueLibLetter(L, shown);
+  });
+  /* 本字母内的分类：只重排这一组的词卡，不离开详情层 */
+  document.getElementById('libDetailMst').addEventListener('click', (e) => {
+    const chip = e.target.closest('.m-chip');
+    if(!chip) return;
+    e.preventDefault(); e.stopPropagation();
+    if(chip.dataset.lmst === libLetterMst) return;
+    libLetterMst = chip.dataset.lmst;
+    renderLibDetail(L, list, hex, true);
   });
   detail.querySelectorAll('.w-card').forEach(card => {
     card.addEventListener('click', (e) => {
       e.preventDefault(); e.stopPropagation();
-      const w = list.find(x => x.word === card.dataset.word);
+      const w = shown.find(x => x.word === card.dataset.word);
       if(w) location.href = '../' + w.file;
     });
   });
@@ -2893,17 +2946,29 @@ function libFlyEnd(f, done){
   setTimeout(fire, 480);
 }
 
+/* 详情层顶到外面那行分类条的位置：内容上沿和那一行对齐，
+   打开后那一行就被同一张白纸盖住，位置正好交还给顶部条里的索引条 */
+function libDetailTopAtMst(detail){
+  const row = document.getElementById('libMst');
+  const stage = detail.parentElement;
+  if(!row || !stage) return;
+  const pad = parseFloat(getComputedStyle(detail).paddingTop) || 0;
+  detail.style.top = (row.getBoundingClientRect().top - stage.getBoundingClientRect().top - pad) + 'px';
+}
+
 function openLibLetter(L){
   if(libAnimating) return;
-  const list = libGroups.get(L);
-  if(!list || !list.length) return;
   const grid = document.getElementById('libGrid');
   const detail = document.getElementById('libDetail');
   const src = grid.querySelector('[data-letter="' + L + '"]');
   if(!src) return;
+  /* 翻开的是这个字母自己的一页：只跟当前关键词走，不套外面那行的分类 */
+  const list = libLetterWords(L);
+  if(!list.length) return;
   libAnimating = true;
   libCurrent = L;
-  const hex = libGroupColor(list);
+  libLetterMst = 'all';     /* 每次翻开都从「全部」看起 */
+  const hex = libGroupColor(libGroups.get(L) || list);
 
   const fromRect = libRect(src);
   src.classList.add('hide');
@@ -2912,6 +2977,7 @@ function openLibLetter(L){
   renderLibDetail(L, list, hex);
   detail.classList.add('show');
   detail.style.opacity = '0';
+  libDetailTopAtMst(detail);
   const badge = document.getElementById('libBadge');
   const toRect = libRect(badge);
 
@@ -2971,6 +3037,7 @@ function hardCloseLib(){
     detail.dataset.style = '';
     detail.style.opacity = '';
     detail.style.transition = '';
+    detail.style.top = '';
   }
   const grid = document.getElementById('libGrid');
   if(grid){
