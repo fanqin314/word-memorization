@@ -1173,7 +1173,35 @@ body{
   color:color-mix(in srgb,var(--ink) 50%,transparent);
   overflow:hidden;text-overflow:ellipsis;
 }
-.spec .meta .spec-num{font-size:6px;font-weight:700;letter-spacing:.04em;color:color-mix(in srgb,var(--ink) 34%,transparent);}
+/* 每组的状态行：未学 / 学习中 / 已掌握 + 进度计数，下面压一条 2px 进度线 */
+.spec .meta .spec-state{
+  margin-top:3px;display:flex;align-items:center;justify-content:space-between;gap:4px;
+  letter-spacing:.02em;
+}
+.spec-state .st{
+  display:inline-flex;align-items:center;gap:3px;min-width:0;
+  font-size:7px;font-weight:800;
+}
+.spec-state .st i{
+  width:5px;height:5px;border-radius:1px;flex:none;background:currentColor;
+}
+.spec-state .sn{
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:0;
+  color:color-mix(in srgb,var(--ink) 40%,transparent);
+}
+.spec[data-state="0"] .spec-state .st{color:color-mix(in srgb,var(--ink) 34%,transparent);}
+.spec[data-state="0"] .spec-state .st i{background:transparent;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 34%,transparent);}
+.spec[data-state="1"] .spec-state .st{color:color-mix(in srgb,var(--ink) 72%,transparent);}
+.spec[data-state="1"] .spec-state .st i{background:color-mix(in srgb,var(--ink) 55%,transparent);}
+.spec[data-state="2"] .spec-state .st{color:var(--ink);}
+.spec[data-state="2"] .spec-state .st i{background:var(--ink);}
+.spec .meta .spec-bar{
+  margin-top:4px;height:2px;
+  background:color-mix(in srgb,var(--ink) 12%,transparent);
+  position:relative;overflow:hidden;
+}
+.spec .spec-bar i{position:absolute;left:0;top:0;bottom:0;display:block;background:var(--ink);}
+.spec[data-state="1"] .spec-bar i{background:color-mix(in srgb,var(--ink) 50%,transparent);}
 
 @keyframes specIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
 
@@ -2634,7 +2662,7 @@ function libFaceKey(L){
 function libSpecSize(n){
   const w = 56 + (Math.min(Math.max(n, 1), 9) - 1) * 9;
   const fs = Math.round(w * .86);
-  return {w, fs, h: Math.round(fs * 1.08) + 40};
+  return {w, fs, h: Math.round(fs * 1.08) + 48};
 }
 
 function libSorted(list){
@@ -2686,15 +2714,22 @@ function renderLibGrid(q){
     const done = list.filter(w => masteryOf(w.word) === 2).length;
     const sz = libSpecSize(n);
     const sty = libFaceKey(L);
-    const w2 = n < 10 ? '0' + n : n;
+    const state = done === 0 ? 0 : (done >= n ? 2 : 1);
+    const stateLabel = MST_LABEL[state];
+    const pct = Math.round(done / n * 100);
     return '<button class="spec" type="button" data-letter="' + esc(L) + '" data-style="' + sty + '"' +
+      ' data-state="' + state + '"' +
       ' style="--w:' + sz.w + 'px;--h:' + sz.h + 'px;--fs:' + sz.fs + 'px;--i:' + i + '"' +
-      ' aria-label="' + esc(L + ' 组，' + n + ' 个词，已掌握 ' + done) + '">' +
+      ' aria-label="' + esc(L + ' 组，' + n + ' 个词，' + stateLabel + ' ' + done + '/' + n) + '">' +
       '<span class="glyph"><span class="gl">' + esc(L) + '</span></span>' +
       '<span class="meta">' +
         '<span class="spec-letter">' + esc(L) + ' · ' + sz.fs + ' PT</span>' +
         '<span class="spec-font">' + (LIB_FACE[sty] || LIB_FACE.o) + '</span>' +
-        '<span class="spec-num">' + w2 + ' W · ' + done + '/' + n + '</span>' +
+        '<span class="spec-state">' +
+          '<span class="st"><i></i>' + stateLabel + '</span>' +
+          '<span class="sn">' + done + '/' + n + '</span>' +
+        '</span>' +
+        '<span class="spec-bar"><i style="width:' + pct + '%"></i></span>' +
       '</span>' +
     '</button>';
   }).join('');
