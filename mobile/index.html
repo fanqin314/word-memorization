@@ -1207,77 +1207,189 @@ body{
 .spec[data-style="w"] .gl{font-family:var(--display);transform:scaleX(1.7);}
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
-/* 详情层 */
-.lib-detail{position:absolute;inset:0;display:none;flex-direction:column;}
-.lib-detail.show{display:flex;}
-.detail-top{flex:none;display:flex;align-items:center;gap:.5rem;padding:.1rem 0 0;}
-.back-btn{
-  appearance:none;border:1px solid var(--rule-2);cursor:pointer;flex:none;
-  width:34px;height:34px;border-radius:10px;
-  background:var(--card);color:var(--ink);
-  display:grid;place-items:center;
-  transition:transform .14s,background .16s;
+/* 详情层：与字母墙同一张新闻纸的内页 */
+.lib-detail{
+  position:absolute;inset:0;display:none;flex-direction:column;
+  padding:12px 14px 0;
+  background:var(--news);
+  background-image:
+    repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(20,18,16,.012) 2px,rgba(20,18,16,.012) 3px),
+    radial-gradient(circle at 18% 22%,rgba(20,18,16,.03),transparent 22%),
+    radial-gradient(circle at 78% 78%,rgba(20,18,16,.024),transparent 24%);
 }
-.back-btn:active{transform:scale(.94);}
-.back-btn svg{width:16px;height:16px;display:block;}
+.lib-detail.show{display:flex;}
+
+/* 顶部条：发丝线压住标题，方角墨线按钮 */
+.detail-top{
+  flex:none;display:flex;align-items:center;gap:10px;
+  padding:0 0 9px;
+  border-bottom:1px solid rgba(20,18,16,.28);
+}
+.back-btn{
+  appearance:none;cursor:pointer;flex:none;
+  width:30px;height:30px;border-radius:2px;
+  border:1px solid var(--news-ink);
+  background:transparent;color:var(--news-ink);
+  display:grid;place-items:center;
+  transition:background .16s,color .16s,transform .14s;
+}
+.back-btn:active{transform:scale(.94);background:var(--news-ink);color:var(--news);}
+.back-btn svg{width:14px;height:14px;display:block;}
 .detail-title{
   flex:1;text-align:center;min-width:0;
-  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.1em;
-  color:color-mix(in srgb,var(--ink) 50%,transparent);
+  font-family:var(--mono);font-size:8px;font-weight:800;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(20,18,16,.55);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .bulk-btn{
-  appearance:none;border:0;cursor:pointer;flex:none;
-  font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.04em;
-  padding:7px 10px;border-radius:8px;
-  background:var(--ink);color:#fff;
-  transition:transform .14s,background .16s;
+  appearance:none;cursor:pointer;flex:none;
+  font-family:var(--mono);font-size:8px;font-weight:800;
+  letter-spacing:.14em;text-transform:uppercase;
+  padding:6px 9px;border-radius:2px;border:1px solid var(--news-ink);
+  background:var(--news-ink);color:var(--news);
+  transition:background .16s,color .16s,transform .14s;
 }
 .bulk-btn:active{transform:scale(.94);}
-.badge{
-  width:84px;height:84px;flex:none;
-  margin:.7rem auto .85rem;border-radius:16px;
-  display:grid;place-items:center;
-  font-family:var(--display);font-size:38px;font-weight:900;letter-spacing:-.03em;
-  color:#FFFFFF;visibility:hidden;
+
+/* 标本牌 + 标本标签栏 */
+.badge-wrap{
+  flex:none;display:flex;align-items:stretch;gap:14px;
+  padding:15px 0 13px;margin-bottom:14px;
+  border-bottom:1px solid rgba(20,18,16,.14);
 }
-.detail-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:.6rem;scrollbar-width:none;}
+.badge{
+  position:relative;flex:none;
+  width:84px;height:84px;border-radius:2px;
+  background:var(--news-ink);color:var(--news);
+  display:grid;place-items:center;
+  font-size:60px;line-height:1;
+  visibility:hidden;
+}
+.badge::before,.badge::after{
+  content:'';position:absolute;width:7px;height:7px;pointer-events:none;
+}
+.badge::before{top:4px;left:4px;border-top:1px solid rgba(239,232,214,.55);border-left:1px solid rgba(239,232,214,.55);}
+.badge::after{bottom:4px;right:4px;border-bottom:1px solid rgba(239,232,214,.55);border-right:1px solid rgba(239,232,214,.55);}
+.badge .badge-gl{display:inline-block;font-weight:900;letter-spacing:-.03em;line-height:1;}
+.badge-meta{
+  flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;justify-content:center;
+  padding-left:8px;border-left:2px solid var(--news-ink);
+}
+.bm-row{display:grid;grid-template-columns:46px minmax(0,1fr);gap:8px;align-items:baseline;}
+.bm-k{
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:.22em;
+  text-transform:uppercase;color:rgba(20,18,16,.4);
+}
+.bm-v{
+  font-family:var(--mono);font-size:9px;font-weight:800;color:var(--news-ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.bm-bar{margin-top:4px;height:2px;background:rgba(20,18,16,.14);position:relative;}
+.bm-bar i{position:absolute;left:0;top:0;bottom:0;display:block;}
+
+/* 17 种字体：徽章字形与字母墙 data-style 一一对应 */
+.lib-detail[data-style="a"] .badge-gl{font-family:var(--display);font-weight:900;transform:scaleX(.88);}
+.lib-detail[data-style="b"] .badge-gl{font-family:var(--serif);font-weight:400;}
+.lib-detail[data-style="c"] .badge-gl{font-family:'Impact','Arial Narrow',var(--display);transform:scaleX(.82);}
+.lib-detail[data-style="d"] .badge{background:var(--news);color:var(--news-ink);}
+.lib-detail[data-style="d"] .badge::before{border-color:rgba(20,18,16,.3);}
+.lib-detail[data-style="d"] .badge::after{border-color:rgba(20,18,16,.3);}
+.lib-detail[data-style="d"] .badge-gl{color:transparent;-webkit-text-stroke:2px var(--news-ink);}
+.lib-detail[data-style="e"] .badge-gl{font-family:var(--display);transform:scaleX(1.25);}
+.lib-detail[data-style="f"] .badge-gl{font-family:'Brush Script MT','Snell Roundhand',cursive;font-weight:400;font-style:italic;transform:rotate(-4deg);}
+.lib-detail[data-style="h"] .badge-gl{font-family:var(--display);text-shadow:5px 5px 0 rgba(239,232,214,.28),10px 10px 0 rgba(239,232,214,.12);}
+.lib-detail[data-style="i"] .badge-gl{font-family:var(--display);transform:scaleX(.55);}
+.lib-detail[data-style="l"] .badge-gl{font-family:var(--display);font-style:italic;transform:skewX(-14deg);}
+.lib-detail[data-style="n"] .badge-gl{
+  color:transparent;
+  background:radial-gradient(circle,var(--news) 38%,transparent 40%) 0 0/8px 8px;
+  -webkit-background-clip:text;background-clip:text;
+}
+.lib-detail[data-style="o"] .badge-gl{font-family:'Helvetica Neue',Helvetica,var(--sans);font-weight:800;}
+.lib-detail[data-style="p"] .badge-gl{font-family:var(--display);text-decoration:underline;text-decoration-thickness:5px;text-underline-offset:.12em;text-decoration-color:var(--news);}
+.lib-detail[data-style="r"] .badge-gl{font-family:var(--display);transform:scaleX(-1);}
+.lib-detail[data-style="s"] .badge{background:var(--news);color:var(--news-ink);}
+.lib-detail[data-style="s"] .badge::before{border-color:rgba(20,18,16,.3);}
+.lib-detail[data-style="s"] .badge::after{border-color:rgba(20,18,16,.3);}
+.lib-detail[data-style="s"] .badge-gl{font-family:var(--display);background:var(--news-ink);color:var(--news);padding:0 .06em;}
+.lib-detail[data-style="t"] .badge{background:var(--news);color:var(--news-ink);}
+.lib-detail[data-style="t"] .badge::before{border-color:rgba(20,18,16,.3);}
+.lib-detail[data-style="t"] .badge::after{border-color:rgba(20,18,16,.3);}
+.lib-detail[data-style="t"] .badge-gl{font-family:var(--serif);color:var(--news-ink);border:2px solid var(--news-ink);padding:.02em .12em;}
+.lib-detail[data-style="u"] .badge-gl{font-family:var(--display);border-bottom:4px double var(--news);padding-bottom:.04em;}
+.lib-detail[data-style="w"] .badge-gl{font-family:var(--display);transform:scaleX(1.5);}
+
+/* 词卡：统一的编辑版式 */
+.detail-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:22px;scrollbar-width:none;}
 .detail-scroll::-webkit-scrollbar{display:none;}
-.w-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.w-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
 .w-card{
-  background:var(--card);border-radius:12px;
-  border-left:4px solid var(--rc,#BC7E8A);
-  padding:.68rem .72rem .72rem;
-  box-shadow:0 1px 2px rgba(32,36,42,.05),0 8px 18px -10px rgba(32,36,42,.18);
-  cursor:pointer;opacity:0;transform:translateY(14px) scale(.96);
+  position:relative;overflow:hidden;cursor:pointer;
+  background:#FBF6EC;
+  border:1px solid rgba(20,18,16,.14);
+  padding:11px 12px 10px;
+  min-height:142px;
+  display:flex;flex-direction:column;
+  opacity:0;
 }
-.w-card.in{animation:cardIn .42s cubic-bezier(.34,1.3,.64,1) both;}
-@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
-.w-word{font-family:var(--display);font-size:.94rem;font-weight:900;letter-spacing:-.01em;line-height:1.2;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.w-ipa{font-family:var(--mono);font-size:.55rem;font-weight:700;color:color-mix(in srgb,var(--ink) 48%,transparent);
-  margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.w-gloss{font-size:.64rem;font-weight:700;line-height:1.35;margin-top:.36rem;
-  color:color-mix(in srgb,var(--ink) 60%,transparent);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.w-meta{display:flex;align-items:center;gap:.34rem;margin-top:.46rem;}
+.w-card.in{animation:wcIn .46s cubic-bezier(.34,1.3,.64,1) both;}
+@keyframes wcIn{from{opacity:0;transform:translateY(14px) scale(.965);}to{opacity:1;transform:none;}}
+.w-card.lead{grid-column:span 2;padding:13px 16px 12px;min-height:172px;}
+
+.w-top{
+  display:flex;justify-content:space-between;gap:8px;
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(20,18,16,.5);
+}
+.w-word{
+  font-family:var(--serif);font-size:19px;font-weight:700;line-height:1.08;
+  letter-spacing:-.01em;margin-top:8px;color:var(--news-ink);
+  word-break:break-word;
+}
+.w-card.lead .w-word{
+  display:flex;align-items:flex-start;gap:9px;
+  font-size:clamp(30px,8.6vw,40px);line-height:.95;letter-spacing:-.03em;
+  margin-top:11px;
+}
+.w-cap{
+  flex:none;font-family:var(--serif);font-size:46px;font-weight:700;line-height:.8;
+  color:#B8704B;transform:translateY(2px);
+}
+.w-ipa{
+  font-family:var(--mono);font-size:7px;font-weight:700;color:rgba(20,18,16,.45);
+  margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.w-gloss{
+  font-size:10.5px;font-weight:700;line-height:1.45;margin-top:6px;
+  padding-left:8px;border-left:2px solid var(--rc,#B8704B);
+  color:rgba(20,18,16,.78);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.w-foot{
+  margin-top:auto;padding-top:7px;border-top:1px solid rgba(20,18,16,.14);
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+}
 .w-mst{
-  font-family:var(--mono);font-size:.5rem;font-weight:900;letter-spacing:.04em;
-  padding:1px 6px;border-radius:5px;border:0;
-  background:color-mix(in srgb,currentColor 12%,transparent);
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:.1em;
+  color:rgba(20,18,16,.55);
 }
-.w-mst.m0{color:#7C7972;}
+.w-mst i{width:6px;height:6px;background:currentColor;display:block;}
+.w-mst.m0{color:#8A8378;}
 .w-mst.m1{color:#9A7B34;}
 .w-mst.m2{color:#4C6B52;}
-.w-chk{font-family:var(--mono);font-size:.5rem;font-weight:900;color:color-mix(in srgb,var(--ink) 42%,transparent);}
+.w-chk{
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:.1em;
+  color:rgba(20,18,16,.35);
+}
 
 .flyer{
   position:fixed;z-index:999;pointer-events:none;
   display:grid;place-items:center;
-  font-family:var(--display);font-weight:900;letter-spacing:-.02em;
-  border-radius:12px;transform-origin:top left;will-change:transform;
-  box-shadow:0 14px 32px -12px rgba(32,36,42,.42);
+  font-weight:900;letter-spacing:-.02em;line-height:1;
+  transform-origin:top left;will-change:transform;
 }
 
 /* ---------------- 自测 ---------------- */
@@ -2522,6 +2634,11 @@ const LIB_FACE = {
   w:'Helvetica Wide'
 };
 
+/* 字母 → 字体样本键：字母墙与详情徽章共用同一副面孔 */
+function libFaceKey(L){
+  return /^[A-Z]$/.test(L) ? L.toLowerCase() : 'o';
+}
+
 /* 字号与卡面尺寸随词量长大：1 词 56px 宽，9 词 128px 宽 */
 function libSpecSize(n){
   const w = 56 + (Math.min(Math.max(n, 1), 9) - 1) * 9;
@@ -2577,7 +2694,7 @@ function renderLibGrid(q){
     const n = list.length;
     const done = list.filter(w => masteryOf(w.word) === 2).length;
     const sz = libSpecSize(n);
-    const sty = /^[A-Z]$/.test(L) ? L.toLowerCase() : 'o';
+    const sty = libFaceKey(L);
     const w2 = n < 10 ? '0' + n : n;
     return '<button class="spec" type="button" data-letter="' + esc(L) + '" data-style="' + sty + '"' +
       ' style="--w:' + sz.w + 'px;--h:' + sz.h + 'px;--fs:' + sz.fs + 'px;--i:' + i + '"' +
@@ -2594,35 +2711,70 @@ function renderLibGrid(q){
 
 function renderLibDetail(L, list, hex){
   const detail = document.getElementById('libDetail');
-  const cards = libSorted(list).map(w => {
+  const sty = libFaceKey(L);
+  const n = list.length;
+  const done = list.filter(w => masteryOf(w.word) === 2).length;
+  const pct = n ? Math.round(done / n * 100) : 0;
+  const withLead = n >= 3;
+
+  const cards = libSorted(list).map((w, i) => {
     const m = masteryOf(w.word);
-    const n = reviewDone(w.word);
-    return '<div class="w-card" data-word="' + esc(w.word) + '" style="--rc:' + rootOf(w).color + '">' +
-      '<div class="w-word">' + esc(w.word) + '</div>' +
-      (w.ipa ? '<div class="w-ipa">' + esc(w.ipa) + '</div>' : '') +
+    const chk = reviewDone(w.word);
+    const isLead = withLead && i === 0;
+    const idx = i + 1 < 10 ? '0' + (i + 1) : String(i + 1);
+    const cap = (w.word.charAt(0) || '').toUpperCase();
+    const wordHtml = isLead
+      ? '<span class="w-cap">' + esc(cap) + '</span><span class="w-word-txt">' + esc(w.word) + '</span>'
+      : esc(w.word);
+    return '<div class="w-card' + (isLead ? ' lead' : '') + '" data-word="' + esc(w.word) + '"' +
+      ' style="--rc:' + rootOf(w).color + ';--i:' + i + '">' +
+      '<div class="w-top"><span>No.' + idx + '</span><span>' + esc(L) + '</span></div>' +
+      '<div class="w-word">' + wordHtml + '</div>' +
+      '<div class="w-ipa">' + esc(w.ipa || '') + '</div>' +
       '<div class="w-gloss">' + esc(w.gloss) + '</div>' +
-      '<div class="w-meta">' +
-        '<span class="w-mst m' + m + '">' + MST_LABEL[m] + '</span>' +
-        '<span class="w-chk">' + (n ? '打卡 ' + n + '/4' : '') + '</span>' +
+      '<div class="w-foot">' +
+        '<span class="w-mst m' + m + '"><i></i>' + MST_LABEL[m] + '</span>' +
+        '<span class="w-chk">' + (chk ? '打卡 ' + chk + '/4' : '') + '</span>' +
       '</div></div>';
   }).join('');
 
+  detail.dataset.style = sty;
   detail.innerHTML =
     '<div class="detail-top">' +
       '<button class="back-btn" id="libBack" type="button" aria-label="返回字母">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>' +
       '</button>' +
-      '<span class="detail-title">' + esc(L) + ' · ' + list.length + ' 个词</span>' +
+      '<span class="detail-title">' + esc(L + ' · ' + n + ' 个词') + '</span>' +
       '<button class="bulk-btn" id="libBulk" type="button">刷这组</button>' +
     '</div>' +
-    '<div class="badge" id="libBadge" style="background:color-mix(in srgb,' + hex + ' 62%,#FFFFFF);box-shadow:0 14px 30px -12px color-mix(in srgb,' + hex + ' 60%,transparent);">' + esc(L) + '</div>' +
+    '<div class="badge-wrap">' +
+      '<div class="badge" id="libBadge">' +
+        '<span class="badge-gl gl">' + esc(L) + '</span>' +
+      '</div>' +
+      '<div class="badge-meta">' +
+        '<div class="bm-row"><span class="bm-k">Letter</span><span class="bm-v">' + esc(L + ' · ' + n + ' W') + '</span></div>' +
+        '<div class="bm-row"><span class="bm-k">Face</span><span class="bm-v">' + esc(LIB_FACE[sty] || LIB_FACE.o) + '</span></div>' +
+        '<div class="bm-row"><span class="bm-k">Studied</span><span class="bm-v">' + done + ' / ' + n + '</span></div>' +
+        '<div class="bm-bar"><i style="width:' + pct + '%;background:' + hex + '"></i></div>' +
+      '</div>' +
+    '</div>' +
     '<div class="detail-scroll"><div class="w-grid">' + cards + '</div></div>';
 
-  document.getElementById('libBack').addEventListener('click', closeLibLetter);
-  document.getElementById('libBadge').addEventListener('click', closeLibLetter);
-  document.getElementById('libBulk').addEventListener('click', () => queueLibLetter(L, libGroups.get(L)));
+  document.getElementById('libBack').addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    closeLibLetter();
+  });
+  document.getElementById('libBadge').addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    closeLibLetter();
+  });
+  document.getElementById('libBulk').addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    queueLibLetter(L, libGroups.get(L));
+  });
   detail.querySelectorAll('.w-card').forEach(card => {
-    card.addEventListener('click', () => {
+    card.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
       const w = list.find(x => x.word === card.dataset.word);
       if(w) location.href = '../' + w.file;
     });
@@ -2652,7 +2804,8 @@ function libLetterOffset(el){
 
 /* 飞行动画：矩形、字号、字母位置两端对齐；缓动不过冲，落地不回弹 */
 function libFly(fromRect, toRect, L, hex, fromEl, toEl){
-  const toStrong = toEl.id === 'libBadge';
+  const toBadge = toEl.id === 'libBadge';
+  const fromBadge = fromEl.id === 'libBadge';
   const f = document.createElement('div');
   f.className = 'flyer';
   const letter = document.createElement('span');
@@ -2667,9 +2820,33 @@ function libFly(fromRect, toRect, L, hex, fromEl, toEl){
   const fromInk = fromEl.classList && fromEl.classList.contains('spec');
   const srcFont = libFontOf(fromEl), dstFont = libFontOf(toEl);
   f.style.fontSize = srcFont + 'px';
-  f.style.background = fromInk ? 'transparent' : 'color-mix(in srgb,' + hex + (toStrong ? ' 12%,#FFFFFF)' : ' 62%,#FFFFFF)');
-  f.style.color = fromInk ? 'var(--news-ink)' : (toStrong ? 'color-mix(in srgb,' + hex + ' 72%,#20242A)' : '#FFFFFF');
-  f.style.borderRadius = fromInk ? '0px' : (toStrong ? '12px' : '16px');
+
+  /* 徽章不写死配色：底色、圆角、字色、字形都取真实计算样式 */
+  const badgeEl = toBadge ? toEl : (fromBadge ? fromEl : null);
+  let badgeBg = '#EFE8D6', badgeRadius = '0px', badgeColor = 'var(--news-ink)';
+  if(badgeEl){
+    const bs = getComputedStyle(badgeEl);
+    const gs = getComputedStyle(badgeEl.querySelector('.badge-gl'));
+    badgeBg = bs.backgroundColor;
+    badgeRadius = bs.borderRadius;
+    badgeColor = gs.color;
+    /* 反白字(s)这类整块墨底的字形，飞行体直接用字形自己的底色 */
+    if(!/rgba\(0, 0, 0, 0\)|transparent/i.test(gs.backgroundColor)) badgeBg = gs.backgroundColor;
+    /* 描边字(d)、网点字(n)等字色是透明的，飞行体回退到墨色 */
+    if(!badgeColor || /rgba\(0, 0, 0, 0\)|transparent/i.test(badgeColor)) badgeColor = 'var(--news-ink)';
+  }
+
+  /* 起点的字形：字母墙取裸墨字，徽章取真实字形 */
+  let srcGlyph = null;
+  try{ srcGlyph = fromEl.querySelector ? fromEl.querySelector('.gl') : null; }catch(e){ srcGlyph = null; }
+  const srcCS = getComputedStyle(srcGlyph || fromEl);
+  f.style.fontFamily = srcCS.fontFamily;
+  f.style.fontWeight = srcCS.fontWeight;
+  f.style.fontStyle = srcCS.fontStyle;
+  f.style.background = fromInk ? 'transparent' : badgeBg;
+  f.style.color = fromInk ? 'var(--news-ink)' : badgeColor;
+  f.style.borderRadius = fromInk ? '0px' : badgeRadius;
+
   letter.style.transform = 'translateY(' + libLetterOffset(fromEl) + 'px)';
   document.body.appendChild(f);
 
@@ -2677,16 +2854,24 @@ function libFly(fromRect, toRect, L, hex, fromEl, toEl){
   const sx = toRect.width / fromRect.width, sy = toRect.height / fromRect.height;
   const offD = libLetterOffset(toEl);
   const ease = 'cubic-bezier(.22,.61,.36,1)';
+
+  /* 终点的字形：落在徽章换徽章字形，反向飞回字母墙换墙上的字形 */
+  const dstGlyph = toEl.querySelector ? toEl.querySelector('.gl') : null;
+  const dstCS = getComputedStyle(dstGlyph || toEl);
+
   requestAnimationFrame(() => {
     f.style.transition = 'transform .36s ' + ease + ',font-size .36s ' + ease +
       ',background .3s ease,color .3s ease,border-radius .3s ease';
     f.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
     f.style.fontSize = (dstFont / sy) + 'px';
+    f.style.fontFamily = dstCS.fontFamily;
+    f.style.fontWeight = dstCS.fontWeight;
+    f.style.fontStyle = dstCS.fontStyle;
     letter.style.transition = 'transform .36s ' + ease;
     letter.style.transform = 'translateY(' + (offD / sy) + 'px)';
-    f.style.background = 'color-mix(in srgb,' + hex + (toStrong ? ' 62%,#FFFFFF)' : ' 12%,#FFFFFF)');
-    f.style.color = toStrong ? '#FFFFFF' : 'color-mix(in srgb,' + hex + ' 72%,#20242A)';
-    f.style.borderRadius = toStrong ? '16px' : '12px';
+    f.style.background = toBadge ? badgeBg : 'transparent';
+    f.style.color = toBadge ? badgeColor : 'var(--news-ink)';
+    f.style.borderRadius = toBadge ? badgeRadius : '0px';
   });
   return f;
 }
@@ -2774,6 +2959,7 @@ function hardCloseLib(){
   if(detail){
     detail.classList.remove('show');
     detail.innerHTML = '';
+    detail.dataset.style = '';
     detail.style.opacity = '';
     detail.style.transition = '';
   }
