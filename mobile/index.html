@@ -1100,12 +1100,9 @@ body{
    字母墙外面用一整行；打开某个字母后，同样的索引条缩进详情层顶部 */
 .lib-mst{
   display:flex;align-items:center;gap:0;margin:-.1rem 0 .55rem;flex:none;
-  transition:opacity .18s ease;
 }
-/* 打开某个字母时这一行让位：只淡出、不动布局，
-   上面量出的位置、关回来时的落点都不受影响；
-   它在详情层淡入之前就淡干净了，两排芯片不会在同一块地方叠着互相透出来 */
-.lib-mst.away{opacity:0;pointer-events:none;}
+/* 打开某个字母时这一行直接收起：不动布局，测量和落点都不受影响 */
+.lib-mst.away{visibility:hidden;pointer-events:none;}
 .m-chip{
   flex:1;min-width:0;height:30px;padding:0 4px;
   display:inline-flex;align-items:center;justify-content:center;gap:.18rem;cursor:pointer;
@@ -1294,21 +1291,11 @@ body{
   width:84px;height:84px;border-radius:2px;
   /* 白底墨字：和整页同一张纸，只有反白字(S)仍保留墨底 */
   background:#FFFFFF;color:var(--ink);
-  /* 左边不画直线，那一道边界交给下面那道折线箭头 */
-  border-top:1px solid var(--rule);
-  border-right:1px solid var(--rule);
-  border-bottom:1px solid var(--rule);
+  box-shadow:inset 0 0 0 1px var(--rule);
   display:grid;place-items:center;
   font-size:60px;line-height:1;
   visibility:hidden;
 }
-/* 左边框的折线箭头：整块标本牌就是返回键，点它（或箭头）就翻回字母墙 */
-.badge-back{
-  position:absolute;left:-11px;top:50%;width:12px;height:34px;
-  transform:translateY(-50%);pointer-events:none;
-  transition:transform .16s var(--ease);
-}
-.badge:active .badge-back{transform:translate(-2px,-50%);}
 .badge::before,.badge::after{
   content:'';position:absolute;width:7px;height:7px;pointer-events:none;
 }
@@ -1333,7 +1320,7 @@ body{
 
 /* 反白字(S)：整个徽章就是那块墨底，字形不再自己铺底 */
 .lib-detail[data-style="s"] .badge{
-  background:var(--ink);color:#FFFFFF;border-color:rgba(255,255,255,.34);
+  background:var(--ink);color:#FFFFFF;box-shadow:none;
 }
 .lib-detail[data-style="s"] .badge::before{border-color:rgba(255,255,255,.55);}
 .lib-detail[data-style="s"] .badge::after{border-color:rgba(255,255,255,.55);}
@@ -2831,9 +2818,7 @@ function renderLibDetail(L, list, hex, keepBadge){
       '<button class="bulk-btn" id="libBulk" type="button"' + (shown.length ? '' : ' disabled') + '>刷这组</button>' +
     '</div>' +
     '<div class="badge-wrap">' +
-      '<div class="badge" id="libBadge" role="button" tabindex="0" aria-label="返回字母">' + libGlyph(sty) +
-        '<svg class="badge-back" viewBox="0 0 12 34" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M11 1L1 17L11 33"/></svg>' +
-      '</div>' +
+      '<div class="badge" id="libBadge" role="button" tabindex="0" aria-label="返回字母">' + libGlyph(sty) + '</div>' +
       '<div class="badge-meta">' +
         '<div class="bm-row"><span class="bm-k">Letter</span><span class="bm-v">' + esc(L + ' · ' + n + ' W') + '</span></div>' +
         '<div class="bm-row"><span class="bm-k">Face</span><span class="bm-v">' + esc(LIB_FACE[sty] || LIB_FACE.o) + '</span></div>' +
@@ -2853,14 +2838,14 @@ function renderLibDetail(L, list, hex, keepBadge){
   if(keepBadge){
     const badge = document.getElementById('libBadge');
     if(badge) badge.style.visibility = 'visible';
-    /* 换分类后重排的词卡直接入场，不必再等飞行动画那一拍 */
-    detail.querySelectorAll('.w-card').forEach((el, i) => {
-      el.style.animationDelay = (i * 24) + 'ms';
-      el.classList.add('in');
-    });
   }
+  /* 整页不再淡入，词卡各自错开一拍直接入场 */
+  detail.querySelectorAll('.w-card').forEach((el, i) => {
+    el.style.animationDelay = (i * 24) + 'ms';
+    el.classList.add('in');
+  });
 
-  /* 标本牌就是返回键：招牌左边那道折线箭头是它，点整块牌子也一样翻回去 */
+  /* 点标本牌也能翻回字母墙 */
   document.getElementById('libBadge').addEventListener('click', (e) => {
     e.preventDefault(); e.stopPropagation();
     closeLibLetter();
@@ -2986,32 +2971,21 @@ function openLibLetter(L){
   const fromRect = libRect(src);
   src.classList.add('hide');
   grid.classList.add('fade-out');
-  /* 外面那行和字母墙一起退场：180ms 内淡干净，早于详情层的淡入，两层不会撞在一起 */
+  /* 外面那行直接收起，不淡出 */
   libMstAway(true);
 
+  /* 这一页不做淡入：翻开就是翻开，只留下字形自己飞过去、词卡错开入场 */
   renderLibDetail(L, list, hex);
   detail.classList.add('show');
-  detail.style.opacity = '0';
   libDetailTopAtMst(detail);
   const badge = document.getElementById('libBadge');
   const toRect = libRect(badge);
 
   const f = libFly(fromRect, toRect, L, hex, src, badge);
 
-  /* 快落地时卡片层先淡入，落地那一刻再显出徽章，交接不闪 */
-  setTimeout(() => {
-    if(!libCurrent || libCurrent !== L) return;
-    detail.style.transition = 'opacity .26s ease';
-    detail.style.opacity = '1';
-    detail.querySelectorAll('.w-card').forEach((el, i) => {
-      el.style.animationDelay = (i * 24) + 'ms';
-      el.classList.add('in');
-    });
-  }, 210);
-
   libFlyEnd(f, () => {
     if(!libCurrent || libCurrent !== L) return;
-    f.remove();
+    if(f) f.remove();
     badge.style.visibility = 'visible';
     libAnimating = false;
   });
@@ -3035,16 +3009,20 @@ function closeLibLetter(){
   src.classList.remove('hide');
   grid.classList.remove('fade-out');
   const toRect = libRect(src);
-  badge.style.visibility = 'hidden';
-  detail.style.transition = 'opacity .2s ease';
-  detail.style.opacity = '0';
-  /* 等这一页淡干净再把外面那行放回来，中间不会出现两层芯片 */
-  setTimeout(() => {
-    if(libCurrent) libMstAway(false);
-  }, 200);
 
+  /* 先把飞回字母墙的字形造出来（要量徽章里的字形），再把这一页立刻收走——不淡出 */
   const f = libFly(fromRect, toRect, L, hex, badge, src);
-  libFlyEnd(f, hardCloseLib);
+  detail.classList.remove('show');
+  detail.innerHTML = '';
+  detail.dataset.style = '';
+  detail.style.top = '';
+  libMstAway(false);
+
+  libFlyEnd(f, () => {
+    if(f) f.remove();
+    libCurrent = null;
+    libAnimating = false;
+  });
 }
 
 function hardCloseLib(){
@@ -3054,8 +3032,6 @@ function hardCloseLib(){
     detail.classList.remove('show');
     detail.innerHTML = '';
     detail.dataset.style = '';
-    detail.style.opacity = '';
-    detail.style.transition = '';
     detail.style.top = '';
   }
   const grid = document.getElementById('libGrid');
