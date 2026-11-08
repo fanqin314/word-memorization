@@ -1098,7 +1098,14 @@ body{
 
 /* 掌握度分类栏：一条方角的分段索引条，中间用发丝线隔开，选中像盖了一枚墨块。
    字母墙外面用一整行；打开某个字母后，同样的索引条缩进详情层顶部 */
-.lib-mst{display:flex;align-items:center;gap:0;margin:-.1rem .1rem .55rem;flex:none;}
+.lib-mst{
+  display:flex;align-items:center;gap:0;margin:-.1rem 0 .55rem;flex:none;
+  transition:opacity .18s ease;
+}
+/* 打开某个字母时这一行让位：只淡出、不动布局，
+   上面量出的位置、关回来时的落点都不受影响；
+   它在详情层淡入之前就淡干净了，两排芯片不会在同一块地方叠着互相透出来 */
+.lib-mst.away{opacity:0;pointer-events:none;}
 .m-chip{
   flex:1;min-width:0;height:30px;padding:0 4px;
   display:inline-flex;align-items:center;justify-content:center;gap:.18rem;cursor:pointer;
@@ -1255,19 +1262,12 @@ body{
 }
 .lib-detail.show{display:flex;}
 
-/* 顶部条：发丝线压住标题，方角墨线按钮 */
+/* 顶部条：和下面那排分类条用同一套规格——30px 高的方角发丝线块、7px 间隔。
+   返回、四个分类、刷这组都落在同一条基线上，不会一高一矮 */
 .detail-top{
-  flex:none;display:flex;align-items:center;gap:10px;
+  flex:none;display:flex;align-items:center;gap:7px;
   padding:0 0 9px;
   border-bottom:1px solid var(--rule-2);
-}
-/* 只在第一次翻开时演一遍：比整页慢半拍抬起，接住从字母墙飞来的字形；
-   换分类重排时不再重播，免得顶部条闪一下。起点落在原位下方，
-   动画过程中不会碰到搜索框的下边缘 */
-.detail-top.intro{animation:libTopIn .4s var(--ease) .16s both;}
-@keyframes libTopIn{
-  from{opacity:0;transform:translateY(7px);}
-  to{opacity:1;transform:translateY(0);}
 }
 .back-btn{
   appearance:none;cursor:pointer;flex:none;
@@ -1279,23 +1279,19 @@ body{
 }
 .back-btn:active{transform:scale(.94);background:var(--ink);color:#FFFFFF;}
 .back-btn svg{width:14px;height:14px;display:block;}
-/* 详情层顶部：返回 + 本字母自己的分类索引条 + 刷这组。
-   打开字母后外面那行分类条收起，就由这一条接手，只筛这个字母的词 */
+/* 详情层顶部：返回 + 本字母自己的分类索引条 + 刷这组 */
 .detail-mst{
-  flex:1;min-width:0;display:flex;align-items:center;gap:0;margin:0 2px;
+  flex:1;min-width:0;display:flex;align-items:center;gap:0;
 }
-.detail-mst .m-chip{height:26px;font-size:7px;letter-spacing:.03em;gap:.12rem;}
 .bulk-btn{
-  appearance:none;cursor:pointer;flex:none;
-  font-family:var(--mono);font-size:8px;font-weight:800;
-  letter-spacing:.14em;text-transform:uppercase;
-  padding:6px 9px;border-radius:2px;border:1px solid var(--ink);
-  background:var(--ink);color:#FFFFFF;
-  transition:background .16s,color .16s,transform .14s;
+  appearance:none;cursor:pointer;flex:none;height:30px;padding:0 .62rem;
+  border-radius:2px;border:1px solid var(--ink);background:var(--ink);color:#FFFFFF;
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.07em;
+  transition:transform .14s var(--spring),background .16s,color .16s;
 }
-.bulk-btn:active{transform:scale(.94);}
+.bulk-btn:active{transform:scale(.95);background:#FFFFFF;color:var(--ink);}
 .bulk-btn[disabled]{opacity:.32;cursor:default;}
-.bulk-btn[disabled]:active{transform:none;}
+.bulk-btn[disabled]:active{transform:none;background:var(--ink);color:#FFFFFF;}
 
 /* 标本牌 + 标本标签栏 */
 .badge-wrap{
@@ -2826,7 +2822,7 @@ function renderLibDetail(L, list, hex, keepBadge){
 
   detail.dataset.style = sty;
   detail.innerHTML =
-    '<div class="detail-top' + (keepBadge ? '' : ' intro') + '">' +
+    '<div class="detail-top">' +
       '<button class="back-btn" id="libBack" type="button" aria-label="返回字母">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>' +
       '</button>' +
@@ -2966,6 +2962,12 @@ function libDetailTopAtMst(detail){
   detail.style.top = (row.getBoundingClientRect().top - stage.getBoundingClientRect().top) + 'px';
 }
 
+/* 外面那行分类条在详情层展开时让位：同一块地方只留一层芯片，不做两层叠加 */
+function libMstAway(away){
+  const row = document.getElementById('libMst');
+  if(row) row.classList.toggle('away', !!away);
+}
+
 function openLibLetter(L){
   if(libAnimating) return;
   const grid = document.getElementById('libGrid');
@@ -2983,6 +2985,8 @@ function openLibLetter(L){
   const fromRect = libRect(src);
   src.classList.add('hide');
   grid.classList.add('fade-out');
+  /* 外面那行和字母墙一起退场：180ms 内淡干净，早于详情层的淡入，两层不会撞在一起 */
+  libMstAway(true);
 
   renderLibDetail(L, list, hex);
   detail.classList.add('show');
@@ -3033,6 +3037,10 @@ function closeLibLetter(){
   badge.style.visibility = 'hidden';
   detail.style.transition = 'opacity .2s ease';
   detail.style.opacity = '0';
+  /* 等这一页淡干净再把外面那行放回来，中间不会出现两层芯片 */
+  setTimeout(() => {
+    if(libCurrent) libMstAway(false);
+  }, 200);
 
   const f = libFly(fromRect, toRect, L, hex, badge, src);
   libFlyEnd(f, hardCloseLib);
@@ -3054,6 +3062,7 @@ function hardCloseLib(){
     grid.classList.remove('fade-out');
     grid.querySelectorAll('.spec.hide').forEach(el => el.classList.remove('hide'));
   }
+  libMstAway(false);
   libCurrent = null;
   libAnimating = false;
 }
