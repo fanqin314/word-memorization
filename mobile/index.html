@@ -1125,6 +1125,8 @@ body{
   overflow-y:auto;overflow-x:hidden;
   padding:16px 14px 26px;
   display:flex;flex-wrap:wrap;align-content:flex-start;
+  /* 每行居中排，最后一行不满时两侧各留一半，不在右边堆出一条空白 */
+  justify-content:center;
   gap:16px 14px;
   scrollbar-width:none;
   overscroll-behavior:contain;
