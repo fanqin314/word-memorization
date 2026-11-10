@@ -1623,6 +1623,43 @@ body{
   font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.04em;line-height:1.9;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
+/* 汉译英：题头、原文、输入框、参考译文、覆盖率 */
+.ex-tr-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;}
+.ex-tr-k{
+  display:block;margin-bottom:.28rem;
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-zh{font-size:1rem;line-height:1.85;color:var(--ink);}
+.ex-tr-in{
+  display:block;width:100%;min-height:150px;margin-top:.6rem;
+  padding:10px 11px;border-radius:2px;border:1px solid var(--rule-2);
+  background:#fff;color:var(--ink);
+  font-family:var(--serif);font-size:1rem;line-height:1.65;
+}
+.ex-tr-in[readonly]{background:var(--paper-2);color:color-mix(in srgb,var(--ink) 72%,transparent);}
+.ex-tr-ref{
+  margin-top:.7rem;padding:.1rem 0 .1rem .65rem;
+  border-left:2px solid var(--ink);
+  font-family:var(--serif);font-size:1rem;line-height:1.7;color:var(--ink);
+}
+.ex-tr-cov{
+  margin-top:.6rem;
+  font-family:var(--mono);font-size:.68rem;font-weight:900;letter-spacing:.04em;
+}
+.ex-tr-verdict{margin-top:.14rem;font-size:.74rem;font-weight:700;line-height:1.5;color:var(--ink);}
+.ex-tr-verdict.bad{color:#A33A1E;}
+.ex-tr-miss-k{
+  display:block;margin-top:.5rem;
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-chips{display:flex;flex-wrap:wrap;gap:.24rem .3rem;margin-top:.3rem;}
+.ex-tr-chip{
+  font-family:var(--mono);font-size:.58rem;font-weight:700;line-height:1.4;
+  padding:.1rem .3rem;border-radius:2px;border:1px solid var(--rule);
+  background:var(--paper-2);color:color-mix(in srgb,var(--ink) 68%,transparent);
+}
 
 /* ---------------- 底部导航 ---------------- */
 .tabbar{
@@ -4057,9 +4094,26 @@ const EXAM_GROUPS = [
     ] }
 ];
 
+/* 汉译英：中文原文与参考译文逐字照抄自题库 md 的 Translation 段落 */
+const EXAM_TRANS = [
+  { id:'t1', unit:1, ref:'Section C · Translation · 教材 p.28',
+    zh:'近年来，随着互联网技术的迅猛发展，互联网经济已成为一个热门话题。以电子商务为代表的互联网经济已成为中国经济发展的重要引擎（driving force）。我国政府提出了“互联网+”的概念，以推动互联网与医疗、交通、教育、金融、公共服务等领域的结合。这将为互联网经济的发展提供更多发展机遇和更广阔的发展空间。',
+    en:'In recent years, with the rapid development of Internet technology, the Internet economy has become a hot topic. The Internet economy, represented by e-commerce, has become an important driving force for China\'s economic development. The Chinese government has proposed the concept of “Internet Plus” to promote the integration of the Internet with healthcare, transportation, education, finance, public services, and other sectors. This will provide more development opportunities and broader space for the development of the Internet economy.' },
+  { id:'t2', unit:2, ref:'Section C · Translation · 教材 p.55',
+    zh:'中央电视台春节联欢晚会（Spring Festival Gala）自 1983 年举办以来，已成为中国人生活中不可缺少的文化消费品和一个重要的文化符号。虽然众口难调，但必须承认的是，“春晚”已成为一项“新民俗”。它不仅是一台晚会，更是一种仪式与象征，一种文化与标签，一种情感与寄托。随着新媒体的出现，“春晚”也在与时俱进，以满足大众日渐多样化的需求。',
+    en:'Since its inception in 1983, the CCTV Spring Festival Gala has become an indispensable cultural consumer product and an important cultural symbol in the lives of Chinese people. Although it is difficult to cater to all tastes, it must be admitted that the Gala has become a “new folk custom”. It is not merely a TV gala, but also a ritual and a symbol, a culture and a label, an emotional attachment and a spiritual anchor. With the emergence of new media, the Gala has also kept pace with the times to meet the public\'s increasingly diverse needs.' },
+  { id:'t3', unit:3, ref:'Section C · Translation · 教材 p.82',
+    zh:'丽江古城坐落在玉龙雪山（Yulong Snow Mountain）脚下，是一座风景秀丽的历史文化名城，也是我国保存完好的少数民族古城之一。随着丽江旅游业的发展，到丽江古城观光游览的中外游客日益增多。1997 年 12 月，丽江古城申报世界文化遗产（World Cultural Heritage Site）获得成功，成为中国第一批被列入世界文化遗产名录的历史文化名城。',
+    en:'The Old Town of Lijiang, located at the foot of Yulong Snow Mountain, is a town of scenic beauty, known for its history and culture. It is also one of China\'s well-preserved old towns of ethnic minority groups. With the boom in Lijiang\'s tourism, the Old Town of Lijiang is receiving a growing number of tourists from home and abroad. In December 1997, the Old Town succeeded in applying to be recognized as a World Cultural Heritage Site, becoming one of the first noted historical and cultural cities in China to be included on the World Cultural Heritage List.' },
+  { id:'t4', unit:4, ref:'Section C · Translation · 教材 p.108',
+    zh:'近年来，社会的发展和就业形势的变化对大学生提出了更高的要求。越来越多的大学生不再局限于学习书本知识，而是利用业余时间积极投身于社会实践活动。通过社会实践活动，他们可以提高分析问题和解决问题的能力，更深入地了解社会，增强社会责任感。同时，参加社会实践活动还可以帮助他们认识到自身的不足，明确未来努力的方向。',
+    en:'In recent years, the social development and changes in employment have posed higher requirements for college students. Instead of confining themselves to learning from books, more and more college students are taking an active part in social practice in their spare time. Through social practice, they can improve their analytical and problem-solving abilities, gain a deeper understanding of society, and increase their sense of social responsibility. Meanwhile, taking part in social practice can also help them recognize their own shortcomings and gain a clear idea about where they should be headed in the future.' }
+];
+
 let examState = loadJSON(EXAM_KEY, {groups:{}});
 if(!examState || typeof examState !== 'object' || Array.isArray(examState)) examState = {groups:{}};
 if(!examState.groups || typeof examState.groups !== 'object' || Array.isArray(examState.groups)) examState.groups = {};
+if(!examState.trans || typeof examState.trans !== 'object' || Array.isArray(examState.trans)) examState.trans = {};
 
 /* 一轮的临时状态：items 里每项是一空 {gid, item} */
 const examRun = {
@@ -4111,6 +4165,67 @@ function examBlankStem(s, fn){
   return esc(s).replace(/___\((\d)\)|___/g, (m, num) => fn(num ? Number(num) : 1));
 }
 
+/* ---------------- 汉译英：取题、存档、覆盖率 ---------------- */
+function examTrans(id){
+  return EXAM_TRANS.find(t => t.id === id) || null;
+}
+/* 只读视图：与 examInfo 一致，没做过 best 记 -1 */
+function examTransInfo(id){
+  const r = examState.trans[id];
+  const o = (r && typeof r === 'object') ? r : {};
+  return {
+    seen: typeof o.seen === 'number' ? o.seen : 0,
+    right: typeof o.right === 'number' ? o.right : 0,
+    best: typeof o.best === 'number' ? o.best : -1,
+    last: typeof o.last === 'number' ? o.last : -1
+  };
+}
+/* 写之前先补齐字段，返回真实引用 */
+function examTransRec(id){
+  let r = examState.trans[id];
+  if(!r || typeof r !== 'object') r = examState.trans[id] = {};
+  if(typeof r.seen !== 'number') r.seen = 0;
+  if(typeof r.right !== 'number') r.right = 0;
+  if(typeof r.best !== 'number') r.best = 0;
+  if(typeof r.last !== 'number') r.last = 0;
+  return r;
+}
+
+/* 覆盖率用的停用词：只保留实词 */
+const TR_STOP = new Set(['a','an','the','of','to','in','on','at','for','with','and','or','but','is','are','was','were','be','been','being','has','have','had','do','does','did','it','its','this','that','these','those','as','by','from','not','so','than','then','when','which','who','whom','whose','will','would','can','could','may','might','must','i','you','he','she','we','they','them','him','her','his','our','their','my','me','us','your','also','more','most','some','any','all','one','two','first','into','about','such','other','there','what','how','if','up','out','over','only','both','each','very']);
+/* 中英文标点一起当分隔符 */
+const TR_SPLIT = /[\s,.;:!?“”"'’()（）\-—、，。！？；：]+/;
+function trTokens(s){
+  return String(s || '').toLowerCase().split(TR_SPLIT).filter(Boolean);
+}
+/* 参考词：长度 ≥3 且不是停用词，去重后保留原顺序 */
+function trRefWords(en){
+  const seen = {};
+  const out = [];
+  trTokens(en).forEach(w => {
+    if(w.length < 3 || TR_STOP.has(w) || seen[w]) return;
+    seen[w] = 1;
+    out.push(w);
+  });
+  return out;
+}
+/* 完全相同，或前 5 个字母相同（容忍时态/复数） */
+function trHit(ref, words){
+  return words.some(w => w === ref || w.slice(0, 5) === ref.slice(0, 5));
+}
+function trCoverage(en, input){
+  const refs = trRefWords(en);
+  const words = trTokens(input);
+  const missed = [];
+  let hits = 0;
+  refs.forEach(w => {
+    if(trHit(w, words)) hits++;
+    else missed.push(w);
+  });
+  const pct = refs.length ? Math.round(hits / refs.length * 100) : 0;
+  return { pct:pct, total:refs.length, hits:hits, missed:missed.slice(0, 12) };
+}
+
 /* ---------------- 题库首页 ---------------- */
 function renderExam(){
   const view = document.getElementById('view-exam');
@@ -4122,7 +4237,7 @@ function renderExam(){
   let html = '<div class="ex-wrap">' +
       '<div class="ex-head">' +
         '<span class="ex-kicker">新视野读写 3 · 期末题库</span>' +
-        '<span class="ex-count">' + EXAM_GROUPS.length + ' 组 · ' + qs + ' 题 · ' + blanks + ' 空</span>' +
+        '<span class="ex-count">' + EXAM_GROUPS.length + ' 组 · ' + qs + ' 题 · ' + blanks + ' 空 · ' + EXAM_TRANS.length + ' 段翻译</span>' +
       '</div>' +
       '<div class="ex-picks">' +
         '<button class="ex-pick" type="button" data-ex-mix>全部混合</button>' +
@@ -4150,6 +4265,28 @@ function renderExam(){
     });
     html += '</div>';
   });
+
+  /* 汉译英：单独一块，不进「全部混合」与「只刷错题」 */
+  html += '<div class="ex-unit"><div class="ex-unit-head ex-tr-head">' +
+      '<span>SECTION C · TRANSLATION</span>' +
+      '<span class="ex-count">' + EXAM_TRANS.length + ' 段 · 汉译英</span>' +
+    '</div>';
+  EXAM_TRANS.forEach(t => {
+    const info = examTransInfo(t.id);
+    const hasBest = info.best >= 0;
+    html += '<button class="ex-row" type="button" data-ex-tr="' + t.id + '">' +
+        '<span class="ex-row-main">' +
+          '<span class="ex-row-t">Unit ' + t.unit + ' · 汉译英</span>' +
+          '<span class="ex-row-s">' + esc(t.ref.replace(' · Translation', '')) + '</span>' +
+        '</span>' +
+        '<span class="ex-row-side">' +
+          '<span class="ex-row-n">1 段</span>' +
+          '<span class="ex-row-r">' + (hasBest ? '最好 ' + info.best + '%' : '—') + '</span>' +
+          '<span class="ex-row-bar"><i style="width:' + (hasBest ? Math.max(0, Math.min(100, info.best)) : 0) + '%;"></i></span>' +
+        '</span>' +
+      '</button>';
+  });
+  html += '</div>';
 
   view.innerHTML = html + '</div>';
 }
@@ -4193,6 +4330,106 @@ function examStartWrong(){
   examRun.wrong = [];
   examRun.answers = {};
   renderExamRun();
+}
+
+/* ---------------- 汉译英：一轮的临时状态与三屏 ---------------- */
+const examTransRun = { id:'', text:'', done:false, pct:0, missed:[] };
+
+function examStartTrans(id){
+  const t = examTrans(id);
+  if(!t) return;
+  examTransRun.id = id;
+  examTransRun.text = '';
+  examTransRun.done = false;
+  examTransRun.pct = 0;
+  examTransRun.missed = [];
+  renderExamTrans();
+}
+/* 输入时只记文本并切换按钮可用态，不重绘（避免打断输入） */
+function examTransInput(el){
+  examTransRun.text = el.value;
+  const wrap = el.closest('.ex-wrap');
+  const btn = wrap ? wrap.querySelector('[data-ex-trans-reveal]') : null;
+  if(btn) btn.disabled = !el.value.trim();
+}
+function examTransChips(words){
+  if(!words || !words.length) return '';
+  return '<span class="ex-tr-miss-k">没写到的关键词</span>' +
+    '<div class="ex-tr-chips">' + words.map(w => '<span class="ex-tr-chip">' + esc(w) + '</span>').join('') + '</div>';
+}
+function renderExamTrans(){
+  const view = document.getElementById('view-exam');
+  if(!view) return;
+  const t = examTrans(examTransRun.id);
+  if(!t){ renderExam(); return; }
+  const done = examTransRun.done;
+  const pct = examTransRun.pct;
+  let body = '';
+  if(done){
+    body = '<div class="ex-tr-ref">' + esc(t.en) + '</div>' +
+      '<p class="ex-tr-cov">覆盖率 ' + pct + '%</p>' +
+      '<p class="ex-tr-verdict' + (pct >= 60 ? '' : ' bad') + '">' + (pct >= 60 ? '命中主要表达' : '还差一些') + '</p>' +
+      examTransChips(examTransRun.missed);
+  }
+  view.innerHTML = '<div class="ex-wrap">' +
+      '<div class="ex-bar">' +
+        '<button class="ex-back" type="button" data-ex-back>← 题库</button>' +
+        '<span class="ex-bar-mid">Unit ' + t.unit + ' · 汉译英</span>' +
+        '<span class="ex-bar-prog">1 / 1</span>' +
+      '</div>' +
+      '<div>' +
+        '<span class="ex-tr-k">中文原文</span>' +
+        '<p class="ex-tr-zh">' + esc(t.zh) + '</p>' +
+        '<textarea class="ex-tr-in" data-ex-tr-input placeholder="先自己译一遍，再对照参考译文"' +
+          (done ? ' readonly' : '') + ' oninput="examTransInput(this)">' + esc(examTransRun.text) + '</textarea>' +
+        body +
+      '</div>' +
+      '<div class="ex-foot">' +
+        (done
+          ? '<button class="ex-btn" type="button" data-ex-trans-result>看结果</button>'
+          : '<button class="ex-btn" type="button" data-ex-trans-reveal disabled>对照译文</button>') +
+      '</div>' +
+    '</div>';
+}
+function examTransReveal(){
+  const t = examTrans(examTransRun.id);
+  if(!t || examTransRun.done) return;
+  const text = String(examTransRun.text || '').trim();
+  if(!text) return;
+  const cov = trCoverage(t.en, text);
+  examTransRun.done = true;
+  examTransRun.pct = cov.pct;
+  examTransRun.missed = cov.missed;
+  const r = examTransRec(t.id);
+  r.seen += 1;
+  if(cov.pct >= 60) r.right += 1;
+  r.best = Math.max(r.best || 0, cov.pct);
+  r.last = cov.pct;
+  persist(EXAM_KEY, examState);
+  renderExamTrans();
+}
+function renderExamTransResult(){
+  const view = document.getElementById('view-exam');
+  if(!view) return;
+  const t = examTrans(examTransRun.id);
+  if(!t){ renderExam(); return; }
+  const info = examTransInfo(t.id);
+  const next = EXAM_TRANS.find(x => x.unit === t.unit + 1);
+  view.innerHTML = '<div class="ex-wrap">' +
+      '<div>' +
+        '<span class="ex-kicker">Unit ' + t.unit + ' · 汉译英 · 本轮完成</span>' +
+        '<p class="ex-res-num">' + examTransRun.pct + '%</p>' +
+        '<p class="ex-res-sub">本段覆盖率 · 目标 60%</p>' +
+        (info.best >= 0 ? '<p class="ex-res-sub">本单元最好 ' + info.best + '%</p>' : '') +
+      '</div>' +
+      '<div class="ex-tr-ref">' + esc(t.en) + '</div>' +
+      examTransChips(examTransRun.missed) +
+      '<div class="ex-foot">' +
+        '<button class="ex-btn ghost" type="button" data-ex-trans-redo>再写一遍</button>' +
+        (next ? '<button class="ex-btn ghost" type="button" data-ex-trans-next="' + next.id + '">下一单元</button>' : '') +
+        '<button class="ex-btn" type="button" data-ex-back>返回题库</button>' +
+      '</div>' +
+    '</div>';
 }
 
 /* ---------------- 答题页 ---------------- */
@@ -4375,6 +4612,33 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
   if(wb){
     e.preventDefault(); e.stopPropagation();
     if(!wb.disabled) examStartWrong();
+    return;
+  }
+  const tr = t.closest('[data-ex-tr]');
+  if(tr){
+    e.preventDefault(); e.stopPropagation();
+    examStartTrans(tr.dataset.exTr);
+    return;
+  }
+  if(t.closest('[data-ex-trans-reveal]')){
+    e.preventDefault(); e.stopPropagation();
+    examTransReveal();
+    return;
+  }
+  if(t.closest('[data-ex-trans-result]')){
+    e.preventDefault(); e.stopPropagation();
+    renderExamTransResult();
+    return;
+  }
+  if(t.closest('[data-ex-trans-redo]')){
+    e.preventDefault(); e.stopPropagation();
+    examStartTrans(examTransRun.id);
+    return;
+  }
+  const trNext = t.closest('[data-ex-trans-next]');
+  if(trNext){
+    e.preventDefault(); e.stopPropagation();
+    examStartTrans(trNext.dataset.exTransNext);
     return;
   }
   const opt = t.closest('[data-ex-opt]');

@@ -17,6 +17,8 @@
 
 - [x] Task 6: 验证与提交——`node --check` 通过；本地 `http.server` 用浏览器子代理跑「进入题库 → 答一组（含答对/答错）→ 结果页 → 重做错题 → 刷新看进度 → 只刷错题为 0 时禁用」；抽查至少 8 题答案与 md 一致；确认刷词/词库/自测/数据四页与既有存储键未受影响；`git commit` + `git push origin main`。
 
+- [x] Task 7: 汉译英段落练习——`EXAM_TRANS` 收录 Unit 1–4 四段（中文原文 + 参考译文），首页新增 Section C 区块，练习页支持多行输入、「对照译文」、实词覆盖率（≥60% 通过）、未命中关键词、结果页与 `examState.trans` 存档回显。
+
 # Task Dependencies
 
 - Task 3、4、5 依赖 Task 1（数据）与 Task 2（容器）。
