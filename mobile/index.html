@@ -1493,9 +1493,140 @@ body{
   font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.08em;color:color-mix(in srgb,var(--ink) 34%,transparent);
 }
 
+/* ---------------- 期末题库 ---------------- */
+.ex-wrap{display:flex;flex-direction:column;gap:.55rem;}
+.ex-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;flex-wrap:wrap;}
+.ex-kicker{
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.ex-count{
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.04em;
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
+}
+.ex-picks{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;}
+.ex-pick{
+  appearance:none;cursor:pointer;min-height:44px;
+  display:flex;align-items:center;justify-content:center;gap:.24rem;
+  padding:.6rem .5rem;border-radius:2px;border:1px solid var(--ink);
+  background:var(--ink);color:#fff;
+  font-family:var(--sans);font-size:.76rem;font-weight:900;line-height:1.2;
+}
+.ex-pick.ghost{background:var(--paper-2);color:var(--ink);border-color:var(--rule-2);}
+.ex-pick[disabled]{opacity:.38;cursor:default;}
+.ex-pick:active{transform:scale(.985);}
+.ex-unit{margin-top:.2rem;}
+.ex-unit-head{
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+  padding:.5rem 0 .24rem;border-top:1px solid var(--rule);
+}
+.ex-row{
+  appearance:none;cursor:pointer;width:100%;text-align:left;
+  display:flex;align-items:center;gap:.5rem;
+  min-height:56px;padding:.5rem .1rem;
+  background:transparent;border:0;border-bottom:1px solid var(--rule);
+  color:var(--ink);font-family:var(--sans);
+}
+.ex-row:active{background:color-mix(in srgb,var(--ink) 4%,transparent);}
+.ex-row-main{flex:1;min-width:0;display:block;}
+.ex-row-t{display:block;font-size:.86rem;font-weight:700;line-height:1.3;letter-spacing:.01em;}
+.ex-row-s{
+  display:block;margin-top:.16rem;
+  font-family:var(--mono);font-size:.55rem;font-weight:700;letter-spacing:.04em;
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
+}
+.ex-row-side{flex:none;width:3.6rem;display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;}
+.ex-row-n{font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.02em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);}
+.ex-row-r{font-family:var(--mono);font-size:.6rem;font-weight:900;}
+.ex-row-bar{display:block;width:100%;height:2px;background:var(--rule);}
+.ex-row-bar i{display:block;height:2px;background:var(--ink);}
+.ex-row-w{font-family:var(--mono);font-size:.52rem;font-weight:900;letter-spacing:.02em;color:#A33A1E;}
+
+.ex-bar{display:flex;align-items:center;gap:.4rem;}
+.ex-back{
+  appearance:none;cursor:pointer;flex:none;
+  min-height:44px;padding:0 .3rem 0 0;background:transparent;border:0;
+  font-family:var(--sans);font-size:.76rem;font-weight:900;color:var(--ink);
+}
+.ex-bar-mid{
+  flex:1;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.04em;
+}
+.ex-bar-prog{
+  flex:none;font-family:var(--mono);font-size:.6rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.ex-q-meta{
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.06em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);margin-bottom:.3rem;
+}
+.ex-q{font-size:1rem;font-weight:700;line-height:1.75;letter-spacing:.01em;word-break:break-word;}
+.ex-blank{
+  display:inline-block;min-width:4.2rem;margin:0 .12rem;text-align:center;
+  border-bottom:2px solid var(--rule-2);font-weight:900;color:var(--ink);
+  vertical-align:baseline;
+}
+.ex-blank.on{border-bottom:2px solid var(--ink);}
+.ex-blank.right{color:#2E7A4B;}
+.ex-blank.wrong{color:#A33A1E;}
+.ex-opts{display:flex;flex-direction:column;gap:.36rem;margin-top:.75rem;}
+.ex-opt{
+  appearance:none;cursor:pointer;width:100%;text-align:left;
+  display:flex;align-items:center;gap:.5rem;
+  min-height:44px;padding:.5rem .55rem;border-radius:2px;
+  background:#fff;border:1px solid var(--rule-2);
+  font-family:var(--sans);font-size:.86rem;font-weight:700;line-height:1.4;color:var(--ink);
+}
+.ex-opt:active{background:color-mix(in srgb,var(--ink) 4%,transparent);}
+.ex-opt .ex-l{
+  flex:none;width:1rem;text-align:center;
+  font-family:var(--mono);font-size:.6rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.ex-opt.right{background:var(--ink);color:#fff;border-color:var(--ink);}
+.ex-opt.right .ex-l{color:#fff;}
+.ex-opt.wrong{background:#fff;color:#A33A1E;border-color:#A33A1E;}
+.ex-opt.wrong .ex-l{color:#A33A1E;}
+.ex-opt.dim{opacity:.45;}
+.ex-tip{
+  margin-top:.7rem;padding:.5rem .6rem;
+  background:color-mix(in srgb,var(--ink) 4%,var(--paper-2));
+  border-left:2px solid var(--rule-2);
+}
+.ex-tip .ex-tk{
+  display:block;margin-bottom:.14rem;
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tip p{font-size:.74rem;font-weight:700;line-height:1.6;color:color-mix(in srgb,var(--ink) 80%,transparent);}
+.ex-foot{display:flex;gap:.4rem;margin-top:.8rem;}
+.ex-btn{
+  appearance:none;cursor:pointer;flex:1;min-height:44px;border-radius:2px;
+  border:1px solid var(--ink);background:var(--ink);color:#fff;
+  font-family:var(--sans);font-size:.78rem;font-weight:900;
+}
+.ex-btn.ghost{background:var(--paper-2);color:var(--ink);border-color:var(--rule-2);}
+.ex-btn[disabled]{opacity:.38;cursor:default;}
+.ex-btn:active{transform:scale(.985);}
+.ex-res-num{font-family:var(--display);font-size:2.4rem;letter-spacing:-.03em;line-height:1.1;margin:.2rem 0 .3rem;}
+.ex-res-sub{font-size:.72rem;font-weight:700;line-height:1.5;color:color-mix(in srgb,var(--ink) 60%,transparent);}
+.ex-wrong{margin-top:.7rem;display:flex;flex-direction:column;gap:.6rem;}
+.ex-wrong-i{padding-top:.6rem;border-top:1px solid var(--rule);}
+.ex-wrong-s{font-size:.84rem;font-weight:700;line-height:1.7;}
+.ex-wrong-s b{border-bottom:2px solid var(--ink);font-weight:900;}
+.ex-wrong-a{font-family:var(--mono);font-size:.62rem;font-weight:900;margin-top:.26rem;letter-spacing:.02em;}
+.ex-wrong-n{font-size:.7rem;font-weight:700;line-height:1.6;color:color-mix(in srgb,var(--ink) 70%,transparent);margin-top:.16rem;}
+.ex-bank{
+  padding-top:.5rem;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.04em;line-height:1.9;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+
 /* ---------------- 底部导航 ---------------- */
 .tabbar{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:.24rem;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:.24rem;
   flex:none;position:relative;z-index:5;
   padding:.42rem .5rem calc(.42rem + env(safe-area-inset-bottom,0px));
   background:var(--paper-2);
@@ -1589,6 +1720,7 @@ body{
     <section class="view deck active" id="view-deck" aria-label="刷词"></section>
     <section class="view" id="view-lib" aria-label="词库"></section>
     <section class="view" id="view-quiz" aria-label="自测"></section>
+    <section class="view" id="view-exam" aria-label="期末题库"></section>
     <section class="view" id="view-stat" aria-label="数据"></section>
   </main>
 
@@ -1604,6 +1736,10 @@ body{
     <button class="tab" type="button" data-tab="quiz">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4.5l4.5 4.5-8 8H7v-4.5z"/><path d="M4 20h16"/></svg>
       <span>自测</span>
+    </button>
+    <button class="tab" type="button" data-tab="exam">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9 8.5h6M9 12.5h6M9 16.5h4"/></svg>
+      <span>期末</span>
     </button>
     <button class="tab" type="button" data-tab="stat">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><path d="M4 19V9"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M22 19h-20"/></svg>
@@ -3654,6 +3790,621 @@ function renderQuizResult(){
 }
 
 /* ============================================================
+   期末题库：新视野读写 3 · Unit 1–4 的「3 Words in use」与「6 Expressions in use」
+   题面与选项逐题照抄自 新视野读写3_期末题库.md
+   ============================================================ */
+const EXAM_KEY = 'wc_exam_v1';
+const EXAM_UNITS = {
+  1:'The digital age: Are we ready?',
+  2:'Life stories',
+  3:'Let\'s go',
+  4:'When work is a pleasure'
+};
+const EXAM_GROUPS = [
+  { id:'u1w', unit:1, kind:'word', title:'Unit 1 · Words in use', ref:'Section A · 教材 p.11',
+    bank:['alter','assess','collaborate','discrete','furious','immersed','sacred','scenario','substitute','velocity'],
+    items:[
+      { q:1, b:1, s:'He entered the film industry, taking small roles and writing ___ for a famous film company.',
+        o:['velocity','substitute','scenarios','scenario'], a:2,
+        n:'scenario 剧本、情节梗概；这里泛指多部，用复数 scenarios' },
+      { q:2, b:1, s:'In doing translation, one should not ___ the meaning of the original to suit one\'s own taste.',
+        o:['assess','alters','altered','alter'], a:3,
+        n:'alter 改变；should not 后接动词原形' },
+      { q:3, b:1, s:'Without warning, there was a(n) ___ storm and the waves swept over the boat.',
+        o:['sacred','discrete','furious','furiously'], a:2,
+        n:'furious 猛烈的、狂暴的；修饰 storm' },
+      { q:4, b:1, s:'Doctors consider it their ___ duty to protect and save the lives of their patients.',
+        o:['sacred','sacredly','discrete','scared'], a:0,
+        n:'sacred 神圣的；sacred duty 神圣的职责' },
+      { q:5, b:1, s:'The question was how to maintain that kind of ___ for a vehicle that weighed considerably more than 3,300 pounds.',
+        o:['velocities','substitute','velocity','scenario'], a:2,
+        n:'velocity 速度（正式用词）；维持那种速度' },
+      { q:6, b:1, s:'They are able to take ___ ideas, thoughts, and generalizations and weave them into meaningful patterns.',
+        o:['discreet','discrete','furious','discretely'], a:1,
+        n:'discrete 分离的、离散的；别和 discreet（谨慎的）混淆' },
+      { q:7, b:1, s:'They needed someone to ___ for a pianist who couldn\'t make it, and her professor recommended her.',
+        o:['substituting','assess','substituted','substitute'], a:3,
+        n:'substitute for 替代…；to 后接动词原形' },
+      { q:8, b:1, s:'Let\'s embrace Chinese culture this summer and get ___ in the richness of traditional Chinese music and dance!',
+        o:['immerse','immersing','immersed','sacred'], a:2,
+        n:'get immersed in 沉浸于…；过去分词作表语' },
+      { q:9, b:1, s:'The Chinese scientific community will ___ with their international peers in frontier science research.',
+        o:['collaborate','collaborated','collaborating','assess'], a:0,
+        n:'collaborate with 与…合作；will 后接原形' },
+      { q:10, b:1, s:'At the end of the semester, students will be ___ on their proficiency in writing and speaking in English.',
+        o:['assessing','alter','assess','assessed'], a:3,
+        n:'be assessed on 被考核…；被动语态用过去分词' }
+    ] },
+  { id:'u1e', unit:1, kind:'expr', title:'Unit 1 · Expressions in use', ref:'Section A · 教材 p.13',
+    bank:['add up to','dumb ... down','in the company of','lay ... out','make room for','pick ... up','plunge into','wipe ... out'],
+    items:[
+      { q:1, b:1, s:'The cheerful guy who wore virtual reality glasses ___ the virtual world.',
+        o:['plunged into','picked up','plunge into','plunging into'], a:0,
+        n:'plunge into 投身于；叙述过去的事用过去式' },
+      { q:2, b:1, s:'It has been the tradition in China that elderly people live in a familiar environment, preferably ___ their children.',
+        o:['in the company of','in the charge of','in the company with','in the course of'], a:0,
+        n:'in the company of 在…陪伴下；介词短语不变形' },
+      { q:3, b:1, s:'Chinese isn\'t a subject that can be ___ in a month, and you can\'t accomplish your goal of mastering the language unless you work at it for years.',
+        o:['picked up','picking up','pick up','plunged into'], a:0,
+        n:'pick up（不经意地）学会；被动 can be + 过去分词' },
+      { q:4, b:1, s:'He ___ the map across the table and took another look at it.',
+        o:['laid out','lied out','lay out','lain out'], a:0,
+        n:'lay out 铺开、摊开；过去式 laid out（不是 lied）' },
+      { q:5, b:1, s:'The live music, the wild dancing, and the amazing lights all ___ an exciting theatrical experience.',
+        o:['add up for','add up to','add up','add up with'], a:1,
+        n:'add up to 合起来构成…；一般现在时或过去式都算对' },
+      { q:6, b:1, s:'Since space is limited, we sometimes have to say goodbye to old things in order to ___ new items.',
+        o:['make rooms for','make room for','make place for','make room to'], a:1,
+        n:'make room for 为…腾出空间；in order to 后接原形' },
+      { q:7, b:1, s:'The magazine has a reputation for being very thorough, although critics claim that it has been ___ in recent years to cater to the mass market.',
+        o:['dumbed down','dumbing down','dumb down','dumbed up'], a:0,
+        n:'dumb down 使通俗化/降低难度；has been + 过去分词' },
+      { q:8, b:1, s:'This marks another historic step toward ___ the absolute poverty that has plagued the nation for centuries.',
+        o:['wipe out','wiping out','wiped out','wiping off'], a:1,
+        n:'wipe out 彻底消除；toward 是介词，后接动名词' }
+    ] },
+  { id:'u2w', unit:2, kind:'word', title:'Unit 2 · Words in use', ref:'Section A · 教材 p.38',
+    bank:['appoint','complexity','dense','escort','expansion','frail','maintenance','patrol','realm','vague'],
+    items:[
+      { q:1, b:1, s:'The eastern area is three times bigger than the western area, featuring ___ tropical rainforests and giant waterfalls.',
+        o:['densely','density','dense','vague'], a:2,
+        n:'dense 茂密的；dense rainforests 茂密的热带雨林' },
+      { q:2, b:1, s:'In the meeting, a new manager was ___ to take charge of the project which was in financial difficulties.',
+        o:['escorted','appoint','appointing','appointed'], a:3,
+        n:'be appointed to do 被任命去做；被动用过去分词' },
+      { q:3, b:1, s:'Services such as cooking, cleaning, and ___ the elderly to hospitals are in high demand.',
+        o:['patrolling','escort','escorting','escorted'], a:2,
+        n:'escort 护送；与 cooking / cleaning 并列，用动名词 escorting' },
+      { q:4, b:1, s:'A high-tech police car capable of immediately detecting stolen cars, disqualified drivers, and other offenses is ___ the roads.',
+        o:['patrolling','patrol','escorting','patrolled'], a:0,
+        n:'patrol 巡逻；is + 现在分词构成现在进行时' },
+      { q:5, b:1, s:'Around 300 workers and engineers are working hard for the timely delivery of the project despite its ___ .',
+        o:['expansion','complex','complexity','complexion'], a:2,
+        n:'complexity 复杂性；its 后接名词' },
+      { q:6, b:1, s:'A researcher said China\'s fast economic ___ in recent years has made great contributions to world economic growth.',
+        o:['expanding','expansions','expansion','expense'], a:2,
+        n:'expansion 扩张、扩展；economic expansion 经济扩张' },
+      { q:7, b:1, s:'That visit was hard work because he spoke no Chinese and had only a(n) ___ plan of action.',
+        o:['vaguely','vague','frail','vagueness'], a:1,
+        n:'vague 含糊的、不明确的；a vague plan 模糊的计划' },
+      { q:8, b:1, s:'China\'s first domestically built polar icebreaker Xuelong 2 has completed its ___ period and will soon set out on a mission again.',
+        o:['maintained','maintenance','maintain','maintaining'], a:1,
+        n:'maintenance 维护、保养；maintenance period 维护期' },
+      { q:9, b:1, s:'A number of people believe that genuine friendships can develop in both the digital and physical ___ , with the boundaries between the two continuing to blur.',
+        o:['realm','realize','real','reel'], a:0,
+        n:'realm 领域、范围；教材答案用单数 realm，写复数 realms 也说得通' },
+      { q:10, b:1, s:'She had to take care of the whole family, two children and two ___ elderly people, all by herself.',
+        o:['frailly','frailty','failure','frail'], a:3,
+        n:'frail（尤指老人）虚弱的；frail elderly people 体弱的老人' }
+    ] },
+  { id:'u2e', unit:2, kind:'expr', title:'Unit 2 · Expressions in use', ref:'Section A · 教材 p.40',
+    bank:['along with','curious about','in charge of','loaded with','set off','take place','trade with','view ... as'],
+    items:[
+      { q:1, b:1, s:'We can enable our students to be ___ their own learning by creating interesting, open-ended tasks which they can finish by themselves.',
+        o:['in the charge of','in terms of','in charge of','in need of'], a:2,
+        n:'in charge of 负责、掌管；be 后接介词短语' },
+      { q:2, b:1, s:'The festival, which falls on the ninth day of the ninth month on the lunar calendar, is ___ an occasion to pay respect to the elderly.',
+        o:['view as','viewed for','viewing as','viewed as'], a:3,
+        n:'view ... as 把…视为；被动 is + 过去分词' },
+      { q:3, b:1, s:'The Belt and Road Initiative raises the level of connectivity and cooperation among dozens of nations that have ___ China for years.',
+        o:['trade with','traded for','traded with','trading with'], a:2,
+        n:'trade with 与…做贸易；现在完成时 have + 过去分词' },
+      { q:4, b:1, s:'From the smallest birthday party to the largest concert, special events ___ every day in these parks.',
+        o:['take over','take part','take up','take place'], a:3,
+        n:'take place 举行、发生；every day 用一般现在时' },
+      { q:5, b:1, s:'The train was fully ___ 50 containers of goods including glass bottles, canned food, and medical supplies.',
+        o:['loaded of','loading with','load with','loaded with'], a:3,
+        n:'be loaded with 装载着…；被动搭配' },
+      { q:6, b:1, s:'Last month, the polar icebreaker ___ from the port for its new scientific expedition to the Antarctic.',
+        o:['set off','set out','set in','set up'], a:0,
+        n:'set off 出发、启程；过去式仍是 set off（不规则动词不变形）' },
+      { q:7, b:1, s:'We have long been ___ what really goes on inside the space station and the video satisfied our curiosity.',
+        o:['curious about','curious for','curious of','curious in'], a:0,
+        n:'be curious about 对…好奇；have been 后接形容词短语' },
+      { q:8, b:1, s:'This is a double room and you can stay here ___ your friend.',
+        o:['along for','along with','along to','along by'], a:1,
+        n:'along with 和…一起；介词短语不变形' }
+    ] },
+  { id:'u3w', unit:3, kind:'word', title:'Unit 3 · Words in use', ref:'Section A · 教材 p.66',
+    bank:['ambiguity','cluster','compulsory','contemplate','drawback','globalize','groan','loosen','offset','stubborn'],
+    items:[
+      { q:1, b:1, s:'Thanks to its nine-year ___ education, China has one of the highest literacy rates in the world, which is a great achievement.',
+        o:['compulsory','compulsion','compulsorily','compulsive'], a:0,
+        n:'compulsory 义务的、强制的；compulsory education 义务教育' },
+      { q:2, b:1, s:'He has been ___ leaving the studio for some time and will be moving on to “new adventures”.',
+        o:['contemplating','contemplated','contempt','contemplate'], a:0,
+        n:'contemplate 考虑、盘算；has been + 现在分词' },
+      { q:3, b:1, s:'Standards should be ___ to include more people in more types of jobs to increase diversity.',
+        o:['loosened','loosen','looseness','loosening'], a:0,
+        n:'loosen 放宽（标准）；被动 be + 过去分词' },
+      { q:4, b:1, s:'In the 1970s, the firm was restructured to ___ the business and pursue new areas of growth.',
+        o:['globalizing','globalized','globalize','global'], a:2,
+        n:'globalize 使（业务）全球化；to 后接动词原形' },
+      { q:5, b:1, s:'However, your current losses should soon be ___ by gains — the fund will produce a positive return of 11.6 percent over a nine-month period.',
+        o:['offsets','set off','offsetting','offset'], a:3,
+        n:'offset 抵消；be offset by 被…抵消（offset 三态同形）' },
+      { q:6, b:1, s:'She pushed herself up into a sitting position to look around but immediately ___ in pain and fell back onto the blanket.',
+        o:['groan','groaning','grown','groaned'], a:3,
+        n:'groan 呻吟；与 pushed / fell 并列用过去式' },
+      { q:7, b:1, s:'My mom was very ___ and unwilling to accept advice, but she became softer and nicer after reading this book.',
+        o:['stubbornly','stubborn','stubbornness','sturdy'], a:1,
+        n:'stubborn 固执的；was 后接形容词' },
+      { q:8, b:1, s:'On weekends, the school parking lot is almost empty except that a few cars ___ near the entrance.',
+        o:['clustering','cluster','clutch','clusters'], a:1,
+        n:'cluster 聚集；主语 cars 是复数，一般现在时用原形' },
+      { q:9, b:1, s:'In the photographer\'s finest pictures there is also a degree of ___ , which allows them to be interpreted in a variety of ways.',
+        o:['ambition','ambiguity','ambiguities','ambiguous'], a:1,
+        n:'ambiguity 模棱两可；a degree of + 名词' },
+      { q:10, b:1, s:'The chief ___ to farming in these districts is the considerable proportion of stony ground.',
+        o:['draw back','drawbacks','drawing','drawback'], a:3,
+        n:'drawback 缺点、不利因素；the chief drawback to … 的主要弊端' }
+    ] },
+  { id:'u3e', unit:3, kind:'expr', title:'Unit 3 · Expressions in use', ref:'Section A · 教材 p.68',
+    bank:['be open to','endow ... with','make up for','mingle ... with','more often than not','on sale','settle for','trade ... for'],
+    items:[
+      { q:1, b:1, s:'They should be more patient, and willing to ___ something less than their dream job at first.',
+        o:['settle for','settle down','settle up','settle in'], a:0,
+        n:'settle for 勉强接受；willing to 后接原形' },
+      { q:2, b:1, s:'The situations these explorers face are various, sometimes unpredictable, and ___ , challenging.',
+        o:['more often than not','more or less','more than often','more often than usual'], a:0,
+        n:'more often than not 往往、多半；插入语，不变形' },
+      { q:3, b:1, s:'As the voyage progressed, the soft, sweet tropical air ___ the fresh smell of the sea and gave the crew a delightful experience of ocean travel.',
+        o:['mingling with','mingled in','mingle with','mingled with'], a:3,
+        n:'mingle with 与…混合；与 progressed / gave 并列用过去式' },
+      { q:4, b:1, s:'I bought too much milk so I ___(1) her my extra gallons ___(2) her bread.',
+        o:['traded','trade','trading','trades'], a:0,
+        n:'trade ... for 用…换…；第一空填 traded（过去式）' },
+      { q:4, b:2, s:'I bought too much milk so I ___(1) her my extra gallons ___(2) her bread.',
+        o:['to','for','by','with'], a:1,
+        n:'第二空填介词 for，构成 trade sth for sth' },
+      { q:5, b:1, s:'You should learn to time your purchases so that you can buy the products when they\'re ___ and save money.',
+        o:['in sale','for sale','on sales','on sale'], a:3,
+        n:'on sale 打折出售；介词短语不变形' },
+      { q:6, b:1, s:'You need to let them know that you ___ their ideas and that you will do what it takes to get things done.',
+        o:['is open to','are open to','are opened to','are open for'], a:1,
+        n:'be open to 愿意接受；主语 you → are open to' },
+      { q:7, b:1, s:'Herbs have been used for centuries to ___(1) a whole range of foods ___(2) subtle flavors.',
+        o:['endowed','endow','endowing','endows'], a:1,
+        n:'endow ... with 赋予…以…；to 后接原形 endow' },
+      { q:7, b:2, s:'Herbs have been used for centuries to ___(1) a whole range of foods ___(2) subtle flavors.',
+        o:['by','with','for','to'], a:1,
+        n:'第二空填 with，构成 endow sth with sth' },
+      { q:8, b:1, s:'The new research indicates that doing enough exercise could ___ some of the unhealthy impacts of bad sleep.',
+        o:['make up to','make up for','make for','make up with'], a:1,
+        n:'make up for 弥补；could 后接原形' }
+    ] },
+  { id:'u4w', unit:4, kind:'word', title:'Unit 4 · Words in use', ref:'Section A · 教材 p.92',
+    bank:['abolish','adverse','commonplace','contend','diversion','foster','gauge','revenue','suffice','upcoming'],
+    items:[
+      { q:1, b:1, s:'He is measuring the depth of the hole to ___ how much climbing line we\'ll need to get us down and back up again.',
+        o:['gauges','gauge','garage','gauged'], a:1,
+        n:'gauge 估计、判断；to 后接动词原形' },
+      { q:2, b:1, s:'He ___ for the lead in the final round, but ultimately finished in second position.',
+        o:['contended','contending','contented','contend'], a:0,
+        n:'contend for 争夺；与 finished 并列用过去式' },
+      { q:3, b:1, s:'Smartphone conversations, which are fairly ___ on commuter trains, can be annoying to fellow commuters.',
+        o:['common sense','commonplace','common place','commonwealth'], a:1,
+        n:'commonplace 常见的、屡见不鲜的；are 后接形容词' },
+      { q:4, b:1, s:'Ask your doctor whether a low-fat diet and a daily walk will ___ to lower your high blood pressure.',
+        o:['suffice','sufficed','suffices','surface'], a:0,
+        n:'suffice 足够；suffice to do 足以做…；will 后接原形' },
+      { q:5, b:1, s:'According to the latest statistics, most of the company\'s ___ is generated through the sale of smartphones.',
+        o:['avenue','revenues','revenge','revenue'], a:3,
+        n:'revenue（公司）收入、收益；不可数名词' },
+      { q:6, b:1, s:'Scientists have learned more about the ___ effects that human activities have on the environment and climate.',
+        o:['advance','adversity','adverse','averse'], a:2,
+        n:'adverse 不利的、有害的；adverse effects 负面影响' },
+      { q:7, b:1, s:'I learned a great deal from this guide, and I am feeling very confident about my chances of passing the ___ exam.',
+        o:['upcoming','coming up','incoming','upcome'], a:0,
+        n:'upcoming 即将来临的；只能放在名词前作定语' },
+      { q:8, b:1, s:'There are rumors going around that this program will be ___ in November or December and all the work will be stopped.',
+        o:['abolish','abolished','polished','abolishing'], a:1,
+        n:'abolish 废除、取消；被动 be + 过去分词' },
+      { q:9, b:1, s:'This program has transformed the airport\'s security screening area into an art gallery and is a pleasant ___ for travelers.',
+        o:['division','diversion','diverse','diversity'], a:1,
+        n:'diversion 消遣、娱乐；a pleasant + 名词' },
+      { q:10, b:1, s:'We hope that the new series of music festivals will ___ interest in the arts in general and increase the city\'s international reputation.',
+        o:['fosters','fostering','foster','fostered'], a:2,
+        n:'foster 培养、促进；will 后接原形' }
+    ] },
+  { id:'u4e', unit:4, kind:'expr', title:'Unit 4 · Expressions in use', ref:'Section A · 教材 p.94',
+    bank:['be counting down the days','conform to','contend with','correlate with','designate ... as','refrain from','sink one\'s teeth into','slave away'],
+    items:[
+      { q:1, b:1, s:'The rapid rise in unemployment does ___ the increase in young people living at home, according to research.',
+        o:['correlated with','correlate to','correlate with','correlation with'], a:2,
+        n:'correlate with 与…相关；does 表强调，后接动词原形' },
+      { q:2, b:1, s:'It was a moment of overwhelming excitement when Steve was given the first prize; Tiffany couldn\'t ___ hugging and kissing him.',
+        o:['refrain from','refrain with','refrain of','refrain to'], a:0,
+        n:'refrain from 忍住不做…；couldn\'t 后接原形，from 后接动名词' },
+      { q:3, b:1, s:'I guarantee they will ___ to come and spend time with you because you have made them feel welcome.',
+        o:['be counting on the days','be counting down the day','be counting down the days','be counting the days down'], a:2,
+        n:'be counting down the days 数着日子盼；will + 动词原形 be' },
+      { q:4, b:1, s:'She spent the next 10 years ___ to pay back the money they had borrowed from the bank.',
+        o:['slaved away','slaving away','slave away','slaving off'], a:1,
+        n:'slave away 埋头苦干；spend time doing → 动名词' },
+      { q:5, b:1, s:'This is a rare opportunity and he just can\'t wait to ___ the interesting new project.',
+        o:['sink his teeth into','sink his tooth into','sink one\'s teeth into','set his teeth into'], a:0,
+        n:'sink one\'s teeth into 全身心投入；主语 he → his' },
+      { q:6, b:1, s:'The travel agency offers considerate care for its customers when they encounter unplanned circumstances or must ___ an unfamiliar environment.',
+        o:['contend against','contend for','contend with','contend to'], a:2,
+        n:'contend with 应对、与…作斗争；must 后接原形' },
+      { q:7, b:1, s:'One teacher will be ___ the distance learning teacher for students who choose to start the school year that way.',
+        o:['designate as','designated to','designated as','designating as'], a:2,
+        n:'designate ... as 指定…为；被动 be + 过去分词' },
+      { q:8, b:1, s:'The deepening cooperation between the two countries meets the development needs of both sides and ___ the will of the people of both sides.',
+        o:['conforms with','conforming to','conforms to','conform to'], a:2,
+        n:'conform to 符合；主语 cooperation 单数 → conforms to' }
+    ] }
+];
+
+let examState = loadJSON(EXAM_KEY, {groups:{}});
+if(!examState || typeof examState !== 'object' || Array.isArray(examState)) examState = {groups:{}};
+if(!examState.groups || typeof examState.groups !== 'object' || Array.isArray(examState.groups)) examState.groups = {};
+
+/* 一轮的临时状态：items 里每项是一空 {gid, item} */
+const examRun = {
+  mode:'group', gid:'', title:'',
+  items:[], idx:0, right:0, wrong:[], answers:{}
+};
+
+/* ---------------- 读写小工具 ---------------- */
+function examGroup(id){
+  return EXAM_GROUPS.find(g => g.id === id) || null;
+}
+function examKey(item, gid){
+  return gid + ':' + item.q + ':' + item.b;
+}
+/* 只读视图：不往 examState 里塞默认值 */
+function examInfo(gid){
+  const r = examState.groups[gid];
+  const o = (r && typeof r === 'object') ? r : {};
+  return {
+    seen: typeof o.seen === 'number' ? o.seen : 0,
+    right: typeof o.right === 'number' ? o.right : 0,
+    best: typeof o.best === 'number' ? o.best : -1,
+    wrong: Array.isArray(o.wrong) ? o.wrong : []
+  };
+}
+/* 写之前先补齐字段，返回真实引用 */
+function examRec(gid){
+  let r = examState.groups[gid];
+  if(!r || typeof r !== 'object') r = examState.groups[gid] = {};
+  if(typeof r.seen !== 'number') r.seen = 0;
+  if(typeof r.right !== 'number') r.right = 0;
+  if(typeof r.best !== 'number') r.best = -1;
+  if(!Array.isArray(r.wrong)) r.wrong = [];
+  return r;
+}
+/* 跨组汇总错题，反查回题目；组不存在就忽略 */
+function examWrongList(){
+  const out = [];
+  EXAM_GROUPS.forEach(g => {
+    examInfo(g.id).wrong.forEach(k => {
+      const it = g.items.find(x => examKey(x, g.id) === k);
+      if(it) out.push({gid:g.id, item:it});
+    });
+  });
+  return out;
+}
+/* 题干里的空位统一交给回调渲染 */
+function examBlankStem(s, fn){
+  return esc(s).replace(/___\((\d)\)|___/g, (m, num) => fn(num ? Number(num) : 1));
+}
+
+/* ---------------- 题库首页 ---------------- */
+function renderExam(){
+  const view = document.getElementById('view-exam');
+  if(!view) return;
+  const blanks = EXAM_GROUPS.reduce((n, g) => n + g.items.length, 0);
+  const qs = EXAM_GROUPS.reduce((n, g) => n + new Set(g.items.map(x => x.q)).size, 0);
+  const wrongList = examWrongList();
+
+  let html = '<div class="ex-wrap">' +
+      '<div class="ex-head">' +
+        '<span class="ex-kicker">新视野读写 3 · 期末题库</span>' +
+        '<span class="ex-count">' + EXAM_GROUPS.length + ' 组 · ' + qs + ' 题 · ' + blanks + ' 空</span>' +
+      '</div>' +
+      '<div class="ex-picks">' +
+        '<button class="ex-pick" type="button" data-ex-mix>全部混合</button>' +
+        '<button class="ex-pick ghost" type="button" data-ex-wrong' + (wrongList.length ? '' : ' disabled') + '>只刷错题 ' + wrongList.length + '</button>' +
+      '</div>';
+
+  [1, 2, 3, 4].forEach(u => {
+    html += '<div class="ex-unit"><div class="ex-unit-head">UNIT ' + u + ' · ' + esc(EXAM_UNITS[u]) + '</div>';
+    EXAM_GROUPS.filter(g => g.unit === u).forEach(g => {
+      const info = examInfo(g.id);
+      const hasBest = info.best >= 0;
+      const pct = hasBest ? Math.max(0, Math.min(100, info.best)) : 0;
+      html += '<button class="ex-row" type="button" data-ex-group="' + g.id + '">' +
+          '<span class="ex-row-main">' +
+            '<span class="ex-row-t">' + (g.kind === 'word' ? '3 · Words in use' : '6 · Expressions in use') + '</span>' +
+            '<span class="ex-row-s">' + esc(g.ref) + '</span>' +
+          '</span>' +
+          '<span class="ex-row-side">' +
+            '<span class="ex-row-n">' + g.items.length + ' 空</span>' +
+            '<span class="ex-row-r">' + (hasBest ? info.best + '%' : '—') + '</span>' +
+            '<span class="ex-row-bar"><i style="width:' + pct + '%;"></i></span>' +
+            (info.wrong.length ? '<span class="ex-row-w">错 ' + info.wrong.length + '</span>' : '') +
+          '</span>' +
+        '</button>';
+    });
+    html += '</div>';
+  });
+
+  view.innerHTML = html + '</div>';
+}
+
+/* ---------------- 开一轮 ---------------- */
+function examStartGroup(gid){
+  const g = examGroup(gid);
+  if(!g) return;
+  examRun.mode = 'group';
+  examRun.gid = gid;
+  examRun.title = g.title;
+  examRun.items = g.items.map(it => ({gid:gid, item:it}));
+  examRun.idx = 0;
+  examRun.right = 0;
+  examRun.wrong = [];
+  examRun.answers = {};
+  renderExamRun();
+}
+function examStartMix(){
+  const all = [];
+  EXAM_GROUPS.forEach(g => g.items.forEach(it => all.push({gid:g.id, item:it})));
+  examRun.mode = 'mix';
+  examRun.gid = '';
+  examRun.title = '全部混合';
+  examRun.items = shuffle(all);
+  examRun.idx = 0;
+  examRun.right = 0;
+  examRun.wrong = [];
+  examRun.answers = {};
+  renderExamRun();
+}
+function examStartWrong(){
+  const list = examWrongList();
+  if(!list.length){ toast('还没有错题'); renderExam(); return; }
+  examRun.mode = 'wrong';
+  examRun.gid = '';
+  examRun.title = '错题练习';
+  examRun.items = shuffle(list);
+  examRun.idx = 0;
+  examRun.right = 0;
+  examRun.wrong = [];
+  examRun.answers = {};
+  renderExamRun();
+}
+
+/* ---------------- 答题页 ---------------- */
+function examRunStem(it, gid){
+  const g = examGroup(gid);
+  const siblings = g ? g.items.filter(x => x.q === it.q) : [it];
+  return examBlankStem(it.s, n => {
+    const sub = siblings.find(x => x.b === n) || it;
+    const a = examRun.answers[examKey(sub, gid)];
+    const cls = 'ex-blank' + (n === it.b ? ' on' : '');
+    if(a) return '<span class="' + cls + ' ' + (a.ok ? 'right' : 'wrong') + '">' + esc(sub.o[a.pick]) + '</span>';
+    return '<span class="' + cls + '"></span>';
+  });
+}
+function examOptsHtml(it, ans){
+  const letters = ['A', 'B', 'C', 'D'];
+  return it.o.map((txt, i) => {
+    let cls = 'ex-opt';
+    if(ans){
+      if(i === it.a) cls += ' right';
+      else if(i === ans.pick) cls += ' wrong';
+      else cls += ' dim';
+    }
+    return '<button class="' + cls + '" type="button" data-ex-opt="' + i + '">' +
+        '<span class="ex-l">' + letters[i] + '</span><span>' + esc(txt) + '</span></button>';
+  }).join('');
+}
+function renderExamRun(){
+  const view = document.getElementById('view-exam');
+  if(!view) return;
+  if(examRun.idx >= examRun.items.length){ renderExamResult(); return; }
+  const cur = examRun.items[examRun.idx];
+  const it = cur.item;
+  const g = examGroup(cur.gid);
+  const ans = examRun.answers[examKey(it, cur.gid)] || null;
+  const blanks = g ? g.items.filter(x => x.q === it.q).length : 1;
+  const where = examRun.mode === 'group' ? '' :
+    (g ? 'Unit ' + g.unit + ' · ' + (g.kind === 'word' ? 'Words' : 'Expressions') + ' · ' : '');
+  const meta = where + '第 ' + it.q + ' 题' + (blanks > 1 ? ' · 空 ' + it.b + '/' + blanks : '');
+  const last = examRun.idx + 1 >= examRun.items.length;
+
+  view.innerHTML = '<div class="ex-wrap">' +
+      '<div class="ex-bar">' +
+        '<button class="ex-back" type="button" data-ex-back>← 题库</button>' +
+        '<span class="ex-bar-mid">' + esc(examRun.title) + '</span>' +
+        '<span class="ex-bar-prog">' + (examRun.idx + 1) + ' / ' + examRun.items.length + '</span>' +
+      '</div>' +
+      '<div>' +
+        '<p class="ex-q-meta">' + esc(meta) + '</p>' +
+        '<p class="ex-q">' + examRunStem(it, cur.gid) + '</p>' +
+        '<div class="ex-opts">' + examOptsHtml(it, ans) + '</div>' +
+        (ans ? '<div class="ex-tip"><span class="ex-tk">考点</span><p>' + esc(it.n) + '</p></div>' : '') +
+      '</div>' +
+      '<div class="ex-foot">' +
+        '<button class="ex-btn" type="button" data-ex-next' + (ans ? '' : ' disabled') + '>' + (last ? '看结果' : '下一题') + '</button>' +
+      '</div>' +
+    '</div>';
+}
+
+/* 判分：状态先落盘，再按状态重绘这一屏 */
+function examPick(i){
+  const cur = examRun.items[examRun.idx];
+  if(!cur) return;
+  const it = cur.item;
+  const key = examKey(it, cur.gid);
+  if(examRun.answers[key]) return;                 /* 已判分：不改变状态，也不重复计数 */
+  if(!(i >= 0 && i < it.o.length)) return;
+  const ok = i === it.a;
+  examRun.answers[key] = {pick:i, ok:ok};
+  if(ok) examRun.right++;
+  else examRun.wrong.push(key);
+  /* 错题归属：错→加入，对→移除 */
+  const r = examRec(cur.gid);
+  const at = r.wrong.indexOf(key);
+  if(ok){ if(at >= 0) r.wrong.splice(at, 1); }
+  else if(at < 0){ r.wrong.push(key); }
+  persist(EXAM_KEY, examState);
+  renderExamRun();
+}
+function examNext(){
+  const cur = examRun.items[examRun.idx];
+  if(!cur || !examRun.answers[examKey(cur.item, cur.gid)]) return;
+  examRun.idx++;
+  if(examRun.idx >= examRun.items.length){ renderExamResult(); return; }
+  renderExamRun();
+}
+
+/* ---------------- 结果页 ---------------- */
+function renderExamResult(){
+  const view = document.getElementById('view-exam');
+  if(!view) return;
+  const total = examRun.items.length;
+  const right = examRun.right;
+  const rate = total ? Math.round(right / total * 100) : 0;
+  let bestLine = '';
+  if(examRun.mode === 'group'){                    /* 只有单组练习才写 seen/right/best */
+    const r = examRec(examRun.gid);
+    const prev = r.best;
+    r.seen += total;
+    r.right += right;
+    r.best = Math.max(r.best, rate);
+    persist(EXAM_KEY, examState);
+    if(prev >= 0) bestLine = '本组最好 ' + r.best + '%';
+  }
+  const wrongs = examRun.wrong
+    .map(k => examRun.items.find(x => examKey(x.item, x.gid) === k))
+    .filter(Boolean);
+
+  let listHtml = '';
+  if(!wrongs.length){
+    listHtml = '<p class="ex-res-sub">全对，这组可以放下了</p>';
+  } else {
+    listHtml = '<div class="ex-wrong">' + wrongs.map(cur => {
+      const it = cur.item;
+      const stem = examBlankStem(it.s, n =>
+        n === it.b ? '<b>' + esc(it.o[it.a]) + '</b>' : '<span class="ex-blank"></span>');
+      return '<div class="ex-wrong-i">' +
+          '<p class="ex-wrong-s">' + stem + '</p>' +
+          '<p class="ex-wrong-a">正确答案：' + 'ABCD'[it.a] + ' ' + esc(it.o[it.a]) + '</p>' +
+          '<p class="ex-wrong-n">考点：' + esc(it.n) + '</p>' +
+        '</div>';
+    }).join('') + '</div>';
+  }
+
+  const g = examRun.mode === 'group' ? examGroup(examRun.gid) : null;
+  const bankHtml = g ? '<p class="ex-bank">本组词库 · ' + g.bank.map(esc).join(' · ') + '</p>' : '';
+
+  view.innerHTML = '<div class="ex-wrap">' +
+      '<div>' +
+        '<span class="ex-kicker">' + esc(examRun.title) + ' · 本轮完成</span>' +
+        '<p class="ex-res-num">' + right + ' / ' + total + '</p>' +
+        '<p class="ex-res-sub">正确率 ' + rate + '%</p>' +
+        (bestLine ? '<p class="ex-res-sub">' + bestLine + '</p>' : '') +
+      '</div>' +
+      listHtml +
+      '<div class="ex-foot">' +
+        '<button class="ex-btn ghost" type="button" data-ex-redo' + (wrongs.length ? '' : ' disabled') + '>重做错题</button>' +
+        '<button class="ex-btn ghost" type="button" data-ex-again>再来一轮</button>' +
+        '<button class="ex-btn" type="button" data-ex-back>返回题库</button>' +
+      '</div>' +
+      bankHtml +
+    '</div>';
+}
+function examRedoWrong(){
+  const items = examRun.wrong
+    .map(k => examRun.items.find(x => examKey(x.item, x.gid) === k))
+    .filter(Boolean);
+  if(!items.length) return;
+  examRun.mode = 'wrong';
+  examRun.gid = '';
+  examRun.title = '错题练习';
+  examRun.items = shuffle(items);
+  examRun.idx = 0;
+  examRun.right = 0;
+  examRun.wrong = [];
+  examRun.answers = {};
+  renderExamRun();
+}
+function examAgain(){
+  if(examRun.mode === 'group') examStartGroup(examRun.gid);
+  else if(examRun.mode === 'wrong') examStartWrong();
+  else examStartMix();
+}
+
+/* 期末题库：整块只绑一次事件委托 */
+document.getElementById('view-exam').addEventListener('click', (e) => {
+  const t = e.target;
+  const grp = t.closest('[data-ex-group]');
+  if(grp){
+    e.preventDefault(); e.stopPropagation();
+    examStartGroup(grp.dataset.exGroup);
+    return;
+  }
+  if(t.closest('[data-ex-mix]')){
+    e.preventDefault(); e.stopPropagation();
+    examStartMix();
+    return;
+  }
+  const wb = t.closest('[data-ex-wrong]');
+  if(wb){
+    e.preventDefault(); e.stopPropagation();
+    if(!wb.disabled) examStartWrong();
+    return;
+  }
+  const opt = t.closest('[data-ex-opt]');
+  if(opt){
+    e.preventDefault(); e.stopPropagation();
+    examPick(Number(opt.dataset.exOpt));
+    return;
+  }
+  if(t.closest('[data-ex-next]')){
+    e.preventDefault(); e.stopPropagation();
+    examNext();
+    return;
+  }
+  if(t.closest('[data-ex-redo]')){
+    e.preventDefault(); e.stopPropagation();
+    examRedoWrong();
+    return;
+  }
+  if(t.closest('[data-ex-again]')){
+    e.preventDefault(); e.stopPropagation();
+    examAgain();
+    return;
+  }
+  if(t.closest('[data-ex-back]')){
+    e.preventDefault(); e.stopPropagation();
+    renderExam();
+  }
+});
+
+/* ============================================================
    数据页
    ============================================================ */
 function renderStat(){
@@ -3811,6 +4562,7 @@ function switchTab(name){
     if(lg) lg.scrollTop = 0;
   }
   if(name === 'quiz') renderQuiz();
+  if(name === 'exam') renderExam();
   if(name === 'stat') renderStat();
   if(name !== 'lib') hardCloseLib();
   const main = document.querySelector('.main');
