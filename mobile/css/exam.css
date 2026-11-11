@@ -80,6 +80,8 @@
 .ex-blank.wrong{color:#A33A1E;}
 /* 判分后在原句里标出搭配落在哪：钢蓝，与记忆行的提示同色 */
 .ex-cue-hl{color:#2B5B84;}
+/* 原句里填进去的答案也按记忆条分色：变形部分用批注红 */
+.ex-ch-hl{color:#A33A1E;}
 .ex-opts{display:flex;flex-direction:column;gap:.36rem;margin-top:.75rem;}
 .ex-opt{
   appearance:none;cursor:pointer;width:100%;text-align:left;

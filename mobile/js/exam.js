@@ -481,7 +481,28 @@ function examCueWrap(text, offset, r){
   const s1 = Math.max(0, r[0] - a), e1 = Math.min(text.length, r[1] - a);
   return esc(text.slice(0, s1)) + '<span class="ex-cue-hl">' + esc(text.slice(s1, e1)) + '</span>' + esc(text.slice(e1));
 }
-/* 带搭配着色的题干：空位仍交给回调，跨空位的部分连空位一起标 */
+/* 记忆条用 ==..== 标出的变形部分，在答案里的字符下标（用于原句里给同一批字母上色） */
+function examCueHlRange(memo, answer){
+  const raw = String((memo && memo.w) || '');
+  const re = /==([^=]+)==/g;
+  let at = -1, part = '', pos = 0, last = 0, m;
+  while((m = re.exec(raw))){
+    pos += raw.slice(last, m.index).length;
+    if(at < 0){ at = pos; part = m[1]; }
+    pos += m[1].length;
+    last = re.lastIndex;
+  }
+  const plain = raw.replace(/==/g, '');
+  const a = String(answer || '');
+  if(at < 0 || !part || !a) return null;
+  const lp = plain.toLowerCase(), la = a.toLowerCase(), lpart = part.toLowerCase();
+  /* 词形一致时直接用记忆条里的位置；否则退到首尾对齐判断，避免把 scenario 开头的 s 标红 */
+  if(lp === la) return [at, at + lpart.length];
+  if(lp.endsWith(lpart) && la.endsWith(lpart)) return [la.length - lpart.length, la.length];
+  if(lp.startsWith(lpart) && la.startsWith(lpart)) return [0, lpart.length];
+  const k = la.indexOf(lpart);
+  return k < 0 ? null : [k, k + lpart.length];
+}
 function examStemCue(s, cue, fn){
   const raw = String(s || '');
   const r = examCueRange(raw, cue);
@@ -883,10 +904,14 @@ function examRunStem(it, gid, cue){
     const cls = 'ex-blank' + (n === it.b ? ' on' : '');
     if(a){
       /* 逐字拆成 <i>，让 CSS 能按 --d 依次写入；空格不包 <i>，否则会塌掉 */
+      const memo = memoFor(gid, it.q);
+      const hl = memo ? examCueHlRange(memo, sub.o[a.pick]) : null;
+      const text = String(sub.o[a.pick] || '');
       let k = 0;
-      const chars = String(sub.o[a.pick] || '').split('').map(ch => {
+      const chars = text.split('').map((ch, idx) => {
         if(ch === ' ') return ' ';
-        return '<i class="ex-ch" style="--d:' + (k++ * 40) + 'ms">' + esc(ch) + '</i>';
+        const on = hl && idx >= hl[0] && idx < hl[1];
+        return '<i class="ex-ch' + (on ? ' ex-ch-hl' : '') + '" style="--d:' + (k++ * 40) + 'ms">' + esc(ch) + '</i>';
       }).join('');
       return '<span class="' + cls + ' ' + (a.ok ? 'right' : 'wrong') + ' writing">' + chars + '</span>';
     }
