@@ -99,6 +99,18 @@
 - **WHEN** 点「看结果」后刷新页面
 - **THEN** 结果页显示本段覆盖率、参考译文与「再写一遍 / 下一单元 / 返回题库」，首页该单元显示「最好 N%」
 
+### Requirement: 干扰项质量
+
+系统 SHALL 让每题的三个干扰项与正确答案同族或形近：至少两项与答案共享词干（原形 / 三单 / -ed / -ing / -ly / 名词化）或仅差 1–2 个字母；短语组的干扰项替换介词、副词或动词。正确答案的文本与位置打散后不得改变其内容。
+
+#### Scenario: 词形判断
+- **WHEN** 答案为 `assessed`
+- **THEN** 四个选项为 assess / assesses / assessing / assessed
+
+#### Scenario: 形近词
+- **WHEN** 答案为 `discrete`
+- **THEN** 干扰项含 discreet / discreetly / discretion 这类形近词
+
 ## MODIFIED Requirements
 
 ### Requirement: 底部导航
