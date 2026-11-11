@@ -451,6 +451,52 @@ function examBlankStem(s, fn){
   return esc(s).replace(/___\((\d)\)|___/g, (m, num) => fn(num ? Number(num) : 1));
 }
 
+/* ---------------- 原句里的搭配着色 ---------------- */
+/* 只拿实词当锚点：the/for 这类会把高亮拉到离谱的位置 */
+const EX_CUE_STOP = ['the','for','with','and','into','of','to','in','on','at','a','an','be','is','are','that','this','his','her','its','their','from'];
+/* 取命中词的第一个到最后一个，中间整段（含空位）一起标，读起来才是完整搭配 */
+function examCueRange(raw, cue){
+  const toks = (String(cue || '').toLowerCase().match(/[a-z]+/g) || [])
+    .filter(t => t.length >= 3 && EX_CUE_STOP.indexOf(t) < 0);
+  if(!toks.length) return null;
+  const words = [];
+  const re = /[A-Za-z][A-Za-z'-]*/g;
+  let m;
+  while((m = re.exec(raw))) words.push({ w:m[0].toLowerCase(), s:m.index, e:m.index + m[0].length });
+  let a = -1, b = -1;
+  toks.forEach(t => {
+    /* 双向前缀匹配：company / companies、maintain / maintains 都算命中 */
+    const hit = words.find(x => x.w === t || x.w.indexOf(t) === 0 || t.indexOf(x.w) === 0);
+    if(!hit) return;
+    if(a < 0 || hit.s < a) a = hit.s;
+    if(hit.e > b) b = hit.e;
+  });
+  return (a < 0 || b <= a) ? null : [a, b];
+}
+/* 区间内包一层钢蓝，区间外原样转义 */
+function examCueWrap(text, offset, r){
+  if(!text) return '';
+  const a = offset, b = offset + text.length;
+  if(b <= r[0] || a >= r[1]) return esc(text);
+  const s1 = Math.max(0, r[0] - a), e1 = Math.min(text.length, r[1] - a);
+  return esc(text.slice(0, s1)) + '<span class="ex-cue-hl">' + esc(text.slice(s1, e1)) + '</span>' + esc(text.slice(e1));
+}
+/* 带搭配着色的题干：空位仍交给回调，跨空位的部分连空位一起标 */
+function examStemCue(s, cue, fn){
+  const raw = String(s || '');
+  const r = examCueRange(raw, cue);
+  if(!r) return examBlankStem(raw, fn);
+  const re = /___\((\d)\)|___/g;
+  let out = '', last = 0, m;
+  while((m = re.exec(raw))){
+    out += examCueWrap(raw.slice(last, m.index), last, r);
+    const blank = fn(m[1] ? Number(m[1]) : 1);
+    out += (m.index >= r[0] && re.lastIndex <= r[1]) ? '<span class="ex-cue-hl">' + blank + '</span>' : blank;
+    last = re.lastIndex;
+  }
+  return out + examCueWrap(raw.slice(last), last, r);
+}
+
 /* ---------------- 记忆库：取条目与渲染小工具 ---------------- */
 /* 按组 + 题号取记忆；双空题两空共用同一条 */
 function memoFor(gid, q){
@@ -828,10 +874,10 @@ function renderExamTransResult(){
 }
 
 /* ---------------- 答题页 ---------------- */
-function examRunStem(it, gid){
+function examRunStem(it, gid, cue){
   const g = examGroup(gid);
   const siblings = g ? g.items.filter(x => x.q === it.q) : [it];
-  return examBlankStem(it.s, n => {
+  const blank = n => {
     const sub = siblings.find(x => x.b === n) || it;
     const a = examRun.answers[examKey(sub, gid)];
     const cls = 'ex-blank' + (n === it.b ? ' on' : '');
@@ -845,7 +891,10 @@ function examRunStem(it, gid){
       return '<span class="' + cls + ' ' + (a.ok ? 'right' : 'wrong') + ' writing">' + chars + '</span>';
     }
     return '<span class="' + cls + '"></span>';
-  });
+  };
+  /* 判分后才标：先给「读句子 → 看搭配落在哪」的时机 */
+  const m = cue ? memoFor(gid, it.q) : null;
+  return m ? examStemCue(it.s, m.cue, blank) : examBlankStem(it.s, blank);
 }
 function examOptsHtml(it, ans){
   const letters = ['A', 'B', 'C', 'D'];
@@ -899,7 +948,7 @@ function renderExamRun(){
         '<span class="ex-q-no">' + no + '</span>' +
         '<p class="ex-q-meta">' + esc(meta) + '</p>' +
       '</div>' +
-      '<p class="ex-q">' + examRunStem(it, cur.gid) + '</p>' +
+      '<p class="ex-q">' + examRunStem(it, cur.gid, !!ans) + '</p>' +
       '<div class="ex-opts">' + examOptsHtml(it, ans) + '</div>' +
       (ans ? '<div class="ex-note">' +
         '<span class="ex-note-k">考点</span>' +
