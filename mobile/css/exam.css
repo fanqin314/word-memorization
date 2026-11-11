@@ -136,13 +136,13 @@
 }
 /* 记忆行：答题解析与结果页错题清单共用，放不下就换行 */
 .ex-memo{
-  display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem .55rem;
-  margin-top:.5rem;
-  font-size:.78rem;font-weight:700;line-height:1.7;
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.22rem .6rem;
+  margin-top:.55rem;
+  font-size:.95rem;font-weight:700;line-height:1.75;
   color:color-mix(in srgb,var(--ink) 62%,transparent);
 }
 .ex-memo-k{
-  flex:none;font-family:var(--mono);font-size:.64rem;font-weight:900;letter-spacing:.1em;
+  flex:none;font-family:var(--mono);font-weight:900;letter-spacing:.06em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
 .ex-memo-w{font-weight:900;color:color-mix(in srgb,var(--ink) 82%,transparent);}
@@ -150,15 +150,15 @@
 .ex-memo-hl{font-weight:900;color:#A33A1E;border-bottom:2px solid currentColor;}
 /* 原文提示换成钢笔墨蓝，和词形、中文分开三层 */
 .ex-memo-cue{
-  font-family:var(--mono);font-size:.74rem;letter-spacing:.01em;
+  font-family:var(--mono);letter-spacing:.01em;
   color:#2B5B84;
 }
-/* 中文是记忆钩子，比英文再大一号，扫一眼就能把词和意思连起来 */
+/* 中文是记忆钩子，字号与词形、搭配统一，只靠字重和颜色区分层次 */
 .ex-memo-zh{
-  font-size:.92rem;line-height:1.5;
+  line-height:1.5;
   color:color-mix(in srgb,var(--ink) 78%,transparent);
 }
-.ex-memo-zh b{font-weight:900;font-size:1rem;color:var(--ink);}
+.ex-memo-zh b{font-weight:900;color:var(--ink);}
 /* 记忆库页：按 Unit 分块，条目默认遮住英文 */
 .ex-mm-unit{margin-top:.15rem;}
 .ex-mm-unit-head{
@@ -351,10 +351,10 @@
 }
 .ex-note-k{
   display:block;margin-bottom:.18rem;
-  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.1em;
+  font-family:var(--mono);font-size:.72rem;font-weight:900;letter-spacing:.1em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
-.ex-note p{font-size:.9rem;font-weight:700;line-height:1.7;}
+.ex-note p{font-size:.95rem;font-weight:700;line-height:1.7;}
 .ex-note-memo{
   margin-top:.55rem;padding:.55rem .65rem;
   background:color-mix(in srgb,var(--ink) 4%,var(--paper-2));
