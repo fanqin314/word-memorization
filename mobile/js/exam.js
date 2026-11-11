@@ -904,11 +904,12 @@ function examRunStem(it, gid, cue){
     const cls = 'ex-blank' + (n === it.b ? ' on' : '');
     if(a){
       /* 逐字拆成 <i>，让 CSS 能按 --d 依次写入；空格不包 <i>，否则会塌掉 */
+      /* 答错时填正确答案，而不是自己选的那个，空格才是「该记住的形态」 */
+      const shown = String((a.ok ? sub.o[a.pick] : sub.o[sub.a]) || '');
       const memo = memoFor(gid, it.q);
-      const hl = memo ? examCueHlRange(memo, sub.o[a.pick]) : null;
-      const text = String(sub.o[a.pick] || '');
+      const hl = memo ? examCueHlRange(memo, shown) : null;
       let k = 0;
-      const chars = text.split('').map((ch, idx) => {
+      const chars = shown.split('').map((ch, idx) => {
         if(ch === ' ') return ' ';
         const on = hl && idx >= hl[0] && idx < hl[1];
         return '<i class="ex-ch' + (on ? ' ex-ch-hl' : '') + '" style="--d:' + (k++ * 40) + 'ms">' + esc(ch) + '</i>';

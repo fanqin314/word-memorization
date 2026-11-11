@@ -153,8 +153,12 @@
   font-family:var(--mono);font-size:.62rem;letter-spacing:.01em;
   color:#2B5B84;
 }
-.ex-memo-zh{color:color-mix(in srgb,var(--ink) 72%,transparent);}
-.ex-memo-zh b{font-weight:900;color:var(--ink);}
+/* 中文是记忆钩子，比英文再大一号，扫一眼就能把词和意思连起来 */
+.ex-memo-zh{
+  font-size:.8rem;line-height:1.5;
+  color:color-mix(in srgb,var(--ink) 78%,transparent);
+}
+.ex-memo-zh b{font-weight:900;font-size:.86rem;color:var(--ink);}
 /* 记忆库页：按 Unit 分块，条目默认遮住英文 */
 .ex-mm-unit{margin-top:.15rem;}
 .ex-mm-unit-head{
