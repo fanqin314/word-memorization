@@ -1669,6 +1669,8 @@ body{
   background:var(--paper-2);
   border-top:1px solid var(--rule);
 }
+/* 期末答题时收起底部导航：整屏只留题干和选项，返回靠顶部的「← 题库」或手机返回键 */
+.app.exam-run .tabbar{display:none;}
 .tab{
   appearance:none;cursor:pointer;
   background:transparent;border:0;border-radius:12px;
@@ -4121,6 +4123,26 @@ const examRun = {
   items:[], idx:0, right:0, wrong:[], answers:{}
 };
 
+/* 答题时收起底部导航，并压一条历史记录：
+   手机返回键先回到题库首页，而不是把整个页面退掉 */
+let examInRun = false;
+function examChrome(on){
+  const app = document.querySelector('.app');
+  if(app) app.classList.toggle('exam-run', on);
+}
+function examEnterRun(){
+  examInRun = true;
+  examChrome(true);
+  if(!history.state || !history.state.examRun) history.pushState({examRun:1}, '');
+}
+function examLeaveRun(){
+  examInRun = false;
+  examChrome(false);
+  renderExam();
+  /* 退掉自己压的那条记录；popstate 里 examInRun 已是 false，不会再多绘一次 */
+  if(history.state && history.state.examRun) history.back();
+}
+
 /* ---------------- 读写小工具 ---------------- */
 function examGroup(id){
   return EXAM_GROUPS.find(g => g.id === id) || null;
@@ -4230,6 +4252,9 @@ function trCoverage(en, input){
 function renderExam(){
   const view = document.getElementById('view-exam');
   if(!view) return;
+  /* 回到题库首页就是离开答题态：底部导航回来 */
+  examInRun = false;
+  examChrome(false);
   const blanks = EXAM_GROUPS.reduce((n, g) => n + g.items.length, 0);
   const qs = EXAM_GROUPS.reduce((n, g) => n + new Set(g.items.map(x => x.q)).size, 0);
   const wrongList = examWrongList();
@@ -4295,6 +4320,7 @@ function renderExam(){
 function examStartGroup(gid){
   const g = examGroup(gid);
   if(!g) return;
+  examEnterRun();
   examRun.mode = 'group';
   examRun.gid = gid;
   examRun.title = g.title;
@@ -4308,6 +4334,7 @@ function examStartGroup(gid){
 function examStartMix(){
   const all = [];
   EXAM_GROUPS.forEach(g => g.items.forEach(it => all.push({gid:g.id, item:it})));
+  examEnterRun();
   examRun.mode = 'mix';
   examRun.gid = '';
   examRun.title = '全部混合';
@@ -4321,6 +4348,7 @@ function examStartMix(){
 function examStartWrong(){
   const list = examWrongList();
   if(!list.length){ toast('还没有错题'); renderExam(); return; }
+  examEnterRun();
   examRun.mode = 'wrong';
   examRun.gid = '';
   examRun.title = '错题练习';
@@ -4338,6 +4366,7 @@ const examTransRun = { id:'', text:'', done:false, pct:0, missed:[] };
 function examStartTrans(id){
   const t = examTrans(id);
   if(!t) return;
+  examEnterRun();
   examTransRun.id = id;
   examTransRun.text = '';
   examTransRun.done = false;
@@ -4664,7 +4693,7 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
   }
   if(t.closest('[data-ex-back]')){
     e.preventDefault(); e.stopPropagation();
-    renderExam();
+    examLeaveRun();
   }
 });
 
@@ -4815,6 +4844,12 @@ function refreshHeader(){
    导航与交互（每个容器只绑定一次）
    ============================================================ */
 function switchTab(name){
+  /* 答题到一半切走：底部导航恢复，顺手退掉那条历史记录 */
+  if(name !== 'exam' && examInRun){
+    examInRun = false;
+    examChrome(false);
+    if(history.state && history.state.examRun) history.back();
+  }
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const view = document.getElementById('view-' + name);
@@ -5180,6 +5215,14 @@ window.addEventListener('pointercancel', endDrag);
 /* 手机返回键 / 浏览器后退：面板开着就先收面板，不直接退出页面。
    这条历史记录是我们压的，返回键已经把它吃掉，所以这里只关面板、不再 back() */
 window.addEventListener('popstate', () => {
+  /* 期末答题中按手机返回键：回到题库首页，不退出页面。
+     这条记录是我们压的，返回键已经把它吃掉，所以这里不再 back() */
+  if(examInRun){
+    examInRun = false;
+    examChrome(false);
+    renderExam();
+    return;
+  }
   /* 自己点遮罩/选牌组关闭时退记录，这一次 popstate 不处理，
      否则快速再点开会被它顺手关掉 */
   if(pickIgnorePop){ pickIgnorePop--; return; }

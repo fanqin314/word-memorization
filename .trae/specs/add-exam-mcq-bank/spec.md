@@ -111,6 +111,22 @@
 - **WHEN** 答案为 `discrete`
 - **THEN** 干扰项含 discreet / discreetly / discretion 这类形近词
 
+### Requirement: 答题态收导航与返回键
+
+系统 SHALL 在进入任一组答题/翻译/结果页时隐藏底部导航，并压入一条历史记录使手机返回键回到题库首页；点「← 题库 / 返回题库」或离开期末 tab 时恢复导航并退掉该记录。
+
+#### Scenario: 收起导航
+- **WHEN** 从题库首页进入任一组
+- **THEN** 底部 5 个 tab 隐藏，答题区占满整屏
+
+#### Scenario: 手机返回键
+- **WHEN** 答题中按手机返回键
+- **THEN** 回到题库首页，底部导航恢复，页面不退出、URL 不变
+
+#### Scenario: 顶部返回
+- **WHEN** 点「← 题库」
+- **THEN** 立即回到题库首页并恢复底部导航，历史记录不残留
+
 ## MODIFIED Requirements
 
 ### Requirement: 底部导航
