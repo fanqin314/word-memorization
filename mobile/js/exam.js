@@ -835,7 +835,15 @@ function examRunStem(it, gid){
     const sub = siblings.find(x => x.b === n) || it;
     const a = examRun.answers[examKey(sub, gid)];
     const cls = 'ex-blank' + (n === it.b ? ' on' : '');
-    if(a) return '<span class="' + cls + ' ' + (a.ok ? 'right' : 'wrong') + '">' + esc(sub.o[a.pick]) + '</span>';
+    if(a){
+      /* 逐字拆成 <i>，让 CSS 能按 --d 依次写入；空格不包 <i>，否则会塌掉 */
+      let k = 0;
+      const chars = String(sub.o[a.pick] || '').split('').map(ch => {
+        if(ch === ' ') return ' ';
+        return '<i class="ex-ch" style="--d:' + (k++ * 40) + 'ms">' + esc(ch) + '</i>';
+      }).join('');
+      return '<span class="' + cls + ' ' + (a.ok ? 'right' : 'wrong') + ' writing">' + chars + '</span>';
+    }
     return '<span class="' + cls + '"></span>';
   });
 }
@@ -844,7 +852,8 @@ function examOptsHtml(it, ans){
   return it.o.map((txt, i) => {
     let cls = 'ex-opt';
     if(ans){
-      if(i === it.a) cls += ' right';
+      /* 答错时正确答案用 lit 虚线点亮，和用户选的 wrong 区分开 */
+      if(i === it.a) cls += ' right' + (ans.ok ? '' : ' lit');
       else if(i === ans.pick) cls += ' wrong';
       else cls += ' dim';
     }
@@ -866,19 +875,38 @@ function renderExamRun(){
   const meta = where + '第 ' + it.q + ' 题' + (blanks > 1 ? ' · 空 ' + it.b + '/' + blanks : '');
   const last = examRun.idx + 1 >= examRun.items.length;
 
-  view.innerHTML = '<div class="ex-wrap">' +
+  /* 题号跟本轮位置走：跨组混合时 it.q 会重复，不能用它 */
+  const no = ('0' + (examRun.idx + 1)).slice(-2);
+  const judgeCls = ans ? (ans.ok ? ' judged-right' : ' judged-wrong') : '';
+  const memo = ans ? examMemoLine(cur.gid, it.q) : '';
+
+  const strip = examRun.items.map((x, i) => {
+    const a = examRun.answers[examKey(x.item, x.gid)];
+    let cls = 'ex-score-cell';
+    if(a) cls += a.ok ? ' is-right' : ' is-wrong';
+    if(i === examRun.idx) cls += ' is-cur';
+    return '<span class="' + cls + '"></span>';
+  }).join('');
+
+  view.innerHTML = '<div class="ex-wrap ex-run' + judgeCls + '">' +
       '<div class="ex-bar">' +
         '<button class="ex-back" type="button" data-ex-back>← 题库</button>' +
         '<span class="ex-bar-mid">' + esc(examRun.title) + '</span>' +
         '<span class="ex-bar-prog">' + (examRun.idx + 1) + ' / ' + examRun.items.length + '</span>' +
       '</div>' +
-      '<div>' +
+      '<div class="ex-score-strip">' + strip + '</div>' +
+      '<div class="ex-q-head">' +
+        '<span class="ex-q-no">' + no + '</span>' +
         '<p class="ex-q-meta">' + esc(meta) + '</p>' +
-        '<p class="ex-q">' + examRunStem(it, cur.gid) + '</p>' +
-        '<div class="ex-opts">' + examOptsHtml(it, ans) + '</div>' +
-        (ans ? '<div class="ex-tip"><span class="ex-tk">考点</span><p>' + esc(it.n) + '</p></div>' +
-          examMemoLine(cur.gid, it.q) : '') +
       '</div>' +
+      '<p class="ex-q">' + examRunStem(it, cur.gid) + '</p>' +
+      '<div class="ex-opts">' + examOptsHtml(it, ans) + '</div>' +
+      (ans ? '<div class="ex-note">' +
+        '<span class="ex-note-k">考点</span>' +
+        '<p>' + esc(it.n) + '</p>' +
+        (memo ? '<div class="ex-note-memo">' + memo + '</div>' : '') +
+      '</div>' +
+      '<span class="ex-stamp ' + (ans.ok ? 'ok' : 'bad') + '" aria-hidden="true">' + (ans.ok ? '✓' : '✗') + '</span>' : '') +
       '<div class="ex-foot">' +
         '<button class="ex-btn" type="button" data-ex-next' + (ans ? '' : ' disabled') + '>' + (last ? '看结果' : '下一题') + '</button>' +
       '</div>' +
@@ -903,7 +931,21 @@ function examPick(i){
   if(ok){ if(at >= 0) r.wrong.splice(at, 1); }
   else if(at < 0){ r.wrong.push(key); }
   persist(EXAM_KEY, examState);
-  renderExamRun();
+
+  /* 先给点击项上一版「按下」态，重绘后 CSS 还能接着放映 */
+  const btn = document.querySelector('#view-exam .ex-opt[data-ex-opt="' + i + '"]');
+  if(btn) btn.classList.add('pick-live');
+  sfxPlay(ok ? 'ok' : 'bad');
+
+  const reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if(reduce){ renderExamRun(); return; }
+  sfxHaptic(ok ? 12 : [8, 40, 8]);
+
+  const idx = examRun.idx;
+  setTimeout(() => {
+    /* 这 140ms 里用户可能已经按了「← 题库」或手机返回键，不能再把答题页画回来 */
+    if(examInRun && examRun.idx === idx) renderExamRun();
+  }, 140);
 }
 function examNext(){
   const cur = examRun.items[examRun.idx];
@@ -942,7 +984,7 @@ function renderExamResult(){
       const it = cur.item;
       const stem = examBlankStem(it.s, n =>
         n === it.b ? '<b>' + esc(it.o[it.a]) + '</b>' : '<span class="ex-blank"></span>');
-      return '<div class="ex-wrong-i">' +
+      return '<div class="ex-wrong-i ex-res-card">' +
           '<p class="ex-wrong-s">' + stem + '</p>' +
           '<p class="ex-wrong-a">正确答案：' + 'ABCD'[it.a] + ' ' + esc(it.o[it.a]) + '</p>' +
           '<p class="ex-wrong-n">考点：' + esc(it.n) + '</p>' +
@@ -954,13 +996,20 @@ function renderExamResult(){
   const g = examRun.mode === 'group' ? examGroup(examRun.gid) : null;
   const bankHtml = g ? '<p class="ex-bank">本组词库 · ' + g.bank.map(esc).join(' · ') + '</p>' : '';
 
-  view.innerHTML = '<div class="ex-wrap">' +
-      '<div>' +
+  const ruler = examRun.items.map((x, i) => {
+    const a = examRun.answers[examKey(x.item, x.gid)];
+    return '<span class="ex-res-cell ' + (a && a.ok ? 'is-right' : 'is-wrong') + '" style="--d:' + (i * 18) + 'ms"></span>';
+  }).join('');
+
+  view.innerHTML = '<div class="ex-wrap ex-res">' +
+      '<div class="ex-res-hero">' +
         '<span class="ex-kicker">' + esc(examRun.title) + ' · 本轮完成</span>' +
-        '<p class="ex-res-num">' + right + ' / ' + total + '</p>' +
+        '<p class="ex-res-num"><b id="exScoreNum">0</b> / ' + total + '</p>' +
         '<p class="ex-res-sub">正确率 ' + rate + '%</p>' +
         (bestLine ? '<p class="ex-res-sub">' + bestLine + '</p>' : '') +
       '</div>' +
+      (right === total ? '<div class="ex-res-seal">全对</div>' : '') +
+      '<div class="ex-res-ruler">' + ruler + '</div>' +
       listHtml +
       '<div class="ex-foot">' +
         '<button class="ex-btn ghost" type="button" data-ex-redo' + (wrongs.length ? '' : ' disabled') + '>重做错题</button>' +
@@ -969,6 +1018,23 @@ function renderExamResult(){
       '</div>' +
       bankHtml +
     '</div>';
+
+  /* innerHTML 刚换过，必须重新取元素；从 0 涨到 right 才有「结算」的感觉 */
+  const numEl = document.getElementById('exScoreNum');
+  if(numEl){
+    const reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if(reduce || !right){
+      numEl.textContent = String(right);
+    } else {
+      const t0 = performance.now();
+      const step = now => {
+        const p = Math.min(1, (now - t0) / 500);
+        numEl.textContent = String(Math.round(right * p));
+        if(p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+  }
 }
 function examRedoWrong(){
   const items = examRun.wrong

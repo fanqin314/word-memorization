@@ -223,3 +223,209 @@
   background:var(--paper-2);color:color-mix(in srgb,var(--ink) 68%,transparent);
 }
 
+/* ============================================================
+   期末四选一：考卷纸面 / 刻度 / 书写 / 印章批注
+   （以下只追加，汉译英与记忆库样式不动）
+   ============================================================ */
+
+/* 局部令牌 */
+.ex-wrap{
+  --ex-sheet:#fff;
+  --ex-red:#A33A1E;
+  --ex-ink-dur:160ms;
+  --ex-write-dur:240ms;
+  --ex-stamp-dur:320ms;
+}
+.ex-run{position:relative;animation:exSheetIn 220ms var(--ease) both;}
+
+/* 进度刻度条 */
+.ex-score-strip{
+  display:flex;align-items:center;gap:2px;height:18px;
+  animation:exRulerIn 260ms var(--ease) both;
+}
+.ex-score-cell{position:relative;flex:1;height:2px;background:var(--rule-2);}
+.ex-score-cell.is-right{background:var(--ink);}
+.ex-score-cell.is-wrong{background:var(--ex-red);}
+.ex-score-cell.is-cur{background:var(--ink);box-shadow:0 0 0 2px rgba(32,36,42,.12);}
+.ex-score-cell.is-cur::after{
+  content:"";position:absolute;left:50%;bottom:-5px;width:6px;height:2px;
+  background:var(--ink);transform:translateX(-50%);
+}
+
+/* 题头 */
+.ex-q-head{
+  display:flex;align-items:baseline;gap:.5rem;
+  padding-bottom:.35rem;border-bottom:1px solid var(--rule);
+}
+.ex-q-no{
+  font-family:var(--display);font-size:2.1rem;line-height:.9;
+  letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--ink);
+}
+.ex-q-head .ex-q-meta{margin-bottom:0;}
+
+/* 选项纸片 */
+.ex-opt{
+  position:relative;overflow:hidden;overflow-wrap:anywhere;
+  box-shadow:0 1px 2px rgba(32,36,42,.04);
+  transition:transform 120ms var(--ease),background-color 120ms,border-color 120ms,color 120ms,box-shadow 120ms;
+}
+.ex-opt:active{transform:translateY(1px) scale(.997);}
+.ex-opt > span{position:relative;z-index:1;}
+.ex-opt > span:last-child{flex:1;min-width:0;overflow-wrap:anywhere;}
+/* 按下态只做「纸被按下去」：不提前变墨，否则重绘时的墨染会闪一下白 */
+.ex-opt.pick-live{
+  background:color-mix(in srgb,var(--ink) 7%,#fff);
+  border-color:var(--ink);color:var(--ink);
+  transform:translateY(1px) scale(.997);
+}
+/* 墨染从左铺满；文字等到墨过来再转白，避免白字压在纸上 */
+.ex-opt.right{
+  background:#fff;border-color:var(--ink);color:#fff;
+  animation:exOptText var(--ex-ink-dur) var(--ease) 70ms both;
+}
+.ex-opt.right .ex-l{color:inherit;}
+.ex-opt.right::before{
+  content:"";position:absolute;inset:0;z-index:0;transform-origin:left;
+  background:var(--ink);
+  animation:exInkSweep var(--ex-ink-dur) var(--ease) both;
+}
+.ex-opt.wrong{animation:exShakeX 220ms var(--ease) both;}
+/* 答错时给正确答案「点亮」：纸色打底 + 虚线框，不参与墨染 */
+.ex-opt.lit,
+.ex-opt.lit.right{
+  background:var(--paper-2);color:var(--ink);
+  border:1px dashed var(--ink);
+  box-shadow:0 0 0 2px rgba(32,36,42,.06);
+  transform:translateY(-1px);animation:none;
+}
+.ex-opt.lit .ex-l,.ex-opt.lit.right .ex-l{color:var(--ink);}
+.ex-opt.lit::before{display:none;}
+
+/* 空格书写：逐字母落下 + 下划线从左铺开 */
+.ex-blank.writing{position:relative;border-bottom-color:transparent;}
+.ex-blank.writing::after{
+  content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
+  background:var(--ink);transform-origin:left;
+  animation:exUnderline var(--ex-write-dur) var(--ease) both;
+}
+.ex-blank.writing.right{color:var(--ink);}
+.ex-blank.writing.wrong{color:var(--ex-red);}
+.ex-blank.writing.wrong::after{background:var(--ex-red);}
+.ex-ch{
+  display:inline-block;font-style:normal;
+  animation:exWriteIn 160ms var(--ease) both;
+  animation-delay:var(--d,0ms);
+}
+
+/* 判分印章 */
+.ex-stamp{
+  position:absolute;top:2.6rem;right:.2rem;
+  display:flex;align-items:center;justify-content:center;
+  width:2.5rem;height:2.5rem;border:2px solid currentColor;border-radius:2px;
+  font-family:var(--display);font-size:1.5rem;line-height:1;
+  pointer-events:none;transform:rotate(-7deg);opacity:0;
+}
+.ex-stamp.ok{color:var(--ink);animation:exStampIn var(--ex-stamp-dur) var(--spring) 60ms both;}
+.ex-stamp.bad{color:var(--ex-red);font-size:1.2rem;opacity:0;animation:exStampIn var(--ex-stamp-dur) var(--spring) 60ms both;}
+
+/* 解析批注 */
+.ex-note{
+  margin-top:.7rem;padding:.1rem 0 .1rem .65rem;
+  border-left:2px solid var(--ink);
+  animation:exNoteIn 200ms var(--ease) 80ms both;
+}
+.ex-note-k{
+  display:block;margin-bottom:.1rem;
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-note p{font-size:.74rem;font-weight:700;line-height:1.6;}
+.ex-note-memo{
+  margin-top:.45rem;padding:.45rem .55rem;
+  background:color-mix(in srgb,var(--ink) 4%,var(--paper-2));
+  border-left:2px solid var(--rule-2);
+}
+
+/* 结果页 */
+.ex-res-hero{padding-bottom:.55rem;border-bottom:1px solid var(--rule);}
+.ex-res-hero .ex-res-num{font-variant-numeric:tabular-nums;}
+.ex-res-ruler{display:flex;gap:2px;margin-top:.5rem;}
+.ex-res-cell{
+  flex:1;height:6px;background:var(--rule-2);transform-origin:left;
+  animation:exRulerIn 260ms var(--ease) both;
+  animation-delay:var(--d,0ms);
+}
+.ex-res-cell.is-right{background:var(--ink);}
+.ex-res-cell.is-wrong{background:var(--ex-red);}
+.ex-res-seal{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:5.4rem;height:2.4rem;border:2px solid currentColor;border-radius:2px;
+  font-family:var(--display);font-size:1rem;letter-spacing:.18em;
+  color:var(--ink);transform:rotate(-6deg);
+  animation:exStampIn 420ms var(--spring) 120ms both;
+}
+.ex-res-card{
+  background:var(--ex-sheet);border:1px solid var(--rule);border-radius:2px;
+  padding:.6rem .65rem;
+}
+.ex-res-card + .ex-res-card{margin-top:.5rem;}
+/* 卡片自带边框，去掉外层那条重复的顶线 */
+.ex-wrong .ex-wrong-i{padding-top:0;border-top:0;}
+
+/* 首页按压 */
+.ex-row:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(32,36,42,.10);}
+
+/* ---------------- 关键帧 ---------------- */
+@keyframes exSheetIn{
+  from{opacity:0;transform:translateY(6px) scale(.995);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+@keyframes exInkSweep{
+  from{transform:scaleX(0);opacity:.2;}
+  to{transform:scaleX(1);opacity:1;}
+}
+@keyframes exWriteIn{
+  from{opacity:0;transform:translateY(2px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes exUnderline{
+  from{transform:scaleX(0);}
+  to{transform:scaleX(1);}
+}
+@keyframes exStampIn{
+  0%{opacity:0;transform:rotate(-7deg) scale(1.55);}
+  60%{opacity:1;transform:rotate(-6deg) scale(.96);}
+  100%{opacity:1;transform:rotate(-7deg) scale(1);}
+}
+@keyframes exOptText{
+  from{color:var(--ink);}
+  to{color:#fff;}
+}
+@keyframes exShakeX{
+  0%{transform:translateX(0);}
+  20%{transform:translateX(-2px);}
+  55%{transform:translateX(2px);}
+  80%{transform:translateX(-1px);}
+  100%{transform:translateX(0);}
+}
+@keyframes exNoteIn{
+  from{opacity:0;transform:translateY(8px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes exRulerIn{
+  from{transform:scaleX(.2);}
+  to{transform:scaleX(1);}
+}
+
+/* 减弱动效：保留印章可见性 */
+@media (prefers-reduced-motion:reduce){
+  .ex-run *,.ex-res *{animation:none !important;transform:none !important;}
+  .ex-stamp{opacity:1 !important;}
+  /* 去掉动画后必须直接给出终态，否则白底白字 */
+  .ex-opt.right{background:var(--ink);color:#fff;}
+  .ex-opt.right .ex-l{color:#fff;}
+  .ex-opt.right::before{display:none;}
+  .ex-opt.lit,.ex-opt.lit.right{background:var(--paper-2);color:var(--ink);}
+  .ex-opt.lit .ex-l{color:var(--ink);}
+}
+
