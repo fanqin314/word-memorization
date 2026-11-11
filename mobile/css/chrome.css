@@ -1,0 +1,80 @@
+/* 底部导航 / 轻提示 / 响应式与减弱动效收尾 */
+
+/* ---------------- 底部导航 ---------------- */
+.tabbar{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:.24rem;
+  flex:none;position:relative;z-index:5;
+  padding:.42rem .5rem calc(.42rem + env(safe-area-inset-bottom,0px));
+  background:var(--paper-2);
+  border-top:1px solid var(--rule);
+}
+/* 期末答题时收起底部导航：整屏只留题干和选项，返回靠顶部的「← 题库」或手机返回键 */
+.app.exam-run .tabbar{display:none;}
+.tab{
+  appearance:none;cursor:pointer;
+  background:transparent;border:0;border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.16rem;
+  padding:.34rem 0 .3rem;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+  font-family:var(--sans);font-size:.6rem;font-weight:900;
+  transition:transform .22s var(--spring),background .2s,color .2s;
+}
+.tab svg{width:21px;height:21px;transition:color .2s;}
+.tab:active{transform:scale(.94);}
+.tab.active{
+  background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--ink);
+}
+.tab.active svg{color:var(--ac-deep);}
+/* 键入时键盘占住下半屏：底栏收起，不跟着键盘一起上浮 */
+.app.kb-typing .tabbar{display:none;}
+
+/* ---------------- 轻提示 ---------------- */
+.toast{
+  position:absolute;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));
+  transform:translate(-50%,12px);z-index:50;
+  background:var(--ink);color:#fff;
+  font-size:.72rem;font-weight:800;letter-spacing:.01em;
+  padding:.5rem .9rem;border-radius:10px;border:0;
+  box-shadow:0 10px 24px -10px rgba(32,36,42,.55);
+  opacity:0;pointer-events:none;white-space:nowrap;
+  max-width:calc(100% - 2rem);overflow:hidden;text-overflow:ellipsis;
+  transition:opacity .2s var(--ease),transform .26s var(--spring);
+}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+
+/* 窄屏：高度按可用内宽反推，保证黄金矩形不横向溢出 */
+@media (max-width:389px){
+  .art-frame{max-width:100%;}
+}
+@media (max-width:350px){
+  .word{font-size:1.7rem;}
+  .scene,.morph{display:none;}
+  .rate{font-size:.7rem;padding:.52rem .1rem .54rem;}
+}
+/* 矮屏逐级减负：保证一屏一张卡，不出现内部滚动 */
+@media (max-height:740px){
+  .morph{display:none;}
+  /* 矮屏背面收紧留白（字号不变），尽量一屏放下 */
+  .back-inner{padding:.42rem .62rem .48rem;}
+  .back-head{margin-bottom:.3rem;padding:0;}
+  .back-gloss{margin:.04rem 0 .3rem;}
+  .back-block{padding:.34rem 0 .3rem;margin-bottom:0;}
+  .back-block h4{margin-bottom:.14rem;}
+  .back-root{line-height:1.75;padding:0;}
+  .fill-q{margin-bottom:.24rem;}
+}
+@media (max-height:640px){
+  .scene{display:none;}
+  .hero{padding-top:calc(.4rem + env(safe-area-inset-top, 0px));padding-bottom:.48rem;}
+}
+@media (max-height:560px){
+  .art-frame{display:none;}
+  .gloss{font-size:.82rem;}
+  .word{font-size:1.55rem;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  .face.front .rv1,.face.front .rv2,.face.front .rv3,.face.front .rv4,
+  .face.front .rv5,.face.front .rv5b,.face.front .rv6,.face.front .di-art,
+  .rate.stamp::after,.deck-meta b.tick,.hero-fill.shine::after{animation:none !important;}
+}

@@ -19,7 +19,7 @@
 ## Impact
 
 - Affected specs：`restyle-lib-detail-magazine`、`polish-card-golden-motion`、`add-due-scheduling` 均不涉及；仅底部导航列数变化。
-- Affected code：`mobile/index.html`（`.tabbar` 列数、导航按钮、`<main>` 内新增 section、脚本区新增题库数据与 `renderExam*` 系列函数、`switchTab`）。
+- Affected code：`mobile/index.html`（`.tabbar` 列数、导航按钮、`<main>` 内新增 section、脚本区新增题库数据与 `renderExam*` 系列函数、`switchTab`）。原单文件已按 tab 拆为 `mobile/css/*.css` 与 `mobile/js/*.js`（核心 / 刷词 / 词库 / 自测 / 期末 / 数据 / 导航与启动），期末相关代码落在 `mobile/js/exam.js` 与 `mobile/css/exam.css`。
 
 ## ADDED Requirements
 

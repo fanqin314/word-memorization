@@ -1,0 +1,85 @@
+/* 数据页：统计卡 + 刷词贡献墙 */
+
+/* ---------------- 刷词贡献墙（放在数据页） ---------------- */
+.cw-scroll{overflow-x:auto;overflow-y:hidden;margin:.1rem -.15rem 0;padding:0 .15rem;scrollbar-width:none;}
+.cw-scroll::-webkit-scrollbar{display:none;}
+.cw-inner{display:inline-block;min-width:100%;}
+.cw-months{position:relative;height:12px;margin-left:15px;}
+.cw-months span{
+  position:absolute;top:0;white-space:nowrap;
+  font-family:var(--mono);font-size:.44rem;font-weight:900;letter-spacing:.02em;
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
+}
+.cw-body{display:flex;align-items:flex-start;gap:5px;}
+.cw-days{flex:none;display:flex;flex-direction:column;gap:3px;width:10px;}
+.cw-days span{
+  height:10px;line-height:10px;text-align:right;
+  font-family:var(--mono);font-size:.4rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 38%,transparent);
+}
+/* 每列一周、每格一天，颜色深浅按当天刷词量 */
+.cw-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,10px);grid-auto-columns:10px;gap:3px;}
+.cw-cell{
+  width:10px;height:10px;border-radius:3px;flex:none;
+  background:color-mix(in srgb,var(--ink) 5%,var(--paper-2));
+  transition:transform .14s var(--spring);
+}
+.cw-cell.lv1{background:color-mix(in srgb,var(--ac) 20%,var(--paper-2));}
+.cw-cell.lv2{background:color-mix(in srgb,var(--ac) 42%,var(--paper-2));}
+.cw-cell.lv3{background:color-mix(in srgb,var(--ac) 66%,var(--paper-2));}
+.cw-cell.lv4{background:color-mix(in srgb,var(--ac) 92%,var(--paper-2));}
+.cw-cell.today{box-shadow:0 0 0 1px color-mix(in srgb,var(--ink) 45%,transparent);}
+.cw-cell.future{visibility:hidden;}
+.cw-cell:active{transform:scale(.86);}
+.cw-tile .tk{position:relative;margin-bottom:.34rem;}
+.cw-win{position:absolute;right:0;top:0;font-style:normal;color:color-mix(in srgb,var(--ink) 40%,transparent);}
+.cw-foot{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:.46rem;}
+.cw-sum{
+  font-family:var(--mono);font-size:.5rem;font-weight:900;letter-spacing:.02em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.cw-sum b{color:var(--ink);}
+.cw-legend{
+  display:inline-flex;align-items:center;gap:3px;
+  font-family:var(--mono);font-size:.42rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 40%,transparent);
+}
+.cw-legend .cw-cell{width:8px;height:8px;border-radius:2px;}
+
+/* ---------------- 数据 ---------------- */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.tile{
+  background:var(--card);border:1px solid var(--rule);border-radius:16px;
+  box-shadow:var(--soft);
+  padding:.6rem .7rem .64rem;
+}
+.tile.wide{grid-column:span 2;}
+.tile .tk{
+  font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);display:block;margin-bottom:.16rem;
+}
+.tile .tv{font-family:var(--display);font-size:1.6rem;letter-spacing:-.03em;line-height:1.1;}
+.tile .tv small{font-family:var(--mono);font-size:.6rem;font-weight:900;color:color-mix(in srgb,var(--ink) 45%,transparent);margin-left:.14rem;}
+.tile .ts{font-size:.62rem;font-weight:700;color:color-mix(in srgb,var(--ink) 52%,transparent);margin-top:.14rem;line-height:1.4;}
+.mst-bars{display:flex;flex-direction:column;gap:.34rem;margin-top:.2rem;}
+.mst-bar{display:flex;align-items:center;gap:.45rem;}
+.mst-bar .lab{flex:none;width:3.4rem;font-size:.6rem;font-weight:900;color:var(--ink-2);}
+.mst-bar .track{flex:1;height:10px;border:1px solid var(--rule);border-radius:999px;background:color-mix(in srgb,var(--ink) 5%,var(--paper-2));overflow:hidden;}
+.mst-bar .fill{display:block;height:100%;border-radius:999px;background:var(--bc);transition:width .5s var(--spring);}
+.mst-bar .num{flex:none;width:1.6rem;text-align:right;font-family:var(--mono);font-size:.6rem;font-weight:900;}
+.link-row{display:flex;align-items:center;gap:.5rem;margin-top:.55rem;}
+.big-link{
+  flex:1;display:flex;align-items:center;justify-content:space-between;gap:.5rem;
+  padding:.62rem .7rem;background:var(--ink);color:#fff;text-decoration:none;
+  border:0;border-radius:12px;
+  font-size:.76rem;font-weight:900;
+  box-shadow:0 6px 16px -8px rgba(32,36,42,.55);
+  transition:transform .16s var(--spring),box-shadow .16s var(--ease);
+}
+.big-link:active{transform:scale(.985);box-shadow:none;}
+.big-link svg{width:16px;height:16px;flex:none;}
+.stat-note{
+  margin-top:.6rem;text-align:center;
+  font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.08em;color:color-mix(in srgb,var(--ink) 34%,transparent);
+}
+

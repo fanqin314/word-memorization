@@ -1,0 +1,835 @@
+/* 刷词：词卡、评分条、正面分层入场与动效 */
+
+/* ---------------- 刷词卡 ---------------- */
+.deck-wrap{display:flex;flex-direction:column;flex:1;min-height:0;}
+.deck-meta{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
+  gap:.4rem;position:relative;z-index:5;
+  padding:.1rem .2rem .45rem;
+  font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 48%,transparent);flex:none;
+}
+.deck-meta b{color:var(--ink);display:inline-block;}
+/* 当前卡组：点开切换牌组；固定墨色，不跟词卡强调色变 */
+.deck-scope{
+  position:relative;
+  justify-self:start;min-width:0;max-width:100%;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:3px 10px 3px 6px;border-radius:9px;
+  border:1px solid rgba(255,255,255,.12);
+  font-family:var(--mono);font-size:.53rem;font-weight:900;letter-spacing:.05em;
+  color:#F5F6F4;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  /* 深色药丸：石墨底 + 更淡的白色波点，压在白色状态条上有分量又不抢词卡 */
+  background-color:#23272D;
+  background-image:radial-gradient(circle,rgba(255,255,255,.07) 1px,transparent 1.3px);
+  background-size:6px 6px;background-position:1px 1px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 2px 8px -4px rgba(32,36,42,.55);
+  transition:transform .16s var(--spring),background-color .16s,border-color .16s;
+}
+/* 按下去先缩一下，松开回弹：给指尖一个明确的「按到了」的回应 */
+.deck-scope:active{transform:scale(.93);}
+.deck-scope:active .deck-dots{transform:scale(.86);}
+.deck-scope.open{
+  background-color:#15181C;
+  border-color:rgba(255,255,255,.24);
+}
+/* 点开时一圈墨色涟漪从按钮边缘荡开（每次加 .open 都会重播） */
+.deck-scope::after{
+  content:'';position:absolute;inset:-2px;border-radius:11px;
+  pointer-events:none;opacity:0;
+}
+.deck-scope.open::after{animation:scopeRipple .52s ease-out;}
+@keyframes scopeRipple{
+  0%{opacity:.85;box-shadow:0 0 0 0 color-mix(in srgb,var(--ink) 24%,transparent);}
+  100%{opacity:0;box-shadow:0 0 0 12px transparent;}
+}
+/* 文案区：平时是牌组名，点开后原地淡出换成「返回」；
+   两层叠在同一个位置，按钮宽度不会跳 */
+/* 卡组名用正排轻字重、字距拉开：比等宽粗体安静，压得住深色底又不吵 */
+.deck-scope .scope-name{
+  position:relative;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--sans);font-size:.56rem;font-weight:700;
+  letter-spacing:.18em;margin-right:-.18em;
+}
+.deck-scope .scope-name .nm{display:inline-block;transition:opacity .16s var(--ease);}
+.deck-scope .scope-name .bk{
+  position:absolute;left:0;top:0;display:inline-block;white-space:nowrap;
+  opacity:0;transition:opacity .16s var(--ease);
+}
+.deck-scope.open .scope-name .nm{opacity:0;}
+.deck-scope.open .scope-name .bk{opacity:1;}
+/* 左侧四点「牌堆」小标：点开后淡出，把位置让给返回箭头 */
+.deck-scope .deck-dots{
+  flex:none;display:grid;grid-template-columns:repeat(2,4px);grid-auto-rows:4px;gap:2px;
+  padding:3px;border-radius:6px;
+  background:rgba(255,255,255,.1);
+  transition:transform .2s var(--spring),opacity .16s var(--ease);
+}
+.deck-scope .deck-dots i{
+  border-radius:50%;background:rgba(255,255,255,.34);
+  transition:background .16s,transform .18s var(--spring);
+}
+.deck-scope .deck-dots i:nth-child(1),.deck-scope .deck-dots i:nth-child(4){transform:scale(.72);}
+.deck-scope.open .deck-dots{opacity:0;transform:scale(.6);}
+/* 返回箭头：和四点共用同一块位置，点开时从右侧转进来 */
+.deck-scope .scope-back{
+  position:absolute;left:6px;top:50%;width:16px;height:16px;margin-top:-8px;
+  pointer-events:none;opacity:0;
+  transform:translateX(6px) scale(.7);
+  transition:opacity .16s var(--ease),transform .26s var(--spring);
+}
+.deck-scope .scope-back::before{
+  content:'';position:absolute;left:5px;top:50%;width:7px;height:7px;margin-top:-3.5px;
+  border-left:1.6px solid #F5F6F4;border-bottom:1.6px solid #F5F6F4;
+  border-radius:1px;transform:rotate(45deg);
+}
+.deck-scope.open .scope-back{opacity:1;transform:none;}
+/* 牌组选择：遮罩 + 词卡收成右上角的小卡 + 从下方上浮的牌架 */
+/* 遮罩只用纯色：全屏 backdrop-filter 在手机上每帧都要重算，面板被拖慢 */
+.deck-mask{
+  position:absolute;inset:0;z-index:1;
+  background:rgba(32,36,42,.18);
+  opacity:0;pointer-events:none;
+  transition:opacity .3s var(--ease) .1s; /* 收起时压暗留一会儿，等抽屉滑下去 */
+}
+.deck-stage.pick-open .deck-mask{opacity:1;pointer-events:auto;transition:opacity .2s var(--ease);}
+/* 打开牌架时，正卡朝右上角收拢并淡出，由小卡接住 */
+.stack{
+  transform-origin:right 16px top 14px;
+  transition:opacity .24s var(--ease),transform .34s cubic-bezier(.22,1,.3,1);
+}
+/* 打开牌架后，正卡退成一张虚化的底片：只用 opacity + transform，
+   不加 filter:blur（大卡每帧重新模糊是这里最贵的一笔开销） */
+.deck-stage.pick-open .stack{
+  opacity:.3;transform:scale(.94) translate3d(0,-3px,0);pointer-events:none;
+  will-change:opacity,transform;
+}
+/* 收起来的当前词卡 */
+.deck-mini{
+  position:absolute;right:16px;top:14px;z-index:3;
+  width:92px;height:124px;padding:10px;
+  display:flex;flex-direction:column;cursor:pointer;
+  background:var(--card);border:1px solid var(--rule);border-radius:12px;
+  box-shadow:-3px -3px 0 rgba(32,36,42,.05),-6px -6px 0 rgba(32,36,42,.03),0 4px 22px -6px rgba(32,36,42,.18);
+  opacity:0;pointer-events:none;
+  transform:rotate(0) scale(.74);transform-origin:100% 0;
+  transition:opacity .28s var(--ease),transform .48s var(--spring);
+}
+.deck-stage.pick-open .deck-mini{
+  opacity:1;pointer-events:auto;transform:rotate(3deg) scale(1);
+  animation:miniFloat 5.6s ease-in-out .5s infinite;
+}
+@keyframes miniFloat{
+  0%,100%{transform:rotate(3deg) scale(1);}
+  50%{transform:rotate(2.4deg) scale(1) translateY(-5px);}
+}
+.deck-mini .wm{
+  font-family:var(--display);font-size:1.05rem;font-weight:900;letter-spacing:-.02em;line-height:1.05;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.deck-mini .gm{
+  margin-top:5px;font-size:.55rem;font-weight:700;line-height:1.3;
+  color:color-mix(in srgb,var(--ink) 72%,transparent);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.deck-mini .bm{
+  margin-top:auto;align-self:flex-start;max-width:100%;
+  display:inline-flex;align-items:center;gap:3px;
+  padding:1px 5px;border-radius:99px;background:rgba(32,36,42,.06);
+  font-family:var(--mono);font-size:.42rem;font-weight:900;color:var(--ink-2);
+}
+.deck-mini .bm::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--ac);flex:none;}
+.deck-mini .bm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* 牌架：从下方抽出的抽屉面板，三节牌组/掌握度/首字母。
+   外面套一层裁切壳，抽屉整块从槽口里往上抽出，不会有内容溢出到页面外 */
+.shelf-clip{
+  position:absolute;left:0;right:0;bottom:0;top:118px;z-index:2;
+  overflow:hidden;pointer-events:none;
+  border-radius:22px 22px 0 0;
+  /* 把抽屉的布局与绘制圈在这一层里：内部重绘不外溢，
+     也不再给整块加投影过渡（阴影过渡每帧都要重绘，正是开面板时顿一下的来源） */
+  contain:layout paint;
+}
+.deck-shelf{
+  position:absolute;left:0;right:0;top:0;bottom:0;
+  padding:30px 16px calc(18px + env(safe-area-inset-bottom,0px));
+  border-radius:22px 22px 0 0;
+  border:1px solid color-mix(in srgb,var(--ink) 9%,transparent);
+  border-bottom:0;
+  /* 抽屉表面：波点纸纹 + 三层雾色晕染 */
+  background-color:var(--card);
+  background-image:
+    radial-gradient(circle,color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1.35px),
+    radial-gradient(82% 40% at 8% 0%,color-mix(in srgb,var(--ac) 15%,transparent),transparent 68%),
+    radial-gradient(68% 38% at 98% 6%,color-mix(in srgb,var(--rose) 12%,transparent),transparent 70%),
+    radial-gradient(92% 52% at 50% 112%,color-mix(in srgb,var(--amber) 12%,transparent),transparent 72%);
+  background-size:10px 10px,auto,auto,auto;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9);
+  overflow-y:auto;overscroll-behavior:contain;
+  /* 收起时整块停在槽口下方（被裁切壳挡住），展开时整块往上抽出；
+     只跑 transform，提前提为合成层，不上弹簧过冲 */
+  pointer-events:none;
+  transform:translate3d(0,100%,0);
+  transition:transform .46s cubic-bezier(.19,1,.3,1);
+  /* 不再常驻 will-change：面板一直挂在页面上，常驻会长期占用一大块合成纹理；
+     translate3d 本身已经能把它提为合成层 */
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  -webkit-overflow-scrolling:touch;
+  /* 只允许纵向滑动：手指一下去浏览器就敢直接滚，不用先等手势判定 */
+  touch-action:pan-y;
+  scrollbar-width:none;
+}
+.deck-shelf::-webkit-scrollbar{display:none;}
+.deck-stage.pick-open .deck-shelf{pointer-events:auto;transform:translate3d(0,0,0);}
+/* 抽屉里缓慢游走的雾色光斑：只动 transform/opacity，滚动时不掉帧 */
+.shelf-aura{position:sticky;top:0;height:0;display:block;z-index:0;pointer-events:none;}
+/* 光斑直接用径向渐变做柔边，不用 filter:blur：模糊滤镜会强制整块重绘 */
+.shelf-aura i{position:absolute;display:block;border-radius:50%;opacity:.7;}
+.shelf-aura i:nth-child(1){width:220px;height:220px;left:-64px;top:-78px;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--ac) 30%,transparent),transparent 100%);}
+.shelf-aura i:nth-child(2){width:196px;height:196px;right:-66px;top:6px;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--rose) 24%,transparent),transparent 100%);}
+.shelf-aura i:nth-child(3){width:236px;height:186px;left:32%;top:96px;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--amber) 20%,transparent),transparent 100%);}
+/* 三个光斑整组一起漂移：一个合成层就够了，比三个各自动画省两级合成开销 */
+.deck-stage.pick-open .shelf-aura{animation:auraDrift 12s ease-in-out infinite;}
+@keyframes auraDrift{
+  0%,100%{transform:translate3d(0,0,0) scale(1);}
+  50%{transform:translate3d(-12px,9px,0) scale(1.05);}
+}
+/* 顶部提示：一颗呼吸小点 */
+.shelf-tip{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  margin:0 0 14px;font-family:var(--mono);font-size:.46rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 40%,transparent);
+}
+/* 呼吸点用「一层会扩散的环」来做：只动 transform/opacity，
+   不用动 box-shadow（阴影动画每帧都要重绘，手机上最容易掉帧） */
+.shelf-tip i{position:relative;width:5px;height:5px;border-radius:50%;background:var(--ac);}
+.shelf-tip i::after{
+  content:'';position:absolute;inset:-1px;border-radius:50%;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--ac) 40%,transparent);
+  opacity:0;pointer-events:none;
+}
+.deck-stage.pick-open .shelf-tip i::after{animation:tipPulse 2.4s ease-out infinite;}
+@keyframes tipPulse{
+  0%{transform:scale(1);opacity:.75;}
+  70%,100%{transform:scale(2.6);opacity:0;}
+}
+/* 三节跟着抽屉的抽出节奏依次落位：抽屉先上来，内容再一层层贴上去 */
+.deck-shelf .sect{
+  position:relative;z-index:1;
+  margin-bottom:18px;opacity:0;transform:translate3d(0,10px,0);
+  transition:opacity .26s var(--ease),transform .32s cubic-bezier(.22,1,.3,1);
+}
+.deck-shelf .sect:last-child{margin-bottom:0;}
+.deck-stage.pick-open .deck-shelf .sect{opacity:1;transform:none;}
+.deck-stage.pick-open .deck-shelf .sect-deck{transition-delay:.1s;}
+.deck-stage.pick-open .deck-shelf .sect-mst{transition-delay:.17s;}
+.deck-stage.pick-open .deck-shelf .sect-ltr{transition-delay:.24s;}
+/* 每节一个自己的主题色：牌组雾青、掌握度琥珀、首字母靛蓝 */
+.deck-shelf .sect-deck{--sect:var(--ac);}
+.deck-shelf .sect-mst{--sect:var(--amber);}
+.deck-shelf .sect-ltr{--sect:var(--indigo);}
+.deck-shelf .sect-head{
+  position:relative;display:flex;align-items:baseline;justify-content:space-between;
+  gap:.5rem;margin:0 4px 10px;padding-bottom:7px;
+}
+/* 标题下的渐隐发丝线，让三节有各自的节拍 */
+.deck-shelf .sect-head::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--sect,var(--ac)) 38%,transparent),
+    color-mix(in srgb,var(--sect,var(--ac)) 8%,transparent) 58%,transparent);
+}
+.deck-shelf .sect-title::before{
+  content:'';display:inline-block;width:5px;height:5px;margin-right:6px;border-radius:50%;
+  vertical-align:1px;background:var(--sect,var(--ac));
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--sect,var(--ac)) 14%,transparent);
+}
+.deck-shelf .sect-title{
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.16em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.deck-shelf .sect-count{
+  font-family:var(--mono);font-size:.52rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 38%,transparent);
+}
+/* 牌组：两列大卡，卡片底下压两层错位纸 */
+.decks-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.deck-tile{
+  appearance:none;cursor:pointer;position:relative;isolation:isolate;
+  border:0;background:transparent;padding:0;text-align:left;
+  font-family:var(--sans);color:var(--ink);
+}
+.deck-tile::before,.deck-tile::after{
+  content:'';position:absolute;inset:0;z-index:-1;
+  background:var(--paper-2);border:1px solid var(--rule);border-radius:14px;
+  transition:transform .3s var(--spring);
+}
+.deck-tile::before{transform:rotate(-1.8deg) translate(-2px,3px);}
+.deck-tile::after{transform:rotate(1deg) translate(3px,2px);}
+.deck-tile:active::before{transform:rotate(-2.4deg) translate(-3px,4px);}
+.deck-tile:active::after{transform:rotate(1.5deg) translate(4px,3px);}
+.deck-tile-inner{
+  position:relative;min-height:100%;
+  display:flex;flex-direction:column;gap:9px;
+  padding:12px 13px 13px;
+  background:var(--card);border:1px solid var(--rule);border-radius:14px;
+}
+.deck-tile .row-top{display:flex;align-items:center;gap:8px;}
+.deck-icon{position:relative;width:30px;height:34px;flex:none;}
+.deck-icon i{
+  position:absolute;inset:0;border-radius:4px;
+  background:var(--card);border:1px solid var(--accent,var(--ac));
+}
+.deck-icon i:nth-child(1){transform:rotate(-6deg) translate(-1px,2px);opacity:.35;
+  background:color-mix(in srgb,var(--accent,var(--ac)) 8%,var(--card));}
+.deck-icon i:nth-child(2){transform:rotate(3deg) translate(1px,0);opacity:.6;
+  background:color-mix(in srgb,var(--accent,var(--ac)) 14%,var(--card));}
+.deck-icon i:nth-child(3){
+  z-index:1;display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--accent,var(--ac)) 22%,var(--card));
+  color:color-mix(in srgb,var(--accent,var(--ac)) 78%,var(--ink));
+  font-family:var(--display);font-size:.66rem;font-weight:900;
+}
+/* 抽屉开着的这段时间，牌堆图标像被轻捏住一样慢慢扇动 */
+.deck-stage.pick-open .deck-icon i:nth-child(1){animation:iconFanA 4.6s ease-in-out infinite;}
+.deck-stage.pick-open .deck-icon i:nth-child(2){animation:iconFanB 4.6s ease-in-out infinite;}
+.decks-grid .deck-tile:nth-child(2) .deck-icon i{animation-delay:-2.1s;}
+@keyframes iconFanA{
+  0%,100%{transform:rotate(-6deg) translate(-1px,2px);}
+  50%{transform:rotate(-9.5deg) translate(-2px,3px);}
+}
+@keyframes iconFanB{
+  0%,100%{transform:rotate(3deg) translate(1px,0);}
+  50%{transform:rotate(7.5deg) translate(2px,-1px);}
+}
+.deck-tile .name{
+  flex:1;min-width:0;font-size:.9rem;font-weight:800;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.deck-tile .line-meta{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  padding-top:9px;border-top:1px dashed var(--rule);
+}
+.deck-tile .count{
+  font-family:var(--mono);font-size:.55rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);white-space:nowrap;
+}
+.deck-tile .count b{font-size:.72rem;letter-spacing:-.02em;margin-right:1px;color:var(--ink);}
+.deck-tile .status{
+  display:inline-flex;align-items:center;gap:4px;white-space:nowrap;
+  font-family:var(--mono);font-size:.5rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 50%,transparent);
+}
+.deck-tile .status i{flex:none;width:5px;height:5px;border-radius:50%;background:var(--accent,var(--ac));}
+.deck-tile.current .deck-tile-inner{
+  background:color-mix(in srgb,var(--accent,var(--ac)) 8%,var(--card));
+  border-color:color-mix(in srgb,var(--accent,var(--ac)) 34%,transparent);
+}
+.deck-tile.current .name{position:relative;padding-left:9px;}
+.deck-tile.current .name::before{content:'';position:absolute;left:0;top:1px;bottom:1px;width:2px;
+  border-radius:2px;background:var(--accent,var(--ac));}
+/* 掌握度：三列竖卡 */
+.mst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.mst-tile{
+  appearance:none;cursor:pointer;padding:12px 8px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:var(--card);border:1px solid var(--rule);border-radius:12px;
+  color:var(--ink);font-family:var(--sans);
+  transition:transform .18s var(--spring),background .18s,border-color .18s;
+}
+.mst-tile:active{transform:scale(.96);}
+.mst-tile .dot{
+  width:16px;height:16px;border-radius:50%;background:var(--dot,#8F9296);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--dot,#8F9296) 15%,transparent);
+  transition:box-shadow .2s;
+}
+.mst-tile .name{font-size:.72rem;font-weight:800;line-height:1.2;white-space:nowrap;}
+.mst-tile .num{font-family:var(--display);font-size:1.05rem;font-weight:900;letter-spacing:-.03em;line-height:1;}
+.mst-tile.current{
+  background:color-mix(in srgb,var(--dot,#8F9296) 10%,var(--card));
+  border-color:color-mix(in srgb,var(--dot,#8F9296) 34%,transparent);
+}
+.mst-tile.current .dot{box-shadow:0 0 0 5px color-mix(in srgb,var(--dot,#8F9296) 22%,transparent);}
+/* 当前档位的圆点往外呼一口气：扩散环只动 transform/opacity */
+.mst-tile .dot{position:relative;}
+.mst-tile .dot::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--dot,#8F9296) 30%,transparent);
+  opacity:0;pointer-events:none;
+}
+.deck-stage.pick-open .mst-tile.current .dot::after{animation:dotBreath 3.4s ease-out infinite;}
+@keyframes dotBreath{
+  0%{transform:scale(1);opacity:.7;}
+  72%,100%{transform:scale(2.1);opacity:0;}
+}
+/* 首字母：向上漂的球阵。球是绝对定位的，位置每帧由脚本写成 transform；
+   球径按该字母的词量变化（--s） */
+.letters-grid{
+  position:relative;height:196px;
+  margin:.1rem -.05rem 0;
+  border-radius:15px;border:1px solid var(--rule);
+  background:
+    radial-gradient(120% 62% at 50% 0%, rgba(32,36,42,.028), transparent 62%),
+    var(--paper-2);
+  box-shadow:inset 0 -26px 36px -30px rgba(32,36,42,.10);
+  overflow:hidden;touch-action:none;isolation:isolate;
+}
+.letter-tile{
+  appearance:none;cursor:grab;position:absolute;left:0;top:0;
+  width:var(--s,48px);height:var(--s,48px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--paper-2);border:1px solid var(--rule);border-radius:50%;
+  color:var(--ink);font-family:var(--display);font-weight:900;
+  letter-spacing:-.02em;line-height:1;
+  box-shadow:0 1px 2px rgba(32,36,42,.06),0 6px 14px -8px rgba(32,36,42,.18);
+  will-change:transform;contain:layout style;
+  transition:background .15s,border-color .15s,color .15s,box-shadow .2s;
+}
+.letter-tile .lt{font-size:calc(var(--s,48px) * .32);}
+.letter-tile .n{
+  margin-top:1px;font-family:var(--mono);font-weight:900;letter-spacing:0;line-height:1;
+  font-size:calc(var(--s,48px) * .16);
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
+}
+/* 抓起时抬高一层：影子变实、层级压过其它球 */
+.letter-tile.dragging{
+  cursor:grabbing;z-index:5;background:var(--card);
+  box-shadow:0 2px 4px rgba(32,36,42,.10),0 16px 30px -12px rgba(32,36,42,.32);
+}
+.letter-tile.current{background:var(--ink);border-color:var(--ink);color:var(--card);}
+.letter-tile.current .n{color:color-mix(in srgb,var(--card) 70%,transparent);}
+/* 当前字母的光晕同样用扩散环，避免 box-shadow 动画每帧重绘 */
+.letter-tile::after{
+  content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 15%,transparent);
+  opacity:0;
+}
+.deck-stage.pick-open .letter-tile.current::after{animation:letterHalo 4.2s ease-out infinite;}
+@keyframes letterHalo{
+  0%{transform:scale(1);opacity:.68;}
+  70%,100%{transform:scale(1.18);opacity:0;}
+}
+@media (prefers-reduced-motion:reduce){
+  .deck-shelf,.deck-shelf .sect,.deck-mini,.stack{transition:none !important;}
+  .deck-stage.pick-open .deck-mini,
+  .deck-stage.pick-open .shelf-aura,
+  .deck-stage.pick-open .shelf-tip i::after,
+  .deck-stage.pick-open .deck-icon i,
+  .deck-stage.pick-open .mst-tile.current .dot::after,
+  .deck-stage.pick-open .letter-tile.current::after,
+  .deck-scope.open .deck-dots,
+  .deck-scope.open::after{animation:none !important;}
+}
+.deck-tools{display:flex;align-items:center;gap:.32rem;flex:none;}
+/* 状态条右侧的四个小控件：共用同一套高度/圆角/描边/按压反馈，
+   文字钮与图标钮只差挨宽度，看起来才是一排东西 */
+.undo-btn,.gloss-btn,.sfx-btn{
+  flex:none;height:28px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  border:1px solid var(--rule-2);border-radius:8px;
+  background:var(--card);color:var(--ink);
+  transition:transform .14s var(--spring),background .16s,border-color .16s,color .16s;
+}
+.undo-btn{padding:0 .52rem;font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.05em;line-height:1;}
+/* 图标钮：与文字钮同高，做成正方形 */
+.gloss-btn,.sfx-btn{width:28px;}
+.gloss-btn svg,.sfx-btn svg{width:15px;height:15px;display:block;}
+.undo-btn:active,.gloss-btn:active,.sfx-btn:active{transform:scale(.94);}
+/* display 会盖掉 hidden 属性，这里显式还原 */
+.undo-btn[hidden]{display:none;}
+/* 两个图标开关共用一套状态语言：偏离默认才上淡墨底；关闭的音效再灰一档 */
+.gloss-btn.on,.sfx-btn.off{
+  background:color-mix(in srgb,var(--ink) 8%,var(--paper-2));
+  border-color:var(--rule-2);
+}
+.sfx-btn.off{color:color-mix(in srgb,var(--ink) 55%,transparent);}
+.deck-stage{position:relative;flex:1;min-height:0;display:flex;}
+.stack{position:relative;flex:1;min-height:0;display:flex;}
+
+/* 后面两张卡的“厚度” */
+.stack::before,.stack::after{
+  content:'';position:absolute;background:color-mix(in srgb,var(--card) 88%,var(--paper));
+  border:1px solid var(--rule);border-radius:20px;
+  transition:transform .3s var(--ease);
+}
+.stack::before{inset:12px -4px -12px 12px;box-shadow:0 2px 12px rgba(32,36,42,.07);}
+.stack::after{inset:6px -1px -6px 6px;box-shadow:0 2px 12px rgba(32,36,42,.09);}
+
+.swipe-card{
+  position:relative;z-index:3;flex:1;min-height:0;
+  display:flex;flex-direction:column;
+  background:transparent;
+  padding:0;
+  touch-action:none;
+  will-change:transform;
+  /* 精修版配色：纸色从纯白兑入该词卡自己的强调色，色相干净不发灰；
+     墨色/强调色仍取自词卡自身的调色 */
+  --cf:color-mix(in srgb,var(--ma,#4E7A8A) var(--ctint,20%),#FFFFFF);
+  --ci:var(--mi,#24201B);
+  --ca:var(--ma,#4E7A8A);
+  /* 强调色的「落下去」版本：用作实心按钮/图标的底色，浅色强调色也能压住 */
+  --cink:color-mix(in srgb,var(--ca) 30%,var(--ci));
+  --cline:color-mix(in srgb,var(--ci) 12%,transparent);
+  --csoft:color-mix(in srgb,var(--ca) 16%,var(--cf));
+  --cmute:color-mix(in srgb,var(--ci) 55%,transparent);
+}
+.swipe-card.out-up{transition:transform .38s var(--ease),opacity .38s var(--ease);transform:translateY(-120%) rotate(-4deg);opacity:0;}
+.swipe-card.out-down{transition:transform .38s var(--ease),opacity .38s var(--ease);transform:translateY(120%) rotate(4deg);opacity:0;}
+.swipe-card.out-left{transition:transform .34s var(--ease),opacity .34s var(--ease);transform:translateX(-122%) rotate(-6deg);opacity:0;}
+.swipe-card.out-right{transition:transform .34s var(--ease),opacity .34s var(--ease);transform:translateX(122%) rotate(6deg);opacity:0;}
+.swipe-card.in{animation:cardIn .46s var(--bounce) backwards;}
+@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.96);}to{opacity:1;transform:none;}}
+
+/* 双面卡：正面 ↔ 背面 3D 翻转（拖动手势作用在外层 .swipe-card，翻面只转内层） */
+.swipe-card{perspective:1100px;}
+.flip-inner{
+  position:relative;display:flex;flex-direction:column;
+  flex:1;min-height:0;
+  transform-style:preserve-3d;
+  transition:transform .55s cubic-bezier(.4,.05,.2,1);
+}
+.swipe-card.flipped .flip-inner{transform:rotateY(180deg);}
+.swipe-card.flipped{touch-action:pan-y;}
+.face{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  padding:.92rem 1.05rem 0;
+  /* 先给一条纯色兜底，再用词卡自己的纸色/墨色覆盖（老内核不支持 color-mix 也不会变透明） */
+  background:#FFFDF8;
+  background:var(--cf,#FFFDF8);
+  color:#24201B;
+  color:var(--ci,#24201B);
+  border:1px solid rgba(36,32,27,.12);
+  border-color:var(--cline,rgba(36,32,27,.12));
+  border-radius:20px;
+  box-shadow:0 4px 22px -6px rgba(32,36,42,.18),0 0 0 1px rgba(32,36,42,.04);
+  overflow:hidden;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.face.back{transform:rotateY(180deg);}
+/* 正面顶部一条强调色押边：词卡自己的颜色先声夺人，和背面的色带呼应 */
+.face.front::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:6px;z-index:1;
+  background:var(--ca);pointer-events:none;
+}
+
+/* 拖动时中央的方向提示 */
+.dir-hint{
+  position:absolute;left:50%;top:50%;z-index:5;pointer-events:none;
+  transform:translate(-50%,-50%) scale(.9);
+  opacity:0;transition:opacity .12s,transform .12s;
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-family:var(--mono);font-size:.72rem;font-weight:900;letter-spacing:.05em;
+  padding:.42rem .82rem;border-radius:999px;border:1px solid var(--cline);
+  background:var(--cf);color:var(--ci);white-space:nowrap;
+  box-shadow:0 6px 18px rgba(36,32,27,.14);
+}
+/* 方向用描边箭头图标（不用「→」这类字符），整支箭头按方向旋转 */
+.dir-hint .dh-ico{display:inline-flex;width:15px;height:15px;flex:none;}
+.dir-hint .dh-ico svg{width:15px;height:15px;display:block;}
+.dir-hint[data-dir="up"] .dh-ico{transform:rotate(-90deg);}
+.dir-hint[data-dir="down"] .dh-ico{transform:rotate(90deg);}
+.dir-hint[data-dir="left"] .dh-ico{transform:rotate(180deg);}
+.dir-hint.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+.dir-hint[data-dir="right"]{background:color-mix(in srgb,#6F8B74 20%,var(--cf));border-color:color-mix(in srgb,#6F8B74 42%,transparent);}
+.dir-hint[data-dir="left"]{background:color-mix(in srgb,#BC7E8A 20%,var(--cf));border-color:color-mix(in srgb,#BC7E8A 42%,transparent);}
+.dir-hint[data-dir="up"]{background:color-mix(in srgb,var(--ci) 8%,var(--cf));}
+.dir-hint[data-dir="down"]{background:color-mix(in srgb,#BB9A5A 24%,var(--cf));border-color:color-mix(in srgb,#BB9A5A 42%,transparent);}
+
+/* 正反面都沿用该词卡自己的纸色/墨色/强调色，不再套用外层界面的配色 */
+.face.back{
+  transform:rotateY(180deg);
+  padding:0;
+}
+.back-band{
+  flex:none;height:6px;
+  background:var(--ca);
+}
+.back-inner{flex:1;min-height:0;display:flex;flex-direction:column;padding:.8rem 1.05rem .9rem;}
+.back-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;flex:none;
+  margin-bottom:.4rem;padding:0;
+  background:transparent;border:0;box-shadow:none;
+}
+.back-word{font-family:var(--display);font-size:1.4rem;letter-spacing:-.03em;line-height:1.1;color:var(--ci);}
+.back-ipa{font-family:var(--mono);font-size:.72rem;font-weight:800;color:var(--cmute);margin-left:.3rem;}
+.back-body{
+  flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain; /* 滚到底不把滚动/回弹传给整张卡 */
+  display:flex;flex-direction:column; /* 让下面的信息块按容器高度自适应撑开 */
+  padding-right:.12rem;
+  /* 与 .main 一致：隐藏可见条但保留占位，避免出现/隐藏时内容宽度跳变 */
+  scrollbar-gutter:stable;
+  scrollbar-width:thin;
+  scrollbar-color:transparent transparent;
+}
+.back-body::-webkit-scrollbar{width:5px;}
+.back-body::-webkit-scrollbar-thumb{background:transparent;}
+.back-body::-webkit-scrollbar-track{background:transparent;}
+.back-gloss{font-size:1.0625rem;font-weight:800;line-height:1.4;margin:.05rem 0 .35rem;color:var(--ci);flex:none;}
+/* 信息块：细线分隔的批注区，按内容自身高度排布，不强行平分剩余高度 */
+.back-block{
+  margin:0;padding:.62rem 0 .55rem;
+  background:transparent;
+  border:0;border-top:1px solid var(--cline);
+  border-radius:0;box-shadow:none;
+  flex:0 0 auto;
+  display:block;
+}
+.back-block h4{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.14em;color:var(--cmute);margin:0 0 .3rem;text-transform:uppercase;}
+.back-block p{margin:0;font-size:.82rem;line-height:1.65;color:color-mix(in srgb,var(--ci) 82%,transparent);}
+.back-block .back-ex{font-family:Georgia,serif;font-size:.86rem;color:var(--ci);}
+.bz-ans{background:color-mix(in srgb,var(--ca) 20%,transparent);color:var(--ci);padding:0 .16rem;border-radius:3px;font-weight:800;box-shadow:0 2px 0 color-mix(in srgb,var(--ca) 45%,transparent);}
+
+/* 背面构词：复刻词卡页 .root-line 的「词素胶囊 + 括号释义 + → 释义」排版 */
+.back-root{
+  margin:.1rem 0 0;padding:0;
+  background:transparent;
+  border:0;border-radius:0;
+  text-align:left;
+  font-size:.8rem;line-height:2;color:color-mix(in srgb,var(--ci) 82%,transparent);
+  overflow-wrap:anywhere;
+}
+.back-root .stem,.back-root .affix{
+  display:inline-block;margin:0 .08rem;padding:.04rem .3rem;
+  border:0;border-radius:5px;
+  font-family:var(--mono);font-size:.76rem;font-weight:900;line-height:1.35;
+}
+.back-root .stem{
+  background:color-mix(in srgb, var(--ca,#F0C97E) 22%, var(--cf, #FFFCF5));
+  color:color-mix(in srgb, var(--ca,#F0C97E) 62%, var(--ci,#24201B));
+}
+.back-root .affix{
+  background:var(--ci);color:var(--cf);
+}
+.back-root em{font-style:normal;font-weight:800;color:color-mix(in srgb,var(--ca) 70%,var(--ci));margin:0 .12rem;}
+.back-root .sep{font-weight:800;color:color-mix(in srgb,var(--ca) 70%,var(--ci));margin:0 .22rem;}
+.back-root b{font-weight:900;color:var(--ci);}
+.back-root.plain{border:0;}
+
+/* 背面拼写：一个字母一个格子 + 下方可拖动的字母块 */
+.fill-block{margin-top:.1rem;}
+.fill-q{font-size:.78rem;line-height:1.5;color:var(--cmute);margin:0 0 .4rem;}
+.spell-slots{
+  display:flex;flex-direction:column;align-items:flex-start;
+  gap:.26rem;width:max-content;max-width:100%;margin:0 auto;
+}
+.spell-row{
+  display:flex;flex-wrap:nowrap;gap:.28rem;
+}
+.spell-tiles{
+  display:flex;flex-wrap:wrap;gap:.28rem;
+  justify-content:center;
+}
+.spell-slot{
+  width:2.35rem;height:2.65rem;flex:none;
+  display:grid;place-items:center;padding:0;
+  border:1.5px dashed var(--cline);
+  border-radius:8px;
+  background:color-mix(in srgb,var(--ci) 4%,var(--cf));
+  overflow:hidden;
+  transition:border-color .15s,background .15s,transform .12s var(--spring);
+}
+.spell-slot.hot{
+  border-style:solid;border-color:var(--ca);
+  background:var(--csoft);
+  transform:translateY(-2px);
+}
+.spell-slot.filled{
+  border-style:solid;border-color:var(--ca);
+  background:var(--csoft);
+}
+.spell-tiles{
+  margin-top:.5rem;padding-top:.5rem;
+  border-top:1px solid var(--cline);
+}
+.spell-tiles:empty{display:none;}
+.spell-tile{
+  appearance:none;cursor:grab;
+  width:2.35rem;height:2.65rem;flex:none;
+  display:grid;place-items:center;padding:0;
+  border:1px solid var(--cline);
+  border-radius:8px;
+  background:var(--csoft);
+  color:var(--ci);
+  font-family:var(--mono);font-size:1.12rem;font-weight:900;line-height:1;
+  box-shadow:none;
+  touch-action:none;
+  user-select:none;-webkit-user-select:none;
+  transition:transform .12s var(--ease),background .15s;
+}
+/* 已落格的字母块去掉自身描边，和格子合成一个整体 */
+.spell-slot.filled .spell-tile{
+  width:100%;height:100%;
+  border:0;border-radius:0;box-shadow:none;background:transparent;
+}
+.spell-tile:active{transform:scale(.95);}
+.spell-tile.dragging{opacity:.32;}
+.spell-ghost{position:fixed;pointer-events:none;z-index:9999;margin:0;}
+.fill-msg{font-size:.72rem;font-weight:700;line-height:1.4;margin:.26rem 0 0;min-height:1em;color:var(--cmute);}
+.fill-block.ok .fill-msg{color:#2F6B45;}
+.fill-block.ok .spell-slot{border-color:#2F6B45;}
+.fill-block.bad .fill-msg{color:#B04A3A;}
+.fill-block.bad .spell-slot{border-color:#B04A3A;}
+.fill-block.bad{animation:fillShake .3s;}
+@keyframes fillShake{20%{transform:translateX(-4px)}55%{transform:translateX(4px)}85%{transform:translateX(-2px)}}
+
+.card-head{display:flex;align-items:center;gap:.4rem;flex:none;margin-bottom:.5rem;}
+.root-tag{
+  display:inline-flex;align-items:center;gap:.26rem;
+  font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.03em;
+  padding:.2rem .46rem;border-radius:6px;
+  border:0;background:var(--csoft);
+  color:color-mix(in srgb,var(--ca) 62%,var(--ci));
+}
+.root-tag .dot{width:5px;height:5px;border-radius:50%;background:var(--ca);flex:none;}
+.mst-tag{
+  display:inline-flex;align-items:center;
+  font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:.04em;
+  padding:0;border:0;background:transparent;color:var(--cmute);
+}
+.mini-card{
+  margin-left:auto;flex:none;
+  display:inline-flex;align-items:center;gap:.18rem;
+  font-family:var(--mono);font-size:.66rem;font-weight:700;
+  color:var(--cmute);background:transparent;border:0;
+  border-radius:0;padding:0;text-decoration:none;
+  transition:opacity .16s;
+}
+.mini-card:active{opacity:.55;}
+
+.card-main{display:flex;flex-direction:column;flex:1;min-height:0;}
+.word-row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sx2);flex:none;}
+.word{
+  font-family:var(--display);
+  font-size:clamp(2.05rem,9.6vw,2.5rem);
+  line-height:1.02;letter-spacing:-.035em;color:var(--ci);
+  word-break:break-word;
+}
+.speak{
+  appearance:none;cursor:pointer;flex:none;
+  width:40px;height:40px;border-radius:10px;
+  border:1px solid var(--cink);background:var(--cink);color:var(--cf);
+  box-shadow:none;
+  display:grid;place-items:center;
+  transition:transform .14s var(--ease),background .2s;
+}
+.speak svg{width:18px;height:18px;}
+.speak:active{transform:scale(.94);}
+.speak.speaking{animation:speakPulse .7s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+/* 词头下方一行：音标 | 词性 */
+.meta{display:flex;align-items:baseline;gap:.6rem;margin:.18rem 0 .68rem;flex:none;}
+.meta .ipa{font-family:var(--mono);font-size:.8rem;font-weight:800;color:var(--cmute);letter-spacing:.01em;}
+.meta .pos{font-family:var(--mono);font-size:.72rem;font-weight:800;letter-spacing:.02em;
+  padding:.08rem .42rem .05rem;border-radius:5px;
+  background:color-mix(in srgb,var(--ca) 26%,#FFFFFF);
+  color:var(--cink);}
+.gloss{font-size:1.125rem;font-weight:800;line-height:1.4;margin-top:.16rem;color:var(--ci);transition:filter .18s var(--ease);}
+/* 顶部开关打开时：正面模糊释义、背面模糊单词，字号与布局完全不变 */
+.app.hide-gloss .face.front .gloss{filter:blur(7px);user-select:none;}
+.app.hide-gloss .face.back .back-word-txt{filter:blur(7px);user-select:none;}
+.back-word-txt{transition:filter .18s var(--ease);}
+
+.art-frame{
+  position:relative;flex:0 1 auto;
+  /* 高度同时受 30vh、200px 上限和「卡片可用内宽」约束：保证黄金矩形永不横向溢出
+     场景/构词多占一行时，允许图形框按比例收缩（不低于 84px），避免文字被裁切 */
+  height:clamp(96px,min(30vh,calc((100vw - 84px) / 1.618)),200px);width:auto;
+  min-height:84px;
+  aspect-ratio:1.618 / 1;
+  margin:.3rem auto .55rem;
+  border:0;border-radius:12px;
+  box-shadow:none;
+  overflow:hidden;background:var(--ci);
+}
+.art-frame .di-art{
+  width:100%;height:100%;
+  display:grid;place-items:center;
+}
+.art-frame .di-art svg{display:block;width:100%;height:100%;}
+.art-frame .art-tag{
+  position:absolute;left:6px;bottom:6px;z-index:2;
+  font-family:var(--mono);font-size:.56rem;font-weight:700;letter-spacing:.08em;
+  padding:.1rem .38rem .12rem;border-radius:4px;
+  background:rgba(255,255,255,.14);color:#fff;backdrop-filter:blur(4px);
+}
+
+.scene{
+  margin-top:.5rem;padding-left:.55rem;border-left:3px solid var(--ca);
+  font-size:.8125rem;font-weight:600;line-height:1.55;color:color-mix(in srgb,var(--ci) 80%,transparent);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.morph{
+  margin-top:.45rem;padding-top:.42rem;
+  border-top:1px solid var(--cline);
+  font-size:.72rem;line-height:1.5;color:var(--cmute);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.morph b{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--cmute);margin-right:.2rem;}
+
+.actions{
+  display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:.5rem;
+  flex:none;margin:.6rem -1.05rem 0;
+  padding:.7rem 1.05rem .85rem;
+  border-top:1px solid var(--cline);background:var(--cf);
+}
+.rate{
+  appearance:none;cursor:pointer;
+  font-family:var(--sans);font-size:.82rem;font-weight:700;letter-spacing:0;
+  padding:.78rem .2rem;border-radius:10px;
+  border:0;
+  background:color-mix(in srgb,var(--ci) 6%,var(--cf));color:var(--ci);
+  box-shadow:none;
+  transition:transform .12s var(--ease),background .18s;
+  position:relative;overflow:hidden;
+}
+/* 评分压印环：点击后由语义色扩散一圈 */
+.rate::after{
+  content:'';position:absolute;left:50%;top:50%;
+  width:10px;height:10px;margin:-5px 0 0 -5px;
+  border-radius:50%;background:var(--rc);opacity:0;
+  transform:scale(0);pointer-events:none;
+}
+@keyframes stampRing{from{opacity:.55;transform:scale(1);}to{opacity:0;transform:scale(14);}}
+.rate.stamp::after{animation:stampRing .32s ease-out;}
+.rate:active{transform:scale(.97);box-shadow:none;}
+.rate.r0{--rc:var(--rose);}
+.rate.r1{--rc:var(--amber);background:color-mix(in srgb,var(--ca) 12%,var(--cf));color:var(--ci);}
+.rate.r2{--rc:var(--moss);background:var(--cink);color:var(--cf);}
+
+/* ---------------- 正面分层入场 / 呼吸 / 数字 tick ---------------- */
+@keyframes rvIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.face.front .rv1{animation:rvIn .4s cubic-bezier(.16,1,.3,1) 0ms backwards;}
+.face.front .rv2{animation:rvIn .4s cubic-bezier(.16,1,.3,1) 40ms backwards;}
+.face.front .rv3{animation:rvIn .4s cubic-bezier(.16,1,.3,1) 80ms backwards;}
+.face.front .rv4{animation:rvIn .4s cubic-bezier(.16,1,.3,1) 120ms backwards;}
+.face.front .rv5{animation:rvIn .4s cubic-bezier(.16,1,.3,1) 160ms backwards;}
+.face.front .rv5b{animation:rvIn .4s cubic-bezier(.16,1,.3,1) 180ms backwards;}
+.face.front .rv6{animation:rvIn .4s cubic-bezier(.16,1,.3,1) 200ms backwards;}
+
+@keyframes artIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:none;}}
+.face.front .di-art{animation:artIn .5s cubic-bezier(.16,1,.3,1) 120ms backwards;}
+/* 连刷时新卡：跳过内部错落入场（整体 cardIn 仍保留），滑完下一张直接到位 */
+.swipe-card.plain .face.front .rv1,
+.swipe-card.plain .face.front .rv2,
+.swipe-card.plain .face.front .rv3,
+.swipe-card.plain .face.front .rv4,
+.swipe-card.plain .face.front .rv5,
+.swipe-card.plain .face.front .rv5b,
+.swipe-card.plain .face.front .rv6,
+.swipe-card.plain .face.front .di-art{animation:none;}
+
+@keyframes posTick{from{transform:scale(1.25);}to{transform:scale(1);}}
+.deck-meta b.tick{animation:posTick .28s cubic-bezier(.16,1,.3,1);}
+
+.deck-empty{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;
+  text-align:center;color:var(--ink-2);padding:1.2rem;
+  position:relative;z-index:4;   /* 压在 .stack 的两张装饰卡上，按钮才点得到 */
+}
+.deck-empty .big{font-family:var(--display);font-size:1.6rem;letter-spacing:-.02em;}
+.deck-empty .empty-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.2rem;}

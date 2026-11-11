@@ -1,0 +1,346 @@
+/* 词库：字母方块与分组详情 */
+
+/* ---------------- 词库：字母方块 + 分组详情 ---------------- */
+#view-lib.active{display:flex;flex-direction:column;height:100%;}
+.main.lib-on{overflow:hidden;padding-bottom:.55rem;}
+.lib-stat{
+  flex:none;display:flex;align-items:baseline;gap:.3rem;margin:0 .12rem .42rem;
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.06em;
+  color:color-mix(in srgb,var(--ink) 48%,transparent);
+}
+.lib-stat b{color:var(--ink);}
+.lib-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.46rem;}
+/* 检索栏：像标本册的索引行——白纸、发丝线、方角，值用衬线，占位符用等宽小标签 */
+.search-box{position:relative;flex:1;min-width:0;}
+.search-box svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:14px;height:14px;color:color-mix(in srgb,var(--ink) 45%,transparent);pointer-events:none;
+}
+.search-box input{
+  width:100%;height:36px;
+  font-family:var(--serif);font-size:.92rem;font-weight:400;letter-spacing:.01em;color:var(--ink);
+  background:#FFFFFF;border:1px solid var(--rule-2);border-radius:2px;
+  padding:0 34px 0 33px;outline:none;
+  transition:border-color .16s,box-shadow .16s;
+}
+.search-box input::placeholder{
+  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 34%,transparent);
+}
+.search-box input::-webkit-search-cancel-button,
+.search-box input::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none;}
+.search-box input:focus{
+  border-color:var(--ink);
+  box-shadow:inset 0 -2px 0 var(--ink);
+}
+.search-box .clear{
+  position:absolute;right:7px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;padding:0;border:1px solid var(--rule-2);border-radius:2px;
+  background:#FFFFFF;color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;font-size:11px;line-height:1;font-weight:700;
+  transition:background .16s,color .16s,border-color .16s;
+}
+.search-box .clear:active{background:var(--ink);color:#FFFFFF;border-color:var(--ink);}
+.search-box .clear[hidden]{display:none;}
+
+/* 掌握度分类栏：一条方角的分段索引条，中间用发丝线隔开，选中像盖了一枚墨块。
+   字母墙外面用一整行；打开某个字母后，同样的索引条缩进详情层顶部 */
+.lib-mst{
+  display:flex;align-items:center;gap:0;margin:-.1rem 0 .55rem;flex:none;
+}
+/* 打开某个字母时这一行直接收起：不动布局，测量和落点都不受影响 */
+.lib-mst.away{visibility:hidden;pointer-events:none;}
+.m-chip{
+  flex:1;min-width:0;height:30px;padding:0 4px;
+  display:inline-flex;align-items:center;justify-content:center;gap:.18rem;cursor:pointer;
+  border:1px solid var(--rule-2);border-radius:0;margin-left:-1px;
+  background:#FFFFFF;color:var(--ink);position:relative;z-index:1;
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.05em;
+  transition:background .16s,border-color .16s,color .16s;
+}
+.m-chip:first-child{margin-left:0;border-radius:2px 0 0 2px;}
+.m-chip:nth-child(4){border-radius:0 2px 2px 0;}
+.m-chip b{font-weight:900;opacity:.42;}
+.m-chip:active{background:color-mix(in srgb,var(--ink) 8%,#FFFFFF);}
+.m-chip.on{
+  background:var(--ink);border-color:var(--ink);color:#FFFFFF;z-index:2;
+}
+.m-chip.on b{opacity:.72;}
+.lib-mst .m-brush{
+  flex:none;height:30px;padding:0 .62rem;cursor:pointer;margin-left:7px;
+  border:1px solid var(--ink);border-radius:2px;background:var(--ink);color:#FFFFFF;
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.07em;
+  transition:transform .14s var(--spring),background .16s,color .16s;
+}
+.lib-mst .m-brush:active{transform:scale(.95);background:#FFFFFF;color:var(--ink);}
+.lib-mst .m-brush[hidden]{display:none;}
+
+.lib-stage{
+  position:relative;flex:1;min-height:0;
+  /* 详情层要从分类条那一行的位置展开、把它盖住，所以这一层不裁切上方 */
+  margin-top:.1rem;
+  /* 和整体界面同一张白纸：字母墙不再单独铺米色新闻纸 */
+  background:var(--paper-2);
+}
+/* 字母墙：像字体样本册一样一张张排开，字号与宽度随词量变化 */
+.lib-grid{
+  position:absolute;inset:0;
+  overflow-y:auto;overflow-x:hidden;
+  padding:16px 14px 26px;
+  display:flex;flex-wrap:wrap;align-content:flex-start;
+  /* 每行居中排，最后一行不满时两侧各留一半，不在右边堆出一条空白 */
+  justify-content:center;
+  gap:16px 14px;
+  scrollbar-width:none;
+  overscroll-behavior:contain;
+  transition:opacity .26s var(--ease);
+}
+.lib-grid::-webkit-scrollbar{display:none;}
+.lib-grid.fade-out{opacity:0;pointer-events:none;}
+.lib-grid .wempty{flex:0 0 100%;color:color-mix(in srgb,var(--ink) 45%,transparent);}
+/* 搜索时每次按键都会重排，此时不再重放入场，免得一直在闪 */
+.lib-grid.no-anim .spec{animation:none;}
+
+.spec{
+  appearance:none;border:0;background:transparent;cursor:pointer;padding:0;
+  flex:none;position:relative;
+  width:var(--w);height:var(--h);
+  display:flex;flex-direction:column;
+  transition:transform .2s var(--ease);
+  animation:specIn .4s var(--ease) backwards;
+  animation-delay:calc(min(var(--i,0),8) * 22ms);
+  -webkit-tap-highlight-color:transparent;
+}
+.spec:active{transform:scale(.94);}
+.spec.hide{visibility:hidden;}
+.spec:hover .gl{opacity:.72;}
+.spec .glyph{
+  flex:1;min-height:0;
+  display:flex;align-items:flex-end;justify-content:center;
+  font-size:var(--fs);line-height:1;color:var(--ink);
+}
+/* 字形本体：内联 SVG 轮廓，不再依赖设备上是否装了那款字体。
+   高度 = 大写字母高度，宽高比由字体轮廓自己决定 */
+.gl{
+  display:block;box-sizing:content-box;
+  height:calc(var(--fs) * .72);width:auto;
+  overflow:visible;
+  transition:opacity .22s var(--ease),color .3s var(--ease);
+  transform-origin:center bottom;
+  user-select:none;-webkit-user-select:none;
+}
+.spec .meta{
+  flex:none;padding-top:5px;
+  display:flex;flex-direction:column;gap:2px;
+  text-align:center;
+  font-family:var(--mono);letter-spacing:.10em;text-transform:uppercase;
+  line-height:1.2;white-space:nowrap;
+}
+.spec .meta .spec-letter{font-size:7.5px;font-weight:900;color:color-mix(in srgb,var(--ink) 68%,transparent);}
+.spec .meta .spec-font{
+  font-size:6px;font-weight:700;letter-spacing:.06em;
+  color:color-mix(in srgb,var(--ink) 50%,transparent);
+  overflow:hidden;text-overflow:ellipsis;
+}
+/* 每组的状态行：未学 / 学习中 / 已掌握 + 进度计数，下面压一条 2px 进度线 */
+.spec .meta .spec-state{
+  margin-top:3px;display:flex;align-items:center;justify-content:space-between;gap:4px;
+  letter-spacing:.02em;
+}
+.spec-state .st{
+  display:inline-flex;align-items:center;gap:3px;min-width:0;
+  font-size:7px;font-weight:800;
+}
+.spec-state .st i{
+  width:5px;height:5px;border-radius:1px;flex:none;background:currentColor;
+}
+.spec-state .sn{
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:0;
+  color:color-mix(in srgb,var(--ink) 40%,transparent);
+}
+.spec[data-state="0"] .spec-state .st{color:color-mix(in srgb,var(--ink) 34%,transparent);}
+.spec[data-state="0"] .spec-state .st i{background:transparent;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 34%,transparent);}
+.spec[data-state="1"] .spec-state .st{color:color-mix(in srgb,var(--ink) 72%,transparent);}
+.spec[data-state="1"] .spec-state .st i{background:color-mix(in srgb,var(--ink) 55%,transparent);}
+.spec[data-state="2"] .spec-state .st{color:var(--ink);}
+.spec[data-state="2"] .spec-state .st i{background:var(--ink);}
+.spec .meta .spec-bar{
+  margin-top:4px;height:2px;
+  background:color-mix(in srgb,var(--ink) 12%,transparent);
+  position:relative;overflow:hidden;
+}
+.spec .spec-bar i{position:absolute;left:0;top:0;bottom:0;display:block;background:var(--ink);}
+.spec[data-state="1"] .spec-bar i{background:color-mix(in srgb,var(--ink) 50%,transparent);}
+
+@keyframes specIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+/* 17 种字体：每个字母一副面孔。用 data-style 统一编排，字母墙 / 详情徽章 / 飞行动画共用一套 */
+[data-style="a"] .gl{transform:scaleX(.88);}
+[data-style="c"] .gl{transform:scaleX(.94);}
+[data-style="d"] .gl path{fill:none;stroke:currentColor;stroke-width:4.4;}
+[data-style="e"] .gl{transform:scaleX(1.28);}
+[data-style="f"] .gl{transform:rotate(-4deg);}
+[data-style="h"] .gl{
+  filter:drop-shadow(3px 3px 0 color-mix(in srgb,currentColor 32%,transparent))
+         drop-shadow(6px 6px 0 color-mix(in srgb,currentColor 14%,transparent));
+}
+[data-style="i"] .gl{transform:scaleX(.5);}
+[data-style="l"] .gl{transform:skewX(-14deg);}
+[data-style="p"] .gl{border-bottom:5px solid currentColor;padding-bottom:2px;}
+[data-style="r"] .gl{transform:scaleX(-1);}
+[data-style="s"] .gl{background:currentColor;padding:0 3px;}
+[data-style="s"] .gl path{fill:#FFFFFF;}
+[data-style="t"] .gl{border:2px solid currentColor;padding:1px 4px;}
+[data-style="u"] .gl{border-bottom:4px double currentColor;padding-bottom:2px;}
+[data-style="w"] .gl{transform:scaleX(1.5);}
+.wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
+
+/* 详情层：与字母墙同一张白纸的内页。
+   左右顶到 section 的两边（.main 的水平内边距就是 .8rem），内容再按同一内边距收进来，
+   所以这一页和上面的搜索框一样宽，不再比外面窄一圈 */
+.lib-detail{
+  position:absolute;top:0;bottom:0;left:-.8rem;right:-.8rem;z-index:3;
+  display:none;flex-direction:column;
+  padding:0 .8rem 0;
+  background:var(--paper-2);
+}
+.lib-detail.show{display:flex;}
+
+/* 顶部条：和下面那排分类条用同一套规格——30px 高的方角发丝线块、7px 间隔。
+   这一条只放本字母的分类索引和刷这组，返回交给下面标本牌左边那道折线箭头 */
+.detail-top{
+  flex:none;display:flex;align-items:center;gap:7px;
+  padding:0 0 9px;
+  border-bottom:1px solid var(--rule-2);
+}
+/* 详情层顶部：本字母自己的分类索引条 + 刷这组 */
+.detail-mst{
+  flex:1;min-width:0;display:flex;align-items:center;gap:0;
+}
+.bulk-btn{
+  appearance:none;cursor:pointer;flex:none;height:30px;padding:0 .62rem;
+  border-radius:2px;border:1px solid var(--ink);background:var(--ink);color:#FFFFFF;
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.07em;
+  transition:transform .14s var(--spring),background .16s,color .16s;
+}
+.bulk-btn:active{transform:scale(.95);background:#FFFFFF;color:var(--ink);}
+.bulk-btn[disabled]{opacity:.32;cursor:default;}
+.bulk-btn[disabled]:active{transform:none;background:var(--ink);color:#FFFFFF;}
+
+/* 标本牌 + 标本标签栏 */
+.badge-wrap{
+  flex:none;display:flex;align-items:stretch;gap:14px;
+  padding:15px 0 13px;margin-bottom:14px;
+  border-bottom:1px solid var(--rule);
+}
+.badge{
+  position:relative;flex:none;cursor:pointer;
+  width:84px;height:84px;border-radius:2px;
+  /* 白底墨字：和整页同一张纸，只有反白字(S)仍保留墨底 */
+  background:#FFFFFF;color:var(--ink);
+  box-shadow:inset 0 0 0 1px var(--rule);
+  display:grid;place-items:center;
+  font-size:60px;line-height:1;
+  visibility:hidden;
+}
+.badge::before,.badge::after{
+  content:'';position:absolute;width:7px;height:7px;pointer-events:none;
+}
+.badge::before{top:4px;left:4px;border-top:1px solid rgba(32,36,42,.3);border-left:1px solid rgba(32,36,42,.3);}
+.badge::after{bottom:4px;right:4px;border-bottom:1px solid rgba(32,36,42,.3);border-right:1px solid rgba(32,36,42,.3);}
+.badge .gl{height:43px;}
+.badge-meta{
+  flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;justify-content:center;
+  padding-left:8px;border-left:2px solid var(--ink);
+}
+.bm-row{display:grid;grid-template-columns:46px minmax(0,1fr);gap:8px;align-items:baseline;}
+.bm-k{
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:.22em;
+  text-transform:uppercase;color:color-mix(in srgb,var(--ink) 40%,transparent);
+}
+.bm-v{
+  font-family:var(--mono);font-size:9px;font-weight:800;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.bm-bar{margin-top:4px;height:2px;background:var(--rule-2);position:relative;}
+.bm-bar i{position:absolute;left:0;top:0;bottom:0;display:block;}
+
+/* 反白字(S)：整个徽章就是那块墨底，字形不再自己铺底 */
+.lib-detail[data-style="s"] .badge{
+  background:var(--ink);color:#FFFFFF;box-shadow:none;
+}
+.lib-detail[data-style="s"] .badge::before{border-color:rgba(255,255,255,.55);}
+.lib-detail[data-style="s"] .badge::after{border-color:rgba(255,255,255,.55);}
+.lib-detail[data-style="s"] .gl{background:transparent;padding:0;}
+
+/* 词卡：统一的编辑版式 */
+.detail-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:22px;scrollbar-width:none;}
+.detail-scroll::-webkit-scrollbar{display:none;}
+.w-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.w-card{
+  position:relative;overflow:hidden;cursor:pointer;
+  background:#FFFFFF;
+  border:1px solid var(--rule);
+  padding:11px 12px 10px;
+  min-height:142px;
+  display:flex;flex-direction:column;
+  opacity:0;
+}
+.w-card.in{animation:wcIn .46s cubic-bezier(.34,1.3,.64,1) both;}
+@keyframes wcIn{from{opacity:0;transform:translateY(14px) scale(.965);}to{opacity:1;transform:none;}}
+.w-card.lead{grid-column:span 2;padding:13px 16px 12px;min-height:172px;}
+
+.w-top{
+  display:flex;justify-content:space-between;gap:8px;
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:.2em;
+  text-transform:uppercase;color:color-mix(in srgb,var(--ink) 50%,transparent);
+}
+.w-word{
+  font-family:var(--serif);font-size:19px;font-weight:700;line-height:1.08;
+  letter-spacing:-.01em;margin-top:8px;color:var(--ink);
+  word-break:break-word;
+}
+.w-card.lead .w-word{
+  display:flex;align-items:flex-start;gap:9px;
+  font-size:clamp(30px,8.6vw,40px);line-height:.95;letter-spacing:-.03em;
+  margin-top:11px;
+}
+.w-cap{
+  flex:none;font-family:var(--serif);font-size:46px;font-weight:700;line-height:.8;
+  color:var(--ink);transform:translateY(2px);
+}
+.w-ipa{
+  font-family:var(--mono);font-size:7px;font-weight:700;color:color-mix(in srgb,var(--ink) 45%,transparent);
+  margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.w-gloss{
+  font-size:10.5px;font-weight:700;line-height:1.45;margin-top:6px;
+  padding-left:8px;border-left:2px solid var(--rule-2);
+  color:color-mix(in srgb,var(--ink) 78%,transparent);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.w-foot{
+  margin-top:auto;padding-top:7px;border-top:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+}
+.w-mst{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.w-mst i{width:6px;height:6px;background:currentColor;display:block;}
+.w-mst.m0{color:#8A8378;}
+.w-mst.m1{color:#9A7B34;}
+.w-mst.m2{color:#4C6B52;}
+.w-chk{
+  font-family:var(--mono);font-size:6.5px;font-weight:800;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 35%,transparent);
+}
+
+/* 飞行体只搬字形本体：透明底，不再画一个方块跟着变 */
+.flyer{
+  position:fixed;z-index:999;pointer-events:none;
+  transform-origin:50% 50%;will-change:transform;
+}
+

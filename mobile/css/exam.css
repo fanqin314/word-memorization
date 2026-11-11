@@ -1,0 +1,225 @@
+/* 期末题库：四选一 / 汉译英 / 记忆库 */
+
+/* ---------------- 期末题库 ---------------- */
+.ex-wrap{display:flex;flex-direction:column;gap:.55rem;}
+.ex-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;flex-wrap:wrap;}
+.ex-kicker{
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.ex-count{
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.04em;
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
+}
+.ex-picks{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;}
+.ex-pick{
+  appearance:none;cursor:pointer;min-height:44px;
+  display:flex;align-items:center;justify-content:center;gap:.24rem;
+  padding:.6rem .5rem;border-radius:2px;border:1px solid var(--ink);
+  background:var(--ink);color:#fff;
+  font-family:var(--sans);font-size:.76rem;font-weight:900;line-height:1.2;
+}
+.ex-pick.ghost{background:var(--paper-2);color:var(--ink);border-color:var(--rule-2);}
+.ex-pick[disabled]{opacity:.38;cursor:default;}
+.ex-pick:active{transform:scale(.985);}
+.ex-unit{margin-top:.2rem;}
+.ex-unit-head{
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+  padding:.5rem 0 .24rem;border-top:1px solid var(--rule);
+}
+.ex-row{
+  appearance:none;cursor:pointer;width:100%;text-align:left;
+  display:flex;align-items:center;gap:.5rem;
+  min-height:56px;padding:.5rem .1rem;
+  background:transparent;border:0;border-bottom:1px solid var(--rule);
+  color:var(--ink);font-family:var(--sans);
+}
+.ex-row:active{background:color-mix(in srgb,var(--ink) 4%,transparent);}
+.ex-row-main{flex:1;min-width:0;display:block;}
+.ex-row-t{display:block;font-size:.86rem;font-weight:700;line-height:1.3;letter-spacing:.01em;}
+.ex-row-s{
+  display:block;margin-top:.16rem;
+  font-family:var(--mono);font-size:.55rem;font-weight:700;letter-spacing:.04em;
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
+}
+.ex-row-side{flex:none;width:3.6rem;display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;}
+.ex-row-n{font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.02em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);}
+.ex-row-r{font-family:var(--mono);font-size:.6rem;font-weight:900;}
+.ex-row-bar{display:block;width:100%;height:2px;background:var(--rule);}
+.ex-row-bar i{display:block;height:2px;background:var(--ink);}
+.ex-row-w{font-family:var(--mono);font-size:.52rem;font-weight:900;letter-spacing:.02em;color:#A33A1E;}
+
+.ex-bar{display:flex;align-items:center;gap:.4rem;}
+.ex-back{
+  appearance:none;cursor:pointer;flex:none;
+  min-height:44px;padding:0 .3rem 0 0;background:transparent;border:0;
+  font-family:var(--sans);font-size:.76rem;font-weight:900;color:var(--ink);
+}
+.ex-bar-mid{
+  flex:1;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.04em;
+}
+.ex-bar-prog{
+  flex:none;font-family:var(--mono);font-size:.6rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.ex-q-meta{
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.06em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);margin-bottom:.3rem;
+}
+.ex-q{font-size:1rem;font-weight:700;line-height:1.75;letter-spacing:.01em;word-break:break-word;}
+.ex-blank{
+  display:inline-block;min-width:4.2rem;margin:0 .12rem;text-align:center;
+  border-bottom:2px solid var(--rule-2);font-weight:900;color:var(--ink);
+  vertical-align:baseline;
+}
+.ex-blank.on{border-bottom:2px solid var(--ink);}
+.ex-blank.right{color:#2E7A4B;}
+.ex-blank.wrong{color:#A33A1E;}
+.ex-opts{display:flex;flex-direction:column;gap:.36rem;margin-top:.75rem;}
+.ex-opt{
+  appearance:none;cursor:pointer;width:100%;text-align:left;
+  display:flex;align-items:center;gap:.5rem;
+  min-height:44px;padding:.5rem .55rem;border-radius:2px;
+  background:#fff;border:1px solid var(--rule-2);
+  font-family:var(--sans);font-size:.86rem;font-weight:700;line-height:1.4;color:var(--ink);
+}
+.ex-opt:active{background:color-mix(in srgb,var(--ink) 4%,transparent);}
+.ex-opt .ex-l{
+  flex:none;width:1rem;text-align:center;
+  font-family:var(--mono);font-size:.6rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.ex-opt.right{background:var(--ink);color:#fff;border-color:var(--ink);}
+.ex-opt.right .ex-l{color:#fff;}
+.ex-opt.wrong{background:#fff;color:#A33A1E;border-color:#A33A1E;}
+.ex-opt.wrong .ex-l{color:#A33A1E;}
+.ex-opt.dim{opacity:.45;}
+.ex-tip{
+  margin-top:.7rem;padding:.5rem .6rem;
+  background:color-mix(in srgb,var(--ink) 4%,var(--paper-2));
+  border-left:2px solid var(--rule-2);
+}
+.ex-tip .ex-tk{
+  display:block;margin-bottom:.14rem;
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tip p{font-size:.74rem;font-weight:700;line-height:1.6;color:color-mix(in srgb,var(--ink) 80%,transparent);}
+.ex-foot{display:flex;gap:.4rem;margin-top:.8rem;}
+.ex-btn{
+  appearance:none;cursor:pointer;flex:1;min-height:44px;border-radius:2px;
+  border:1px solid var(--ink);background:var(--ink);color:#fff;
+  font-family:var(--sans);font-size:.78rem;font-weight:900;
+}
+.ex-btn.ghost{background:var(--paper-2);color:var(--ink);border-color:var(--rule-2);}
+.ex-btn[disabled]{opacity:.38;cursor:default;}
+.ex-btn:active{transform:scale(.985);}
+.ex-res-num{font-family:var(--display);font-size:2.4rem;letter-spacing:-.03em;line-height:1.1;margin:.2rem 0 .3rem;}
+.ex-res-sub{font-size:.72rem;font-weight:700;line-height:1.5;color:color-mix(in srgb,var(--ink) 60%,transparent);}
+.ex-wrong{margin-top:.7rem;display:flex;flex-direction:column;gap:.6rem;}
+.ex-wrong-i{padding-top:.6rem;border-top:1px solid var(--rule);}
+.ex-wrong-s{font-size:.84rem;font-weight:700;line-height:1.7;}
+.ex-wrong-s b{border-bottom:2px solid var(--ink);font-weight:900;}
+.ex-wrong-a{font-family:var(--mono);font-size:.62rem;font-weight:900;margin-top:.26rem;letter-spacing:.02em;}
+.ex-wrong-n{font-size:.7rem;font-weight:700;line-height:1.6;color:color-mix(in srgb,var(--ink) 70%,transparent);margin-top:.16rem;}
+.ex-bank{
+  padding-top:.5rem;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.04em;line-height:1.9;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+/* 记忆行：答题解析与结果页错题清单共用，放不下就换行 */
+.ex-memo{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.12rem .5rem;
+  margin-top:.4rem;
+  font-size:.66rem;font-weight:700;line-height:1.65;
+  color:color-mix(in srgb,var(--ink) 62%,transparent);
+}
+.ex-memo-k{
+  flex:none;font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-memo-w{font-weight:900;color:color-mix(in srgb,var(--ink) 82%,transparent);}
+.ex-memo-hl{font-weight:900;color:var(--ink);border-bottom:2px solid var(--ink);}
+.ex-memo-cue{font-family:var(--mono);font-size:.62rem;letter-spacing:.01em;}
+.ex-memo-zh{color:color-mix(in srgb,var(--ink) 72%,transparent);}
+.ex-memo-zh b{font-weight:900;color:var(--ink);}
+/* 记忆库页：按 Unit 分块，条目默认遮住英文 */
+.ex-mm-unit{margin-top:.15rem;}
+.ex-mm-unit-head{
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+  padding:.5rem 0 .24rem;border-top:1px solid var(--rule);
+}
+.ex-mm-sec{
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
+  padding:.34rem 0 .06rem;
+}
+.ex-mm-row{
+  appearance:none;cursor:pointer;width:100%;text-align:left;
+  display:flex;align-items:center;gap:.5rem;
+  min-height:56px;padding:.5rem .1rem;
+  background:transparent;border:0;border-bottom:1px solid var(--rule);
+  color:var(--ink);font-family:var(--sans);
+}
+.ex-mm-row:active{background:color-mix(in srgb,var(--ink) 4%,transparent);}
+.ex-mm-main{flex:1;min-width:0;display:block;}
+.ex-mm-p{
+  display:block;font-family:var(--mono);font-size:.8rem;font-weight:900;letter-spacing:.06em;
+  line-height:1.5;word-break:break-word;
+}
+.ex-mm-p b{font-weight:900;border-bottom:2px solid var(--ink);}
+.ex-mm-zh{
+  display:block;margin-top:.16rem;
+  font-size:.7rem;font-weight:700;line-height:1.5;
+  color:color-mix(in srgb,var(--ink) 62%,transparent);
+}
+.ex-mm-zh b{font-weight:900;color:var(--ink);}
+.ex-mm-tag{
+  flex:none;display:inline-flex;align-items:center;justify-content:center;
+  min-height:28px;padding:0 .42rem;border:1px solid var(--rule-2);border-radius:2px;
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.04em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.ex-mm-row.open .ex-mm-tag{background:var(--ink);color:#fff;border-color:var(--ink);}
+/* 汉译英：题头、原文、输入框、参考译文、覆盖率 */
+.ex-tr-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;}
+.ex-tr-k{
+  display:block;margin-bottom:.28rem;
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-zh{font-size:1rem;line-height:1.85;color:var(--ink);}
+.ex-tr-in{
+  display:block;width:100%;min-height:150px;margin-top:.6rem;
+  padding:10px 11px;border-radius:2px;border:1px solid var(--rule-2);
+  background:#fff;color:var(--ink);
+  font-family:var(--serif);font-size:1rem;line-height:1.65;
+}
+.ex-tr-in[readonly]{background:var(--paper-2);color:color-mix(in srgb,var(--ink) 72%,transparent);}
+.ex-tr-ref{
+  margin-top:.7rem;padding:.1rem 0 .1rem .65rem;
+  border-left:2px solid var(--ink);
+  font-family:var(--serif);font-size:1rem;line-height:1.7;color:var(--ink);
+}
+.ex-tr-cov{
+  margin-top:.6rem;
+  font-family:var(--mono);font-size:.68rem;font-weight:900;letter-spacing:.04em;
+}
+.ex-tr-verdict{margin-top:.14rem;font-size:.74rem;font-weight:700;line-height:1.5;color:var(--ink);}
+.ex-tr-verdict.bad{color:#A33A1E;}
+.ex-tr-miss-k{
+  display:block;margin-top:.5rem;
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-chips{display:flex;flex-wrap:wrap;gap:.24rem .3rem;margin-top:.3rem;}
+.ex-tr-chip{
+  font-family:var(--mono);font-size:.58rem;font-weight:700;line-height:1.4;
+  padding:.1rem .3rem;border-radius:2px;border:1px solid var(--rule);
+  background:var(--paper-2);color:color-mix(in srgb,var(--ink) 68%,transparent);
+}
+
