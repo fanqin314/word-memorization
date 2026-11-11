@@ -1623,6 +1623,61 @@ body{
   font-family:var(--mono);font-size:.54rem;font-weight:900;letter-spacing:.04em;line-height:1.9;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
+/* 记忆行：答题解析与结果页错题清单共用，放不下就换行 */
+.ex-memo{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.12rem .5rem;
+  margin-top:.4rem;
+  font-size:.66rem;font-weight:700;line-height:1.65;
+  color:color-mix(in srgb,var(--ink) 62%,transparent);
+}
+.ex-memo-k{
+  flex:none;font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-memo-w{font-weight:900;color:color-mix(in srgb,var(--ink) 82%,transparent);}
+.ex-memo-hl{font-weight:900;color:var(--ink);border-bottom:2px solid var(--ink);}
+.ex-memo-cue{font-family:var(--mono);font-size:.62rem;letter-spacing:.01em;}
+.ex-memo-zh{color:color-mix(in srgb,var(--ink) 72%,transparent);}
+.ex-memo-zh b{font-weight:900;color:var(--ink);}
+/* 记忆库页：按 Unit 分块，条目默认遮住英文 */
+.ex-mm-unit{margin-top:.15rem;}
+.ex-mm-unit-head{
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+  padding:.5rem 0 .24rem;border-top:1px solid var(--rule);
+}
+.ex-mm-sec{
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
+  padding:.34rem 0 .06rem;
+}
+.ex-mm-row{
+  appearance:none;cursor:pointer;width:100%;text-align:left;
+  display:flex;align-items:center;gap:.5rem;
+  min-height:56px;padding:.5rem .1rem;
+  background:transparent;border:0;border-bottom:1px solid var(--rule);
+  color:var(--ink);font-family:var(--sans);
+}
+.ex-mm-row:active{background:color-mix(in srgb,var(--ink) 4%,transparent);}
+.ex-mm-main{flex:1;min-width:0;display:block;}
+.ex-mm-p{
+  display:block;font-family:var(--mono);font-size:.8rem;font-weight:900;letter-spacing:.06em;
+  line-height:1.5;word-break:break-word;
+}
+.ex-mm-p b{font-weight:900;border-bottom:2px solid var(--ink);}
+.ex-mm-zh{
+  display:block;margin-top:.16rem;
+  font-size:.7rem;font-weight:700;line-height:1.5;
+  color:color-mix(in srgb,var(--ink) 62%,transparent);
+}
+.ex-mm-zh b{font-weight:900;color:var(--ink);}
+.ex-mm-tag{
+  flex:none;display:inline-flex;align-items:center;justify-content:center;
+  min-height:28px;padding:0 .42rem;border:1px solid var(--rule-2);border-radius:2px;
+  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.04em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.ex-mm-row.open .ex-mm-tag{background:var(--ink);color:#fff;border-color:var(--ink);}
 /* 汉译英：题头、原文、输入框、参考译文、覆盖率 */
 .ex-tr-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;}
 .ex-tr-k{
@@ -4112,6 +4167,98 @@ const EXAM_TRANS = [
     en:'In recent years, the social development and changes in employment have posed higher requirements for college students. Instead of confining themselves to learning from books, more and more college students are taking an active part in social practice in their spare time. Through social practice, they can improve their analytical and problem-solving abilities, gain a deeper understanding of society, and increase their sense of social responsibility. Meanwhile, taking part in social practice can also help them recognize their own shortcomings and gain a clear idea about where they should be headed in the future.' }
 ];
 
+/* 用户整理的第 3/6 题记忆库：q 与原题号对应，w 里 ==..== 是变形部分 */
+const EXAM_MEMO = [
+  { id:'u1w', unit:1, kind:'word', items:[
+    { q:1, w:'scenario==s==', cue:'writing for a company', zh:'为电影公司写**剧本**' },
+    { q:2, w:'alter', cue:'the meaning', zh:'**改变**含义' },
+    { q:3, w:'furious', cue:'a ____ storm', zh:'**猛烈的**风暴' },
+    { q:4, w:'sacred', cue:'____ duty', zh:'**神圣的**职责' },
+    { q:5, w:'velocity', cue:'maintain ____', zh:'保持**速度**' },
+    { q:6, w:'discrete', cue:'____ ideas', zh:'**离散的**想法' },
+    { q:7, w:'substitute', cue:'____ for a pianist', zh:'**代替**钢琴家' },
+    { q:8, w:'immers==ed==', cue:'get ____ in', zh:'沉浸于...之中' },
+    { q:9, w:'collaborate', cue:'____ with peers', zh:'与同行**合作**' },
+    { q:10, w:'assess==ed==', cue:'be ____ on', zh:'根据...**被评估**' }
+  ] },
+  { id:'u1e', unit:1, kind:'expr', items:[
+    { q:1, w:'plung==ed== into', cue:'____ the virtual world', zh:'一头扎进**虚拟世界**' },
+    { q:2, w:'in the company of', cue:'live ____ children', zh:'在子女的**陪伴下**生活' },
+    { q:3, w:'pick==ed== up', cue:'be ____ in a month', zh:'一个月内**学会**' },
+    { q:4, w:'la==id== out', cue:'____ the map', zh:'**铺开**地图' },
+    { q:5, w:'add up to', cue:'all ____ an experience', zh:'共同**构成**一次体验' },
+    { q:6, w:'make room for', cue:'____ new items', zh:'为新品**腾出空间**' },
+    { q:7, w:'dumb==ed== down', cue:'has been ____', zh:'已经被**简单化**' },
+    { q:8, w:'wip==ing== out', cue:'____ poverty', zh:'**消除**贫困' }
+  ] },
+  { id:'u2w', unit:2, kind:'word', items:[
+    { q:1, w:'dense', cue:'____ rainforests', zh:'**茂密的**热带雨林' },
+    { q:2, w:'appoint==ed==', cue:'was ____ to', zh:'**被任命**为...' },
+    { q:3, w:'escort==ing==', cue:'____ the elderly', zh:'**护送**老人' },
+    { q:4, w:'patroll==ing==', cue:'is ____ the roads', zh:'正在道路上**巡逻**' },
+    { q:5, w:'complexity', cue:'despite its ____', zh:'尽管其具有**复杂性**' },
+    { q:6, w:'expansion', cue:'economic ____', zh:'经济**扩张**' },
+    { q:7, w:'vague', cue:'a ____ plan', zh:'一个**模糊的**计划' },
+    { q:8, w:'maintenance', cue:'____ period', zh:'**维护**期' },
+    { q:9, w:'realm==s==', cue:'digital and physical ____', zh:'数字和物理**领域**' },
+    { q:10, w:'frail', cue:'____ elderly people', zh:'**虚弱的**老人' }
+  ] },
+  { id:'u2e', unit:2, kind:'expr', items:[
+    { q:1, w:'in charge of', cue:'be ____ learning', zh:'**负责**学习' },
+    { q:2, w:'view==ed== as', cue:'is ____ an occasion', zh:'**被视为**一个场合' },
+    { q:3, w:'trad==ed== with', cue:'have ____ China', zh:'与中国**进行贸易**' },
+    { q:4, w:'take place', cue:'events ____ daily', zh:'每天**发生**的事件' },
+    { q:5, w:'load==ed== with', cue:'was fully ____ goods', zh:'**满载着**货物' },
+    { q:6, w:'set off', cue:'____ from the port', zh:'从港口**出发**' },
+    { q:7, w:'curious about', cue:'been ____ space', zh:'对太空**感到好奇**' },
+    { q:8, w:'along with', cue:'stay ____ your friend', zh:'**与**朋友**一起**待着' }
+  ] },
+  { id:'u3w', unit:3, kind:'word', items:[
+    { q:1, w:'compulsory', cue:'____ education', zh:'**义务**教育' },
+    { q:2, w:'contemplat==ing==', cue:'has been ____ leaving', zh:'一直**打算**离开' },
+    { q:3, w:'loosen==ed==', cue:'be ____', zh:'被**放宽**' },
+    { q:4, w:'globalize', cue:'____ the business', zh:'使业务**全球化**' },
+    { q:5, w:'offset', cue:'be ____ by gains', zh:'被收益**抵消**' },
+    { q:6, w:'groan==ed==', cue:'____ in pain', zh:'痛苦地**呻吟**' },
+    { q:7, w:'stubborn', cue:'very ____', zh:'非常**固执**' },
+    { q:8, w:'cluster', cue:'cars ____ near...', zh:'车辆**聚集**在...附近' },
+    { q:9, w:'ambiguity', cue:'a degree of ____', zh:'一定程度的**模糊性**' },
+    { q:10, w:'drawback', cue:'chief ____', zh:'主要**缺点**' }
+  ] },
+  { id:'u3e', unit:3, kind:'expr', items:[
+    { q:1, w:'settle for', cue:'willing to ____', zh:'愿意**勉强接受**' },
+    { q:2, w:'more often than not', cue:'____ challenging', zh:'**往往**具有挑战性' },
+    { q:3, w:'mingl==ed== with', cue:'air ____ smell', zh:'空气与气味**混合**' },
+    { q:4, w:'trad==ed== ... for', cue:'____ milk ____ bread', zh:'用牛奶**交换**面包' },
+    { q:5, w:'on sale', cue:'when they\'re ____', zh:'当它们**打折**时' },
+    { q:6, w:'are open to', cue:'____ their ideas', zh:'**愿意接受**他们的想法' },
+    { q:7, w:'endow... with', cue:'____ foods ____ flavors', zh:'**赋予**食物风味' },
+    { q:8, w:'make up for', cue:'____ impacts', zh:'**弥补**影响' }
+  ] },
+  { id:'u4w', unit:4, kind:'word', items:[
+    { q:1, w:'gauge', cue:'____ how much', zh:'**估计**有多少' },
+    { q:2, w:'contend==ed==', cue:'____ for the lead', zh:'**争夺**领先地位' },
+    { q:3, w:'commonplace', cue:'fairly ____', zh:'相当**常见**' },
+    { q:4, w:'suffice', cue:'will ____ to lower', zh:'**足以**降低...' },
+    { q:5, w:'revenue', cue:'company\'s ____', zh:'公司的**收入**' },
+    { q:6, w:'adverse', cue:'____ effects', zh:'**不利的**影响' },
+    { q:7, w:'upcoming', cue:'____ exam', zh:'**即将到来的**考试' },
+    { q:8, w:'abolish==ed==', cue:'be ____', zh:'被**废除**' },
+    { q:9, w:'diversion', cue:'pleasant ____', zh:'愉快的**消遣**' },
+    { q:10, w:'foster', cue:'____ interest', zh:'**培养**兴趣' }
+  ] },
+  { id:'u4e', unit:4, kind:'expr', items:[
+    { q:1, w:'correlate with', cue:'does ____ the increase', zh:'**与**增长**相关**' },
+    { q:2, w:'refrain from', cue:'couldn\'t ____ hugging', zh:'忍不住（无法**克制**）拥抱' },
+    { q:3, w:'count==ing== down the days', cue:'will be ____ to come', zh:'**倒数着日子**盼着到来' },
+    { q:4, w:'slav==ing== away', cue:'10 years ____', zh:'**苦干**十年' },
+    { q:5, w:'sink his teeth into', cue:'____ the project', zh:'**全身心投入**项目' },
+    { q:6, w:'contend with', cue:'must ____ environment', zh:'必须**应对**环境' },
+    { q:7, w:'designat==ed== as', cue:'be ____ the teacher', zh:'**被指定为**老师' },
+    { q:8, w:'conform==s== to', cue:'____ the will', zh:'**符合**意愿' }
+  ] }
+];
+
 let examState = loadJSON(EXAM_KEY, {groups:{}});
 if(!examState || typeof examState !== 'object' || Array.isArray(examState)) examState = {groups:{}};
 if(!examState.groups || typeof examState.groups !== 'object' || Array.isArray(examState.groups)) examState.groups = {};
@@ -4187,6 +4334,46 @@ function examBlankStem(s, fn){
   return esc(s).replace(/___\((\d)\)|___/g, (m, num) => fn(num ? Number(num) : 1));
 }
 
+/* ---------------- 记忆库：取条目与渲染小工具 ---------------- */
+/* 按组 + 题号取记忆；双空题两空共用同一条 */
+function memoFor(gid, q){
+  const g = EXAM_MEMO.find(x => x.id === gid);
+  return g ? (g.items.find(m => m.q === q) || null) : null;
+}
+/* 记忆库总条数 */
+function examMemoCount(){
+  return EXAM_MEMO.reduce((n, g) => n + g.items.length, 0);
+}
+/* w 里的 ==..== 渲染成加粗词形，其余文字转义 */
+function examMemoW(w){
+  return String(w || '').split(/(==[^=]+==)/).map(seg => {
+    const m = seg.match(/^==([^=]+)==$/);
+    return m ? '<b class="ex-memo-hl">' + esc(m[1]) + '</b>' : esc(seg);
+  }).join('');
+}
+/* zh 里的 **..** 渲染成加粗，其余文字转义 */
+function examMemoZh(zh){
+  return String(zh || '').split(/(\*\*[^*]+\*\*)/).map(seg => {
+    const m = seg.match(/^\*\*([^*]+)\*\*$/);
+    return m ? '<b>' + esc(m[1]) + '</b>' : esc(seg);
+  }).join('');
+}
+/* 答题解析与结果页共用的一行记忆 */
+function examMemoLine(gid, q){
+  const m = memoFor(gid, q);
+  if(!m) return '';
+  return '<div class="ex-memo">' +
+      '<span class="ex-memo-k">搭配</span>' +
+      '<span class="ex-memo-w">' + examMemoW(m.w) + '</span>' +
+      '<span class="ex-memo-cue">' + esc(m.cue) + '</span>' +
+      '<span class="ex-memo-zh">' + examMemoZh(m.zh) + '</span>' +
+    '</div>';
+}
+/* 遮住英文：字母逐个换成 •，____ 与标点保留 */
+function examMemoMask(w){
+  return String(w || '').replace(/==/g, '').replace(/[A-Za-z]/g, '•');
+}
+
 /* ---------------- 汉译英：取题、存档、覆盖率 ---------------- */
 function examTrans(id){
   return EXAM_TRANS.find(t => t.id === id) || null;
@@ -4258,6 +4445,7 @@ function renderExam(){
   const blanks = EXAM_GROUPS.reduce((n, g) => n + g.items.length, 0);
   const qs = EXAM_GROUPS.reduce((n, g) => n + new Set(g.items.map(x => x.q)).size, 0);
   const wrongList = examWrongList();
+  const memoTotal = examMemoCount();
 
   let html = '<div class="ex-wrap">' +
       '<div class="ex-head">' +
@@ -4313,6 +4501,67 @@ function renderExam(){
   });
   html += '</div>';
 
+  /* 记忆库：只读背诵版，不进「全部混合」「只刷错题」，也不写存档 */
+  html += '<div class="ex-unit"><div class="ex-unit-head ex-tr-head">' +
+      '<span>MEMORY · 记忆库</span>' +
+      '<span class="ex-count">' + memoTotal + ' 条 · 背诵版</span>' +
+    '</div>' +
+    '<button class="ex-row" type="button" data-ex-mm="all">' +
+      '<span class="ex-row-main">' +
+        '<span class="ex-row-t">第 3/6 题 · 全部词条</span>' +
+        '<span class="ex-row-s">词形 + 搭配 + 中文</span>' +
+      '</span>' +
+      '<span class="ex-row-side">' +
+        '<span class="ex-row-n">' + memoTotal + ' 条</span>' +
+      '</span>' +
+    '</button>' +
+  '</div>';
+
+  view.innerHTML = html + '</div>';
+}
+
+/* ---------------- 记忆库页：默认遮住英文，点一下看词 ---------------- */
+let examMemoOpen = {};                    /* 展开状态只存内存，刷新不保留 */
+function examOpenMemo(){
+  examEnterRun();
+  examMemoOpen = {};
+  renderExamMemo();
+}
+function examMemoToggle(key){
+  if(examMemoOpen[key]) delete examMemoOpen[key];
+  else examMemoOpen[key] = 1;
+  renderExamMemo();
+}
+function renderExamMemo(){
+  const view = document.getElementById('view-exam');
+  if(!view) return;
+  let html = '<div class="ex-wrap">' +
+      '<div class="ex-bar">' +
+        '<button class="ex-back" type="button" data-ex-back>← 题库</button>' +
+        '<span class="ex-bar-mid">记忆库</span>' +
+        '<span class="ex-bar-prog">' + examMemoCount() + ' 条</span>' +
+      '</div>';
+  [1, 2, 3, 4].forEach(u => {
+    const groups = EXAM_MEMO.filter(g => g.unit === u);
+    if(!groups.length) return;
+    html += '<div class="ex-mm-unit">' +
+      '<div class="ex-mm-unit-head">UNIT ' + u + ' · ' + esc(EXAM_UNITS[u] || '') + '</div>';
+    groups.forEach(g => {
+      html += '<div class="ex-mm-sec">' + (g.kind === 'word' ? '3 · Words in use' : '6 · Expressions in use') + '</div>';
+      g.items.forEach(m => {
+        const key = g.id + ':' + m.q;
+        const open = !!examMemoOpen[key];
+        html += '<button class="ex-mm-row' + (open ? ' open' : '') + '" type="button" data-ex-mm-row="' + key + '">' +
+            '<span class="ex-mm-main">' +
+              '<span class="ex-mm-p">' + (open ? examMemoW(m.w) : esc(examMemoMask(m.w))) + '</span>' +
+              '<span class="ex-mm-zh">' + examMemoZh(m.zh) + '</span>' +
+            '</span>' +
+            '<span class="ex-mm-tag">' + (open ? '收起' : '看词') + '</span>' +
+          '</button>';
+      });
+    });
+    html += '</div>';
+  });
   view.innerHTML = html + '</div>';
 }
 
@@ -4510,7 +4759,8 @@ function renderExamRun(){
         '<p class="ex-q-meta">' + esc(meta) + '</p>' +
         '<p class="ex-q">' + examRunStem(it, cur.gid) + '</p>' +
         '<div class="ex-opts">' + examOptsHtml(it, ans) + '</div>' +
-        (ans ? '<div class="ex-tip"><span class="ex-tk">考点</span><p>' + esc(it.n) + '</p></div>' : '') +
+        (ans ? '<div class="ex-tip"><span class="ex-tk">考点</span><p>' + esc(it.n) + '</p></div>' +
+          examMemoLine(cur.gid, it.q) : '') +
       '</div>' +
       '<div class="ex-foot">' +
         '<button class="ex-btn" type="button" data-ex-next' + (ans ? '' : ' disabled') + '>' + (last ? '看结果' : '下一题') + '</button>' +
@@ -4579,6 +4829,7 @@ function renderExamResult(){
           '<p class="ex-wrong-s">' + stem + '</p>' +
           '<p class="ex-wrong-a">正确答案：' + 'ABCD'[it.a] + ' ' + esc(it.o[it.a]) + '</p>' +
           '<p class="ex-wrong-n">考点：' + esc(it.n) + '</p>' +
+          examMemoLine(cur.gid, it.q) +
         '</div>';
     }).join('') + '</div>';
   }
@@ -4626,6 +4877,17 @@ function examAgain(){
 /* 期末题库：整块只绑一次事件委托 */
 document.getElementById('view-exam').addEventListener('click', (e) => {
   const t = e.target;
+  if(t.closest('[data-ex-mm]')){
+    e.preventDefault(); e.stopPropagation();
+    examOpenMemo();
+    return;
+  }
+  const mmRow = t.closest('[data-ex-mm-row]');
+  if(mmRow){
+    e.preventDefault(); e.stopPropagation();
+    examMemoToggle(mmRow.dataset.exMmRow);
+    return;
+  }
   const grp = t.closest('[data-ex-group]');
   if(grp){
     e.preventDefault(); e.stopPropagation();

@@ -19,6 +19,8 @@
 
 - [x] Task 7: 汉译英段落练习——`EXAM_TRANS` 收录 Unit 1–4 四段（中文原文 + 参考译文），首页新增 Section C 区块，练习页支持多行输入、「对照译文」、实词覆盖率（≥60% 通过）、未命中关键词、结果页与 `examState.trans` 存档回显。
 
+- [x] Task 8: 记忆库——`EXAM_MEMO` 收录用户整理的 8 组 72 条记忆条（词形含 `==变形==`、提示搭配、中文含 `**重点**`）；`memoFor/examMemoW/examMemoZh/examMemoMask/examMemoLine` 渲染工具；答题解析与结果页错题清单追加「搭配」行；首页新增 MEMORY 入口与背诵页（默认遮英文、点开看词、展开态不持久化），双空题共用一条。
+
 # Task Dependencies
 
 - Task 3、4、5 依赖 Task 1（数据）与 Task 2（容器）。
