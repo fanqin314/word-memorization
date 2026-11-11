@@ -142,8 +142,13 @@
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
 .ex-memo-w{font-weight:900;color:color-mix(in srgb,var(--ink) 82%,transparent);}
-.ex-memo-hl{font-weight:900;color:var(--ink);border-bottom:2px solid var(--ink);}
-.ex-memo-cue{font-family:var(--mono);font-size:.62rem;letter-spacing:.01em;}
+/* 要变形的字母用批注红标出来，读的时候一眼看到「这里要改」 */
+.ex-memo-hl{font-weight:900;color:#A33A1E;border-bottom:2px solid currentColor;}
+/* 原文提示换成钢笔墨蓝，和词形、中文分开三层 */
+.ex-memo-cue{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.01em;
+  color:#2B5B84;
+}
 .ex-memo-zh{color:color-mix(in srgb,var(--ink) 72%,transparent);}
 .ex-memo-zh b{font-weight:900;color:var(--ink);}
 /* 记忆库页：按 Unit 分块，条目默认遮住英文 */
@@ -172,6 +177,8 @@
   line-height:1.5;word-break:break-word;
 }
 .ex-mm-p b{font-weight:900;border-bottom:2px solid var(--ink);}
+/* 背诵页同样让变形字母显红，和解析里的记忆行保持一致 */
+.ex-mm-p b.ex-memo-hl{color:#A33A1E;border-bottom-color:currentColor;}
 .ex-mm-zh{
   display:block;margin-top:.16rem;
   font-size:.7rem;font-weight:700;line-height:1.5;
