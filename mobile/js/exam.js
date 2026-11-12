@@ -794,8 +794,38 @@ function examStartWrong(){
 }
 
 /* ---------------- 汉译英：一轮的临时状态与三屏 ---------------- */
-const examTransRun = { id:'', text:'', done:false, pct:0, missed:[] };
+const examTransRun = { id:'', text:'', done:false, pct:0, missed:[], parts:[], texts:[], step:0 };
 
+/* 一段中文拆成「一口能吃完」的小句：先按句号切，太长的再按逗号切；
+   切完把过短的碎片并回去，避免出现「交通、」这种没法翻的碎片 */
+function examTransChunks(zh){
+  const out = [];
+  String(zh || '').replace(/([。！？；])/g, '$1\n').split('\n').forEach(s0 => {
+    const s = s0.trim();
+    if(!s) return;
+    if(s.length <= 34){ out.push(s); return; }
+    let buf = '';
+    s.replace(/([，、：])/g, '$1\n').split('\n').forEach(p0 => {
+      const p = p0.trim();
+      if(!p) return;
+      buf += p;
+      if(buf.length >= 12){ out.push(buf); buf = ''; }
+    });
+    if(buf){
+      if(out.length) out[out.length - 1] += buf;
+      else out.push(buf);
+    }
+  });
+  return out.length ? out : [String(zh || '')];
+}
+function examTransWordCount(txt){
+  const s = String(txt || '').trim();
+  return s ? s.split(/\s+/).length : 0;
+}
+/* 所有小句拼回整段，用来和参考译文算覆盖率 */
+function examTransSync(){
+  examTransRun.text = (examTransRun.texts || []).map(x => String(x || '').trim()).filter(Boolean).join(' ');
+}
 function examStartTrans(id){
   const t = examTrans(id);
   if(!t) return;
@@ -805,14 +835,38 @@ function examStartTrans(id){
   examTransRun.done = false;
   examTransRun.pct = 0;
   examTransRun.missed = [];
+  examTransRun.parts = examTransChunks(t.zh);
+  examTransRun.texts = examTransRun.parts.map(() => '');
+  examTransRun.step = 0;
   renderExamTrans();
 }
 /* 输入时只记文本并切换按钮可用态，不重绘（避免打断输入） */
 function examTransInput(el){
-  examTransRun.text = el.value;
+  examTransRun.texts[examTransRun.step] = el.value;
+  examTransSync();
   const wrap = el.closest('.ex-wrap');
-  const btn = wrap ? wrap.querySelector('[data-ex-trans-reveal]') : null;
+  if(!wrap) return;
+  const btn = wrap.querySelector('[data-ex-tr-next]');
   if(btn) btn.disabled = !el.value.trim();
+  const cnt = wrap.querySelector('.ex-tr-count b');
+  if(cnt) cnt.textContent = examTransWordCount(el.value);
+}
+/* 写完一句：盖章 + 铃声，然后就进下一句，把长任务切成一小口 */
+function examTransStepNext(){
+  const step = examTransRun.step;
+  const txt = String(examTransRun.texts[step] || '').trim();
+  if(!txt) return;
+  examTransRun.texts[step] = txt;
+  examTransSync();
+  if(step >= examTransRun.parts.length - 1){ examTransReveal(); return; }
+  examTransRun.step = step + 1;
+  sfxPlay('ok');
+  renderExamTrans();
+}
+function examTransStepPrev(){
+  if(examTransRun.step <= 0) return;
+  examTransRun.step -= 1;
+  renderExamTrans();
 }
 function examTransChips(words){
   if(!words || !words.length) return '';
@@ -826,30 +880,42 @@ function renderExamTrans(){
   if(!t){ renderExam(); return; }
   const done = examTransRun.done;
   const pct = examTransRun.pct;
+  const parts = examTransRun.parts;
+  const step = Math.min(examTransRun.step, parts.length - 1);
+  const last = step >= parts.length - 1;
+  const cur = String(examTransRun.texts[step] || '');
   let body = '';
   if(done){
     body = '<div class="ex-tr-ref">' + esc(t.en) + '</div>' +
       '<p class="ex-tr-cov">覆盖率 ' + pct + '%</p>' +
       '<p class="ex-tr-verdict' + (pct >= 60 ? '' : ' bad') + '">' + (pct >= 60 ? '命中主要表达' : '还差一些') + '</p>' +
       examTransChips(examTransRun.missed);
+  } else {
+    const passed = parts.slice(0, step)
+      .map((p, i) => String(examTransRun.texts[i] || '').trim())
+      .filter(Boolean)
+      .map(x => '<div class="ex-tr-done"><span class="ex-tr-tick">✓</span>' + esc(x) + '</div>')
+      .join('');
+    body = (passed ? '<div class="ex-tr-done-list">' + passed + '</div>' : '') +
+      '<span class="ex-tr-k">第 ' + (step + 1) + ' / ' + parts.length + ' 句</span>' +
+      '<p class="ex-tr-zh">' + esc(parts[step]) + '</p>' +
+      '<textarea class="ex-tr-in" data-ex-tr-input placeholder="这一句先自己译，写完点下一句"' +
+        ' oninput="examTransInput(this)">' + esc(cur) + '</textarea>' +
+      '<p class="ex-tr-count">已写 <b>' + examTransWordCount(cur) + '</b> 词</p>';
   }
   view.innerHTML = '<div class="ex-wrap">' +
       '<div class="ex-bar">' +
         '<button class="ex-back" type="button" data-ex-back>← 题库</button>' +
         '<span class="ex-bar-mid">Unit ' + t.unit + ' · 汉译英</span>' +
-        '<span class="ex-bar-prog">1 / 1</span>' +
+        '<span class="ex-bar-prog">' + (done ? parts.length + ' / ' + parts.length : (step + 1) + ' / ' + parts.length) + '</span>' +
       '</div>' +
-      '<div>' +
-        '<span class="ex-tr-k">中文原文</span>' +
-        '<p class="ex-tr-zh">' + esc(t.zh) + '</p>' +
-        '<textarea class="ex-tr-in" data-ex-tr-input placeholder="先自己译一遍，再对照参考译文"' +
-          (done ? ' readonly' : '') + ' oninput="examTransInput(this)">' + esc(examTransRun.text) + '</textarea>' +
-        body +
-      '</div>' +
+      '<div>' + body + '</div>' +
       '<div class="ex-foot">' +
         (done
           ? '<button class="ex-btn" type="button" data-ex-trans-result>看结果</button>'
-          : '<button class="ex-btn" type="button" data-ex-trans-reveal disabled>对照译文</button>') +
+          : (step > 0 ? '<button class="ex-btn ghost" type="button" data-ex-tr-prev>上一句</button>' : '') +
+            '<button class="ex-btn" type="button" data-ex-tr-next' + (cur.trim() ? '' : ' disabled') + '>' +
+              (last ? '对照译文' : '下一句 →') + '</button>') +
       '</div>' +
     '</div>';
 }
@@ -868,6 +934,7 @@ function examTransReveal(){
   r.best = Math.max(r.best || 0, cov.pct);
   r.last = cov.pct;
   persist(EXAM_KEY, examState);
+  sfxPlay(cov.pct >= 60 ? 'goal' : 'rate1');   /* 收尾给一次亮音，分数不好也不打击 */
   renderExamTrans();
 }
 function renderExamTransResult(){
@@ -1169,9 +1236,14 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
     examStartTrans(tr.dataset.exTr);
     return;
   }
-  if(t.closest('[data-ex-trans-reveal]')){
+  if(t.closest('[data-ex-tr-next]')){
     e.preventDefault(); e.stopPropagation();
-    examTransReveal();
+    examTransStepNext();
+    return;
+  }
+  if(t.closest('[data-ex-tr-prev]')){
+    e.preventDefault(); e.stopPropagation();
+    examTransStepPrev();
     return;
   }
   if(t.closest('[data-ex-trans-result]')){
