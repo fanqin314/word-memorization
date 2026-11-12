@@ -200,50 +200,90 @@
   color:color-mix(in srgb,var(--ink) 55%,transparent);
 }
 .ex-mm-row.open .ex-mm-tag{background:var(--ink);color:#fff;border-color:var(--ink);}
-/* 汉译英：题头、原文、输入框、参考译文、覆盖率 */
+/* ============================================================
+   汉译英：一张写译稿（刻度 → 当前句 → 可点亮词块 → 稿纸）
+   ============================================================ */
+/* 题库首页的区块头（标题在左、数量在右），与写译稿页无关 */
 .ex-tr-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;}
+/* 顶部刻度：每句一格，走过填墨，当前格浅墨 */
+.ex-tr-ticks{display:flex;gap:3px;margin:.1rem 0 .55rem;}
+.ex-tr-ticks i{
+  flex:1;height:3px;border-radius:1px;background:var(--rule-2);
+  transition:background 240ms var(--ease);
+}
+.ex-tr-ticks i.on{background:var(--ink);}
+.ex-tr-ticks i.cur{background:color-mix(in srgb,var(--ink) 45%,transparent);}
+
+/* 句号小标：等宽、疏字距，不跟中文抢注意力 */
 .ex-tr-k{
-  display:block;margin-bottom:.28rem;
-  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.1em;
+  display:block;margin-bottom:.34rem;
+  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.14em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
-/* 逐句推进：已完成的小句在上面积成清单，当前一句单独放大 */
+.ex-tr-k em{
+  font-style:normal;margin-left:.4rem;
+  color:color-mix(in srgb,var(--ink) 28%,transparent);
+}
+
+/* 已完成句子：一行纸条，不再多行堆叠把当前句挤下去 */
 .ex-tr-done-list{
-  display:flex;flex-direction:column;gap:.28rem;
-  margin:0 0 .75rem .1rem;padding-left:.65rem;
-  border-left:2px solid var(--rule-2);
+  display:flex;flex-direction:column;
+  margin:0 0 .7rem;border-top:1px solid var(--rule);
 }
 .ex-tr-done{
-  display:flex;gap:.45rem;align-items:flex-start;
-  font-size:.78rem;line-height:1.6;
+  display:flex;align-items:center;gap:.45rem;
+  padding:.42rem 0;border-bottom:1px solid var(--rule);
+  font-size:.8rem;line-height:1.5;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
+.ex-tr-done-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ex-tr-tick{flex:none;font-weight:900;color:#2E7A4B;animation:exTickIn 260ms var(--ease) both;}
 @keyframes exTickIn{from{transform:scale(.4);opacity:0;}to{transform:none;opacity:1;}}
-.ex-tr-count{
-  margin-top:.35rem;text-align:right;
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;
-  color:color-mix(in srgb,var(--ink) 45%,transparent);
+
+/* 当前句：整页唯一的主体，字号压过标签和词块 */
+.ex-tr-zh{
+  position:relative;padding-left:.75rem;
+  font-family:var(--serif);font-size:1.06rem;line-height:1.9;color:var(--ink);
 }
-.ex-tr-count b{color:var(--ink);font-weight:900;}
-/* 必用词块：给一时想不出来的句子搭台阶 */
-.ex-tr-cues{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem;}
+.ex-tr-zh::before{
+  content:"";position:absolute;left:0;top:.42em;bottom:.42em;width:2px;
+  background:var(--rule-2);transition:background 240ms var(--ease);
+}
+/* 词块全部写进去：左侧标记变绿点，算一次无声的小完成 */
+.ex-tr-zh.ready::before{background:#2E7A4B;}
+
+/* 必用词块：先虚线待命，写对了变实线并打绿勾 */
+.ex-tr-cues{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.65rem;}
 .ex-tr-cue{
-  padding:.22rem .42rem;border:1px solid var(--rule-2);border-radius:2px;
-  font-family:var(--mono);font-size:.68rem;font-weight:700;line-height:1.4;
-  color:color-mix(in srgb,var(--ink) 72%,transparent);
-  background:var(--paper-2);
+  display:inline-flex;align-items:center;gap:.28rem;
+  padding:.26rem .48rem;border:1px dashed var(--rule-2);border-radius:2px;
+  font-family:var(--mono);font-size:.72rem;font-weight:700;line-height:1.4;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+  background:transparent;
+  transition:color 160ms var(--ease),border-color 160ms var(--ease),background-color 160ms var(--ease);
 }
-/* 看这句参考：先看再写，参考块与页边批注同族 */
+.ex-tr-cue.on{
+  border-style:solid;border-color:var(--ink);background:var(--paper-2);
+  color:var(--ink);animation:exCueIn 260ms var(--ease);
+}
+.ex-tr-cue.on::after{content:"✓";font-weight:900;color:#2E7A4B;}
+@keyframes exCueIn{from{transform:scale(.96);}to{transform:none;}}
+
+/* 看这句参考：无边框文字按钮，箭头随展开翻转 */
 .ex-tr-refbtn{
-  appearance:none;cursor:pointer;margin-top:.55rem;padding:.3rem .55rem;
-  border:1px solid var(--rule-2);border-radius:2px;background:transparent;
-  font-family:var(--mono);font-size:.66rem;font-weight:900;letter-spacing:.06em;
+  appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;
+  margin-top:.6rem;padding:.24rem 0;border:0;background:transparent;
+  font-family:var(--mono);font-size:.68rem;font-weight:900;letter-spacing:.06em;
   color:#2B5B84;
 }
+.ex-tr-caret{
+  width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid currentColor;transition:transform 180ms var(--ease);
+}
+.ex-tr-refbtn.open .ex-tr-caret{transform:rotate(180deg);}
 .ex-tr-refseg{
-  margin-top:.45rem;padding:.5rem .65rem;border-left:2px solid #2B5B84;
-  font-size:.8rem;line-height:1.65;
+  margin-top:.4rem;padding:.5rem .65rem;border-left:2px solid #2B5B84;
+  font-size:.86rem;line-height:1.7;
   color:color-mix(in srgb,var(--ink) 78%,transparent);
   background:color-mix(in srgb,var(--paper-2) 72%,#fff);
 }
@@ -253,26 +293,55 @@
   font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.06em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
-.ex-tr-stat{margin-top:.35rem;font-size:.72rem;color:color-mix(in srgb,var(--ink) 55%,transparent);}
-.ex-tr-zh{font-size:1rem;line-height:1.85;color:var(--ink);}
+
+/* 稿纸输入：去掉全边框，只留一条底线，聚焦时线变墨 */
 .ex-tr-in{
-  display:block;width:100%;min-height:110px;margin-top:.6rem;
-  padding:10px 11px;border-radius:2px;border:1px solid var(--rule-2);
-  background:#fff;color:var(--ink);
-  font-family:var(--serif);font-size:1rem;line-height:1.65;
+  display:block;width:100%;min-height:96px;margin-top:.65rem;resize:none;
+  padding:.5rem .1rem;border:0;border-bottom:1.5px solid var(--rule-2);border-radius:0;
+  background:var(--paper-2);color:var(--ink);
+  font-family:var(--serif);font-size:1.02rem;line-height:1.7;
+  transition:border-color 160ms var(--ease);
 }
-.ex-tr-in[readonly]{background:var(--paper-2);color:color-mix(in srgb,var(--ink) 72%,transparent);}
+.ex-tr-in:focus{outline:none;border-bottom-color:var(--ink);}
+.ex-tr-in[readonly]{color:color-mix(in srgb,var(--ink) 72%,transparent);}
+.ex-tr-in::placeholder{color:color-mix(in srgb,var(--ink) 32%,transparent);}
+
+/* 词数：只在写了之后出现 */
+.ex-tr-count{
+  margin-top:.3rem;text-align:right;
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-count[hidden]{display:none;}
+.ex-tr-count b{color:var(--ink);font-weight:900;}
+
+/* 结算：大号覆盖率 + 两格统计 */
 .ex-tr-ref{
-  margin-top:.7rem;padding:.1rem 0 .1rem .65rem;
+  margin-top:.5rem;padding:.1rem 0 .1rem .65rem;
   border-left:2px solid var(--ink);
   font-family:var(--serif);font-size:1rem;line-height:1.7;color:var(--ink);
 }
-.ex-tr-cov{
-  margin-top:.6rem;
-  font-family:var(--mono);font-size:.68rem;font-weight:900;letter-spacing:.04em;
+.ex-tr-cov{display:flex;align-items:baseline;gap:.45rem;margin-top:.75rem;}
+.ex-tr-cov span{
+  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
-.ex-tr-verdict{margin-top:.14rem;font-size:.74rem;font-weight:700;line-height:1.5;color:var(--ink);}
+.ex-tr-cov b{
+  font-family:var(--display);font-size:1.5rem;font-weight:900;line-height:1.1;
+  letter-spacing:-.02em;
+}
+.ex-tr-verdict{margin-top:.1rem;font-size:.78rem;font-weight:700;line-height:1.5;color:var(--ink);}
 .ex-tr-verdict.bad{color:#A33A1E;}
+.ex-tr-stat{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.6rem;}
+.ex-tr-stat > div{
+  display:flex;flex-direction:column;gap:.1rem;
+  padding:.42rem .55rem;border:1px solid var(--rule);
+}
+.ex-tr-stat b{font-family:var(--display);font-size:1.15rem;line-height:1.1;}
+.ex-tr-stat span{
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.06em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
 .ex-tr-miss-k{
   display:block;margin-top:.5rem;
   font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.08em;
@@ -283,6 +352,25 @@
   font-family:var(--mono);font-size:.58rem;font-weight:700;line-height:1.4;
   padding:.1rem .3rem;border-radius:2px;border:1px solid var(--rule);
   background:var(--paper-2);color:color-mix(in srgb,var(--ink) 68%,transparent);
+}
+/* 写译稿页的页脚：按钮更实、更高，手指好按 */
+.ex-tr-page .ex-foot{margin-top:.9rem;}
+.ex-tr-page .ex-foot .ex-btn{min-height:46px;font-size:.9rem;}
+/* 不能用的时候退成纸色，而不是压暗成一块灰 */
+.ex-tr-page .ex-foot .ex-btn[disabled]{
+  opacity:1;background:var(--rule);border-color:var(--rule);
+  color:color-mix(in srgb,var(--ink) 42%,transparent);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .ex-tr-cue.on,
+  .ex-tr-tick{animation:none;}
+  .ex-tr-in,
+  .ex-tr-ticks i,
+  .ex-tr-zh::before,
+  .ex-tr-cue,
+  .ex-tr-caret{transition:none;}
+  .ex-tr-refbtn.open .ex-tr-caret{transform:none;}
 }
 
 /* ============================================================
