@@ -226,6 +226,34 @@
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
 .ex-tr-count b{color:var(--ink);font-weight:900;}
+/* 必用词块：给一时想不出来的句子搭台阶 */
+.ex-tr-cues{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem;}
+.ex-tr-cue{
+  padding:.22rem .42rem;border:1px solid var(--rule-2);border-radius:2px;
+  font-family:var(--mono);font-size:.68rem;font-weight:700;line-height:1.4;
+  color:color-mix(in srgb,var(--ink) 72%,transparent);
+  background:var(--paper-2);
+}
+/* 看这句参考：先看再写，参考块与页边批注同族 */
+.ex-tr-refbtn{
+  appearance:none;cursor:pointer;margin-top:.55rem;padding:.3rem .55rem;
+  border:1px solid var(--rule-2);border-radius:2px;background:transparent;
+  font-family:var(--mono);font-size:.66rem;font-weight:900;letter-spacing:.06em;
+  color:#2B5B84;
+}
+.ex-tr-refseg{
+  margin-top:.45rem;padding:.5rem .65rem;border-left:2px solid #2B5B84;
+  font-size:.8rem;line-height:1.65;
+  color:color-mix(in srgb,var(--ink) 78%,transparent);
+  background:color-mix(in srgb,var(--paper-2) 72%,#fff);
+}
+.ex-tr-refseg[hidden]{display:none;}
+.ex-tr-refmark{
+  flex:none;margin-left:.35rem;padding:0 .3rem;border:1px solid var(--rule-2);border-radius:2px;
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.06em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-stat{margin-top:.35rem;font-size:.72rem;color:color-mix(in srgb,var(--ink) 55%,transparent);}
 .ex-tr-zh{font-size:1rem;line-height:1.85;color:var(--ink);}
 .ex-tr-in{
   display:block;width:100%;min-height:110px;margin-top:.6rem;

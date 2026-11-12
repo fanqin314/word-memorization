@@ -284,6 +284,63 @@ const EXAM_TRANS = [
     en:'In recent years, the social development and changes in employment have posed higher requirements for college students. Instead of confining themselves to learning from books, more and more college students are taking an active part in social practice in their spare time. Through social practice, they can improve their analytical and problem-solving abilities, gain a deeper understanding of society, and increase their sense of social responsibility. Meanwhile, taking part in social practice can also help them recognize their own shortcomings and gain a clear idea about where they should be headed in the future.' }
 ];
 
+/* 句级支架：中文按句号切，逐句配英文参考与必用词块（t3 首句合并原英文前两句） */
+const EXAM_TRANS_SEG = [
+  { id:'t1', items:[
+    { zh:'近年来，随着互联网技术的迅猛发展，互联网经济已成为一个热门话题。',
+      en:'In recent years, with the rapid development of Internet technology, the Internet economy has become a hot topic.',
+      cues:['In recent years','the rapid development of','has become','hot topic'] },
+    { zh:'以电子商务为代表的互联网经济已成为中国经济发展的重要引擎（driving force）。',
+      en:'The Internet economy, represented by e-commerce, has become an important driving force for China\'s economic development.',
+      cues:['represented by','driving force','economic development'] },
+    { zh:'我国政府提出了“互联网+”的概念，以推动互联网与医疗、交通、教育、金融、公共服务等领域的结合。',
+      en:'The Chinese government has proposed the concept of “Internet Plus” to promote the integration of the Internet with healthcare, transportation, education, finance, public services, and other sectors.',
+      cues:['proposed the concept of','promote the integration','public services'] },
+    { zh:'这将为互联网经济的发展提供更多发展机遇和更广阔的发展空间。',
+      en:'This will provide more development opportunities and broader space for the development of the Internet economy.',
+      cues:['provide','opportunities','broader space'] }
+  ] },
+  { id:'t2', items:[
+    { zh:'中央电视台春节联欢晚会（Spring Festival Gala）自 1983 年举办以来，已成为中国人生活中不可缺少的文化消费品和一个重要的文化符号。',
+      en:'Since its inception in 1983, the CCTV Spring Festival Gala has become an indispensable cultural consumer product and an important cultural symbol in the lives of Chinese people.',
+      cues:['Since its inception','indispensable','cultural symbol'] },
+    { zh:'虽然众口难调，但必须承认的是，“春晚”已成为一项“新民俗”。',
+      en:'Although it is difficult to cater to all tastes, it must be admitted that the Gala has become a “new folk custom”.',
+      cues:['cater to all tastes','it must be admitted','new folk custom'] },
+    { zh:'它不仅是一台晚会，更是一种仪式与象征，一种文化与标签，一种情感与寄托。',
+      en:'It is not merely a TV gala, but also a ritual and a symbol, a culture and a label, an emotional attachment and a spiritual anchor.',
+      cues:['not merely','ritual and a symbol','emotional attachment','spiritual anchor'] },
+    { zh:'随着新媒体的出现，“春晚”也在与时俱进，以满足大众日渐多样化的需求。',
+      en:'With the emergence of new media, the Gala has also kept pace with the times to meet the public\'s increasingly diverse needs.',
+      cues:['With the emergence of','kept pace with the times','increasingly diverse needs'] }
+  ] },
+  { id:'t3', items:[
+    { zh:'丽江古城坐落在玉龙雪山（Yulong Snow Mountain）脚下，是一座风景秀丽的历史文化名城，也是我国保存完好的少数民族古城之一。',
+      en:'The Old Town of Lijiang, located at the foot of Yulong Snow Mountain, is a town of scenic beauty, known for its history and culture. It is also one of China\'s well-preserved old towns of ethnic minority groups.',
+      cues:['located at the foot of','scenic beauty','well-preserved','ethnic minority'] },
+    { zh:'随着丽江旅游业的发展，到丽江古城观光游览的中外游客日益增多。',
+      en:'With the boom in Lijiang\'s tourism, the Old Town of Lijiang is receiving a growing number of tourists from home and abroad.',
+      cues:['With the boom in','a growing number of','from home and abroad'] },
+    { zh:'1997 年 12 月，丽江古城申报世界文化遗产（World Cultural Heritage Site）获得成功，成为中国第一批被列入世界文化遗产名录的历史文化名城。',
+      en:'In December 1997, the Old Town succeeded in applying to be recognized as a World Cultural Heritage Site, becoming one of the first noted historical and cultural cities in China to be included on the World Cultural Heritage List.',
+      cues:['succeeded in applying','recognized as','becoming one of the first'] }
+  ] },
+  { id:'t4', items:[
+    { zh:'近年来，社会的发展和就业形势的变化对大学生提出了更高的要求。',
+      en:'In recent years, the social development and changes in employment have posed higher requirements for college students.',
+      cues:['posed higher requirements','college students'] },
+    { zh:'越来越多的大学生不再局限于学习书本知识，而是利用业余时间积极投身于社会实践活动。',
+      en:'Instead of confining themselves to learning from books, more and more college students are taking an active part in social practice in their spare time.',
+      cues:['Instead of confining','taking an active part in','in their spare time'] },
+    { zh:'通过社会实践活动，他们可以提高分析问题和解决问题的能力，更深入地了解社会，增强社会责任感。',
+      en:'Through social practice, they can improve their analytical and problem-solving abilities, gain a deeper understanding of society, and increase their sense of social responsibility.',
+      cues:['improve their analytical','gain a deeper understanding','sense of social responsibility'] },
+    { zh:'同时，参加社会实践活动还可以帮助他们认识到自身的不足，明确未来努力的方向。',
+      en:'Meanwhile, taking part in social practice can also help them recognize their own shortcomings and gain a clear idea about where they should be headed in the future.',
+      cues:['Meanwhile','shortcomings','in the future'] }
+  ] }
+];
+
 /* 用户整理的第 3/6 题记忆库：q 与原题号对应，w 里 ==..== 是变形部分 */
 const EXAM_MEMO = [
   { id:'u1w', unit:1, kind:'word', items:[
@@ -794,7 +851,7 @@ function examStartWrong(){
 }
 
 /* ---------------- 汉译英：一轮的临时状态与三屏 ---------------- */
-const examTransRun = { id:'', text:'', done:false, pct:0, missed:[], parts:[], texts:[], step:0 };
+const examTransRun = { id:'', text:'', done:false, pct:0, missed:[], parts:[], texts:[], step:0, refs:[], cues:[], refUsed:[], showRef:false };
 
 /* 一段中文拆成「一口能吃完」的小句：先按句号切，太长的再按逗号切；
    切完把过短的碎片并回去，避免出现「交通、」这种没法翻的碎片 */
@@ -830,15 +887,40 @@ function examStartTrans(id){
   const t = examTrans(id);
   if(!t) return;
   examEnterRun();
+  const seg = EXAM_TRANS_SEG.find(x => x.id === id);
   examTransRun.id = id;
   examTransRun.text = '';
   examTransRun.done = false;
   examTransRun.pct = 0;
   examTransRun.missed = [];
-  examTransRun.parts = examTransChunks(t.zh);
+  examTransRun.showRef = false;
+  if(seg){
+    /* 有句级数据：中文、英文参考、词块逐句一一对应 */
+    examTransRun.parts = seg.items.map(x => x.zh);
+    examTransRun.refs = seg.items.map(x => x.en);
+    examTransRun.cues = seg.items.map(x => x.cues || []);
+  } else {
+    examTransRun.parts = examTransChunks(t.zh);
+    examTransRun.refs = examTransRun.parts.map(() => '');
+    examTransRun.cues = examTransRun.parts.map(() => []);
+  }
   examTransRun.texts = examTransRun.parts.map(() => '');
+  examTransRun.refUsed = examTransRun.parts.map(() => false);
   examTransRun.step = 0;
   renderExamTrans();
+}
+/* 展开/收起当前句的参考：只动 DOM，不重绘，已写内容和光标都留着 */
+function examTransToggleRef(){
+  const wrap = document.querySelector('#view-exam .ex-wrap');
+  if(!wrap) return;
+  const box = wrap.querySelector('[data-ex-tr-refbox]');
+  const btn = wrap.querySelector('[data-ex-tr-ref]');
+  if(!box || !btn) return;
+  const open = box.hidden;
+  box.hidden = !open;
+  btn.textContent = open ? '收起参考' : '看这句参考';
+  if(open) examTransRun.refUsed[examTransRun.step] = true;
+  examTransRun.showRef = open;
 }
 /* 输入时只记文本并切换按钮可用态，不重绘（避免打断输入） */
 function examTransInput(el){
@@ -860,12 +942,14 @@ function examTransStepNext(){
   examTransSync();
   if(step >= examTransRun.parts.length - 1){ examTransReveal(); return; }
   examTransRun.step = step + 1;
+  examTransRun.showRef = false;
   sfxPlay('ok');
   renderExamTrans();
 }
 function examTransStepPrev(){
   if(examTransRun.step <= 0) return;
   examTransRun.step -= 1;
+  examTransRun.showRef = false;
   renderExamTrans();
 }
 function examTransChips(words){
@@ -884,22 +968,36 @@ function renderExamTrans(){
   const step = Math.min(examTransRun.step, parts.length - 1);
   const last = step >= parts.length - 1;
   const cur = String(examTransRun.texts[step] || '');
+  const cues = examTransRun.cues[step] || [];
+  const segRef = String(examTransRun.refs[step] || '').trim();
+  const refUsed = (examTransRun.refUsed || []).filter(Boolean).length;
   let body = '';
   if(done){
     body = '<div class="ex-tr-ref">' + esc(t.en) + '</div>' +
       '<p class="ex-tr-cov">覆盖率 ' + pct + '%</p>' +
       '<p class="ex-tr-verdict' + (pct >= 60 ? '' : ' bad') + '">' + (pct >= 60 ? '命中主要表达' : '还差一些') + '</p>' +
+      '<p class="ex-tr-stat">独立完成 ' + (parts.length - refUsed) + ' 句 · 参考 ' + refUsed + ' 句</p>' +
       examTransChips(examTransRun.missed);
   } else {
     const passed = parts.slice(0, step)
-      .map((p, i) => String(examTransRun.texts[i] || '').trim())
-      .filter(Boolean)
-      .map(x => '<div class="ex-tr-done"><span class="ex-tr-tick">✓</span>' + esc(x) + '</div>')
+      .map((p, i) => {
+        const txt = String(examTransRun.texts[i] || '').trim();
+        if(!txt) return '';
+        return '<div class="ex-tr-done"><span class="ex-tr-tick">✓</span>' + esc(txt) +
+          (examTransRun.refUsed[i] ? '<span class="ex-tr-refmark">参考</span>' : '') + '</div>';
+      })
       .join('');
     body = (passed ? '<div class="ex-tr-done-list">' + passed + '</div>' : '') +
       '<span class="ex-tr-k">第 ' + (step + 1) + ' / ' + parts.length + ' 句</span>' +
       '<p class="ex-tr-zh">' + esc(parts[step]) + '</p>' +
-      '<textarea class="ex-tr-in" data-ex-tr-input placeholder="这一句先自己译，写完点下一句"' +
+      (cues.length ? '<div class="ex-tr-cues">' +
+        cues.map(c => '<span class="ex-tr-cue">' + esc(c) + '</span>').join('') + '</div>' : '') +
+      (segRef
+        ? '<button class="ex-tr-refbtn" type="button" data-ex-tr-ref>' +
+            (examTransRun.showRef ? '收起参考' : '看这句参考') + '</button>' +
+          '<div class="ex-tr-refseg" data-ex-tr-refbox' + (examTransRun.showRef ? '' : ' hidden') + '>' + esc(segRef) + '</div>'
+        : '') +
+      '<textarea class="ex-tr-in" data-ex-tr-input placeholder="照着上面的词块，一句一句拼出来"' +
         ' oninput="examTransInput(this)">' + esc(cur) + '</textarea>' +
       '<p class="ex-tr-count">已写 <b>' + examTransWordCount(cur) + '</b> 词</p>';
   }
@@ -950,6 +1048,8 @@ function renderExamTransResult(){
         '<p class="ex-res-num">' + examTransRun.pct + '%</p>' +
         '<p class="ex-res-sub">本段覆盖率 · 目标 60%</p>' +
         (info.best >= 0 ? '<p class="ex-res-sub">本单元最好 ' + info.best + '%</p>' : '') +
+        '<p class="ex-res-sub">独立完成 ' + (examTransRun.parts.length - examTransRun.refUsed.filter(Boolean).length) +
+          ' 句 · 参考 ' + examTransRun.refUsed.filter(Boolean).length + ' 句</p>' +
       '</div>' +
       '<div class="ex-tr-ref">' + esc(t.en) + '</div>' +
       examTransChips(examTransRun.missed) +
@@ -1234,6 +1334,11 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
   if(tr){
     e.preventDefault(); e.stopPropagation();
     examStartTrans(tr.dataset.exTr);
+    return;
+  }
+  if(t.closest('[data-ex-tr-ref]')){
+    e.preventDefault(); e.stopPropagation();
+    examTransToggleRef();
     return;
   }
   if(t.closest('[data-ex-tr-next]')){
