@@ -289,7 +289,7 @@ const EXAM_TRANS_SEG = [
   { id:'t1', items:[
     { zh:'近年来，随着互联网技术的迅猛发展，互联网经济已成为一个热门话题。',
       en:'In recent years, with the rapid development of Internet technology, the Internet economy has become a hot topic.',
-      cues:['In recent years','the rapid development of','has become','hot topic'] },
+      cues:['In recent years','with the rapid development of','Internet technology','the Internet economy','has become','a hot topic'] },
     { zh:'以电子商务为代表的互联网经济已成为中国经济发展的重要引擎（driving force）。',
       en:'The Internet economy, represented by e-commerce, has become an important driving force for China\'s economic development.',
       cues:['represented by','driving force','economic development'] },
@@ -852,11 +852,19 @@ function examStartWrong(){
   renderExamRun();
 }
 
-/* ---------------- 汉译英：一轮的临时状态与三屏 ---------------- */
+/* ---------------- 汉译英：四档记忆（排序 / 全提示 / 首字母 / 回忆） ---------------- */
+/* 存档键只存句子级状态：level / idx / inputs / currentWord / checked / covers / missed，
+   L1 额外存 orderPicks / shuffled，回放额外存 phase */
+const TRANS_KEY = 'trans_final_v1';
 const examTransRun = {
-  id:'', text:'', pct:0, missed:[], parts:[], texts:[], step:0, refs:[], cues:[], refUsed:[], cueFired:[], showRef:false,
-  level:2, checked:[], covers:[], misses:[], expanded:[], orderPicks:[], shuffled:[], phase:'write', lastTypeAt:-1
+  id:'', parts:[], refs:[], cues:[], level:2, idx:0, phase:'write',
+  inputs:[], currentWord:[], checked:[], covers:[], missed:[],
+  orderPicks:[], shuffled:[], expanded:[], pct:0,
+  lastCommitPos:-1, freshDone:false, lastPick:null
 };
+let examTransAutoTimer = null;
+let examTransFreshTimer = null;
+let examTransHintTimer = null;
 
 /* 一段中文拆成「一口能吃完」的小句：先按句号切，太长的再按逗号切；
    切完把过短的碎片并回去，避免出现「交通、」这种没法翻的碎片 */
@@ -880,18 +888,57 @@ function examTransChunks(zh){
   });
   return out.length ? out : [String(zh || '')];
 }
-function examTransWordCount(txt){
-  const s = String(txt || '').trim();
-  return s ? s.split(/\s+/).length : 0;
-}
-/* 所有小句拼回整段，用来和参考译文算覆盖率 */
-function examTransSync(){
-  examTransRun.text = (examTransRun.texts || []).map(x => String(x || '').trim()).filter(Boolean).join(' ');
-}
-/* 等级偏好：存在 examState.transLv，非法值一律回落到全提示 */
+/* 新开一段时的默认档：全提示。等级只在 trans_final_v1 里按段保存 */
 function examTransLevel(){
-  const lv = Number(examState.transLv);
-  return (lv === 1 || lv === 2 || lv === 3 || lv === 4) ? lv : 2;
+  return 2;
+}
+
+/* ---------------- 存档 ---------------- */
+function examTransSave(){
+  try{
+    localStorage.setItem(TRANS_KEY, JSON.stringify({
+      id: examTransRun.id,
+      level: examTransRun.level,
+      idx: examTransRun.idx,
+      phase: examTransRun.phase,
+      inputs: examTransRun.inputs,
+      currentWord: examTransRun.currentWord,
+      checked: examTransRun.checked,
+      covers: examTransRun.covers,
+      missed: examTransRun.missed,
+      orderPicks: examTransRun.orderPicks,
+      shuffled: examTransRun.shuffled
+    }));
+  }catch(e){}
+}
+/* 只有同一段、句数对得上才续写；其他情况一律新开 */
+function examTransRestore(id, n){
+  let s = null;
+  try{ s = JSON.parse(localStorage.getItem(TRANS_KEY) || 'null'); }catch(e){}
+  if(!s || s.id !== id) return null;
+  if(!Array.isArray(s.inputs) || s.inputs.length !== n) return null;
+  const arr = (v, fill) => {
+    const out = [];
+    for(let i = 0; i < n; i++){
+      const x = Array.isArray(v) ? v[i] : undefined;
+      out.push(x === undefined ? fill : x);
+    }
+    return out;
+  };
+  const lv = Number(s.level);
+  const idx = Number(s.idx);
+  return {
+    level: (lv >= 1 && lv <= 4) ? lv : examTransLevel(),
+    idx: (idx >= 0 && idx < n) ? Math.floor(idx) : 0,
+    phase: s.phase === 'replay' ? 'replay' : 'write',
+    inputs: arr(s.inputs, '').map(x => String(x || '')),
+    currentWord: arr(s.currentWord, '').map(x => String(x || '')),
+    checked: arr(s.checked, false).map(Boolean),
+    covers: arr(s.covers, 0).map(x => Number(x) || 0),
+    missed: arr(s.missed, []).map(x => Array.isArray(x) ? x.slice() : []),
+    orderPicks: arr(s.orderPicks, []).map(x => Array.isArray(x) ? x.slice() : []),
+    shuffled: arr(s.shuffled, null).map(x => Array.isArray(x) ? x.slice() : null)
+  };
 }
 
 /* ---------------- 参考句：逐词工具 ---------------- */
@@ -902,6 +949,12 @@ function examTransRefTokens(step){
 function examTransCleanWord(w){
   return String(w || '').toLowerCase().replace(/[^a-z']/g, '');
 }
+/* 完全一致（忽略大小写与标点），自动提交用这个，不做前缀容忍 */
+function examTransExact(a, b){
+  const ca = examTransCleanWord(a);
+  const cb = examTransCleanWord(b);
+  return !!ca && ca === cb;
+}
 /* 清理后完全相同，或前 5 个字母相同（两者都至少 5 个字母） */
 function examTransWordHit(a, b){
   const ca = examTransCleanWord(a);
@@ -910,10 +963,15 @@ function examTransWordHit(a, b){
   if(ca === cb) return true;
   return ca.length >= 5 && cb.length >= 5 && ca.slice(0, 5) === cb.slice(0, 5);
 }
+/* 已提交 + 当前词，拼成完整输入 */
+function examTransFullInput(step){
+  return String((examTransRun.inputs || [])[step] || '') +
+    String((examTransRun.currentWord || [])[step] || '');
+}
 /* 输入前缀已经对上的词数：从第一个词开始逐词比，遇到不匹配立刻停 */
 function examTransWordProgress(step){
   const refs = examTransRefTokens(step);
-  const ins = String((examTransRun.texts || [])[step] || '').split(/\s+/).filter(Boolean);
+  const ins = examTransFullInput(step).split(/\s+/).filter(Boolean);
   let match = 0;
   for(let k = 0; k < refs.length && k < ins.length; k++){
     if(!examTransWordHit(ins[k], refs[k])) break;
@@ -938,13 +996,15 @@ function examTransCueRanges(step){
     return null;
   });
 }
-/* 下一个词提示：输入为空不给字母；写满参考词数后 done=true */
+/* 下一个词提示：正在拼的词（或下一个词）的首字母 */
 function examTransNextHint(step){
   const refs = examTransRefTokens(step);
-  const input = String((examTransRun.texts || [])[step] || '');
-  if(!input.trim()) return { letter:'', idx:0, word:'', done:false };
+  const input = examTransFullInput(step);
   const ins = input.split(/\s+/).filter(Boolean);
-  const idx = /\s$/.test(input) ? ins.length : Math.max(0, ins.length - 1);
+  let idx;
+  if(!input.trim()) idx = 0;
+  else if(/\s$/.test(input)) idx = ins.length;
+  else idx = Math.max(0, ins.length - 1);
   if(idx >= refs.length) return { letter:'', idx:idx, word:'', done:true };
   const word = refs[idx] || '';
   const clean = examTransCleanWord(word);
@@ -957,192 +1017,258 @@ function examTransPartialCue(cue){
     return core.length > 3 ? w.slice(0, 3) + '…' : w;
   }).join(' ');
 }
-/* 当前句「你的」：L1 用排序结果拼句，其余用输入；缺失时互相兜底 */
+/* 当前句「你的」：L1 用排序结果拼句，其余用已提交 + 当前词 */
 function examTransYourText(step){
   const picks = (examTransRun.orderPicks || [])[step] || [];
   const words = examTransRefTokens(step);
-  const text = String((examTransRun.texts || [])[step] || '');
+  const text = examTransFullInput(step);
   if(examTransRun.level === 1){
     if(picks.length) return picks.map(k => words[k]).filter(Boolean).join(' ');
     return text;
   }
-  return text.trim() ? text : picks.map(k => words[k]).filter(Boolean).join(' ');
+  if(String(text || '').trim()) return text;
+  return picks.map(k => words[k]).filter(Boolean).join(' ');
 }
 function examTransCanCheck(step){
-  if(examTransRun.checked[step]) return true;
+  if((examTransRun.checked || [])[step]) return true;
   if(examTransRun.level === 1){
     const words = examTransRefTokens(step);
-    return words.length > 0 && (examTransRun.orderPicks[step] || []).length >= words.length;
+    return words.length > 0 && ((examTransRun.orderPicks || [])[step] || []).length >= words.length;
   }
-  return String(examTransRun.texts[step] || '').trim().length > 0;
+  return String(examTransFullInput(step) || '').trim().length > 0;
+}
+/* 整段覆盖率：回放页与结算共用 */
+function examTransOverallPct(){
+  const t = examTrans(examTransRun.id);
+  if(!t) return 0;
+  const full = (examTransRun.parts || [])
+    .map((_, i) => String(examTransYourText(i) || '').trim())
+    .filter(Boolean)
+    .join(' ');
+  return trCoverage(t.en, full).pct;
 }
 
-/* ---------------- 轮播输入 ---------------- */
-/* 未聚焦时静态层显示整句；空句显示提示 */
+/* ---------------- 提交 / 撤销 ---------------- */
+function examTransCommitWords(words){
+  const step = examTransRun.idx;
+  let val = String((examTransRun.inputs || [])[step] || '');
+  let added = 0;
+  (words || []).forEach(w => {
+    const word = String(w || '').trim();
+    if(!word) return;
+    if(val && !/\s$/.test(val)) val += ' ';
+    val += word + ' ';
+    added++;
+  });
+  if(!added) return;
+  examTransRun.inputs[step] = val;
+  examTransRun.currentWord[step] = '';
+  examTransRun.lastCommitPos = val.trim().split(/\s+/).filter(Boolean).length - 1;
+  examTransRun.freshDone = false;
+  clearTimeout(examTransFreshTimer);
+  examTransFreshTimer = setTimeout(() => { examTransRun.lastCommitPos = -1; }, 600);
+}
+
+/* 自动提交：当前词与参考词完全一致，300ms 无新输入才提交 */
+function examTransScheduleAutoCommit(word){
+  clearTimeout(examTransAutoTimer);
+  if(!word) return;
+  const step = examTransRun.idx;
+  if((examTransRun.checked || [])[step]) return;
+  const refs = examTransRefTokens(step);
+  const doneN = String((examTransRun.inputs || [])[step] || '').split(/\s+/).filter(Boolean).length;
+  const refWord = refs[doneN] || '';
+  if(!refWord || !examTransExact(word, refWord)) return;
+  examTransAutoTimer = setTimeout(() => {
+    if(examTransRun.idx !== step) return;
+    if((examTransRun.checked || [])[step]) return;
+    const ta = document.querySelector('#view-exam .ex-tr-ta');
+    if(!ta || ta.value !== word) return;
+    examTransCommitWords([word]);
+    ta.value = '';
+    examTransRun.currentWord[step] = '';
+    examTransSave();
+    examTransPaintLocal();
+  }, 300);
+}
+
+/* ---------------- 局部更新 ---------------- */
+/* 未聚焦时显示普通文本；已提交词按是否对上参考词分绿底 / 红底删除线 */
 function examTransStaticPaint(){
   const el = document.querySelector('#view-exam .ex-tr-car-static');
   if(!el) return;
-  const val = String((examTransRun.texts || [])[examTransRun.step] || '');
-  if(val.trim()){
-    el.textContent = val;
-    el.classList.remove('placeholder');
-  } else {
+  const step = examTransRun.idx;
+  const ins = String((examTransRun.inputs || [])[step] || '');
+  const cur = String((examTransRun.currentWord || [])[step] || '');
+  if(!ins.trim() && !cur){
     el.textContent = '点击开始输入';
     el.classList.add('placeholder');
+    return;
   }
+  el.classList.remove('placeholder');
+  const refs = examTransRefTokens(step);
+  const words = ins.split(/\s+/).filter(Boolean);
+  const fresh = examTransRun.lastCommitPos >= 0 && !examTransRun.freshDone;
+  let html = words.map((w, k) => {
+    const ok = examTransExact(w, refs[k] || '');
+    return '<span class="ex-tr-tk ' + (ok ? 'ok' : 'bad') +
+      (fresh && k === examTransRun.lastCommitPos ? ' fresh' : '') + '">' + esc(w) + '</span>';
+  }).join(' ');
+  if(cur) html += (html ? ' ' : '') + '<span class="ex-tr-tk cur">' + esc(cur) + '</span>';
+  el.innerHTML = html;
 }
-/* 当前句按词渲染：末尾有空格 = 词间停顿，最后一段是当前词 */
-function examTransCarRender(){
+/* 聚焦时：已提交词缩成左侧小 slot，当前词放大逐字母比对 */
+function renderTyping(){
   const box = document.querySelector('#view-exam .ex-tr-car');
   if(!box) return;
-  const step = examTransRun.step;
-  const val = String((examTransRun.texts || [])[step] || '');
+  const step = examTransRun.idx;
+  const ins = String((examTransRun.inputs || [])[step] || '');
+  const cur = String((examTransRun.currentWord || [])[step] || '');
   const refs = examTransRefTokens(step);
-  const endsWithSpace = val.length > 0 && /\s$/.test(val);
-  const parts = val.split(/\s+/).filter(Boolean);
-  const typing = !endsWithSpace && parts.length > 0;
-  const currentIdx = typing ? parts.length - 1 : parts.length;
-  const doneCount = typing ? parts.length - 1 : parts.length;
-  let html = '';
-  for(let k = 0; k < doneCount; k++){
-    const word = parts[k] || '';
-    const miss = !examTransWordHit(word, refs[k] || '');
-    html += '<span class="ex-tr-slot done' + (miss ? ' miss' : '') + '">' + esc(word) + '</span>';
+  const done = ins.split(/\s+/).filter(Boolean);
+  const fresh = examTransRun.lastCommitPos >= 0 && !examTransRun.freshDone;
+  let html = done.map((w, k) =>
+    '<span class="ex-tr-slot done' + (fresh && k === examTransRun.lastCommitPos ? ' fresh' : '') + '">' +
+      esc(w) + '</span>').join('');
+  const ref = refs[done.length] || '';
+  let letters = '';
+  for(let k = 0; k < cur.length; k++){
+    const ok = cur[k].toLowerCase() === (ref[k] || '').toLowerCase();
+    letters += '<span class="ex-tr-ltr' + (ok ? '' : ' bad') + '">' + esc(cur[k]) + '</span>';
   }
-  if(currentIdx < refs.length || typing){
-    const word = typing ? (parts[currentIdx] || '') : '';
-    const ref = refs[currentIdx] || '';
-    let letters = '';
-    for(let k = 0; k < word.length; k++){
-      const ok = word[k].toLowerCase() === (ref[k] || '').toLowerCase();
-      letters += '<span class="ex-tr-ltr' + (ok ? '' : ' wrong') +
-        (!ok && k === examTransRun.lastTypeAt ? ' shake' : '') + '">' + esc(word[k]) + '</span>';
-    }
-    html += '<span class="ex-tr-slot current">' + letters + '<i class="ex-tr-car-caret"></i></span>';
-  }
+  html += '<span class="ex-tr-slot current">' + letters + '<i class="ex-tr-car-caret"></i></span>';
   box.innerHTML = html;
   examTransStaticPaint();
-  if(window.requestAnimationFrame) requestAnimationFrame(examTransScrollCurrent);
+  examTransRun.freshDone = true;
+  /* 同步摆一次，保证每敲一个字母当前词都在 34px 处；下一帧再校正一次布局 */
+  examTransScrollCurrent();
+  if(window.requestAnimationFrame) window.requestAnimationFrame(examTransScrollCurrent);
 }
-/* 把当前词滚到距左侧约 34px；找最近的可横向滚动容器 */
+/* 把当前词滚到距容器左侧 34px（34px 是 .ex-tr-carousel 的左内边距） */
 function examTransScrollCurrent(){
-  const cur = document.querySelector('#view-exam .ex-tr-slot.current');
+  const cur = document.querySelector('#view-exam .ex-tr-car-view .ex-tr-slot.current');
   if(!cur) return;
-  let box = cur.parentElement;
-  while(box && box !== document.body){
-    const st = window.getComputedStyle(box);
-    if(/(auto|scroll)/.test(st.overflowX) && box.scrollWidth > box.clientWidth + 1) break;
-    box = box.parentElement;
-  }
-  if(!box || box === document.body) box = cur.closest('.ex-tr-carousel');
+  const box = cur.closest ? cur.closest('.ex-tr-car-view') : null;
   if(!box) return;
   const wrapRect = box.getBoundingClientRect();
   const curRect = cur.getBoundingClientRect();
-  const currentLeft = curRect.left - wrapRect.left + box.scrollLeft;
-  const target = Math.max(0, currentLeft - 34);
+  /* 滚动容器左边缘已经让出 34px，所以当前词贴住容器左边缘即可 */
+  const target = Math.max(0, curRect.left - wrapRect.left + box.scrollLeft);
   if(Math.abs(box.scrollLeft - target) <= 2) return;
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(typeof box.scrollTo === 'function'){
-    box.scrollTo({ left:target, behavior: reduce ? 'auto' : 'smooth' });
-  } else {
-    box.scrollLeft = target;
+  box.scrollLeft = target;
+}
+function examTransKbSync(){
+  const vv = window.visualViewport;
+  const kb = vv ? Math.max(0, window.innerHeight - vv.height) : 0;
+  if(document.documentElement && document.documentElement.style){
+    document.documentElement.style.setProperty('--kb', kb + 'px');
   }
 }
 function examTransFocus(el){
   const box = el && el.closest ? el.closest('.ex-tr-carousel') : null;
   if(box) box.classList.add('focused');
-  if(el && typeof el.setSelectionRange === 'function'){
-    const n = el.value.length;
-    try{ el.setSelectionRange(n, n); }catch(e){}
-  }
-  examTransCarRender();
+  const step = examTransRun.idx;
+  const cw = String((examTransRun.currentWord || [])[step] || '');
+  if(el.value !== cw) el.value = cw;
+  try{ el.setSelectionRange(cw.length, cw.length); }catch(e){}
+  renderTyping();
+  examTransKbSync();
+  setTimeout(() => {
+    if(el && el.scrollIntoView) el.scrollIntoView({ block:'center', behavior:'smooth' });
+  }, 260);
 }
 function examTransBlur(el){
   const box = el && el.closest ? el.closest('.ex-tr-carousel') : null;
   if(box) box.classList.remove('focused');
-  examTransStaticPaint();
+  renderTyping();
+  examTransKbSync();
 }
-/* 输入时只做局部更新：轮播、词块、进度、提示、计数、按钮 */
+/* 输入时只更新当前词 / 已完成区 / cue / 进度 / 按钮，不整页重绘 */
+function examTransPaintLocal(){
+  renderTyping();
+  updateCues();
+  updateLv2();
+  updateFab();
+}
 function examTransInput(el){
-  const step = examTransRun.step;
-  const prev = String((examTransRun.texts || [])[step] || '');
-  let val = String(el.value || '');
-  examTransRun.lastTypeAt = -1;
-  if(val.length === prev.length + 1){
-    const caret = typeof el.selectionStart === 'number' ? el.selectionStart : val.length;
-    const before = val.slice(0, caret);
-    const m = before.match(/(\S+)$/);
-    if(m && !/\s$/.test(before)) examTransRun.lastTypeAt = m[1].length - 1;
-  }
-  /* 拼对一个词就补空格，光标留在末尾；L2–L4 一致 */
-  if(examTransRun.level >= 2 && examTransRun.level <= 4 && !examTransRun.checked[step]){
-    const caret = typeof el.selectionStart === 'number' ? el.selectionStart : val.length;
-    if(caret === val.length && val.length > 0 && !/\s$/.test(val)){
-      const refs = examTransRefTokens(step);
-      const words = val.split(/\s+/).filter(Boolean);
-      const wi = words.length - 1;
-      /* 自动空格只在整词拼完时触发：前缀容忍会让 recen 提前断词 */
-      const typed = examTransCleanWord(words[wi]);
-      const want = examTransCleanWord(refs[wi]);
-      if(wi >= 0 && wi < refs.length && typed && typed === want){
-        val += ' ';
-        el.value = val;
-        try{ el.setSelectionRange(val.length, val.length); }catch(e){}
-      }
-    }
-  }
-  examTransRun.texts[step] = val;
-  examTransSync();
-  examTransCarRender();
-  examTransCuePaint();
-  examTransProgressPaint();
-  examTransHintPaint();
-  examTransCountPaint();
-  examTransButtonPaint();
-}
-
-/* ---------------- 词块 / 进度 / 提示 / 计数 ---------------- */
-function examTransCuePaint(){
-  const step = examTransRun.step;
-  const level = examTransRun.level;
-  if(examTransRun.checked[step]) return;
-  if(level !== 2 && level !== 3){
-    const zh = document.querySelector('#view-exam .ex-tr-zh');
-    if(zh) zh.classList.remove('ready');
+  const step = examTransRun.idx;
+  if((examTransRun.checked || [])[step]) return;
+  const val = String(el.value || '');
+  /* 输入空格 → 提交当前词 */
+  if(/\s/.test(val)){
+    const raw = val.replace(/\s+/g, ' ').trim();
+    examTransRun.currentWord[step] = '';
+    if(raw) examTransCommitWords(raw.split(' '));
+    el.value = '';
+    clearTimeout(examTransAutoTimer);
+    examTransSave();
+    examTransPaintLocal();
     return;
   }
+  examTransRun.currentWord[step] = val;
+  examTransSave();
+  examTransPaintLocal();
+  examTransScheduleAutoCommit(val);
+}
+/* textarea 为空时退格：撤销最后一个已提交词并回填 */
+function examTransBackspace(e, el){
+  const step = examTransRun.idx;
+  if((examTransRun.checked || [])[step]) return;
+  if(el.value) return;
+  const words = String((examTransRun.inputs || [])[step] || '').trim().split(/\s+/).filter(Boolean);
+  if(!words.length) return;
+  const last = words.pop();
+  examTransRun.inputs[step] = words.length ? words.join(' ') + ' ' : '';
+  examTransRun.currentWord[step] = last;
+  examTransRun.lastCommitPos = -1;
+  clearTimeout(examTransAutoTimer);
+  clearTimeout(examTransFreshTimer);
+  if(e && e.preventDefault) e.preventDefault();
+  el.value = last;
+  try{ el.setSelectionRange(last.length, last.length); }catch(err){}
+  examTransSave();
+  examTransPaintLocal();
+}
+
+/* ---------------- 词块 / 进度 / 提示 / 按钮 ---------------- */
+function updateCues(){
+  const step = examTransRun.idx;
+  const level = examTransRun.level;
+  if((examTransRun.checked || [])[step]) return;
+  if(level !== 2 && level !== 3) return;
   const chips = document.querySelectorAll('#view-exam [data-ex-tr-cue]');
+  if(!chips.length) return;
   const ranges = examTransCueRanges(step);
   const prog = examTransWordProgress(step);
-  const fired = examTransRun.cueFired[step] || (examTransRun.cueFired[step] = []);
-  let all = chips.length > 0;
   chips.forEach(chip => {
     const k = Number(chip.dataset.exTrCue);
     const range = ranges[k];
-    const on = !!range && prog.match >= range.end;
-    chip.classList.toggle('on', on);
-    if(on){
-      if(fired.indexOf(k) < 0){ fired.push(k); sfxPlay('pick'); }
-    } else {
-      all = false;
-    }
+    const done = !!range && prog.match >= range.end;
+    if(done) chip.classList.add('done');
+    else chip.classList.remove('done');
   });
-  const zh = document.querySelector('#view-exam .ex-tr-zh');
-  if(zh) zh.classList.toggle('ready', all);
 }
 function examTransProgressPaint(){
   if(examTransRun.level !== 2) return;
-  const prog = examTransWordProgress(examTransRun.step);
-  const bar = document.querySelector('#view-exam .ex-tr-prog-bar i');
+  const prog = examTransWordProgress(examTransRun.idx);
+  const bar = document.querySelector('#view-exam .ex-tr-prog-bar > i');
   if(bar) bar.style.width = (prog.total ? (prog.match / prog.total * 100).toFixed(1) : '0') + '%';
   const num = document.querySelector('#view-exam .ex-tr-prog-n');
   if(num) num.textContent = prog.match + ' / ' + prog.total + ' 词';
 }
+/* L2 的进度条与下一个词提示 */
+function updateLv2(){
+  examTransProgressPaint();
+  examTransHintPaint();
+}
 function examTransHintPaint(){
   const box = document.querySelector('#view-exam .ex-tr-hint');
   if(!box) return;
-  if(examTransRun.level !== 2){ box.style.display = 'none'; return; }
-  const h = examTransNextHint(examTransRun.step);
+  if(examTransRun.level !== 2 || (examTransRun.checked || [])[examTransRun.idx]){
+    box.style.display = 'none';
+    return;
+  }
+  const h = examTransNextHint(examTransRun.idx);
   box.classList.toggle('ex-tr-hint-ok', !!h.done);
   if(h.done){
     box.style.display = '';
@@ -1150,27 +1276,32 @@ function examTransHintPaint(){
   } else if(h.letter){
     box.style.display = '';
     box.innerHTML = '<span class="ex-tr-hint-k">下一个词</span>' +
-      '<span class="ex-tr-hint-c">' + esc(h.letter) + '…</span>';
+      '<span class="ex-tr-hint-c">' + esc(h.letter) + '<i>…</i></span>';
   } else {
     box.style.display = 'none';
     box.innerHTML = '';
   }
 }
-function examTransCountPaint(){
-  const row = document.querySelector('#view-exam .ex-tr-count');
-  if(!row) return;
-  if(examTransRun.level !== 3 && examTransRun.level !== 4){ row.hidden = true; return; }
-  const n = examTransWordCount((examTransRun.texts || [])[examTransRun.step] || '');
-  row.hidden = n === 0;
-  const b = row.querySelector('b');
-  if(b) b.textContent = n;
-}
-function examTransButtonPaint(){
-  const btn = document.querySelector('#view-exam [data-ex-check]');
-  if(!btn) return;
-  const step = examTransRun.step;
-  if(examTransRun.checked[step]) return;
-  btn.disabled = !examTransCanCheck(step);
+/* 检查按钮与右下角胶囊共用文案与禁用态 */
+function updateFab(){
+  const step = examTransRun.idx;
+  const n = (examTransRun.parts || []).length;
+  const checked = !!(examTransRun.checked || [])[step];
+  const label = checked ? (step + 1 >= n ? '回放' : '下一句') : '检查';
+  const disabled = !checked && !examTransCanCheck(step);
+  const btn = document.querySelector('#view-exam .ex-btn[data-ex-check]');
+  if(btn){
+    btn.disabled = disabled;
+    btn.textContent = label;
+  }
+  const fab = document.querySelector('#view-exam .ex-fab');
+  if(fab){
+    fab.disabled = disabled;
+    const lab = fab.querySelector('.ex-fab-label');
+    if(lab) lab.textContent = label;
+    const arw = fab.querySelector('.ex-fab-arw');
+    if(arw) arw.textContent = checked ? '→' : '✓';
+  }
 }
 
 /* ---------------- 排序档（L1） ---------------- */
@@ -1188,189 +1319,211 @@ function examTransShuffle(step){
   examTransRun.shuffled[step] = idx;
   return idx;
 }
-let examTransHintTimer = null;
 /* 5 秒不动就点亮下一个正确词块；每次重绘 / 点选 / 切档都重置 */
 function examTransHintTick(){
   clearTimeout(examTransHintTimer);
-  const step = examTransRun.step;
-  if(examTransRun.level !== 1 || examTransRun.checked[step] || examTransRun.phase !== 'write') return;
+  const step = examTransRun.idx;
+  if(examTransRun.level !== 1 || (examTransRun.checked || [])[step] || examTransRun.phase !== 'write') return;
   const words = examTransRefTokens(step);
-  const picks = examTransRun.orderPicks[step] || [];
+  const picks = (examTransRun.orderPicks || [])[step] || [];
   if(!words.length || picks.length >= words.length) return;
   examTransHintTimer = setTimeout(() => {
-    const next = (examTransRun.orderPicks[step] || []).length;
-    if(next >= words.length) return;
-    const used = {};
-    (examTransRun.orderPicks[step] || []).forEach(k => { used[k] = 1; });
-    if(used[next]) return;
-    const card = document.querySelector('#view-exam .ex-tr-sort');
-    if(!card) return;
-    const el = card.querySelector('[data-ex-sort="' + next + '"]');
+    if(examTransRun.idx !== step) return;
+    if(examTransRun.level !== 1 || (examTransRun.checked || [])[step]) return;
+    const next = ((examTransRun.orderPicks || [])[step] || []).length;
+    const el = document.querySelector('#view-exam .ex-tr-sort [data-ex-sort="' + next + '"]');
     if(el) el.classList.add('hint');
   }, 5000);
 }
+function examTransPlayPickAnim(){
+  const lp = examTransRun.lastPick;
+  if(!lp) return;
+  if(Date.now() - lp.at > 700){ examTransRun.lastPick = null; return; }
+  examTransRun.lastPick = null;
+  const chip = document.querySelector('#view-exam .ex-tr-answer [data-ex-unsort="' + lp.pos + '"]');
+  if(!chip) return;
+  chip.classList.add(lp.ok ? 'just-ok' : 'just-bad');
+  setTimeout(() => chip.classList.remove('just-ok', 'just-bad'), 420);
+}
 function examTransPick(k){
-  const step = examTransRun.step;
-  if(examTransRun.checked[step]) return;
+  const step = examTransRun.idx;
+  if((examTransRun.checked || [])[step]) return;
   const words = examTransRefTokens(step);
   if(!(k >= 0 && k < words.length)) return;
   const picks = examTransRun.orderPicks[step] || (examTransRun.orderPicks[step] = []);
   if(picks.indexOf(k) >= 0) return;
   const pos = picks.length;
+  const ok = k === pos;
   picks.push(k);
-  sfxPlay(k === pos ? 'pick' : 'drop');
+  examTransRun.lastPick = { pos:pos, ok:ok, at:Date.now() };
+  sfxPlay(ok ? 'pick' : 'drop');
+  examTransSave();
   renderExamTrans();
 }
 function examTransUnpick(pos){
-  const step = examTransRun.step;
-  if(examTransRun.checked[step]) return;
-  const picks = examTransRun.orderPicks[step] || [];
+  const step = examTransRun.idx;
+  if((examTransRun.checked || [])[step]) return;
+  const picks = (examTransRun.orderPicks || [])[step] || [];
   if(!(pos >= 0 && pos < picks.length)) return;
-  picks.splice(pos);
+  picks.splice(pos, 1);
+  examTransRun.lastPick = null;
+  examTransSave();
   renderExamTrans();
 }
-function examStartTrans(id){
+
+/* ---------------- 一轮的开合 ---------------- */
+function examStartTrans(id, restart){
   const t = examTrans(id);
   if(!t) return;
   examEnterRun();
   const seg = EXAM_TRANS_SEG.find(x => x.id === id);
-  examTransRun.id = id;
-  examTransRun.text = '';
-  examTransRun.pct = 0;
-  examTransRun.missed = [];
-  examTransRun.showRef = false;
-  examTransRun.level = examTransLevel();
+  let parts, refs, cues;
   if(seg){
     /* 有句级数据：中文、英文参考、词块逐句一一对应 */
-    examTransRun.parts = seg.items.map(x => x.zh);
-    examTransRun.refs = seg.items.map(x => x.en || '');
-    examTransRun.cues = seg.items.map(x => x.cues || []);
+    parts = seg.items.map(x => x.zh);
+    refs = seg.items.map(x => x.en || '');
+    cues = seg.items.map(x => x.cues || []);
   } else {
-    examTransRun.parts = examTransChunks(t.zh);
-    examTransRun.refs = examTransRun.parts.map(() => '');
-    examTransRun.cues = examTransRun.parts.map(() => []);
+    parts = examTransChunks(t.zh);
+    refs = parts.map(() => '');
+    cues = parts.map(() => []);
   }
-  examTransRun.texts = examTransRun.parts.map(() => '');
-  examTransRun.refUsed = examTransRun.parts.map(() => false);
-  examTransRun.cueFired = examTransRun.parts.map(() => []);
-  examTransRun.checked = examTransRun.parts.map(() => false);
-  examTransRun.covers = examTransRun.parts.map(() => 0);
-  examTransRun.misses = examTransRun.parts.map(() => []);
-  examTransRun.expanded = examTransRun.parts.map(() => false);
-  examTransRun.orderPicks = examTransRun.parts.map(() => []);
-  examTransRun.shuffled = examTransRun.parts.map(() => null);
-  examTransRun.step = 0;
-  examTransRun.phase = 'write';
-  examTransRun.lastTypeAt = -1;
+  const n = parts.length;
+  const s = restart ? null : examTransRestore(id, n);
+
+  examTransRun.id = id;
+  examTransRun.parts = parts;
+  examTransRun.refs = refs;
+  examTransRun.cues = cues;
+  examTransRun.level = s ? s.level : examTransLevel();
+  examTransRun.idx = s ? s.idx : 0;
+  examTransRun.phase = s ? s.phase : 'write';
+  examTransRun.inputs = s ? s.inputs : new Array(n).fill('');
+  examTransRun.currentWord = s ? s.currentWord : new Array(n).fill('');
+  examTransRun.checked = s ? s.checked : new Array(n).fill(false);
+  examTransRun.covers = s ? s.covers : new Array(n).fill(0);
+  examTransRun.missed = s ? s.missed : new Array(n).fill(null).map(() => []);
+  examTransRun.orderPicks = s ? s.orderPicks : new Array(n).fill(null).map(() => []);
+  examTransRun.shuffled = s ? s.shuffled : new Array(n).fill(null);
+  examTransRun.expanded = new Array(n).fill(false);
+  examTransRun.pct = 0;
+  examTransRun.lastCommitPos = -1;
+  examTransRun.lastPick = null;
+  clearTimeout(examTransAutoTimer);
+  clearTimeout(examTransFreshTimer);
   clearTimeout(examTransHintTimer);
+
+  examTransSave();
   renderExamTrans();
-}
-/* 展开/收起当前句的参考：只动 DOM，不重绘，已写内容和光标都留着 */
-function examTransToggleRef(){
-  const wrap = document.querySelector('#view-exam .ex-wrap');
-  if(!wrap) return;
-  const box = wrap.querySelector('[data-ex-tr-refbox]');
-  const btn = wrap.querySelector('[data-ex-tr-ref]');
-  if(!box || !btn) return;
-  const open = box.hidden;
-  box.hidden = !open;
-  const lab = btn.querySelector('[data-ex-tr-ref-label]');
-  if(lab) lab.textContent = open ? '收起参考' : '看这句参考';
-  btn.classList.toggle('open', open);
-  if(open) examTransRun.refUsed[examTransRun.step] = true;
-  examTransRun.showRef = open;
 }
 /* 切换记忆等级：保留已写内容，只撤销当前句判分 */
 function examTransSetLevel(lv){
   lv = Number(lv);
   if(lv !== 1 && lv !== 2 && lv !== 3 && lv !== 4) return;
   if(examTransRun.level === lv) return;
-  const step = examTransRun.step;
+  const step = examTransRun.idx;
   examTransRun.level = lv;
-  examState.transLv = lv;
-  persist(EXAM_KEY, examState);
-  /* 切档只撤销当前句判分，已写内容留着 */
   examTransRun.checked[step] = false;
   examTransRun.covers[step] = 0;
-  examTransRun.misses[step] = [];
+  examTransRun.missed[step] = [];
   if(lv === 1){
     examTransRun.orderPicks[step] = [];
     examTransRun.shuffled[step] = null;
   }
-  examTransRun.showRef = false;
-  examTransRun.lastTypeAt = -1;
+  examTransRun.lastCommitPos = -1;
+  examTransRun.lastPick = null;
+  clearTimeout(examTransAutoTimer);
+  examTransSave();
   renderExamTrans();
   /* 已写过内容时把光标接回末尾，切档后可以继续写 */
-  if(lv >= 2 && String((examTransRun.texts || [])[step] || '').trim()){
+  if(lv >= 2 && String(examTransFullInput(step) || '').trim()){
     const ta = document.querySelector('#view-exam .ex-tr-ta');
     if(ta) examTransFocus(ta);
   }
 }
 /* 重写这句：撤销判分，内容保留 */
 function examTransRewrite(step){
-  const i = typeof step === 'number' ? step : examTransRun.step;
+  const i = typeof step === 'number' ? step : examTransRun.idx;
   if(!(i >= 0 && i < (examTransRun.parts || []).length)) return;
   examTransRun.checked[i] = false;
   examTransRun.covers[i] = 0;
-  examTransRun.misses[i] = [];
-  examTransRun.lastTypeAt = -1;
+  examTransRun.missed[i] = [];
+  examTransRun.lastCommitPos = -1;
+  examTransSave();
   renderExamTrans();
 }
-/* 单句检查：L1 看排序正确率，L2–L4 看覆盖率 */
+/* 单句检查：L1 看排序正确率，L2–L4 看覆盖率（已提交 + 当前词） */
 function examTransCheck(){
-  const step = examTransRun.step;
-  if(examTransRun.checked[step]) return;
+  const step = examTransRun.idx;
+  if((examTransRun.checked || [])[step]) return;
   const t = examTrans(examTransRun.id);
   if(!t) return;
   let pct = 0;
-  let missed = [];
+  let missList = [];
   if(examTransRun.level === 1){
     const words = examTransRefTokens(step);
-    const picks = examTransRun.orderPicks[step] || [];
+    const picks = (examTransRun.orderPicks || [])[step] || [];
     let right = 0;
     picks.forEach((k, pos) => { if(k === pos) right++; });
     pct = words.length ? Math.round(right / words.length * 100) : 0;
   } else {
+    if(String(examTransRun.currentWord[step] || '')){
+      examTransCommitWords([examTransRun.currentWord[step]]);
+    }
+    examTransRun.lastCommitPos = -1;
     const ref = String((examTransRun.refs || [])[step] || '') || t.en;
-    const cov = trCoverage(ref, String((examTransRun.texts || [])[step] || ''));
+    const cov = trCoverage(ref, examTransFullInput(step));
     pct = cov.pct;
-    missed = cov.missed || [];
+    missList = cov.missed || [];
   }
   examTransRun.checked[step] = true;
   examTransRun.covers[step] = pct;
-  examTransRun.misses[step] = missed.slice(0, 12);
+  examTransRun.missed[step] = missList.slice(0, 12);
+  examTransSave();
   sfxPlay(pct >= 60 ? 'ok' : 'rate2');
   renderExamTrans();
 }
+/* 检查 / 下一句 / 回放：检查按钮与 .ex-fab 共用 */
+function examTransPrimary(){
+  const step = examTransRun.idx;
+  if((examTransRun.checked || [])[step]) examTransStepNext();
+  else examTransCheck();
+}
 function examTransStepNext(){
-  const step = examTransRun.step;
-  if(!examTransRun.checked[step]) return;
-  if(step >= examTransRun.parts.length - 1){ examTransReveal(); return; }
-  examTransRun.step = step + 1;
-  examTransRun.showRef = false;
-  examTransRun.lastTypeAt = -1;
+  const step = examTransRun.idx;
+  if(!(examTransRun.checked || [])[step]) return;
+  if(step >= (examTransRun.parts || []).length - 1){ examTransReveal(); return; }
+  examTransRun.idx = step + 1;
+  examTransRun.lastCommitPos = -1;
+  examTransRun.lastPick = null;
+  clearTimeout(examTransAutoTimer);
+  examTransSave();
   sfxPlay('ok');
   renderExamTrans();
 }
 function examTransStepPrev(){
-  if(examTransRun.step <= 0) return;
-  examTransRun.step -= 1;
-  examTransRun.showRef = false;
-  examTransRun.lastTypeAt = -1;
+  if(examTransRun.idx <= 0) return;
+  examTransRun.idx -= 1;
+  examTransRun.lastCommitPos = -1;
+  examTransRun.lastPick = null;
+  clearTimeout(examTransAutoTimer);
+  examTransSave();
   renderExamTrans();
 }
+
+/* ---------------- 页面片段 ---------------- */
 function examTransChips(words){
   if(!words || !words.length) return '';
   return '<span class="ex-tr-miss-k">没写到的关键词</span>' +
     '<div class="ex-tr-chips">' + words.map(w => '<span class="ex-tr-chip">' + esc(w) + '</span>').join('') + '</div>';
 }
-/* 顶部刻度：已检查的是墨色，当前格是浅墨，没到的是发丝线 */
+/* 顶部刻度：已检查的是实色，当前格是半透明，没到的是发丝线 */
 function examTransTicks(){
   const n = (examTransRun.parts || []).length;
-  const step = examTransRun.step;
+  const step = examTransRun.idx;
   let out = '<div class="ex-tr-ticks">';
   for(let i = 0; i < n; i++){
-    const cls = ((examTransRun.checked[i] ? 'on' : '') + (i === step ? ' cur' : '')).trim();
+    const cls = (((examTransRun.checked || [])[i] ? 'done' : '') + (i === step ? ' cur' : '')).trim();
     out += '<i class="' + cls + '"></i>';
   }
   return out + '</div>';
@@ -1383,28 +1536,24 @@ function examTransLevelBar(level){
     return '<button class="ex-tr-lvb' + (level === lv ? ' on' : '') + '" type="button" data-ex-lv="' + lv + '">' + lab + '</button>';
   }).join('') + '</div>';
 }
-/* L2 完整词块；L3 每个词前 3 字母 + 省略号；L4 不给 */
+/* L2 完整词块；L3 每个词前 3 字母 + 省略号；L1 / L4 不给 */
 function examTransCuesHtml(step, level){
   const cues = (examTransRun.cues || [])[step] || [];
   if(!cues.length || level === 1 || level === 4) return '';
-  return '<div class="ex-tr-cues">' + cues.map((cue, k) => {
-    const text = level === 3 ? examTransPartialCue(cue) : String(cue || '');
-    return '<span class="ex-tr-cue' + (level === 3 ? ' partial' : '') + '" data-ex-tr-cue="' + k + '">' + esc(text) + '</span>';
-  }).join('') + '</div>';
-}
-function examTransReady(step){
-  if(examTransRun.level !== 2 && examTransRun.level !== 3) return false;
-  const cues = (examTransRun.cues || [])[step] || [];
-  if(!cues.length) return false;
   const ranges = examTransCueRanges(step);
   const prog = examTransWordProgress(step);
-  return ranges.every(r => !!r && prog.match >= r.end);
+  return '<div class="ex-tr-cues">' + cues.map((cue, k) => {
+    const text = level === 3 ? examTransPartialCue(cue) : String(cue || '');
+    const done = !!ranges[k] && prog.match >= ranges[k].end;
+    return '<span class="ex-tr-cue' + (level === 3 ? ' partial' : '') + (done ? ' done' : '') +
+      '" data-ex-tr-cue="' + k + '">' + esc(text) + '</span>';
+  }).join('') + '</div>';
 }
 /* L1：池子按打乱顺序固定摆好，选走的只隐身不挪位 */
 function examTransSortHtml(step){
   const words = examTransRefTokens(step);
   const shuf = examTransShuffle(step);
-  const picks = examTransRun.orderPicks[step] || [];
+  const picks = (examTransRun.orderPicks || [])[step] || [];
   const used = {};
   picks.forEach(k => { used[k] = 1; });
   const pool = shuf.map(k => {
@@ -1419,18 +1568,22 @@ function examTransSortHtml(step){
       esc(words[k] || '') + '</button>';
   }).join('') : '<span class="ex-tr-empty">点击上面的词，按顺序排好</span>';
   return '<div class="ex-tr-sort">' +
-      '<div class="ex-tr-pool">' + pool + '</div>' +
-      '<div class="ex-tr-answer">' + answer + '</div>' +
+      '<div class="ex-tr-pool">' +
+        '<span class="ex-tr-sort-k">打乱的词 · 位置固定 · 5 秒不动会高亮下一个</span>' + pool +
+      '</div>' +
+      '<div class="ex-tr-answer">' +
+        '<span class="ex-tr-sort-k">你的顺序 · 点词可撤回</span>' + answer +
+      '</div>' +
     '</div>';
 }
 /* 已完成的句子：01 已完成 ▸，展开显示你的 / 参考 */
 function examTransDoneList(step){
   let rows = '';
   for(let i = 0; i < step; i++){
-    const open = !!examTransRun.expanded[i];
+    const open = !!(examTransRun.expanded || [])[i];
     rows += '<button class="ex-tr-done-row' + (open ? ' open' : '') + '" type="button" data-ex-expand="' + i + '">' +
         '<b>' + ('0' + (i + 1)).slice(-2) + '</b>' +
-        '<span>已完成</span>' +
+        '<span>' + ((examTransRun.checked || [])[i] ? '已完成' : '未检查') + '</span>' +
         '<i class="ex-tr-chev" aria-hidden="true"></i>' +
       '</button>';
     if(open){
@@ -1446,7 +1599,7 @@ function examTransDoneList(step){
 }
 /* 单句内联反馈：大号覆盖率 + 你的 / 参考 + 漏词 */
 function examTransFeedback(step){
-  const pct = Math.max(0, Math.min(100, Number(examTransRun.covers[step]) || 0));
+  const pct = Math.max(0, Math.min(100, Number((examTransRun.covers || [])[step]) || 0));
   const ok = pct >= 60;
   let html = '<div class="ex-tr-fb">' +
       '<div class="ex-tr-fb-head">' +
@@ -1458,7 +1611,7 @@ function examTransFeedback(step){
         esc(examTransYourText(step) || '（未写）') + '</span></div>' +
       '<div class="ex-tr-fb-line"><span class="k">参考</span><span class="v ref">' +
         esc((examTransRun.refs || [])[step] || '') + '</span></div>';
-  if(examTransRun.level !== 1) html += examTransChips(examTransRun.misses[step] || []);
+  if(examTransRun.level !== 1) html += examTransChips((examTransRun.missed || [])[step] || []);
   return html + '</div>';
 }
 function renderExamTrans(){
@@ -1470,19 +1623,17 @@ function renderExamTrans(){
   const parts = examTransRun.parts || [];
   const n = parts.length;
   if(!n){ renderExam(); return; }
-  const step = Math.max(0, Math.min(examTransRun.step, n - 1));
-  examTransRun.step = step;
+  const step = Math.max(0, Math.min(examTransRun.idx, n - 1));
+  examTransRun.idx = step;
   const level = examTransRun.level;
   const checked = !!examTransRun.checked[step];
-  const cur = String(examTransRun.texts[step] || '');
-  const ref = String(examTransRun.refs[step] || '').trim();
   const last = step >= n - 1;
 
   let body = examTransTicks() +
     examTransDoneList(step) +
-    '<span class="ex-tr-k">SENTENCE ' + ('0' + (step + 1)).slice(-2) +
+    '<span class="ex-tr-stage">SENTENCE ' + ('0' + (step + 1)).slice(-2) +
       '<em>/ ' + ('0' + n).slice(-2) + '</em></span>' +
-    '<p class="ex-tr-zh' + (examTransReady(step) ? ' ready' : '') + '">' + esc(parts[step] || '') + '</p>' +
+    '<p class="ex-tr-zh">' + esc(parts[step] || '') + '</p>' +
     examTransLevelBar(level);
 
   if(checked){
@@ -1500,30 +1651,20 @@ function renderExamTrans(){
         '</div>' +
         '<div class="ex-tr-hint" style="display:none;"></div>';
     }
-    if(ref){
-      body += '<button class="ex-tr-refbtn' + (examTransRun.showRef ? ' open' : '') + '" type="button" data-ex-tr-ref>' +
-          '<span data-ex-tr-ref-label>' + (examTransRun.showRef ? '收起参考' : '看这句参考') + '</span>' +
-          '<i class="ex-tr-caret" aria-hidden="true"></i></button>' +
-        '<div class="ex-tr-refseg" data-ex-tr-refbox' + (examTransRun.showRef ? '' : ' hidden') + '>' + esc(ref) + '</div>';
-    }
     body += '<div class="ex-tr-carousel">' +
-        '<div class="ex-tr-car-static placeholder">点击开始输入</div>' +
-        '<div class="ex-tr-car"></div>' +
-        '<textarea class="ex-tr-ta" data-ex-tr-input spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"' +
-          ' oninput="examTransInput(this)" onfocus="examTransFocus(this)" onblur="examTransBlur(this)">' + esc(cur) + '</textarea>' +
+        '<div class="ex-tr-car-view">' +
+          '<div class="ex-tr-car-static placeholder">点击开始输入</div>' +
+          '<div class="ex-tr-car"></div>' +
+        '</div>' +
+        '<textarea class="ex-tr-ta" data-ex-tr-input spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" inputmode="text"></textarea>' +
       '</div>';
-    if(level === 3 || level === 4){
-      body += '<p class="ex-tr-count"' + (cur.trim() ? '' : ' hidden') + '>已写 <b>' + examTransWordCount(cur) + '</b> 词</p>';
-    }
   }
 
+  const label = checked ? (last ? '回放' : '下一句') : '检查';
+  const disabled = !checked && !examTransCanCheck(step);
   let foot = '';
   if(step > 0) foot += '<button class="ex-btn ghost" type="button" data-ex-tr-prev>上一句</button>';
-  if(checked){
-    foot += '<button class="ex-btn" type="button" data-ex-tr-next>' + (last ? '看整段回放' : '下一句 →') + '</button>';
-  } else {
-    foot += '<button class="ex-btn" type="button" data-ex-check' + (examTransCanCheck(step) ? '' : ' disabled') + '>检查</button>';
-  }
+  foot += '<button class="ex-btn" type="button" data-ex-check' + (disabled ? ' disabled' : '') + '>' + label + '</button>';
 
   view.innerHTML = '<div class="ex-wrap ex-tr-page">' +
       '<div class="ex-bar">' +
@@ -1533,35 +1674,34 @@ function renderExamTrans(){
       '</div>' +
       '<div>' + body + '</div>' +
       '<div class="ex-foot">' + foot + '</div>' +
+      '<button class="ex-fab" type="button" data-ex-check' + (disabled ? ' disabled' : '') +
+        '><span class="ex-fab-label">' + label + '</span><span class="ex-fab-arw">' +
+        (checked ? '→' : '✓') + '</span></button>' +
     '</div>';
 
-  examTransCarRender();
-  examTransCuePaint();
-  examTransProgressPaint();
-  examTransHintPaint();
-  examTransCountPaint();
-  examTransButtonPaint();
+  renderTyping();
+  updateCues();
+  updateLv2();
+  updateFab();
+  examTransPlayPickAnim();
   examTransHintTick();
+  examTransKbSync();
 }
 function examTransReveal(){
   const t = examTrans(examTransRun.id);
   if(!t || examTransRun.phase === 'replay') return;
-  const full = (examTransRun.parts || [])
-    .map((_, i) => String(examTransYourText(i) || '').trim())
-    .filter(Boolean)
-    .join(' ');
-  const cov = trCoverage(t.en, full);
-  examTransRun.pct = cov.pct;
-  examTransRun.missed = cov.missed;
+  const pct = examTransOverallPct();
+  examTransRun.pct = pct;
   examTransRun.phase = 'replay';
+  examTransSave();
   /* seen / right / best / last 只在这里更新一次 */
   const r = examTransRec(t.id);
   r.seen += 1;
-  if(cov.pct >= 60) r.right += 1;
-  r.best = Math.max(r.best || 0, cov.pct);
-  r.last = cov.pct;
+  if(pct >= 60) r.right += 1;
+  r.best = Math.max(r.best || 0, pct);
+  r.last = pct;
   persist(EXAM_KEY, examState);
-  sfxPlay(cov.pct >= 60 ? 'goal' : 'rate1');   /* 收尾给一次亮音，分数不好也不打击 */
+  sfxPlay(pct >= 60 ? 'goal' : 'rate1');   /* 收尾给一次亮音，分数不好也不打击 */
   renderExamTransResult();
 }
 function renderExamTransResult(){
@@ -1570,12 +1710,11 @@ function renderExamTransResult(){
   const t = examTrans(examTransRun.id);
   if(!t){ renderExam(); return; }
   const parts = examTransRun.parts || [];
-  const pct = Math.max(0, Math.min(100, Number(examTransRun.pct) || 0));
+  const pct = Math.max(0, Math.min(100, Number(examTransRun.pct) || examTransOverallPct()));
   const ok = pct >= 60;
-  const refUsed = (examTransRun.refUsed || []).filter(Boolean).length;
   const next = EXAM_TRANS.find(x => x.unit === t.unit + 1);
   const items = parts.map((zh, i) => {
-    const c = Math.max(0, Math.min(100, Number(examTransRun.covers[i]) || 0));
+    const c = Math.max(0, Math.min(100, Number((examTransRun.covers || [])[i]) || 0));
     return '<div class="ex-tr-rp-item" style="--d:' + (i * 90) + 'ms">' +
         '<div class="ex-tr-rp-no">' + ('0' + (i + 1)).slice(-2) + ' · 覆盖率 ' + c + '%</div>' +
         '<p class="ex-tr-rp-zh">' + esc(zh || '') + '</p>' +
@@ -1592,10 +1731,6 @@ function renderExamTransResult(){
           '<p class="ex-tr-rp-pct">' + pct + '%</p>' +
           '<p class="ex-tr-rp-sub">' + (ok ? '主要表达都到位了，读一遍巩固' : '标红的句子建议重写一遍') + '</p>' +
         '</div>' +
-        '<div class="ex-tr-stat">' +
-          '<div><b>' + (parts.length - refUsed) + '</b><span>独立完成</span></div>' +
-          '<div><b>' + refUsed + '</b><span>看了参考</span></div>' +
-        '</div>' +
       '</div>' +
       '<div class="ex-tr-rp-list">' + items + '</div>' +
       '<div class="ex-foot">' +
@@ -1605,6 +1740,50 @@ function renderExamTransResult(){
       '</div>' +
     '</div>';
 }
+
+/* ---------------- 输入 / 键盘：整块只绑一次 ---------------- */
+(function examTransBind(){
+  const view = document.getElementById('view-exam');
+  if(!view || typeof view.addEventListener !== 'function') return;
+  const taOf = e => (e.target && e.target.closest) ? e.target.closest('.ex-tr-ta') : null;
+  view.addEventListener('input', e => {
+    const ta = taOf(e);
+    if(ta) examTransInput(ta);
+  });
+  view.addEventListener('keydown', e => {
+    const ta = taOf(e);
+    if(!ta) return;
+    if(e.key === 'Backspace' && !ta.value) examTransBackspace(e, ta);
+  });
+  view.addEventListener('focusin', e => {
+    const ta = taOf(e);
+    if(ta) examTransFocus(ta);
+  });
+  view.addEventListener('focusout', e => {
+    const ta = taOf(e);
+    if(ta) examTransBlur(ta);
+  });
+  /* L1 提示：点一下排序区就清掉高亮并重新计时 */
+  view.addEventListener('pointerdown', e => {
+    if(!e.target || !e.target.closest) return;
+    if(e.target.closest('.ex-tr-sort')){
+      document.querySelectorAll('#view-exam .ex-tr-word.hint').forEach(el => el.classList.remove('hint'));
+      examTransHintTick();
+      return;
+    }
+    /* 输入区横向滚动后 textarea 可能已滑出视野，点框内任意处都能接回键盘 */
+    const car = e.target.closest('.ex-tr-carousel');
+    if(car && !e.target.closest('.ex-tr-ta')){
+      const ta = car.querySelector('.ex-tr-ta');
+      if(ta) ta.focus();
+    }
+  });
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', examTransKbSync);
+    window.visualViewport.addEventListener('scroll', examTransKbSync);
+  }
+  examTransKbSync();
+})();
 
 /* ---------------- 答题页 ---------------- */
 function examRunStem(it, gid, cue){
@@ -1909,7 +2088,7 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
   }
   if(t.closest('[data-ex-check]')){
     e.preventDefault(); e.stopPropagation();
-    examTransCheck();
+    examTransPrimary();
     return;
   }
   if(t.closest('[data-ex-rewrite]')){
@@ -1927,20 +2106,15 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
     examTransStepPrev();
     return;
   }
-  if(t.closest('[data-ex-tr-ref]')){
-    e.preventDefault(); e.stopPropagation();
-    examTransToggleRef();
-    return;
-  }
   if(t.closest('[data-ex-trans-redo]')){
     e.preventDefault(); e.stopPropagation();
-    examStartTrans(examTransRun.id);
+    examStartTrans(examTransRun.id, true);
     return;
   }
   const trNext = t.closest('[data-ex-trans-next]');
   if(trNext){
     e.preventDefault(); e.stopPropagation();
-    examStartTrans(trNext.dataset.exTransNext);
+    examStartTrans(trNext.dataset.exTransNext, true);
     return;
   }
   const opt = t.closest('[data-ex-opt]');
