@@ -973,15 +973,15 @@
 .deck-exam .face.front .card-main{justify-content:flex-start;padding-top:.3rem;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;}
 .deck-exam .face.front .card-main::-webkit-scrollbar{display:none;}
 .deck-exam .face.front .meta{margin-top:.6rem;}
-/* 正面四选一：选项贴在句子下面，判完用墨底与批注红标出来 */
+/* 正面四选一：白纸上的描边行，判完再用墨底与灰划掉标出来 */
 .deck-exam .ex-deck-opts{margin-top:.7rem;gap:.34rem;}
 .deck-exam .ex-opt{
   min-height:42px;padding:.4rem .55rem;border-radius:8px;
-  background:color-mix(in srgb,var(--ci) 3%,var(--cf));
-  border-color:color-mix(in srgb,var(--ci) 14%,transparent);
+  background:transparent;
+  border-color:color-mix(in srgb,var(--ci) 16%,transparent);
   font-size:.82rem;
 }
-.deck-exam .ex-opt:active{background:color-mix(in srgb,var(--ci) 9%,var(--cf));}
+.deck-exam .ex-opt:active{background:color-mix(in srgb,var(--ci) 5%,transparent);}
 .deck-exam .ex-opt.right{background:var(--ink);color:#fff;border-color:var(--ink);}
 .deck-exam .ex-opt.right .ex-l{color:#fff;}
 /* 选错不做红色：灰底 + 深灰描边 + 划掉，和黑色正确项靠明度分开 */

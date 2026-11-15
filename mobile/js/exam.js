@@ -2116,8 +2116,8 @@ function examDeckRender(){
   const where = g ? 'UNIT ' + g.unit + ' · ' + (g.kind === 'word' ? 'Words' : 'Expressions') : '期末填空';
   const no = '第 ' + it.q + ' 题' + (sibs.length > 1 ? ' · 空 ' + it.b + '/' + sibs.length : '');
   const memo = examMemoLine(cur.gid, it.q);
-  /* 整套题卡只走黑白灰：纸底、押边、选项对错都用墨度区分，不掺色相 */
-  const deckTint = '--rc:#8A8A86;--mp:#F6F6F4;--mi:#2B2B2B;--ma:#8A8A86;--ctint:18%';
+  /* 整套题卡只走黑白灰：纸底和普通词卡一样是白的，只留墨字与灰线，不掺色相 */
+  const deckTint = '--rc:#8A8A86;--mp:#FFFFFF;--mi:#2B2B2B;--ma:#8A8A86;--ctint:4%';
   /* 正面就是四选一：选项顺序照题库，点一下判对错再自动翻到解析 */
   const opts = '<div class="ex-opts ex-deck-opts">' +
     (it.o || []).map((txt, i) =>
