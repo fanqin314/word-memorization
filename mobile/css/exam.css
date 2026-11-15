@@ -201,23 +201,38 @@
 }
 .ex-mm-row.open .ex-mm-tag{background:var(--ink);color:#fff;border-color:var(--ink);}
 /* ============================================================
-   汉译英：一张写译稿（刻度 → 当前句 → 可点亮词块 → 稿纸）
+   汉译英：一张校样纸
+   刻度 → 当前句 → 逐步撤走的四档脚手架 → 轮播稿纸
    ============================================================ */
 /* 题库首页的区块头（标题在左、数量在右），与写译稿页无关 */
 .ex-tr-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;}
+
+/* 写译稿页：局部只借三种状态色（钢蓝=参考/提示，绿=命中，红=批注） */
+.ex-wrap.ex-tr-page{
+  --tr-ref:#2B5B84;
+  --tr-ok:#2E7A4B;
+  --tr-bad:#A33A1E;
+  min-width:0;max-width:100%;
+}
+.ex-tr-page.replay{gap:.65rem;}
+.ex-tr-page .ex-bar{padding-bottom:.2rem;border-bottom:1px solid var(--rule);}
+.ex-tr-page .ex-bar-mid{letter-spacing:.06em;color:color-mix(in srgb,var(--ink) 55%,transparent);}
+.ex-tr-page .ex-bar-prog{color:color-mix(in srgb,var(--ink) 45%,transparent);}
+.ex-tr-page .ex-kicker{font-size:10px;letter-spacing:.12em;color:color-mix(in srgb,var(--ink) 55%,transparent);}
+
 /* 顶部刻度：每句一格，走过填墨，当前格浅墨 */
-.ex-tr-ticks{display:flex;gap:3px;margin:.1rem 0 .55rem;}
+.ex-tr-ticks{display:flex;gap:3px;margin:.1rem 0 .5rem;}
 .ex-tr-ticks i{
   flex:1;height:3px;border-radius:1px;background:var(--rule-2);
   transition:background 240ms var(--ease);
 }
 .ex-tr-ticks i.on{background:var(--ink);}
-.ex-tr-ticks i.cur{background:color-mix(in srgb,var(--ink) 45%,transparent);}
+.ex-tr-ticks i.cur:not(.on){background:color-mix(in srgb,var(--ink) 45%,transparent);}
 
 /* 句号小标：等宽、疏字距，不跟中文抢注意力 */
 .ex-tr-k{
-  display:block;margin-bottom:.34rem;
-  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.14em;
+  display:block;margin-bottom:.3rem;
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.14em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
 .ex-tr-k em{
@@ -225,113 +240,321 @@
   color:color-mix(in srgb,var(--ink) 28%,transparent);
 }
 
-/* 已完成句子：一行纸条，不再多行堆叠把当前句挤下去 */
+/* 已完成句子：整行按钮，展开后露出你的 / 参考 */
 .ex-tr-done-list{
   display:flex;flex-direction:column;
-  margin:0 0 .7rem;border-top:1px solid var(--rule);
+  margin:0 0 .2rem;border-top:1px solid var(--rule);
 }
-.ex-tr-done{
+.ex-tr-done-row{
+  appearance:none;cursor:pointer;width:100%;text-align:left;
   display:flex;align-items:center;gap:.45rem;
-  padding:.42rem 0;border-bottom:1px solid var(--rule);
-  font-size:.8rem;line-height:1.5;
+  min-height:44px;padding:.35rem 0;
+  border:0;border-bottom:1px solid var(--rule);background:transparent;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
+  font-family:var(--sans);font-size:.8rem;line-height:1.5;
 }
-.ex-tr-done-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.ex-tr-tick{flex:none;font-weight:900;color:#2E7A4B;animation:exTickIn 260ms var(--ease) both;}
-@keyframes exTickIn{from{transform:scale(.4);opacity:0;}to{transform:none;opacity:1;}}
+.ex-tr-done-row:active{background:color-mix(in srgb,var(--ink) 4%,transparent);}
+.ex-tr-done-row b{
+  flex:none;font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.06em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.ex-tr-done-row > span{
+  flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.ex-tr-chev{
+  flex:none;display:inline-flex;align-items:center;justify-content:center;
+  min-width:1em;font-family:var(--mono);font-size:.62rem;line-height:1;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+  transition:transform 180ms var(--ease);
+}
+.ex-tr-chev:empty::before{content:"▸";}
+.ex-tr-done-row.open .ex-tr-chev,
+.ex-tr-done-row[aria-expanded="true"] .ex-tr-chev,
+.ex-tr-chev.open{transform:rotate(90deg);}
+.ex-tr-done-open{
+  margin:0 0 .1rem;padding:.45rem .1rem .5rem .7rem;
+  border-left:2px solid var(--tr-ref);
+  background:color-mix(in srgb,var(--tr-ref) 4%,transparent);
+  font-size:.86rem;line-height:1.7;
+  color:color-mix(in srgb,var(--ink) 62%,transparent);
+  overflow-wrap:anywhere;
+}
+.ex-tr-done-open[hidden]{display:none;}
 
 /* 当前句：整页唯一的主体，字号压过标签和词块 */
 .ex-tr-zh{
-  position:relative;padding-left:.75rem;
+  position:relative;padding-left:.75rem;margin-top:.1rem;
   font-family:var(--serif);font-size:1.06rem;line-height:1.9;color:var(--ink);
+  overflow-wrap:break-word;
 }
 .ex-tr-zh::before{
   content:"";position:absolute;left:0;top:.42em;bottom:.42em;width:2px;
   background:var(--rule-2);transition:background 240ms var(--ease);
 }
-/* 词块全部写进去：左侧标记变绿点，算一次无声的小完成 */
-.ex-tr-zh.ready::before{background:#2E7A4B;}
+/* 词块全部写进去：左侧标记变绿，算一次无声的小完成 */
+.ex-tr-zh.ready::before{background:var(--tr-ok);}
 
 /* 必用词块：先虚线待命，写对了变实线并打绿勾 */
 .ex-tr-cues{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.65rem;}
 .ex-tr-cue{
-  display:inline-flex;align-items:center;gap:.28rem;
+  appearance:none;display:inline-flex;align-items:center;gap:.24rem;
   padding:.26rem .48rem;border:1px dashed var(--rule-2);border-radius:2px;
   font-family:var(--mono);font-size:.72rem;font-weight:700;line-height:1.4;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
   background:transparent;
   transition:color 160ms var(--ease),border-color 160ms var(--ease),background-color 160ms var(--ease);
 }
+/* 部分写出：字还在路上，先降一点存在感 */
+.ex-tr-cue.partial{opacity:.62;}
 .ex-tr-cue.on{
   border-style:solid;border-color:var(--ink);background:var(--paper-2);
   color:var(--ink);animation:exCueIn 260ms var(--ease);
 }
-.ex-tr-cue.on::after{content:"✓";font-weight:900;color:#2E7A4B;}
+.ex-tr-cue.on::after{content:"✓";font-weight:900;color:var(--tr-ok);}
 @keyframes exCueIn{from{transform:scale(.96);}to{transform:none;}}
+
+/* 逐词进度：3px 墨条 + 等宽小字 x / y 词 */
+.ex-tr-prog{display:flex;align-items:center;gap:.5rem;margin-top:.55rem;}
+.ex-tr-prog-bar{
+  flex:1;min-width:0;height:3px;border-radius:1px;
+  background:var(--rule-2);overflow:hidden;
+}
+.ex-tr-prog-bar > i{display:block;height:3px;background:var(--ink);transition:width 260ms var(--ease);}
+.ex-tr-prog-n{
+  flex:none;font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.04em;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+
+/* 下一个词：只给首字母，衬线大字放在小胶囊里 */
+.ex-tr-hint{
+  display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;
+  min-height:24px;margin-top:.45rem;
+  font-size:.72rem;color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-hint-k{
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-hint-c{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:1.6em;padding:.05rem .42rem;
+  border:1px solid var(--rule-2);border-radius:2px;background:var(--paper-2);
+  font-family:var(--serif);font-size:1rem;font-weight:700;line-height:1.35;
+  color:var(--tr-ref);
+}
+.ex-tr-hint-ok{font-family:var(--sans);font-size:.72rem;font-weight:700;color:var(--tr-ok);}
+
+/* 四档等级：四等分按钮，当前档墨底白字，其余纸底发丝线 */
+.ex-tr-lv{display:flex;align-items:stretch;gap:.3rem;margin-top:.55rem;min-width:0;}
+.ex-tr-lv-k{
+  flex:none;align-self:center;white-space:nowrap;
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-lvb{
+  appearance:none;cursor:pointer;flex:1 1 0;min-width:0;min-height:44px;
+  padding:.2rem .1rem;border:1px solid var(--rule-2);border-radius:2px;
+  background:var(--paper-2);color:color-mix(in srgb,var(--ink) 55%,transparent);
+  font-family:var(--sans);font-size:.72rem;font-weight:900;line-height:1.2;
+  white-space:nowrap;
+  transition:background-color 160ms var(--ease),color 160ms var(--ease),border-color 160ms var(--ease);
+}
+.ex-tr-lvb.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+.ex-tr-lvb:active{transform:scale(.985);}
+.ex-tr-lvb[disabled]{opacity:.4;cursor:default;}
+
+/* 排序档：池与答案两块发丝线框，选走的词只隐身、不挪位 */
+.ex-tr-sort{display:flex;flex-direction:column;gap:.4rem;margin-top:.55rem;min-width:0;}
+.ex-tr-pool,.ex-tr-answer{
+  display:flex;flex-wrap:wrap;gap:.32rem;align-content:flex-start;
+  min-height:52px;padding:.5rem;
+  border:1px solid var(--rule-2);border-radius:2px;background:var(--paper-2);
+}
+.ex-tr-answer{border-color:var(--rule);background:transparent;}
+.ex-tr-sort-k{
+  flex:0 0 100%;margin-bottom:.1rem;
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-word{
+  appearance:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  min-height:44px;padding:.3rem .55rem;
+  border:1px solid var(--rule-2);border-radius:2px;background:var(--paper-2);
+  color:var(--ink);font-family:var(--sans);font-size:.86rem;font-weight:700;line-height:1.25;
+  transition:border-color 160ms var(--ease),color 160ms var(--ease),background-color 160ms var(--ease);
+}
+.ex-tr-word:active{transform:scale(.97);}
+.ex-tr-word.used{visibility:hidden;pointer-events:none;}
+.ex-tr-word.picked{border-color:color-mix(in srgb,var(--ink) 35%,transparent);}
+.ex-tr-word.picked.ok{
+  border-color:var(--tr-ok);color:var(--tr-ok);
+  background:color-mix(in srgb,var(--tr-ok) 8%,var(--paper-2));
+}
+.ex-tr-word.picked.bad{
+  border-color:var(--tr-bad);color:var(--tr-bad);
+  background:color-mix(in srgb,var(--tr-bad) 7%,var(--paper-2));
+}
+/* 5 秒无操作：下一个正确词块轻轻脉冲，不整块发亮 */
+.ex-tr-word.hint{
+  border-color:var(--tr-ref);color:var(--tr-ref);
+  animation:exTrWordPulse 1.4s var(--ease) infinite;
+}
+@keyframes exTrWordPulse{
+  0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--tr-ref) 0%,transparent);}
+  50%{box-shadow:0 0 0 3px color-mix(in srgb,var(--tr-ref) 14%,transparent);}
+}
+.ex-tr-empty{
+  flex:0 0 100%;padding:.5rem;
+  border:1px dashed var(--rule-2);border-radius:2px;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;text-align:center;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
 
 /* 看这句参考：无边框文字按钮，箭头随展开翻转 */
 .ex-tr-refbtn{
-  appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;
-  margin-top:.6rem;padding:.24rem 0;border:0;background:transparent;
-  font-family:var(--mono);font-size:.68rem;font-weight:900;letter-spacing:.06em;
-  color:#2B5B84;
+  appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:.32rem;
+  min-height:44px;margin-top:.3rem;padding:0;border:0;background:transparent;
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.06em;
+  color:var(--tr-ref);
 }
 .ex-tr-caret{
-  width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;
+  width:0;height:0;flex:none;border-left:4px solid transparent;border-right:4px solid transparent;
   border-top:5px solid currentColor;transition:transform 180ms var(--ease);
 }
 .ex-tr-refbtn.open .ex-tr-caret{transform:rotate(180deg);}
 .ex-tr-refseg{
-  margin-top:.4rem;padding:.5rem .65rem;border-left:2px solid #2B5B84;
-  font-size:.86rem;line-height:1.7;
-  color:color-mix(in srgb,var(--ink) 78%,transparent);
-  background:color-mix(in srgb,var(--paper-2) 72%,#fff);
+  margin-top:.4rem;padding:.5rem .65rem;border-left:2px solid var(--tr-ref);
+  font-family:var(--serif);font-size:.9rem;line-height:1.7;
+  color:color-mix(in srgb,var(--ink) 72%,transparent);
+  background:color-mix(in srgb,var(--tr-ref) 4%,var(--paper-2));
+  overflow-wrap:anywhere;
 }
 .ex-tr-refseg[hidden]{display:none;}
-.ex-tr-refmark{
-  flex:none;margin-left:.35rem;padding:0 .3rem;border:1px solid var(--rule-2);border-radius:2px;
-  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.06em;
-  color:color-mix(in srgb,var(--ink) 45%,transparent);
-}
 
-/* 稿纸输入：去掉全边框，只留一条底线，聚焦时线变墨 */
-.ex-tr-in{
-  display:block;width:100%;min-height:96px;margin-top:.65rem;resize:none;
-  padding:.5rem .1rem;border:0;border-bottom:1.5px solid var(--rule-2);border-radius:0;
-  background:var(--paper-2);color:var(--ink);
-  font-family:var(--serif);font-size:1.02rem;line-height:1.7;
+/* 轮播稿纸：未聚焦是普通文本，tap 后变成打字机的当前字位 */
+.ex-tr-carousel{
+  position:relative;margin-top:.6rem;max-width:100%;min-height:112px;
+  padding:.9rem 1.05rem;
+  border:1px solid var(--rule-2);border-radius:2px;background:var(--paper-2);
+  overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;cursor:text;
   transition:border-color 160ms var(--ease);
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 18px),transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 18px),transparent 100%);
 }
-.ex-tr-in:focus{outline:none;border-bottom-color:var(--ink);}
-.ex-tr-in[readonly]{color:color-mix(in srgb,var(--ink) 72%,transparent);}
-.ex-tr-in::placeholder{color:color-mix(in srgb,var(--ink) 32%,transparent);}
+.ex-tr-carousel::-webkit-scrollbar{display:none;}
+.ex-tr-carousel.focused{border-color:var(--ink);}
+/* 失焦外观：就是一段写在纸上的普通英文 */
+.ex-tr-car-static{
+  min-height:4.2rem;
+  font-family:var(--serif);font-size:1rem;line-height:1.75;color:var(--ink);
+  white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;
+}
+.ex-tr-car-static.placeholder{color:color-mix(in srgb,var(--ink) 32%,transparent);}
+/* 聚焦外观：一次只把一个词放大到当前字位 */
+.ex-tr-car{
+  display:none;align-items:baseline;gap:12px;
+  width:max-content;min-width:100%;min-height:1.9rem;white-space:nowrap;
+}
+.ex-tr-carousel.focused .ex-tr-car{display:flex;}
+.ex-tr-carousel.focused .ex-tr-car-static{display:none;}
+.ex-tr-slot{
+  display:inline-flex;align-items:baseline;flex:none;
+  font-family:var(--mono);font-size:.86rem;line-height:1.3;
+  color:color-mix(in srgb,var(--ink) 28%,transparent);
+  transition:font-size 260ms var(--ease),color 220ms var(--ease);
+}
+.ex-tr-slot.done{color:color-mix(in srgb,var(--ink) 45%,transparent);}
+.ex-tr-slot.miss{color:var(--tr-bad);border-bottom:1px dashed currentColor;}
+.ex-tr-slot.current{
+  font-family:var(--serif);font-size:1.5rem;font-weight:700;line-height:1.25;
+  color:var(--ink);
+}
+.ex-tr-ltr{display:inline-block;transition:color 140ms var(--ease);}
+.ex-tr-ltr.wrong{color:var(--tr-bad);}
+.ex-tr-ltr.shake{animation:exTrShake 320ms var(--ease);}
+@keyframes exTrShake{
+  0%,100%{transform:translateX(0);}
+  25%{transform:translateX(-2px);}
+  55%{transform:translateX(2px);}
+  80%{transform:translateX(-1px);}
+}
+.ex-tr-car-caret{
+  display:inline-block;flex:none;width:2px;height:1.1em;margin-left:1px;
+  background:var(--ink);vertical-align:-.12em;
+  animation:exTrBlink 1.05s steps(1) infinite;
+}
+@keyframes exTrBlink{0%,50%{opacity:1;}51%,100%{opacity:0;}}
+/* 透明 textarea：只接键盘与光标，字面全部由上面的槽位显示 */
+.ex-tr-ta{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  margin:0;padding:0;border:0;resize:none;outline:none;
+  background:transparent;color:transparent;caret-color:transparent;
+  -webkit-text-fill-color:transparent;-webkit-appearance:none;
+  font-family:var(--mono);font-size:16px;line-height:1.4;
+  overflow:hidden;z-index:2;
+}
 
 /* 词数：只在写了之后出现 */
 .ex-tr-count{
   margin-top:.3rem;text-align:right;
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;
+  font-family:var(--mono);font-size:10px;letter-spacing:.04em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
 .ex-tr-count[hidden]{display:none;}
 .ex-tr-count b{color:var(--ink);font-weight:900;}
 
-/* 结算：大号覆盖率 + 两格统计 */
+/* 检查后：锁定的答案 + 单句反馈（覆盖率 / 你的 / 参考 / 漏词） */
+.ex-tr-locked{
+  margin-top:.6rem;padding:.65rem .7rem;
+  border:1px solid var(--rule);border-radius:2px;background:var(--paper-2);
+  font-family:var(--serif);font-size:1rem;line-height:1.7;
+  color:color-mix(in srgb,var(--ink) 72%,transparent);
+  overflow-wrap:anywhere;
+}
+.ex-tr-fb{margin-top:.7rem;padding-top:.55rem;border-top:1px solid var(--rule);}
+.ex-tr-fb-head{display:flex;align-items:baseline;gap:.45rem;flex-wrap:wrap;}
+.ex-tr-fb-pct{
+  font-family:var(--display);font-size:1.6rem;font-weight:900;line-height:1.1;
+  letter-spacing:-.02em;color:var(--ink);
+}
+.ex-tr-fb-pct.ok{color:var(--tr-ok);}
+.ex-tr-fb-pct.bad{color:var(--tr-bad);}
+.ex-tr-fb-tag{
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.1em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+/* 重写这句：无边框文字按钮，手指按得到 */
+.ex-tr-fb-rewrite{
+  appearance:none;cursor:pointer;display:inline-flex;align-items:center;
+  min-height:44px;margin-left:auto;padding:0 .1rem;
+  border:0;background:transparent;
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.06em;
+  color:var(--tr-ref);
+}
+/* 你的 / 参考：标签等宽小字，正文回到可读字号 */
+.ex-tr-fb-line{display:flex;align-items:baseline;gap:.5rem;margin-top:.35rem;min-width:0;}
+.ex-tr-fb-line k,.ex-tr-fb-line .k{
+  flex:none;width:2.2rem;
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.04em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-fb-line v,.ex-tr-fb-line .v{
+  flex:1;min-width:0;font-size:.86rem;line-height:1.6;
+  color:color-mix(in srgb,var(--ink) 62%,transparent);
+  overflow-wrap:anywhere;word-break:break-word;
+}
+.ex-tr-fb-line v.you,.ex-tr-fb-line .v.you{color:var(--ink);}
+.ex-tr-fb-line v.ref,.ex-tr-fb-line .v.ref{color:var(--tr-ref);}
+/* 整段参考：沿用原有的左侧墨线 */
 .ex-tr-ref{
   margin-top:.5rem;padding:.1rem 0 .1rem .65rem;
   border-left:2px solid var(--ink);
   font-family:var(--serif);font-size:1rem;line-height:1.7;color:var(--ink);
+  overflow-wrap:anywhere;
 }
-.ex-tr-cov{display:flex;align-items:baseline;gap:.45rem;margin-top:.75rem;}
-.ex-tr-cov span{
-  font-family:var(--mono);font-size:.62rem;font-weight:900;letter-spacing:.1em;
-  color:color-mix(in srgb,var(--ink) 45%,transparent);
-}
-.ex-tr-cov b{
-  font-family:var(--display);font-size:1.5rem;font-weight:900;line-height:1.1;
-  letter-spacing:-.02em;
-}
-.ex-tr-verdict{margin-top:.1rem;font-size:.78rem;font-weight:700;line-height:1.5;color:var(--ink);}
-.ex-tr-verdict.bad{color:#A33A1E;}
 .ex-tr-stat{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.6rem;}
 .ex-tr-stat > div{
   display:flex;flex-direction:column;gap:.1rem;
@@ -339,12 +562,12 @@
 }
 .ex-tr-stat b{font-family:var(--display);font-size:1.15rem;line-height:1.1;}
 .ex-tr-stat span{
-  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.06em;
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.06em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
 .ex-tr-miss-k{
-  display:block;margin-top:.5rem;
-  font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.08em;
+  display:block;margin-top:.55rem;
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.08em;
   color:color-mix(in srgb,var(--ink) 45%,transparent);
 }
 .ex-tr-chips{display:flex;flex-wrap:wrap;gap:.24rem .3rem;margin-top:.3rem;}
@@ -353,6 +576,46 @@
   padding:.1rem .3rem;border-radius:2px;border:1px solid var(--rule);
   background:var(--paper-2);color:color-mix(in srgb,var(--ink) 68%,transparent);
 }
+/* 整段回放：覆盖率放大成页眉，逐句错落淡入 */
+.ex-tr-rp-head{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;}
+.ex-tr-rp-pct{
+  font-family:var(--display);font-size:2.4rem;font-weight:900;line-height:1.05;
+  letter-spacing:-.03em;color:var(--ink);
+}
+.ex-tr-rp-sub{
+  font-size:.78rem;font-weight:700;line-height:1.5;
+  color:color-mix(in srgb,var(--ink) 60%,transparent);
+}
+.ex-tr-rp-list{margin-top:.75rem;border-top:1px solid var(--rule);}
+.ex-tr-rp-item{
+  padding:.6rem 0;border-bottom:1px solid var(--rule);
+  opacity:0;transform:translateY(12px);
+  animation:exTrRpIn 320ms var(--ease) forwards;
+  animation-delay:var(--d,0ms);
+}
+@keyframes exTrRpIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+.ex-tr-rp-no{
+  display:block;font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-rp-zh{
+  margin-top:.14rem;
+  font-family:var(--serif);font-size:1rem;line-height:1.7;color:var(--ink);
+  overflow-wrap:break-word;
+}
+.ex-tr-rp-line{display:flex;align-items:baseline;gap:.5rem;margin-top:.3rem;min-width:0;}
+.ex-tr-rp-line k,.ex-tr-rp-line .k{
+  flex:none;width:2.2rem;
+  font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.04em;
+  color:color-mix(in srgb,var(--ink) 45%,transparent);
+}
+.ex-tr-rp-line v,.ex-tr-rp-line .v{
+  flex:1;min-width:0;font-size:.86rem;line-height:1.6;
+  color:color-mix(in srgb,var(--ink) 62%,transparent);
+  overflow-wrap:anywhere;word-break:break-word;
+}
+.ex-tr-rp-line v.ref,.ex-tr-rp-line .v.ref{color:var(--tr-ref);}
+
 /* 写译稿页的页脚：按钮更实、更高，手指好按 */
 .ex-tr-page .ex-foot{margin-top:.9rem;}
 .ex-tr-page .ex-foot .ex-btn{min-height:46px;font-size:.9rem;}
@@ -364,13 +627,22 @@
 
 @media (prefers-reduced-motion: reduce){
   .ex-tr-cue.on,
-  .ex-tr-tick{animation:none;}
-  .ex-tr-in,
+  .ex-tr-word.hint,
+  .ex-tr-ltr.shake,
+  .ex-tr-car-caret,
+  .ex-tr-rp-item{animation:none;}
+  .ex-tr-rp-item{opacity:1;transform:none;}
   .ex-tr-ticks i,
   .ex-tr-zh::before,
   .ex-tr-cue,
-  .ex-tr-caret{transition:none;}
-  .ex-tr-refbtn.open .ex-tr-caret{transform:none;}
+  .ex-tr-lvb,
+  .ex-tr-word,
+  .ex-tr-caret,
+  .ex-tr-chev,
+  .ex-tr-slot,
+  .ex-tr-ltr,
+  .ex-tr-carousel,
+  .ex-tr-prog-bar > i{transition:none;}
 }
 
 /* ============================================================
