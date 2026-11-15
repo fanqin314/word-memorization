@@ -1005,6 +1005,13 @@
 .deck-exam .ex-memo-cue{color:color-mix(in srgb,var(--ci) 56%,transparent);}
 /* 背面原句比正面小一档，答案和考点才是主角 */
 .deck-exam .back-body .ex-deck-sent{font-size:1rem;line-height:1.7;font-weight:800;}
+/* 原句下面接整句中文：比原句浅一档，只靠明度分层 */
+.deck-exam .back-zh{
+  margin:.34rem 0 .1rem;
+  font-size:.84rem;font-weight:700;line-height:1.72;
+  color:color-mix(in srgb,var(--ci) 58%,transparent);
+  overflow-wrap:anywhere;
+}
 .deck-exam .ex-deck-ans{
   display:inline-block;
   font-size:clamp(1.35rem,6.4vw,1.9rem);line-height:1.15;letter-spacing:-.02em;
@@ -1017,4 +1024,6 @@
 /* 「遮住答案」在翻卡里只糊答案：题面始终清楚，背面答案与填进去的词一起糊掉 */
 .app.hide-gloss .deck-exam .face.front .gloss{filter:none;user-select:auto;}
 .app.hide-gloss .deck-exam .back-body .ex-blank{filter:blur(7px);user-select:none;}
+/* 中文译文也会点破答案，遮答案时一起糊 */
+.app.hide-gloss .deck-exam .back-zh{filter:blur(7px);user-select:none;}
 

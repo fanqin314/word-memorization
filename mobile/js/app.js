@@ -336,6 +336,7 @@ function hideHint(card){
 
 const deckView = document.getElementById('view-deck');
 deckView.addEventListener('pointerdown', (e) => {
+  if(e.pointerType === 'touch') return; /* 触屏走下面的 touch 事件，pointer 在手机上会被原生滚动打断 */
   const card = e.target.closest('.swipe-card');
   if(!card) return;
   if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]') || e.target.closest('[data-ex-deck-opt]')) return;
@@ -364,8 +365,47 @@ deckView.addEventListener('pointermove', (e) => {
   st.card.style.transform = 'translate(' + st.dx + 'px,' + st.dy + 'px) rotate(' + (st.dx / 45) + 'deg)';
   hintDir(st.card, st.dx, st.dy);
 });
-function endDrag(){
+/* 触屏单独接管：手机上原生滚动会让 pointermove 中途断掉，改用 touch 事件才滑得动 */
+deckView.addEventListener('touchstart', (e) => {
+  if(e.touches.length !== 1 || dragState) return;
+  const card = e.target.closest('.swipe-card');
+  if(!card) return;
+  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]') || e.target.closest('[data-ex-deck-opt]')) return;
+  if(e.target.closest('.spell-tile') || e.target.closest('.spell-slot')) return;
+  const t = e.touches[0];
+  const back = card.classList.contains('flipped') && !!e.target.closest('.face.back');
+  dragState = {id:'touch', card, x:t.clientX, y:t.clientY, dx:0, dy:0, moved:false, back, fired:false};
+  if(!back) card.style.transition = 'none';
+}, {passive:true});
+deckView.addEventListener('touchmove', (e) => {
+  if(!dragState || dragState.id !== 'touch' || e.touches.length !== 1) return;
+  const st = dragState;
+  const t = e.touches[0];
+  st.dx = t.clientX - st.x;
+  st.dy = t.clientY - st.y;
+  if(!st.moved && Math.hypot(st.dx, st.dy) > 8) st.moved = true;
+  if(!st.moved) return;
+  if(st.back){
+    /* 背面纵向留给阅读滚动，只有明显横向才切题 */
+    if(Math.abs(st.dx) <= Math.abs(st.dy)) return;
+    e.preventDefault();
+    if(!st.fired && Math.abs(st.dx) > 55){
+      st.fired = true;
+      advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
+    }
+    return;
+  }
+  e.preventDefault();
+  st.card.style.transform = 'translate(' + st.dx + 'px,' + st.dy + 'px) rotate(' + (st.dx / 45) + 'deg)';
+  hintDir(st.card, st.dx, st.dy);
+}, {passive:false});
+deckView.addEventListener('touchend', () => { if(dragState && dragState.id === 'touch') endDrag(); });
+deckView.addEventListener('touchcancel', () => { if(dragState && dragState.id === 'touch') endDrag(); });
+
+function endDrag(e){
   if(!dragState) return;
+  /* 触屏状态只由 touchend 收尾，别被同一手势的 pointerup 抢先处理 */
+  if(dragState.id === 'touch' && e && e.type && e.type.indexOf('pointer') === 0) return;
   const {card, dx, dy, moved, back} = dragState;
   dragState = null;
   if(!back){
