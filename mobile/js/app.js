@@ -339,12 +339,14 @@ deckView.addEventListener('pointerdown', (e) => {
   if(e.pointerType === 'touch') return; /* 触屏走下面的 touch 事件，pointer 在手机上会被原生滚动打断 */
   const card = e.target.closest('.swipe-card');
   if(!card) return;
-  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]') || e.target.closest('[data-ex-deck-opt]')) return;
+  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]')) return;
+  /* 选项上也允许起手拖动：位移超过阈值就算滑卡，点按不动才算选答案 */
   /* 背面拼写块的拖动/点按交给 spellDrag 处理，不参与切卡手势 */
   if(e.target.closest('.spell-tile') || e.target.closest('.spell-slot')) return;
   /* 背面：仍记录起点，但只接管水平滑动；垂直方向留给 back-body 原生滚动 */
   const back = card.classList.contains('flipped') && !!e.target.closest('.face.back');
-  dragState = {id:e.pointerId, card, x:e.clientX, y:e.clientY, dx:0, dy:0, moved:false, back, fired:false};
+  dragState = {id:e.pointerId, card, x:e.clientX, y:e.clientY, dx:0, dy:0, moved:false, back, fired:false,
+    onOpt:!!e.target.closest('[data-ex-deck-opt]')};
   if(!back) card.style.transition = 'none';
 });
 deckView.addEventListener('pointermove', (e) => {
@@ -370,11 +372,13 @@ deckView.addEventListener('touchstart', (e) => {
   if(e.touches.length !== 1 || dragState) return;
   const card = e.target.closest('.swipe-card');
   if(!card) return;
-  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]') || e.target.closest('[data-ex-deck-opt]')) return;
+  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]')) return;
+  /* 选项上也允许起手拖动：位移超过阈值就算滑卡，点按不动才算选答案 */
   if(e.target.closest('.spell-tile') || e.target.closest('.spell-slot')) return;
   const t = e.touches[0];
   const back = card.classList.contains('flipped') && !!e.target.closest('.face.back');
-  dragState = {id:'touch', card, x:t.clientX, y:t.clientY, dx:0, dy:0, moved:false, back, fired:false};
+  dragState = {id:'touch', card, x:t.clientX, y:t.clientY, dx:0, dy:0, moved:false, back, fired:false,
+    onOpt:!!e.target.closest('[data-ex-deck-opt]')};
   if(!back) card.style.transition = 'none';
 }, {passive:true});
 deckView.addEventListener('touchmove', (e) => {
@@ -406,7 +410,7 @@ function endDrag(e){
   if(!dragState) return;
   /* 触屏状态只由 touchend 收尾，别被同一手势的 pointerup 抢先处理 */
   if(dragState.id === 'touch' && e && e.type && e.type.indexOf('pointer') === 0) return;
-  const {card, dx, dy, moved, back} = dragState;
+  const {card, dx, dy, moved, back, onOpt} = dragState;
   dragState = null;
   if(!back){
     card.style.transition = '';
@@ -420,10 +424,13 @@ function endDrag(e){
     setTimeout(() => { suppressTap = false; }, 80);
     return;
   }
-  suppressTap = true;
-  setTimeout(() => { suppressTap = false; }, 80);
   const TH = 70;
   const ax = Math.abs(dx), ay = Math.abs(dy);
+  /* 从选项上起手：只有真滑出阈值才吃掉这一下，微抖仍按点选处理 */
+  if(!onOpt || ax > TH || ay > TH){
+    suppressTap = true;
+    setTimeout(() => { suppressTap = false; }, 80);
+  }
   if(ax > ay){
     if(ax > TH) advance(dx > 0 ? 2 : 0, dx > 0 ? 'right' : 'left');
   } else if(ay > TH){
