@@ -400,6 +400,16 @@
 }
 .letter-tile.current{background:var(--ink);border-color:var(--ink);color:var(--card);}
 .letter-tile.current .n{color:color-mix(in srgb,var(--card) 70%,transparent);}
+/* 期末填空球：墨色实心球，和纸白的字母球一眼分开；金环慢慢荡开提示可点 */
+.letter-tile.exam-ball{
+  background:var(--ink);border-color:var(--ink);color:var(--card);cursor:pointer;
+  box-shadow:0 2px 4px rgba(32,36,42,.16),0 12px 24px -10px rgba(32,36,42,.45);
+}
+.letter-tile.exam-ball .lt{font-size:calc(var(--s,56px) * .34);}
+.letter-tile.exam-ball .n{color:color-mix(in srgb,var(--card) 64%,transparent);}
+.letter-tile.exam-ball.dragging{
+  background:var(--ink);border-color:rgba(255,255,255,.5);
+}
 /* 当前字母的光晕同样用扩散环，避免 box-shadow 动画每帧重绘 */
 .letter-tile::after{
   content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;
@@ -407,6 +417,9 @@
   opacity:0;
 }
 .deck-stage.pick-open .letter-tile.current::after{animation:letterHalo 4.2s ease-out infinite;}
+/* 期末球的光圈用白色：整颗球与题卡统一在黑 / 白 / 灰里 */
+.letter-tile.exam-ball::after{box-shadow:0 0 0 2px rgba(255,255,255,.42);}
+.deck-stage.pick-open .letter-tile.exam-ball::after{animation:letterHalo 3.2s ease-out infinite;}
 @keyframes letterHalo{
   0%{transform:scale(1);opacity:.68;}
   70%,100%{transform:scale(1.18);opacity:0;}
@@ -419,6 +432,7 @@
   .deck-stage.pick-open .deck-icon i,
   .deck-stage.pick-open .mst-tile.current .dot::after,
   .deck-stage.pick-open .letter-tile.current::after,
+  .deck-stage.pick-open .letter-tile.exam-ball::after,
   .deck-scope.open .deck-dots,
   .deck-scope.open::after{animation:none !important;}
 }

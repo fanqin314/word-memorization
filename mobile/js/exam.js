@@ -437,13 +437,19 @@ let examState = loadJSON(EXAM_KEY, {groups:{}});
 if(!examState || typeof examState !== 'object' || Array.isArray(examState)) examState = {groups:{}};
 if(!examState.groups || typeof examState.groups !== 'object' || Array.isArray(examState.groups)) examState.groups = {};
 if(!examState.trans || typeof examState.trans !== 'object' || Array.isArray(examState.trans)) examState.trans = {};
+/* SM-2 调度：key 与 examKey 一致，值为 { ease, interval, due } */
+if(!examState.sched || typeof examState.sched !== 'object' || Array.isArray(examState.sched)) examState.sched = {};
 const examTransLvSaved = Number(examState.transLv);
 if(examTransLvSaved !== 1 && examTransLvSaved !== 2 && examTransLvSaved !== 3 && examTransLvSaved !== 4) examState.transLv = 2;
 
 /* 一轮的临时状态：items 里每项是一空 {gid, item} */
 const examRun = {
   mode:'group', gid:'', title:'',
-  items:[], idx:0, right:0, wrong:[], answers:{}
+  items:[], idx:0, right:0, wrong:[], answers:{},
+  /* group 内连对空数；剩余题目队列（初始 = 全部空，答错会追加到末尾） */
+  combo:0, groupPool:[],
+  /* 翻面卡片模式：card=true 时一屏一张卡，flipped 记录当前是否已翻到背面 */
+  card:false, flipped:false
 };
 
 /* 答题时收起底部导航，并压一条历史记录：
@@ -456,6 +462,9 @@ function examChrome(on){
 function examEnterRun(){
   examInRun = true;
   examChrome(true);
+  /* 每次开新的一轮都退回「选项答题」，卡片模式由 examStartMix(true) 单独打开 */
+  examRun.card = false;
+  examRun.flipped = false;
   if(!history.state || !history.state.examRun) history.pushState({examRun:1}, '');
 }
 function examLeaveRun(){
@@ -472,6 +481,46 @@ function examGroup(id){
 }
 function examKey(item, gid){
   return gid + ':' + item.q + ':' + item.b;
+}
+/* 今天（或 N 天后）的本地日期，YYYY-MM-DD，字符串比较即日期比较 */
+function examDay(offset){
+  const d = new Date();
+  d.setDate(d.getDate() + (Number(offset) || 0));
+  return d.getFullYear() + '-' +
+    ('0' + (d.getMonth() + 1)).slice(-2) + '-' +
+    ('0' + d.getDate()).slice(-2);
+}
+/* 判分后更新 SM-2：答对拉长间隔，答错回到 1 天 */
+function examSchedUpdate(gid, item, ok){
+  const key = examKey(item, gid);
+  let s = examState.sched[key];
+  if(!s || typeof s !== 'object') s = examState.sched[key] = {};
+  if(typeof s.ease !== 'number') s.ease = 2.5;
+  if(typeof s.interval !== 'number') s.interval = 0;
+  if(ok){
+    s.ease = Math.min(3.0, s.ease + 0.1);
+    s.interval = s.interval === 0 ? 1 : Math.min(365, Math.round(s.interval * s.ease));
+    s.due = examDay(s.interval);
+  } else {
+    s.ease = Math.max(1.3, s.ease - 0.2);
+    s.interval = 1;
+    s.due = examDay(1);
+  }
+  return s;
+}
+/* 所有到期题（due <= 今天），按 due 升序；从没排过期的视为今天到期 */
+function examDueList(){
+  const today = examDay(0);
+  const out = [];
+  EXAM_GROUPS.forEach(g => {
+    g.items.forEach(item => {
+      const s = examState.sched[examKey(item, g.id)];
+      const due = (s && typeof s.due === 'string') ? s.due : '';
+      if(!due || due <= today) out.push({ gid:g.id, item:item, due:due });
+    });
+  });
+  out.sort((a, b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : 0));
+  return out.map(x => ({ gid:x.gid, item:x.item }));
 }
 /* 只读视图：不往 examState 里塞默认值 */
 function examInfo(gid){
@@ -583,6 +632,11 @@ function memoFor(gid, q){
   const g = EXAM_MEMO.find(x => x.id === gid);
   return g ? (g.items.find(m => m.q === q) || null) : null;
 }
+/* 按组 + 题号取原题；双空题取第一空即可，句子本身两空都在 */
+function examGroupItem(gid, q){
+  const g = examGroup(gid);
+  return g ? (g.items.find(x => x.q === q) || null) : null;
+}
 /* 记忆库总条数 */
 function examMemoCount(){
   return EXAM_MEMO.reduce((n, g) => n + g.items.length, 0);
@@ -684,6 +738,7 @@ function renderExam(){
   if(!view) return;
   /* 回到题库首页就是离开答题态：底部导航回来 */
   examInRun = false;
+  view.classList.remove('exam-card-on');
   examChrome(false);
   const blanks = EXAM_GROUPS.reduce((n, g) => n + g.items.length, 0);
   const qs = EXAM_GROUPS.reduce((n, g) => n + new Set(g.items.map(x => x.q)).size, 0);
@@ -769,15 +824,24 @@ function examOpenMemo(){
   examEnterRun();
   examMemoOpen = {};
   renderExamMemo();
+  /* 从题库首页进来时不一定在顶部，记忆库从第一条开始看 */
+  const main = document.querySelector('.main');
+  if(main) main.scrollTop = 0;
 }
 function examMemoToggle(key){
   if(examMemoOpen[key]) delete examMemoOpen[key];
   else examMemoOpen[key] = 1;
+  /* 整块 innerHTML 重绘会让 .main 的高度瞬间归零，滚动位置被浏览器拉回顶部；
+     先存后还原，展开条目时视野停在原处 */
+  const main = document.querySelector('.main');
+  const top = main ? main.scrollTop : 0;
   renderExamMemo();
+  if(main) main.scrollTop = top;
 }
 function renderExamMemo(){
   const view = document.getElementById('view-exam');
   if(!view) return;
+  view.classList.remove('exam-card-on');
   let html = '<div class="ex-wrap">' +
       '<div class="ex-bar">' +
         '<button class="ex-back" type="button" data-ex-back>← 题库</button>' +
@@ -787,19 +851,34 @@ function renderExamMemo(){
   [1, 2, 3, 4].forEach(u => {
     const groups = EXAM_MEMO.filter(g => g.unit === u);
     if(!groups.length) return;
+    /* 每个 Unit 一种强调色，编号、展开卡片的左边线都用它 */
+    const accent = ['var(--rose)', 'var(--amber)', 'var(--moss)', 'var(--ac)'][u - 1] || 'var(--ink)';
     html += '<div class="ex-mm-unit">' +
       '<div class="ex-mm-unit-head">UNIT ' + u + ' · ' + esc(EXAM_UNITS[u] || '') + '</div>';
     groups.forEach(g => {
       html += '<div class="ex-mm-sec">' + (g.kind === 'word' ? '3 · Words in use' : '6 · Expressions in use') + '</div>';
-      g.items.forEach(m => {
+      g.items.forEach((m, i) => {
         const key = g.id + ':' + m.q;
         const open = !!examMemoOpen[key];
-        html += '<button class="ex-mm-row' + (open ? ' open' : '') + '" type="button" data-ex-mm-row="' + key + '">' +
+        /* 展开的原题走绝对定位卡片浮在下一行上，行高不变，所以列表不会因为点开而位移 */
+        const it = open ? examGroupItem(g.id, m.q) : null;
+        const stem = it ? examStemCue(it.s, m.cue, () => '<span class="ex-blank"></span>') : '';
+        html += '<button class="ex-mm-row' + (open ? ' open' : '') + '" type="button" data-ex-mm-row="' + key + '" style="--mm-accent:' + accent + '">' +
+            '<span class="ex-mm-idx">' + ('0' + (i + 1)).slice(-2) + '</span>' +
             '<span class="ex-mm-main">' +
-              '<span class="ex-mm-p">' + (open ? examMemoW(m.w) : esc(examMemoMask(m.w))) + '</span>' +
-              '<span class="ex-mm-zh">' + examMemoZh(m.zh) + '</span>' +
+              '<span class="ex-mm-wordline">' +
+                '<span class="ex-mm-p">' + (open ? examMemoW(m.w) : esc(examMemoMask(m.w))) + '</span>' +
+                '<span class="ex-mm-tag">' + (open ? '收起' : '看词') + '</span>' +
+              '</span>' +
+              '<span class="ex-mm-meta">' +
+                '<span class="ex-mm-cue">' + esc(m.cue) + '</span>' +
+                '<span class="ex-mm-zh">' + examMemoZh(m.zh) + '</span>' +
+              '</span>' +
             '</span>' +
-            '<span class="ex-mm-tag">' + (open ? '收起' : '看词') + '</span>' +
+            (stem ? '<span class="ex-mm-detail">' +
+              '<span class="ex-mm-detail-k">原题</span>' +
+              '<span class="ex-mm-stem">' + stem + '</span>' +
+            '</span>' : '') +
           '</button>';
       });
     });
@@ -816,26 +895,55 @@ function examStartGroup(gid){
   examRun.mode = 'group';
   examRun.gid = gid;
   examRun.title = g.title;
-  examRun.items = g.items.map(it => ({gid:gid, item:it}));
+  /* 到期的排前面（due 升序），其余按原顺序 */
+  const today = examDay(0);
+  const due = [];
+  const rest = [];
+  g.items.forEach(it => {
+    const s = examState.sched[examKey(it, gid)];
+    const d = (s && typeof s.due === 'string') ? s.due : '';
+    if(d && d <= today) due.push({ gid:gid, item:it, due:d });
+    else rest.push({ gid:gid, item:it });
+  });
+  due.sort((a, b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : 0));
+  examRun.items = due.map(x => ({ gid:x.gid, item:x.item })).concat(rest);
+  examRun.groupPool = examRun.items.slice();
+  examRun.combo = 0;
   examRun.idx = 0;
   examRun.right = 0;
   examRun.wrong = [];
   examRun.answers = {};
   renderExamRun();
 }
-function examStartMix(){
-  const all = [];
-  EXAM_GROUPS.forEach(g => g.items.forEach(it => all.push({gid:g.id, item:it})));
+function examStartMix(card){
+  /* 先出全部到期题，再从未到期的里随机补足到 20 空 */
   examEnterRun();
   examRun.mode = 'mix';
   examRun.gid = '';
   examRun.title = '全部混合';
-  examRun.items = shuffle(all);
+  examRun.items = examMixItems();
+  examRun.groupPool = examRun.items.slice();
+  examRun.combo = 0;
   examRun.idx = 0;
   examRun.right = 0;
   examRun.wrong = [];
   examRun.answers = {};
+  /* 翻面卡片模式：不判分、不写调度，只一屏一张卡看原题与答案 */
+  examRun.card = !!card;
+  examRun.flipped = false;
   renderExamRun();
+}
+/* 「全部混合」的题目清单：到期的先出，不足 20 空随机补 */
+function examMixItems(){
+  const due = examDueList();
+  const dueKeys = new Map();
+  due.forEach(x => dueKeys.set(examKey(x.item, x.gid), true));
+  const rest = [];
+  EXAM_GROUPS.forEach(g => g.items.forEach(it => {
+    if(!dueKeys.has(examKey(it, g.id))) rest.push({gid:g.id, item:it});
+  }));
+  const fill = due.length >= 20 ? [] : shuffle(rest).slice(0, 20 - due.length);
+  return due.concat(fill);
 }
 function examStartWrong(){
   const list = examWrongList();
@@ -845,6 +953,8 @@ function examStartWrong(){
   examRun.gid = '';
   examRun.title = '错题练习';
   examRun.items = shuffle(list);
+  examRun.groupPool = examRun.items.slice();
+  examRun.combo = 0;
   examRun.idx = 0;
   examRun.right = 0;
   examRun.wrong = [];
@@ -1289,11 +1399,6 @@ function updateFab(){
   const checked = !!(examTransRun.checked || [])[step];
   const label = checked ? (step + 1 >= n ? '回放' : '下一句') : '检查';
   const disabled = !checked && !examTransCanCheck(step);
-  const btn = document.querySelector('#view-exam .ex-btn[data-ex-check]');
-  if(btn){
-    btn.disabled = disabled;
-    btn.textContent = label;
-  }
   const fab = document.querySelector('#view-exam .ex-fab');
   if(fab){
     fab.disabled = disabled;
@@ -1617,6 +1722,7 @@ function examTransFeedback(step){
 function renderExamTrans(){
   const view = document.getElementById('view-exam');
   if(!view) return;
+  view.classList.remove('exam-card-on');
   if(examTransRun.phase === 'replay'){ renderExamTransResult(); return; }
   const t = examTrans(examTransRun.id);
   if(!t){ renderExam(); return; }
@@ -1662,9 +1768,10 @@ function renderExamTrans(){
 
   const label = checked ? (last ? '回放' : '下一句') : '检查';
   const disabled = !checked && !examTransCanCheck(step);
-  let foot = '';
-  if(step > 0) foot += '<button class="ex-btn ghost" type="button" data-ex-tr-prev>上一句</button>';
-  foot += '<button class="ex-btn" type="button" data-ex-check' + (disabled ? ' disabled' : '') + '>' + label + '</button>';
+  /* 主操作只放在右下角胶囊里，底部只留「上一句」 */
+  const foot = step > 0
+    ? '<div class="ex-foot"><button class="ex-btn ghost" type="button" data-ex-tr-prev>上一句</button></div>'
+    : '';
 
   view.innerHTML = '<div class="ex-wrap ex-tr-page">' +
       '<div class="ex-bar">' +
@@ -1673,7 +1780,7 @@ function renderExamTrans(){
         '<span class="ex-bar-prog">' + (step + 1) + ' / ' + n + '</span>' +
       '</div>' +
       '<div>' + body + '</div>' +
-      '<div class="ex-foot">' + foot + '</div>' +
+      foot +
       '<button class="ex-fab" type="button" data-ex-check' + (disabled ? ' disabled' : '') +
         '><span class="ex-fab-label">' + label + '</span><span class="ex-fab-arw">' +
         (checked ? '→' : '✓') + '</span></button>' +
@@ -1707,6 +1814,7 @@ function examTransReveal(){
 function renderExamTransResult(){
   const view = document.getElementById('view-exam');
   if(!view) return;
+  view.classList.remove('exam-card-on');
   const t = examTrans(examTransRun.id);
   if(!t){ renderExam(); return; }
   const parts = examTransRun.parts || [];
@@ -1827,30 +1935,322 @@ function examOptsHtml(it, ans){
         '<span class="ex-l">' + letters[i] + '</span><span>' + esc(txt) + '</span></button>';
   }).join('');
 }
+/* ---------------- 翻面卡片：一屏一张，正面看题、背面看答案 ---------------- */
+/* 卡片里的句子：show=true 时把这一空的正确答案写进空格（双空题两空都写） */
+function examCardStem(it, gid, show){
+  const g = examGroup(gid);
+  const siblings = g ? g.items.filter(x => x.q === it.q) : [it];
+  const memo = memoFor(gid, it.q);
+  const blank = n => {
+    if(!show) return '<span class="ex-blank"></span>';
+    const sub = siblings.find(x => x.b === n) || it;
+    const ans = String(sub.o[sub.a] || '');
+    const hl = memo ? examCueHlRange(memo, ans) : null;
+    let k = 0;
+    const chars = ans.split('').map((ch, idx) => {
+      if(ch === ' ') return ' ';
+      const on = hl && idx >= hl[0] && idx < hl[1];
+      return '<i class="ex-ch' + (on ? ' ex-ch-hl' : '') + '" style="--d:' + (k++ * 40) + 'ms">' + esc(ch) + '</i>';
+    }).join('');
+    return '<span class="ex-blank on right writing">' + chars + '</span>';
+  };
+  return memo ? examStemCue(it.s, memo.cue, blank) : examBlankStem(it.s, blank);
+}
+
+function renderExamCard(){
+  const view = document.getElementById('view-exam');
+  if(!view) return;
+  /* 卡片模式让视图变成纵向弹性容器，卡片才和刷词卡一样撑满内容区 */
+  view.classList.add('exam-card-on');
+  const cur = examRun.items[examRun.idx];
+  if(!cur){ renderExamCardDone(); return; }
+  const it = cur.item;
+  const g = examGroup(cur.gid);
+  const blanks = g ? g.items.filter(x => x.q === it.q).length : 1;
+  const where = g ? 'UNIT ' + g.unit + ' · ' + (g.kind === 'word' ? 'Words' : 'Expressions') : '期末填空';
+  const meta = '第 ' + it.q + ' 题' + (blanks > 1 ? ' · 空 ' + it.b + '/' + blanks : '');
+  const last = examRun.idx >= examRun.items.length - 1;
+  const flipped = !!examRun.flipped;
+  const memo = examMemoLine(cur.gid, it.q);
+  /* 每个 Unit 一种强调色，卡片押边、芯片、实心按钮都跟着它 */
+  const accent = ['var(--rose)', 'var(--amber)', 'var(--moss)', 'var(--ac)'][(g ? g.unit : 1) - 1] || 'var(--ac)';
+
+  /* 正反两面各渲染一套头和动作条：翻面只切类名不重绘，所以文案按面写死 */
+  const head = back => '<div class="card-head">' +
+      '<span class="root-tag"><i class="dot"></i>' + esc(where) + '</span>' +
+      '<span class="mst-tag">' + esc(meta) + '</span>' +
+      '<span class="mini-card">' + (back ? '翻回' : '翻面') + ' ›</span>' +
+    '</div>';
+  const acts = back => '<div class="actions">' +
+      '<button class="rate r0" type="button" data-ex-cardbtn data-act="prev"' +
+        (examRun.idx <= 0 ? ' disabled' : '') + '>上一张</button>' +
+      '<button class="rate r1" type="button" data-ex-cardbtn data-act="flip">' +
+        (back ? '翻回' : '看答案') + '</button>' +
+      '<button class="rate r2" type="button" data-ex-cardbtn data-act="next">' +
+        (last ? '完成' : '下一张') + '</button>' +
+    '</div>';
+
+  view.innerHTML = '<div class="ex-wrap ex-run ex-cardrun' + (flipped ? ' is-flipped' : '') + '" style="--ca:' + accent + '">' +
+      '<div class="ex-bar">' +
+        '<button class="ex-back" type="button" data-ex-back>← 题库</button>' +
+        '<span class="ex-bar-mid">' + esc(examRun.title) + '</span>' +
+        '<span class="ex-bar-prog">第 <b>' + (examRun.idx + 1) + '</b> / <b>' + examRun.items.length + '</b> 张</span>' +
+      '</div>' +
+      '<div class="ex-card" data-ex-card role="button" tabindex="0" aria-label="点一下翻面">' +
+        '<div class="ex-face ex-face-front">' +
+          head(false) +
+          '<div class="card-main">' +
+            '<p class="gloss ex-sent">' + examCardStem(it, cur.gid, false) + '</p>' +
+            (g && g.ref ? '<p class="morph"><b>出处</b>' + esc(g.ref) + '</p>' : '') +
+          '</div>' +
+          acts(false) +
+        '</div>' +
+        '<div class="ex-face ex-face-back">' +
+          head(true) +
+          '<div class="card-main">' +
+            '<p class="gloss ex-sent">' + examCardStem(it, cur.gid, true) + '</p>' +
+            (it.n ? '<p class="scene"><b>考点</b> ' + esc(it.n) + '</p>' : '') +
+            memo +
+          '</div>' +
+          acts(true) +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+/* 翻面只改类名、不重绘，卡片才有真的转过去的过程 */
+function examCardFlip(){
+  if(!examRun.card) return;
+  examRun.flipped = !examRun.flipped;
+  const wrap = document.querySelector('#view-exam .ex-cardrun');
+  if(wrap) wrap.classList.toggle('is-flipped', examRun.flipped);
+  sfxPlay('flip');
+}
+
+function examCardNext(){
+  examRun.idx++;
+  examRun.flipped = false;
+  if(examRun.idx >= examRun.items.length){ renderExamCardDone(); return; }
+  renderExamCard();
+}
+
+function examCardPrev(){
+  if(examRun.idx <= 0) return;
+  examRun.idx--;
+  examRun.flipped = false;
+  renderExamCard();
+}
+
+/* 卡片走完：这一轮不判分，只报看了多少张 */
+function renderExamCardDone(){
+  const view = document.getElementById('view-exam');
+  if(!view) return;
+  view.classList.remove('exam-card-on');
+  view.innerHTML = '<div class="ex-wrap ex-res">' +
+      '<div class="ex-res-hero">' +
+        '<span class="ex-kicker">' + esc(examRun.title) + ' · 翻卡完成</span>' +
+        '<p class="ex-res-num"><b>' + examRun.items.length + '</b> 张</p>' +
+        '<p class="ex-res-sub">看完一遍，想验一验就去做题</p>' +
+      '</div>' +
+      '<div class="ex-foot">' +
+        '<button class="ex-btn ghost" type="button" data-ex-cardagain>再翻一遍</button>' +
+        '<button class="ex-btn" type="button" data-ex-back>返回题库</button>' +
+      '</div>' +
+    '</div>';
+}
+
+/* ---------------- 期末填空借刷词页那张卡：只换卡里的内容 ---------------- */
+/* 从球阵进来：不切页、不开新视图，直接把题目渲染进 #cardStack */
+function examDeckBegin(){
+  examRun.mode = 'mix';
+  examRun.gid = '';
+  examRun.title = '全部混合';
+  examRun.items = examMixItems();
+  examRun.groupPool = examRun.items.slice();
+  examRun.combo = 0;
+  examRun.idx = 0;
+  examRun.right = 0;
+  examRun.wrong = [];
+  examRun.answers = {};
+  examRun.card = true;
+  examRun.flipped = false;
+  deckExam = true;
+  sfxPlay('pick');
+  renderDeckShell();
+}
+
+function examDeckRestart(){ examDeckBegin(); }
+
+/* 小卡里的题面摘要：去掉标签，把空格压成一个 */
+function examDeckMiniText(){
+  const cur = examRun.items[examRun.idx];
+  if(!cur) return '翻卡完成';
+  return examCardStem(cur.item, cur.gid, false)
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/* 退出翻卡：恢复原来的刷词队列和工具按钮 */
+function exitExamDeck(){
+  if(!deckExam) return;
+  deckExam = false;
+  examRun.card = false;
+  /* 进入时把面板那条历史就地改成了翻卡态，退出时同样就地作废，不压后退 */
+  if(history.state && history.state.deckExam) history.replaceState({}, '');
+  renderDeckShell();
+}
+
+function examDeckRender(){
+  const host = document.getElementById('cardStack');
+  if(!host) return;
+  const cur = examRun.items[examRun.idx];
+  const posEl = document.getElementById('deckPos');
+  if(posEl) posEl.textContent = cur ? examRun.idx + 1 : examRun.items.length;
+  if(!cur){ examDeckDone(); return; }
+
+  const it = cur.item;
+  const g = examGroup(cur.gid);
+  const sibs = g ? g.items.filter(x => x.q === it.q) : [it];
+  const answers = sibs.map(x => x.o[x.a]).join(' / ');
+  const where = g ? 'UNIT ' + g.unit + ' · ' + (g.kind === 'word' ? 'Words' : 'Expressions') : '期末填空';
+  const no = '第 ' + it.q + ' 题' + (sibs.length > 1 ? ' · 空 ' + it.b + '/' + sibs.length : '');
+  const memo = examMemoLine(cur.gid, it.q);
+  /* 整套题卡只走黑白灰：纸底、押边、选项对错都用墨度区分，不掺色相 */
+  const deckTint = '--rc:#8A8A86;--mp:#F6F6F4;--mi:#2B2B2B;--ma:#8A8A86;--ctint:18%';
+  /* 正面就是四选一：选项顺序照题库，点一下判对错再自动翻到解析 */
+  const opts = '<div class="ex-opts ex-deck-opts">' +
+    (it.o || []).map((txt, i) =>
+      '<button class="ex-opt" type="button" data-ex-deck-opt="' + i + '">' +
+        '<span class="ex-l">' + 'ABCD'[i] + '</span><span>' + esc(txt) + '</span>' +
+      '</button>').join('') +
+    '</div>';
+
+  host.innerHTML =
+    '<div class="swipe-card in deck-exam" style="' + deckTint + '">' +
+      '<div class="dir-hint" aria-hidden="true"></div>' +
+      '<div class="flip-inner">' +
+        /* 正面：题面 + 四个选项，答案不露 */
+        '<div class="face front">' +
+          '<div class="card-head rv1">' +
+            '<span class="root-tag"><i class="dot"></i>' + esc(where) + '</span>' +
+            '<span class="mst-tag">' + esc(no) + '</span>' +
+            '<span class="mini-card">答案 ›</span>' +
+          '</div>' +
+          '<div class="card-main">' +
+            '<p class="gloss ex-deck-sent">' + examCardStem(it, cur.gid, false) + '</p>' +
+            '<div class="meta"><span class="ipa">' + sibs.length + ' 空</span>' +
+              (g ? '<span class="pos">' + esc(g.ref) + '</span>' : '') + '</div>' +
+            opts +
+          '</div>' +
+        '</div>' +
+        /* 背面：答案落进原句，接考点与搭配 */
+        '<div class="face back">' +
+          '<div class="back-band"></div>' +
+          '<div class="back-inner">' +
+            '<div class="back-head">' +
+              '<div class="back-word"><span class="back-word-txt ex-deck-ans">' + esc(answers) + '</span>' +
+                '<span class="back-ipa">答案</span></div>' +
+              '<span class="mini-card back-link">翻回 ›</span>' +
+            '</div>' +
+            '<div class="back-body">' +
+              '<p class="back-gloss ex-deck-sent">' + examCardStem(it, cur.gid, true) + '</p>' +
+              (it.n ? '<div class="back-block"><h4>考点</h4><p class="back-ex">' + esc(it.n) + '</p></div>' : '') +
+              (memo ? '<div class="back-block">' + memo + '</div>' : '') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+/* 刷词页的滑动/按钮都走 advance()，这里按方向翻译成翻卡动作 */
+function examDeckAdvance(level, dir){
+  if(dir === 'up' || dir === 'down' || level === 1){ examDeckFlip(); return; }
+  if(dir === 'left' || (!dir && level === 2)) examDeckNext();
+  else examDeckPrev();
+}
+function examDeckFlip(){
+  const card = document.querySelector('#cardStack .swipe-card');
+  if(!card) return;
+  card.classList.toggle('flipped');
+  sfxPlay('flip');
+}
+/* 正面点选项：判对错、标出正确答案，随后自动翻到背面看解析 */
+function examDeckAnswer(i, btn){
+  if(!deckExam || examRun.idx >= examRun.items.length) return;
+  const box = btn.closest('.ex-deck-opts');
+  if(!box || box.dataset.done === '1') return;
+  const cur = examRun.items[examRun.idx];
+  const right = i === cur.item.a;
+  box.dataset.done = '1';
+  Array.from(box.querySelectorAll('[data-ex-deck-opt]')).forEach(b => {
+    const bi = Number(b.dataset.exDeckOpt);
+    if(bi === cur.item.a) b.classList.add('right');
+    else if(bi === i) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  sfxPlay(right ? 'ok' : 'bad');
+  const at = examRun.idx;
+  setTimeout(() => {
+    if(!deckExam || examRun.idx !== at) return;
+    const card = document.querySelector('#cardStack .swipe-card');
+    if(card && !card.classList.contains('flipped')){
+      card.classList.add('flipped');
+      sfxPlay('flip');
+    }
+  }, right ? 480 : 760);
+}
+function examDeckNext(){
+  if(examRun.idx >= examRun.items.length - 1){ examRun.idx = examRun.items.length; examDeckRender(); return; }
+  examRun.idx++;
+  examDeckRender();
+}
+function examDeckPrev(){
+  if(examRun.idx <= 0) return;
+  examRun.idx--;
+  examDeckRender();
+}
+function examDeckDone(){
+  const host = document.getElementById('cardStack');
+  if(!host) return;
+  host.innerHTML = '<div class="deck-empty">' +
+      '<span class="big">翻完了</span>' +
+      '<small>一共 ' + examRun.items.length + ' 张 · 想验一验就去题库做题</small>' +
+      '<div class="empty-actions">' +
+        '<button class="rate r2" type="button" data-exam-deck-again>再翻一遍</button>' +
+        '<button class="rate r0" type="button" data-exam-deck-exit>回到全部词</button>' +
+      '</div>' +
+    '</div>';
+}
+
 function renderExamRun(){
   const view = document.getElementById('view-exam');
   if(!view) return;
-  if(examRun.idx >= examRun.items.length){ renderExamResult(); return; }
-  const cur = examRun.items[examRun.idx];
+  view.classList.toggle('exam-card-on', !!examRun.card);
+  if(examRun.card){ renderExamCard(); return; }
+  const cur = examRun.groupPool.length ? examRun.groupPool[0] : examRun.items[examRun.idx];
+  if(!cur){ renderExamResult(); return; }
   const it = cur.item;
   const g = examGroup(cur.gid);
-  const ans = examRun.answers[examKey(it, cur.gid)] || null;
+  const ans = cur.retry ? null : (examRun.answers[examKey(it, cur.gid)] || null);
   const blanks = g ? g.items.filter(x => x.q === it.q).length : 1;
   const where = examRun.mode === 'group' ? '' :
     (g ? 'Unit ' + g.unit + ' · ' + (g.kind === 'word' ? 'Words' : 'Expressions') + ' · ' : '');
   const meta = where + '第 ' + it.q + ' 题' + (blanks > 1 ? ' · 空 ' + it.b + '/' + blanks : '');
-  const last = examRun.idx + 1 >= examRun.items.length;
+  const last = examRun.groupPool.length <= 1;
 
   /* 题号跟本轮位置走：跨组混合时 it.q 会重复，不能用它 */
   const no = ('0' + (examRun.idx + 1)).slice(-2);
   const judgeCls = ans ? (ans.ok ? ' judged-right' : ' judged-wrong') : '';
   const memo = ans ? examMemoLine(cur.gid, it.q) : '';
+  const phrase = ans ? examPhraseConfirm(cur.gid, it.q) : '';
 
   const strip = examRun.items.map((x, i) => {
     const a = examRun.answers[examKey(x.item, x.gid)];
     let cls = 'ex-score-cell';
     if(a) cls += a.ok ? ' is-right' : ' is-wrong';
-    if(i === examRun.idx) cls += ' is-cur';
+    if(x === cur) cls += ' is-cur';
     return '<span class="' + cls + '"></span>';
   }).join('');
 
@@ -1860,6 +2260,7 @@ function renderExamRun(){
         '<span class="ex-bar-mid">' + esc(examRun.title) + '</span>' +
         '<span class="ex-bar-prog">' + (examRun.idx + 1) + ' / ' + examRun.items.length + '</span>' +
       '</div>' +
+      (examRun.mode === 'group' ? '<div class="ex-group-progress" data-ex-progress></div>' : '') +
       '<div class="ex-score-strip">' + strip + '</div>' +
       '<div class="ex-q-head">' +
         '<span class="ex-q-no">' + no + '</span>' +
@@ -1870,6 +2271,7 @@ function renderExamRun(){
       (ans ? '<div class="ex-note">' +
         '<span class="ex-note-k">考点</span>' +
         '<p>' + esc(it.n) + '</p>' +
+        (phrase ? '<div class="ex-phrase-confirm" style="animation:exNoteIn 200ms var(--ease) both">' + esc(phrase) + '</div>' : '') +
         (memo ? '<div class="ex-note-memo">' + memo + '</div>' : '') +
       '</div>' +
       '<span class="ex-stamp ' + (ans.ok ? 'ok' : 'bad') + '" aria-hidden="true">' + (ans.ok ? '✓' : '✗') + '</span>' : '') +
@@ -1877,25 +2279,80 @@ function renderExamRun(){
         '<button class="ex-btn" type="button" data-ex-next' + (ans ? '' : ' disabled') + '>' + (last ? '看结果' : '下一题') + '</button>' +
       '</div>' +
     '</div>';
+  examProgressFlashPaint();
+}
+
+/* 连击提示：给进度条加类，300ms 后移除；中途重绘会按剩余时间重新挂上 */
+let examFlashKind = '';
+let examFlashUntil = 0;
+function examFlashProgress(kind){
+  examFlashKind = kind;
+  examFlashUntil = Date.now() + 300;
+  examProgressFlashPaint();
+  setTimeout(examProgressFlashPaint, 300);
+}
+function examProgressFlashPaint(){
+  const el = document.querySelector('#view-exam .ex-group-progress');
+  if(!el) return;
+  const on = Date.now() < examFlashUntil ? examFlashKind : '';
+  el.classList.toggle('flash-ok', on === 'ok');
+  el.classList.toggle('flash-bad', on === 'bad');
+  /* exam.css 里现有的动画钩子是 .combo-3 / .combo-break，同时挂上才会真的闪 */
+  el.classList.toggle('combo-3', on === 'ok');
+  el.classList.toggle('combo-break', on === 'bad');
+}
+/* 双空题两空都答对时，返回短语；否则空串 */
+function examPhraseConfirm(gid, q){
+  const g = examGroup(gid);
+  if(!g) return '';
+  const sib = g.items.filter(x => x.q === q);
+  if(sib.length < 2) return '';
+  const allOk = sib.every(x => {
+    const a = examRun.answers[examKey(x, gid)];
+    return !!(a && a.ok);
+  });
+  if(!allOk) return '';
+  const m = memoFor(gid, q);
+  return m ? String(m.w || '').replace(/==/g, '') : '';
 }
 
 /* 判分：状态先落盘，再按状态重绘这一屏 */
 function examPick(i){
-  const cur = examRun.items[examRun.idx];
+  const cur = examRun.groupPool.length ? examRun.groupPool[0] : examRun.items[examRun.idx];
   if(!cur) return;
   const it = cur.item;
   const key = examKey(it, cur.gid);
-  if(examRun.answers[key]) return;                 /* 已判分：不改变状态，也不重复计数 */
+  if(!cur.retry && examRun.answers[key]) return;    /* 已判分：不改变状态，也不重复计数 */
   if(!(i >= 0 && i < it.o.length)) return;
   const ok = i === it.a;
+  cur.retry = false;
+  cur.done = true;
   examRun.answers[key] = {pick:i, ok:ok};
   if(ok) examRun.right++;
-  else examRun.wrong.push(key);
+  else if(examRun.wrong.indexOf(key) < 0) examRun.wrong.push(key);
+  /* group 内连击：连对 3 空闪一次，断了闪一次并把这一空排到队尾 */
+  if(examRun.mode === 'group'){
+    if(ok){
+      examRun.combo++;
+      if(examRun.combo % 3 === 0) examFlashProgress('ok');
+    } else {
+      examRun.combo = 0;
+      examFlashProgress('bad');
+      /* 同一个空最多出现两次：原题一次 + 追加一次 */
+      const seen = examRun.items.filter(x => examKey(x.item, x.gid) === key).length;
+      if(seen < 2){
+        const again = { gid:cur.gid, item:it, retry:true };
+        examRun.items.push(again);
+        examRun.groupPool.push(again);
+      }
+    }
+  }
   /* 错题归属：错→加入，对→移除 */
   const r = examRec(cur.gid);
   const at = r.wrong.indexOf(key);
   if(ok){ if(at >= 0) r.wrong.splice(at, 1); }
   else if(at < 0){ r.wrong.push(key); }
+  examSchedUpdate(cur.gid, it, ok);
   persist(EXAM_KEY, examState);
 
   /* 先给点击项上一版「按下」态，重绘后 CSS 还能接着放映 */
@@ -1914,10 +2371,13 @@ function examPick(i){
   }, 140);
 }
 function examNext(){
-  const cur = examRun.items[examRun.idx];
-  if(!cur || !examRun.answers[examKey(cur.item, cur.gid)]) return;
+  const cur = examRun.groupPool.length ? examRun.groupPool[0] : examRun.items[examRun.idx];
+  if(!cur) return;
+  /* 追加回来的空要重新答一次，不能用上一次的判分放行 */
+  if(cur.retry ? !cur.done : !examRun.answers[examKey(cur.item, cur.gid)]) return;
+  if(examRun.groupPool.length) examRun.groupPool.shift();
   examRun.idx++;
-  if(examRun.idx >= examRun.items.length){ renderExamResult(); return; }
+  if(!examRun.groupPool.length){ renderExamResult(); return; }
   renderExamRun();
 }
 
@@ -1925,8 +2385,9 @@ function examNext(){
 function renderExamResult(){
   const view = document.getElementById('view-exam');
   if(!view) return;
-  const total = examRun.items.length;
-  const right = examRun.right;
+  view.classList.remove('exam-card-on');
+  const total = examRun.items.filter(x => !x.retry).length;
+  const right = Math.max(0, total - examRun.wrong.length);
   const rate = total ? Math.round(right / total * 100) : 0;
   let bestLine = '';
   if(examRun.mode === 'group'){                    /* 只有单组练习才写 seen/right/best */
@@ -2011,6 +2472,8 @@ function examRedoWrong(){
   examRun.gid = '';
   examRun.title = '错题练习';
   examRun.items = shuffle(items);
+  examRun.groupPool = examRun.items.slice();
+  examRun.combo = 0;
   examRun.idx = 0;
   examRun.right = 0;
   examRun.wrong = [];
@@ -2115,6 +2578,24 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
   if(trNext){
     e.preventDefault(); e.stopPropagation();
     examStartTrans(trNext.dataset.exTransNext, true);
+    return;
+  }
+  const cardBtn = t.closest('[data-ex-cardbtn]');
+  if(cardBtn){
+    e.preventDefault(); e.stopPropagation();
+    if(cardBtn.dataset.act === 'next') examCardNext();
+    else if(cardBtn.dataset.act === 'prev') examCardPrev();
+    else examCardFlip();
+    return;
+  }
+  if(t.closest('[data-ex-card]')){
+    e.preventDefault(); e.stopPropagation();
+    examCardFlip();
+    return;
+  }
+  if(t.closest('[data-ex-cardagain]')){
+    e.preventDefault(); e.stopPropagation();
+    examStartMix(true);
     return;
   }
   const opt = t.closest('[data-ex-opt]');

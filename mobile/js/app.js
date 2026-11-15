@@ -65,6 +65,11 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
     pickDeck(dChip.dataset.deck);
     return;
   }
+  if(e.target.closest('[data-exam-ball]')){
+    e.preventDefault(); e.stopPropagation();
+    startExamFromShelf();
+    return;
+  }
   if(e.target.closest('#deckPick')) return; /* 面板留白处不翻面 */
   const undoBtn = e.target.closest('#undoBtn');
   if(undoBtn){
@@ -80,6 +85,22 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   if(e.target.closest('[data-scope-again]')){
     e.preventDefault(); e.stopPropagation();
     replayDeckScope();
+    return;
+  }
+  if(e.target.closest('[data-exam-deck-again]')){
+    e.preventDefault(); e.stopPropagation();
+    examDeckRestart();
+    return;
+  }
+  const exOpt = e.target.closest('[data-ex-deck-opt]');
+  if(exOpt){
+    e.preventDefault(); e.stopPropagation();
+    examDeckAnswer(Number(exOpt.dataset.exDeckOpt), exOpt);
+    return;
+  }
+  if(e.target.closest('[data-exam-deck-exit]')){
+    e.preventDefault(); e.stopPropagation();
+    exitExamDeck();
     return;
   }
   const rateBtn = e.target.closest('[data-rate]');
@@ -317,7 +338,7 @@ const deckView = document.getElementById('view-deck');
 deckView.addEventListener('pointerdown', (e) => {
   const card = e.target.closest('.swipe-card');
   if(!card) return;
-  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]')) return;
+  if(e.target.closest('.rate') || e.target.closest('.mini-card') || e.target.closest('.speak') || e.target.closest('[data-flip]') || e.target.closest('[data-ex-deck-opt]')) return;
   /* 背面拼写块的拖动/点按交给 spellDrag 处理，不参与切卡手势 */
   if(e.target.closest('.spell-tile') || e.target.closest('.spell-slot')) return;
   /* 背面：仍记录起点，但只接管水平滑动；垂直方向留给 back-body 原生滚动 */
@@ -386,7 +407,11 @@ window.addEventListener('popstate', () => {
   /* 自己点遮罩/选牌组关闭时退记录，这一次 popstate 不处理，
      否则快速再点开会被它顺手关掉 */
   if(pickIgnorePop){ pickIgnorePop--; return; }
-  if(!deckPickOpen) return;
+  if(!deckPickOpen){
+    /* 翻卡中按手机返回键：退回原来的刷词队列，不退出页面 */
+    if(deckExam) exitExamDeck();
+    return;
+  }
   pickHistory = false;
   closeDeckPick();
   sfxPlay('panelClose');

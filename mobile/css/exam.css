@@ -173,13 +173,32 @@
 }
 .ex-mm-row{
   appearance:none;cursor:pointer;width:100%;text-align:left;
-  display:flex;align-items:center;gap:.5rem;
-  min-height:56px;padding:.5rem .1rem;
+  position:relative;
+  display:flex;align-items:flex-start;gap:.5rem;
+  min-height:52px;padding:.46rem .1rem;
   background:transparent;border:0;border-bottom:1px solid var(--rule);
   color:var(--ink);font-family:var(--sans);
+  transition:background .18s var(--ease);
 }
 .ex-mm-row:active{background:color-mix(in srgb,var(--ink) 4%,transparent);}
+/* 点开时整行铺一层 Unit 强调色的淡底，原题卡片浮在下一行上方，行高与页面高度都不变 */
+.ex-mm-row.open{
+  z-index:3;
+  background:color-mix(in srgb,var(--mm-accent,var(--ink)) 8%,transparent);
+}
+/* 左侧编号：点开时换成 Unit 强调色并轻移一格 */
+.ex-mm-idx{
+  flex:none;width:1.5rem;
+  font-family:var(--display);font-size:.92rem;line-height:1.65;letter-spacing:-.02em;
+  color:color-mix(in srgb,var(--ink) 26%,transparent);
+  font-variant-numeric:tabular-nums;
+  transition:color .18s var(--ease),transform .18s var(--ease);
+}
+.ex-mm-row.open .ex-mm-idx{color:var(--mm-accent,var(--ink));transform:translateX(1px);}
 .ex-mm-main{flex:1;min-width:0;display:block;}
+/* 词形一行，右侧挂「看词 / 收起」标签；提示词与中文并成一行，收起时只占两行 */
+.ex-mm-wordline{display:flex;align-items:center;gap:.5rem;}
+.ex-mm-wordline .ex-mm-p{flex:1;min-width:0;}
 .ex-mm-p{
   display:block;font-family:var(--mono);font-size:.8rem;font-weight:900;letter-spacing:.06em;
   line-height:1.5;word-break:break-word;
@@ -187,19 +206,64 @@
 .ex-mm-p b{font-weight:900;border-bottom:2px solid var(--ink);}
 /* 背诵页同样让变形字母显红，和解析里的记忆行保持一致 */
 .ex-mm-p b.ex-memo-hl{color:#A33A1E;border-bottom-color:currentColor;}
+.ex-mm-meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:.1rem .45rem;margin-top:.2rem;}
 .ex-mm-zh{
-  display:block;margin-top:.16rem;
+  display:block;
   font-size:.7rem;font-weight:700;line-height:1.5;
   color:color-mix(in srgb,var(--ink) 62%,transparent);
 }
 .ex-mm-zh b{font-weight:900;color:var(--ink);}
+/* 记忆库：关键提示词常显 */
+.ex-mm-cue{
+  display:block;
+  font-family:var(--mono);font-size:.56rem;font-weight:900;letter-spacing:.02em;
+  line-height:1.5;color:#2B5B84;word-break:break-word;
+}
 .ex-mm-tag{
   flex:none;display:inline-flex;align-items:center;justify-content:center;
-  min-height:28px;padding:0 .42rem;border:1px solid var(--rule-2);border-radius:2px;
+  min-height:26px;padding:0 .4rem;border:1px solid var(--rule-2);border-radius:2px;
   font-family:var(--mono);font-size:.55rem;font-weight:900;letter-spacing:.04em;
   color:color-mix(in srgb,var(--ink) 55%,transparent);
+  transition:background .16s var(--ease),color .16s var(--ease),border-color .16s var(--ease);
 }
+/* 小箭头：收起时指右，点开后转 90° 指下 */
+.ex-mm-tag::after{
+  content:"›";margin-left:.26rem;
+  font-size:.74rem;line-height:1;
+  transition:transform .18s var(--ease);
+}
+.ex-mm-row.open .ex-mm-tag::after{transform:rotate(90deg);}
 .ex-mm-row.open .ex-mm-tag{background:var(--ink);color:#fff;border-color:var(--ink);}
+/* 原题卡：绝对定位盖在下一行上方，出现时从行底轻轻展开 */
+.ex-mm-detail{
+  position:absolute;left:0;right:0;top:calc(100% - 1px);z-index:4;
+  padding:.58rem .62rem .64rem .66rem;
+  background:var(--paper-2);
+  border:1px solid color-mix(in srgb,var(--ink) 14%,transparent);
+  border-left:3px solid var(--mm-accent,var(--ink));
+  box-shadow:0 10px 26px color-mix(in srgb,var(--ink) 15%,transparent);
+  animation:exMmDrop 180ms var(--ease) both;
+}
+@keyframes exMmDrop{
+  from{opacity:0;transform:translateY(-6px) scale(.985);}
+  to{opacity:1;transform:none;}
+}
+.ex-mm-detail-k{
+  display:block;margin-bottom:.2rem;
+  font-family:var(--mono);font-size:.52rem;font-weight:900;letter-spacing:.14em;
+  color:var(--mm-accent,var(--ink));
+}
+.ex-mm-stem{
+  display:block;
+  font-size:.74rem;font-weight:700;line-height:1.75;
+  color:color-mix(in srgb,var(--ink) 78%,transparent);word-break:break-word;
+}
+.ex-mm-stem .ex-blank{
+  min-width:2.6rem;margin:0 .1rem;
+  border-bottom-color:color-mix(in srgb,var(--ink) 32%,transparent);
+}
+.ex-mm-stem .ex-cue-hl .ex-blank{border-bottom-color:currentColor;}
+.ex-mm-row.open .ex-mm-p{font-size:.92rem;letter-spacing:.05em;}
 /* ============================================================
    汉译英：四档记忆（排序 / 全提示 / 首字母 / 回忆）
    只在 .ex-tr-page 作用域内定义颜色，不污染其他模块
@@ -222,6 +286,9 @@
 .ex-tr-page .ex-bar{padding-bottom:.35rem;border-bottom:1px solid var(--line);}
 .ex-tr-page .ex-bar-mid{letter-spacing:.06em;color:var(--ink2);}
 .ex-tr-page .ex-bar-prog{color:var(--ink3);}
+/* 底部只放「上一句」，主操作交给右下角胶囊 */
+.ex-tr-page .ex-foot{margin-top:.6rem;}
+.ex-tr-page .ex-foot .ex-btn{flex:0 0 auto;min-width:104px;padding:0 1.1rem;}
 
 /* 阶段标签与顶部刻度 */
 .ex-tr-stage{
@@ -729,7 +796,7 @@
   100%{transform:translateX(0);}
 }
 @keyframes exNoteIn{
-  from{opacity:0;transform:translateY(8px);}
+  from{opacity:0;transform:translateY(4px);}
   to{opacity:1;transform:translateY(0);}
 }
 @keyframes exRulerIn{
@@ -748,4 +815,206 @@
   .ex-opt.lit,.ex-opt.lit.right{background:var(--paper-2);color:var(--ink);}
   .ex-opt.lit .ex-l{color:var(--ink);}
 }
+
+/* ---------------- 字母块印章 / 解析淡入 / 连击提示 ---------------- */
+/* 1. 选中后字母块：1 → 1.08 → 1，80ms */
+.ex-opt.right .ex-l,
+.ex-opt.wrong .ex-l,
+.ex-opt.lit .ex-l{
+  display:inline-block;border-radius:4px;
+  animation:exOptStamp 80ms cubic-bezier(.2,.9,.3,1.2) both;
+}
+/* 2. 答错时正确答案也走同一印章，字母块改用 --ok 打底 */
+.ex-opt.lit .ex-l,
+.ex-opt.lit.right .ex-l{
+  background:var(--ok,#4E7A5E);color:#fff;
+}
+@keyframes exOptStamp{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.08);}
+  100%{transform:scale(1);}
+}
+/* 3. 解析块与记忆行：4px 上浮淡入，200ms，延后 80ms */
+.ex-tip,.ex-note,.ex-memo{animation:exNoteIn 200ms var(--ease) 80ms both;}
+/* 4. group 顶部 2px 线：连击 3 空闪一次 --ok，连击断闪一次 --bad */
+.ex-group-progress{
+  position:relative;height:2px;border-radius:1px;
+  background:var(--rule);overflow:hidden;
+}
+.ex-group-progress::after{
+  content:"";position:absolute;inset:0;pointer-events:none;background:transparent;
+}
+.ex-group-progress.combo-3::after{animation:exComboOk 300ms ease;}
+.ex-group-progress.combo-break::after{animation:exComboBad 300ms ease;}
+@keyframes exComboOk{
+  from{background:color-mix(in srgb,var(--ok,#4E7A5E) 20%,transparent);}
+  to{background:transparent;}
+}
+@keyframes exComboBad{
+  from{background:color-mix(in srgb,var(--bad,#A33A1E) 20%,transparent);}
+  to{background:transparent;}
+}
+
+/* ---------------- 翻面卡片（期末填空 · 球阵入口） ---------------- */
+/* 纸卡语言与版面节奏都沿用刷词页：视图撑满内容区，顶行压缩成小字行，
+   卡堆吃满剩余高度，背后再垫两层偏移纸卡做厚度 */
+#view-exam.active.exam-card-on{display:flex;flex-direction:column;min-height:100%;}
+.ex-cardrun{
+  flex:1;min-height:0;
+  display:flex;flex-direction:column;
+  gap:0;
+  --ca:var(--ac);
+  --cf:color-mix(in srgb,var(--ca) 13%,#FFFFFF);
+  --ci:var(--ink);
+  --cink:color-mix(in srgb,var(--ca) 30%,var(--ci));
+  --cline:color-mix(in srgb,var(--ci) 12%,transparent);
+  --csoft:color-mix(in srgb,var(--ca) 16%,var(--cf));
+  --cmute:color-mix(in srgb,var(--ci) 55%,transparent);
+}
+/* 顶行：和 .deck-meta 同一节奏——左侧墨色小药丸，右侧「第 N / M 张」 */
+.ex-cardrun .ex-bar{
+  flex:none;
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;
+  gap:.4rem;padding:.1rem .2rem .45rem;
+  font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 48%,transparent);
+}
+.ex-cardrun .ex-bar b{color:var(--ink);display:inline-block;}
+.ex-cardrun .ex-bar-mid{
+  min-width:0;text-align:left;
+  font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 48%,transparent);
+}
+.ex-cardrun .ex-bar-prog{
+  text-align:right;white-space:nowrap;
+  font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.08em;
+  color:color-mix(in srgb,var(--ink) 48%,transparent);
+}
+/* 「题库」退成和「全部词」一样的深色小药丸 */
+.ex-cardrun .ex-back{
+  justify-self:start;min-height:0;height:24px;padding:0 .55rem;
+  display:inline-flex;align-items:center;gap:5px;
+  border:1px solid rgba(255,255,255,.12);border-radius:9px;
+  background-color:#23272D;color:#F5F6F4;
+  font-family:var(--mono);font-size:.53rem;font-weight:900;letter-spacing:.05em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 2px 8px -4px rgba(32,36,42,.55);
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s var(--spring);
+}
+.ex-cardrun .ex-back:active{transform:scale(.93);}
+/* 卡堆：flex 吃满剩余高度，背后两层纸卡和刷词卡同厚度 */
+.ex-card{
+  position:relative;flex:1;min-height:0;
+  display:flex;
+  perspective:1400px;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.ex-card::before,.ex-card::after{
+  content:'';position:absolute;pointer-events:none;
+  background:color-mix(in srgb,var(--cf) 82%,var(--paper));
+  border:1px solid var(--cline);border-radius:20px;
+}
+.ex-card::before{inset:12px -4px -12px 12px;z-index:0;box-shadow:0 2px 12px rgba(32,36,42,.07);}
+.ex-card::after{inset:6px -1px -6px 6px;z-index:1;box-shadow:0 2px 12px rgba(32,36,42,.09);}
+/* 两面都铺满卡堆：翻面时高度不变，也不会撑开容器 */
+.ex-face{
+  position:absolute;inset:0;z-index:2;
+  display:flex;flex-direction:column;
+  padding:.92rem 1.05rem 0;
+  background:var(--cf);color:var(--ci);
+  border:1px solid var(--cline);
+  border-radius:20px;
+  box-shadow:0 4px 22px -6px rgba(32,36,42,.18),0 0 0 1px rgba(32,36,42,.04);
+  overflow:hidden;
+  transform-origin:50% 50%;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  transition:opacity .24s var(--ease),transform .42s cubic-bezier(.22,1,.3,1);
+}
+.ex-face::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:6px;z-index:1;
+  background:var(--ca);pointer-events:none;
+}
+.ex-face-back{opacity:0;transform:rotateY(14deg) scale(.97);pointer-events:none;}
+.ex-cardrun.is-flipped .ex-face-front{
+  opacity:0;transform:rotateY(-14deg) scale(.97);pointer-events:none;
+}
+.ex-cardrun.is-flipped .ex-face-back{opacity:1;transform:none;pointer-events:auto;}
+.ex-face .card-main{
+  padding-top:.2rem;
+  overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;
+}
+.ex-face .card-main::-webkit-scrollbar{display:none;}
+.ex-face-front .card-main{justify-content:center;}
+.ex-sent{
+  font-size:1.02rem;font-weight:800;line-height:1.8;letter-spacing:.005em;
+  overflow-wrap:anywhere;
+}
+.ex-face .scene{
+  margin-top:.7rem;display:block;overflow:visible;
+  -webkit-line-clamp:unset;
+}
+.ex-face .ex-memo{margin-top:.55rem;}
+.ex-face .morph{margin-top:.55rem;}
+.ex-face .actions{grid-template-columns:1fr 1fr 1.15fr;}
+.rate[disabled]{opacity:.42;pointer-events:none;}
+@media (prefers-reduced-motion:reduce){
+  .ex-card{perspective:none;}
+  .ex-face{transition:opacity .12s linear;}
+}
+
+/* ---------------- 期末填空走刷词页那张卡：卡面排版 ---------------- */
+/* 题面用卡的正文层级放大，句子里那个空仍然是下划线 */
+.deck-exam .ex-deck-sent{
+  font-size:clamp(1.12rem,5.2vw,1.4rem);
+  font-weight:800;line-height:1.85;letter-spacing:.005em;
+  margin-top:.25rem;overflow-wrap:anywhere;
+}
+.deck-exam .face.front .card-main{justify-content:flex-start;padding-top:.3rem;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;}
+.deck-exam .face.front .card-main::-webkit-scrollbar{display:none;}
+.deck-exam .face.front .meta{margin-top:.6rem;}
+/* 正面四选一：选项贴在句子下面，判完用墨底与批注红标出来 */
+.deck-exam .ex-deck-opts{margin-top:.7rem;gap:.34rem;}
+.deck-exam .ex-opt{
+  min-height:42px;padding:.4rem .55rem;border-radius:8px;
+  background:color-mix(in srgb,var(--ci) 3%,var(--cf));
+  border-color:color-mix(in srgb,var(--ci) 14%,transparent);
+  font-size:.82rem;
+}
+.deck-exam .ex-opt:active{background:color-mix(in srgb,var(--ci) 9%,var(--cf));}
+.deck-exam .ex-opt.right{background:var(--ink);color:#fff;border-color:var(--ink);}
+.deck-exam .ex-opt.right .ex-l{color:#fff;}
+/* 选错不做红色：灰底 + 深灰描边 + 划掉，和黑色正确项靠明度分开 */
+.deck-exam .ex-opt.wrong{
+  background:color-mix(in srgb,var(--ci) 9%,var(--cf));
+  color:color-mix(in srgb,var(--ci) 72%,transparent);
+  border-color:color-mix(in srgb,var(--ci) 42%,transparent);
+  text-decoration:line-through;text-decoration-thickness:1.5px;
+}
+/* 左侧字母标记也跟着走灰，不留批注红 */
+.deck-exam .ex-opt.wrong .ex-l{color:color-mix(in srgb,var(--ci) 62%,transparent);}
+.deck-exam .ex-opt.dim{opacity:.45;}
+.deck-exam .ex-blank.wrong{
+  color:color-mix(in srgb,var(--ci) 72%,transparent);
+  border-bottom-color:color-mix(in srgb,var(--ci) 42%,transparent);
+}
+/* 句内提示与变形标记也收敛成墨度，不再出现蓝、红 */
+.deck-exam .ex-cue-hl{color:color-mix(in srgb,var(--ci) 58%,transparent);}
+.deck-exam .ex-ch-hl{color:var(--ci);}
+.deck-exam .ex-memo-hl{color:var(--ci);border-bottom-color:color-mix(in srgb,var(--ci) 52%,transparent);}
+.deck-exam .ex-memo-cue{color:color-mix(in srgb,var(--ci) 56%,transparent);}
+/* 背面原句比正面小一档，答案和考点才是主角 */
+.deck-exam .back-body .ex-deck-sent{font-size:1rem;line-height:1.7;font-weight:800;}
+.deck-exam .ex-deck-ans{
+  display:inline-block;
+  font-size:clamp(1.35rem,6.4vw,1.9rem);line-height:1.15;letter-spacing:-.02em;
+  overflow-wrap:anywhere;
+}
+.deck-exam .ex-blank{min-width:4.6rem;}
+.deck-exam .ex-blank.on{border-bottom-color:color-mix(in srgb,var(--ci) 40%,transparent);}
+/* 卡上不再放动作条：底部留出与顶部对称的呼吸位，切题靠左右滑、翻面靠点卡 */
+.deck-exam .face{padding-bottom:1.05rem;}
+/* 「遮住答案」在翻卡里只糊答案：题面始终清楚，背面答案与填进去的词一起糊掉 */
+.app.hide-gloss .deck-exam .face.front .gloss{filter:none;user-select:auto;}
+.app.hide-gloss .deck-exam .back-body .ex-blank{filter:blur(7px);user-select:none;}
 

@@ -29,6 +29,7 @@ let animating = false;
 let deckScoped = false;
 let deckBackup = null;      /* 进入分组前的 {queue, pos, undoSnap} */
 let deckScopeLabel = '';    /* 当前分组字母，如 'C' */
+let deckExam = false;       /* 期末填空借这张卡展示：内容换成题目，页面仍是刷词页 */
 let deckPickOpen = false;   /* 牌组选择面板是否展开 */
 let deckPickDirty = true;   /* 面板里的计数是否过期（评分后掌握度会变） */
 let pickHistory = false;    /* 面板打开时压了一条历史记录，供手机返回键收回 */
@@ -381,8 +382,9 @@ function rootOf(w){
   return {label: roots.map(r => (ROOT_META[r] || ROOT_META.other).label).join(' / '), color: meta.color};
 }
 
-/* 牌组面板打开时右上角收起来的小卡：显示当前词 */
+/* 牌组面板打开时右上角收起来的小卡：显示当前词（翻卡模式显示当前题） */
 function miniCardHtml(){
+  if(deckExam) return '<div class="deck-mini" id="deckMini" title="收起牌组面板">' + miniCardInner(null) + '</div>';
   const w = queue[pos] || queue[queue.length - 1];
   if(!w) return '<div class="deck-mini" id="deckMini" hidden></div>';
   return '<div class="deck-mini" id="deckMini" title="收起牌组面板">' +
@@ -390,6 +392,12 @@ function miniCardHtml(){
     '</div>';
 }
 function miniCardInner(w){
+  if(deckExam){
+    const n = Math.min(examRun.idx + 1, examRun.items.length);
+    return '<div class="wm">第 ' + n + ' 题</div>' +
+      '<div class="gm">' + esc(examDeckMiniText()) + '</div>' +
+      '<div class="bm"><span>' + esc(scopeName()) + '</span></div>';
+  }
   return '<div class="wm">' + esc(w.word) + '</div>' +
     '<div class="gm">' + esc(w.gloss || '') + '</div>' +
     '<div class="bm"><span>' + esc(scopeName()) + '</span></div>';
@@ -397,8 +405,10 @@ function miniCardInner(w){
 /* 小卡内容跟着当前词走：外壳只在重建 deck 时生成，词是刷到哪张算哪张 */
 function syncMiniCard(){
   const box = document.getElementById('deckMini');
+  if(!box) return;
+  if(deckExam){ box.removeAttribute('hidden'); box.innerHTML = miniCardInner(null); return; }
   const w = queue[pos] || queue[queue.length - 1];
-  if(!box || !w) return;
+  if(!w) return;
   box.removeAttribute('hidden');
   box.innerHTML = miniCardInner(w);
 }
@@ -416,9 +426,9 @@ function renderDeckShell(){
             '<span class="bk" aria-hidden="true">返回</span>' +
           '</span>' +
         '</button>' +
-        '<span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + queue.length + '</b> 张</span>' +
+        '<span>第 <b id="deckPos">1</b> / <b id="deckTotal">' + (deckExam ? examRun.items.length : queue.length) + '</b> 张</span>' +
         '<span class="deck-tools">' +
-        (deckScoped ? '<button class="undo-btn" id="scopeExitBtn" type="button" aria-label="退出分组">退出</button>' : '') +
+        (deckScoped || deckExam ? '<button class="undo-btn" id="scopeExitBtn" type="button" aria-label="退出当前牌组">退出</button>' : '') +
         '<button class="undo-btn" id="undoBtn" type="button" aria-label="撤回上一张" hidden>撤回</button>' +
         '<button class="gloss-btn" id="hideGlossBtn" type="button" aria-label="遮住答案" aria-pressed="false" title="遮住答案"></button>' +
         sfxButtonHtml() + '</span>' +
@@ -436,6 +446,7 @@ function renderDeckShell(){
   deckPickPrebuild(); /* 面板内容提前建好，点开时只切类，不再临时排版 */
   syncSfxBtn();
   applyGloss(); /* 按钮随 deck 一起重建，重新同步图标与状态 */
+  syncMiniCard();
 }
 
 function cardHtml(w, plain){
@@ -496,6 +507,7 @@ function cardHtml(w, plain){
 }
 
 function renderCard(plainInner){
+  if(deckExam){ examDeckRender(); return; }
   const host = document.getElementById('cardStack');
   const posEl = document.getElementById('deckPos');
   if(!host) return;
@@ -633,6 +645,7 @@ function undoLast(){
 }
 
 function advance(level, dir){
+  if(deckExam){ examDeckAdvance(level, dir); return; }
   if(animating) return;
   const w = queue[pos];
   if(!w) return;
@@ -664,6 +677,7 @@ function advance(level, dir){
 
 /* 标题栏中间显示的当前卡组名：没有分组时就是全部词 */
 function scopeName(){
+  if(deckExam) return examRun.title || '期末填空';
   return deckScopeLabel || '全部词';
 }
 
@@ -711,6 +725,10 @@ function deckPickHtml(){
     {key:'review', name:'今天复习', n:rated.size, accent:'var(--rose)', icon:'复', status:rated.size ? '今日已评' : '今日未评'}
   ];
   const mColors = ['#8F9296', 'var(--amber)', 'var(--moss)'];
+  /* 期末填空球：和题库首页同一口径的「空」数，和首字母球一起漂在同一个框里 */
+  const examN = (typeof EXAM_GROUPS !== 'undefined')
+    ? EXAM_GROUPS.reduce((n, g) => n + g.items.length, 0)
+    : 0;
 
   return '<div class="shelf-aura" aria-hidden="true"><i></i><i></i><i></i></div>' +
     '<div class="shelf-tip"><i></i>点选牌组，立即开刷</div>' +
@@ -725,6 +743,10 @@ function deckPickHtml(){
       '</div></div>' +
     '<div class="sect sect-ltr">' + sectHead('首字母', letters.size + ' 个') +
       '<div class="letters-grid" id="letterStage">' +
+        '<button class="letter-tile exam-ball" type="button" data-exam-ball style="--s:56px"' +
+          ' aria-label="期末填空，' + examN + ' 空，点开刷题">' +
+          '<span class="lt">填</span><span class="n">' + examN + '</span>' +
+        '</button>' +
         Array.from(letters.keys()).sort().map(L => {
           const n = letters.get(L);
           /* 球径按词数开方缩放：1 个词 40px，9 个词 58px（面积更接近词量） */
@@ -985,7 +1007,9 @@ function popPickHistory(){
   try{ history.back(); }catch(e){}
 }
 
-function closeDeckPick(){
+/* keepHistory：面板那条记录留着改写成答题态，不走异步 back()，
+   否则 popstate 会在答题页刚打开时把它关掉 */
+function closeDeckPick(keepHistory){
   const wasOpen = deckPickOpen;
   deckPickOpen = false;
   const stage = document.getElementById('deckStage');
@@ -995,8 +1019,19 @@ function closeDeckPick(){
     btn.classList.remove('open');
     btn.setAttribute('aria-expanded', 'false');
   }
-  if(wasOpen) popPickHistory();
+  if(wasOpen && !keepHistory) popPickHistory();
   ballSceneStop();
+}
+
+/* 球阵里的期末填空球：收起面板，把题目装进刷词页这张卡里 */
+function startExamFromShelf(){
+  const keep = deckPickOpen && !!pickHistory;
+  closeDeckPick(keep);
+  if(keep && history.state && history.state.deckPick){
+    history.replaceState({ deckExam: 1 }, '');
+    pickHistory = false;   /* 这条记录已改写成翻卡态，不再归面板管 */
+  }
+  examDeckBegin();
 }
 
 function toggleDeckPick(){
@@ -1028,6 +1063,16 @@ function toggleDeckPick(){
 /* 选中某个牌组：从头开始刷这一组 */
 function pickDeck(key){
   if(animating) return;
+  /* 翻卡中直接换牌组：面板那条记录就地作废，不再压新的 */
+  if(deckExam){
+    deckExam = false;
+    examRun.card = false;
+    if(deckPickOpen){
+      closeDeckPick(true);
+      if(history.state) history.replaceState({}, '');
+      pickHistory = false;
+    }
+  }
   closeDeckPick();
   sfxPlay('pick');
   if(key === 'all'){
@@ -1092,6 +1137,7 @@ function startReviewToday(){
 
 /* 退出分组：原样回到进入前那张 */
 function exitDeckScope(){
+  if(deckExam){ exitExamDeck(); toast('已回到 ' + (deckScopeLabel || '全部单词')); return; }
   if(!deckScoped || animating) return;
   if(deckBackup){
     queue = deckBackup.queue;
