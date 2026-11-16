@@ -1535,7 +1535,8 @@ function examTransPick(k){
   const picks = examTransRun.orderPicks[step] || (examTransRun.orderPicks[step] = []);
   if(picks.indexOf(k) >= 0) return;
   const pos = picks.length;
-  const ok = k === pos;
+  /* 重复词（the / of / is）按词面判对错，谁先点都算对，不强制点某一个副本 */
+  const ok = examTransExact(words[k], words[pos]);
   picks.push(k);
   examTransRun.lastPick = { pos:pos, ok:ok, at:Date.now() };
   sfxPlay(ok ? 'pick' : 'drop');
@@ -1757,7 +1758,8 @@ function examTransSortHtml(step){
       (on ? ' disabled' : '') + '>' + esc(words[k]) + '</button>';
   }).join('');
   const answer = picks.length ? picks.map((k, pos) => {
-    const ok = k === pos;
+    /* 和选词时同一套判定：填到这一格的词面对了就算对 */
+    const ok = examTransExact(words[k], words[pos]);
     return '<button class="ex-tr-word picked ' + (ok ? 'ok' : 'bad') + '" type="button" data-ex-unsort="' + pos + '">' +
       esc(words[k] || '') + '</button>';
   }).join('') : '<span class="ex-tr-empty">点击上面的词，按顺序排好</span>';
