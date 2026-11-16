@@ -1770,27 +1770,6 @@ function examTransSortHtml(step){
       '</div>' +
     '</div>';
 }
-/* 已完成的句子：01 已完成 ▸，展开显示你的 / 参考 */
-function examTransDoneList(step){
-  let rows = '';
-  for(let i = 0; i < step; i++){
-    const open = !!(examTransRun.expanded || [])[i];
-    rows += '<button class="ex-tr-done-row' + (open ? ' open' : '') + '" type="button" data-ex-expand="' + i + '">' +
-        '<b>' + ('0' + (i + 1)).slice(-2) + '</b>' +
-        '<span>' + ((examTransRun.checked || [])[i] ? '已完成' : '未检查') + '</span>' +
-        '<i class="ex-tr-chev" aria-hidden="true"></i>' +
-      '</button>';
-    if(open){
-      rows += '<div class="ex-tr-done-open">' +
-          '<div class="ex-tr-fb-line"><span class="k">你的</span><span class="v">' +
-            esc(examTransYourText(i) || '（未写）') + '</span></div>' +
-          '<div class="ex-tr-fb-line"><span class="k">参考</span><span class="v ref">' +
-            esc((examTransRun.refs || [])[i] || '') + '</span></div>' +
-        '</div>';
-    }
-  }
-  return rows ? '<div class="ex-tr-done-list">' + rows + '</div>' : '';
-}
 /* 单句内联反馈：大号覆盖率 + 你的 / 参考 + 漏词 */
 function examTransFeedback(step){
   const pct = Math.max(0, Math.min(100, Number((examTransRun.covers || [])[step]) || 0));
@@ -1825,7 +1804,6 @@ function renderExamTrans(){
   const last = step >= n - 1;
 
   let body = examTransTicks() +
-    examTransDoneList(step) +
     '<span class="ex-tr-stage">SENTENCE ' + ('0' + (step + 1)).slice(-2) +
       '<em>/ ' + ('0' + n).slice(-2) + '</em></span>' +
     '<p class="ex-tr-zh">' + esc(parts[step] || '') + '</p>' +
@@ -1857,10 +1835,13 @@ function renderExamTrans(){
 
   const label = checked ? (last ? '回放' : '下一句') : '检查';
   const disabled = !checked && !examTransCanCheck(step);
-  /* 主操作只放在右下角胶囊里，底部只留「上一句」 */
-  const foot = step > 0
-    ? '<div class="ex-foot"><button class="ex-btn ghost" type="button" data-ex-tr-prev>上一句</button></div>'
-    : '';
+  /* 主操作与「上一句」收在同一个悬浮组里，同一套圆角与字重 */
+  const acts = '<div class="ex-acts">' +
+      (step > 0 ? '<button class="ex-act" type="button" data-ex-tr-prev>上一句</button>' : '') +
+      '<button class="ex-fab" type="button" data-ex-check' + (disabled ? ' disabled' : '') +
+        '><span class="ex-fab-label">' + label + '</span><span class="ex-fab-arw">' +
+        (checked ? '→' : '✓') + '</span></button>' +
+    '</div>';
 
   view.innerHTML = '<div class="ex-wrap ex-tr-page">' +
       '<div class="ex-bar">' +
@@ -1869,10 +1850,7 @@ function renderExamTrans(){
         '<span class="ex-bar-prog">' + (step + 1) + ' / ' + n + '</span>' +
       '</div>' +
       '<div>' + body + '</div>' +
-      foot +
-      '<button class="ex-fab" type="button" data-ex-check' + (disabled ? ' disabled' : '') +
-        '><span class="ex-fab-label">' + label + '</span><span class="ex-fab-arw">' +
-        (checked ? '→' : '✓') + '</span></button>' +
+      acts +
     '</div>';
 
   renderTyping();
@@ -2654,14 +2632,6 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
   if(unsortBtn){
     e.preventDefault(); e.stopPropagation();
     examTransUnpick(Number(unsortBtn.dataset.exUnsort));
-    return;
-  }
-  const expBtn = t.closest('[data-ex-expand]');
-  if(expBtn){
-    e.preventDefault(); e.stopPropagation();
-    const i = Number(expBtn.dataset.exExpand);
-    examTransRun.expanded[i] = !examTransRun.expanded[i];
-    renderExamTrans();
     return;
   }
   if(t.closest('[data-ex-check]')){

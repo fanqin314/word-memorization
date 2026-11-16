@@ -297,36 +297,17 @@
 }
 .ex-tr-stage em{font-style:normal;margin-left:.35rem;opacity:.72;}
 .ex-tr-ticks{display:flex;gap:4px;margin:.1rem 0 .55rem;}
-/* 3px 的发丝线不好点，用 padding 把触控区撑到 19px，视觉仍是细线 */
+/* 视觉只有 2px 的发丝线，padding 撑出 20px 触控区；用 background-color 而不是简写，免得把 clip 重置成整块 */
 .ex-tr-ticks i{
-  flex:1;height:3px;padding:8px 0;box-sizing:content-box;border-radius:2px;
-  background:var(--line2);background-clip:content-box;cursor:pointer;
-  transition:background .4s ease,opacity .4s ease;
+  flex:1;height:2px;padding:9px 0;box-sizing:content-box;border-radius:2px;
+  background-color:var(--line2);background-clip:content-box;cursor:pointer;
+  transition:background-color .35s ease,opacity .35s ease,transform .35s ease;
 }
-.ex-tr-ticks i:active{opacity:.55;}
-.ex-tr-ticks i.done{background:var(--accent);}
-.ex-tr-ticks i.cur:not(.done){background:var(--accent);opacity:.4;}
-
-/* 已完成的句子 */
-.ex-tr-done-list{display:flex;flex-direction:column;gap:6px;margin:.1rem 0 .7rem;}
-.ex-tr-done-row{
-  appearance:none;cursor:pointer;display:flex;align-items:center;gap:8px;
-  min-height:32px;padding:0 10px;border:1px solid var(--line);border-radius:9px;
-  background:transparent;color:var(--ink3);font-family:var(--sans);font-size:11.5px;
-  text-align:left;opacity:.6;transition:opacity .25s ease;
-}
-.ex-tr-done-row:active{opacity:1;}
-.ex-tr-done-row b{flex:none;font-family:var(--mono);font-size:10px;font-weight:700;}
-.ex-tr-done-row > span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.ex-tr-chev{
-  flex:none;width:6px;height:6px;border-right:1px solid var(--ink3);
-  border-bottom:1px solid var(--ink3);transform:rotate(-45deg);transition:transform .25s ease;
-}
-.ex-tr-done-row.open .ex-tr-chev{transform:rotate(45deg);}
-.ex-tr-done-open{
-  margin:0 0 .1rem;padding:.55rem .7rem;border:1px solid var(--line);
-  border-radius:9px;background:transparent;
-}
+.ex-tr-ticks i:active{opacity:.55;transform:scaleY(2.2);}
+.ex-tr-ticks i.done{background-color:var(--ink);animation:trTickFill .45s ease both;}
+.ex-tr-ticks i.cur:not(.done){background-color:var(--ink);opacity:.45;animation:trTickPulse 1.6s ease-in-out infinite;}
+@keyframes trTickFill{from{transform:scaleY(2.6);}to{transform:scaleY(1);}}
+@keyframes trTickPulse{0%,100%{opacity:.24;transform:scaleY(1);}50%{opacity:.72;transform:scaleY(1.8);}}
 
 /* 中文题干 */
 .ex-tr-zh{
@@ -585,19 +566,35 @@
 .ex-tr-rp-line .v{flex:1;min-width:0;color:var(--ink2);overflow-wrap:break-word;}
 .ex-tr-rp-line .v.ref{color:var(--ink3);}
 
-/* 按钮与右下角胶囊 */
+/* 按钮与右下角悬浮操作组 */
 .ex-tr-page .ex-foot{margin-top:.9rem;}
 .ex-tr-page .ex-foot .ex-btn{min-height:46px;font-size:.9rem;border-radius:10px;}
 .ex-tr-page .ex-foot .ex-btn[disabled]{
   opacity:1;background:var(--line);border-color:var(--line);color:var(--ink3);
 }
-.ex-fab{
+/* 「上一句」和「检查」同一组、同一套圆角：次按钮描边，主按钮实墨 */
+.ex-acts{
   position:fixed;right:max(14px,calc((100vw - 480px) / 2 + 14px));
   bottom:calc(var(--kb,0px) + 16px);z-index:20;
-  display:inline-flex;align-items:center;gap:6px;padding:12px 18px;
-  border:0;border-radius:999px;background:var(--accent,#2E3A59);color:#fff;
+  display:flex;align-items:center;gap:8px;
+}
+.ex-act{
+  appearance:none;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:44px;padding:0 16px;border-radius:999px;
+  border:1px solid color-mix(in srgb,var(--ink) 24%,transparent);
+  background:var(--paper-2,#fff);color:var(--ink);
   font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.02em;
-  box-shadow:0 6px 20px -6px rgba(46,58,89,.5);cursor:pointer;
+  box-shadow:0 6px 20px -8px rgba(36,32,27,.35);
+  transition:opacity .2s ease,transform .15s ease;
+}
+.ex-act:active{transform:scale(.95);}
+.ex-fab{
+  position:static;
+  display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:12px 18px;
+  border:0;border-radius:999px;background:var(--ink);color:#fff;
+  font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.02em;
+  box-shadow:0 8px 22px -8px rgba(36,32,27,.55);cursor:pointer;
   transition:opacity .2s ease,transform .15s ease;
 }
 .ex-fab:active{transform:scale(.95);}
@@ -607,7 +604,7 @@
 @media (prefers-reduced-motion: reduce){
   .ex-tr-cue.done,.ex-tr-word.hint,.ex-tr-word.just-ok,.ex-tr-word.just-bad,
   .ex-tr-ltr.bad,.ex-tr-car-caret,.ex-tr-slot.fresh,.ex-tr-tk.fresh,
-  .ex-tr-car,.ex-tr-rp-item,.ex-tr-hint-c,.ex-tr-fb{animation:none;}
+  .ex-tr-car,.ex-tr-rp-item,.ex-tr-hint-c,.ex-tr-fb,.ex-tr-ticks i{animation:none;}
   .ex-tr-rp-item{opacity:1;transform:none;}
   .ex-tr-ticks i,.ex-tr-cue,.ex-tr-lvb,.ex-tr-word,.ex-tr-slot,.ex-tr-ltr,
   .ex-tr-carousel,.ex-tr-prog-bar > i,.ex-tr-done-row,.ex-tr-chev{transition:none;}
