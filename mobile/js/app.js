@@ -321,9 +321,9 @@ document.addEventListener('pointercancel', endSpellDrag);
 let dragState = null, suppressTap = false;
 const HINT_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg>';
 const DIR_LABEL = {up:'跳过', right:'认识', left:'不认识', down:'有点印象'};
-/* 题卡的方向含义和刷词卡不同：左右是翻题，上下是翻面 */
-const DIR_LABEL_EXAM = {up:'翻面', right:'上一题', left:'下一题', down:'翻面'};
-const DIR_LABEL_EXAM_BACK = {up:'翻回正面', right:'上一题', left:'下一题', down:'翻回正面'};
+/* 题卡跟着翻转方向走：左右是翻面，上下才换题 */
+const DIR_LABEL_EXAM = {up:'下一题', right:'翻面', left:'翻面', down:'上一题'};
+const DIR_LABEL_EXAM_BACK = {up:'下一题', right:'翻回正面', left:'翻回正面', down:'上一题'};
 
 function hintDir(card, dx, dy){
   const h = card.querySelector('.dir-hint');
@@ -380,11 +380,6 @@ deckView.addEventListener('pointermove', (e) => {
   st.cardDrag = true;
   st.card.style.transform = 'translate(' + st.dx + 'px,' + st.dy + 'px) rotate(' + (st.dx / 45) + 'deg)';
   hintDir(st.card, st.dx, st.dy);
-  /* 题卡背面横向滑到头就切题 */
-  if(st.back && !st.fired && Math.abs(st.dx) > Math.abs(st.dy) && Math.abs(st.dx) > 55){
-    st.fired = true;
-    advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
-  }
 });
 /* 触屏单独接管：手机上原生滚动会让 pointermove 中途断掉，改用 touch 事件才滑得动 */
 deckView.addEventListener('touchstart', (e) => {
@@ -432,10 +427,6 @@ deckView.addEventListener('touchmove', (e) => {
   st.cardDrag = true;
   st.card.style.transform = 'translate(' + st.dx + 'px,' + st.dy + 'px) rotate(' + (st.dx / 45) + 'deg)';
   hintDir(st.card, st.dx, st.dy);
-  if(st.back && !st.fired && Math.abs(st.dx) > Math.abs(st.dy) && Math.abs(st.dx) > 55){
-    st.fired = true;
-    advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
-  }
 }, {passive:false});
 deckView.addEventListener('touchend', () => { if(dragState && dragState.id === 'touch') endDrag(); });
 deckView.addEventListener('touchcancel', () => { if(dragState && dragState.id === 'touch') endDrag(); });
@@ -473,11 +464,19 @@ function endDrag(e){
     setTimeout(() => { suppressTap = false; }, 80);
   }
   if(fired) return; /* 触屏滑动中途已经切过卡，松手不再切一次 */
+  if(card.classList.contains('deck-exam')){
+    /* 题卡：左右翻面、上下换题，全程跟手，松手才结算 */
+    if(ax > ay){
+      if(ax > TH) examDeckFlip();
+    } else if(ay > TH){
+      if(dy < 0) examDeckNext(); else examDeckPrev();
+    }
+    return;
+  }
   if(ax > ay){
     if(ax > TH) advance(dx > 0 ? 2 : 0, dx > 0 ? 'right' : 'left');
   } else if(ay > TH){
-    /* 题卡背面上下拖就是翻回正面 */
-    advance(freeBack ? null : (dy < 0 ? null : 1), dy < 0 ? 'up' : 'down');
+    advance(dy < 0 ? null : 1, dy < 0 ? 'up' : 'down');
   }
 }
 window.addEventListener('pointerup', endDrag);
