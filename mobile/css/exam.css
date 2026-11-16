@@ -297,10 +297,13 @@
 }
 .ex-tr-stage em{font-style:normal;margin-left:.35rem;opacity:.72;}
 .ex-tr-ticks{display:flex;gap:4px;margin:.1rem 0 .55rem;}
+/* 3px 的发丝线不好点，用 padding 把触控区撑到 19px，视觉仍是细线 */
 .ex-tr-ticks i{
-  flex:1;height:3px;border-radius:2px;background:var(--line2);
+  flex:1;height:3px;padding:8px 0;box-sizing:content-box;border-radius:2px;
+  background:var(--line2);background-clip:content-box;cursor:pointer;
   transition:background .4s ease,opacity .4s ease;
 }
+.ex-tr-ticks i:active{opacity:.55;}
 .ex-tr-ticks i.done{background:var(--accent);}
 .ex-tr-ticks i.cur:not(.done){background:var(--accent);opacity:.4;}
 
@@ -1021,6 +1024,10 @@
 .deck-exam .ex-blank.on{border-bottom-color:color-mix(in srgb,var(--ci) 40%,transparent);}
 /* 卡上不再放动作条：底部留出与顶部对称的呼吸位，切题靠左右滑、翻面靠点卡 */
 .deck-exam .face{padding-bottom:1.05rem;}
+/* 题卡的方向提示只留墨度灰，不掺绿/粉 */
+.deck-exam .dir-hint{background:color-mix(in srgb,var(--ci) 8%,var(--cf));border-color:var(--cline);color:var(--ci);}
+.deck-exam .dir-hint[data-dir="right"],
+.deck-exam .dir-hint[data-dir="left"]{background:color-mix(in srgb,var(--ci) 13%,var(--cf));border-color:color-mix(in srgb,var(--ci) 30%,transparent);}
 /* 「遮住答案」在翻卡里只糊答案：题面始终清楚，背面答案与填进去的词一起糊掉 */
 .app.hide-gloss .deck-exam .face.front .gloss{filter:none;user-select:auto;}
 .app.hide-gloss .deck-exam .back-body .ex-blank{filter:blur(7px);user-select:none;}

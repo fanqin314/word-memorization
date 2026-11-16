@@ -150,7 +150,12 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   if(e.target.closest('.spell-slot')){ e.preventDefault(); e.stopPropagation(); return; }
   if(e.target.closest('[data-flip]')){ e.preventDefault(); e.stopPropagation(); }
   const card = e.target.closest('.swipe-card');
-  if(card){ card.classList.toggle('flipped'); sfxPlay('flip'); }
+  if(card){
+    /* 题卡翻回正面要重画一次，清掉上次判题痕迹 */
+    if(card.classList.contains('deck-exam')){ examDeckFlip(); return; }
+    card.classList.toggle('flipped');
+    sfxPlay('flip');
+  }
 });
 
 /* 点面板与卡组名以外的地方，收起牌组选择 */
@@ -316,6 +321,9 @@ document.addEventListener('pointercancel', endSpellDrag);
 let dragState = null, suppressTap = false;
 const HINT_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg>';
 const DIR_LABEL = {up:'跳过', right:'认识', left:'不认识', down:'有点印象'};
+/* 题卡的方向含义和刷词卡不同：左右是翻题，上下是翻面 */
+const DIR_LABEL_EXAM = {up:'翻面', right:'上一题', left:'下一题', down:'翻面'};
+const DIR_LABEL_EXAM_BACK = {up:'翻回正面', right:'上一题', left:'下一题', down:'翻回正面'};
 
 function hintDir(card, dx, dy){
   const h = card.querySelector('.dir-hint');
@@ -323,9 +331,12 @@ function hintDir(card, dx, dy){
   const ax = Math.abs(dx), ay = Math.abs(dy);
   if(Math.max(ax, ay) < 16){ h.classList.remove('show'); return; }
   const dir = ax > ay ? (dx > 0 ? 'right' : 'left') : (dy < 0 ? 'up' : 'down');
-  if(h.dataset.dir !== dir){
+  const exam = card.classList.contains('deck-exam');
+  const label = (exam ? (card.classList.contains('flipped') ? DIR_LABEL_EXAM_BACK : DIR_LABEL_EXAM) : DIR_LABEL)[dir];
+  if(h.dataset.dir !== dir || h.dataset.label !== label){
     h.dataset.dir = dir;
-    h.innerHTML = '<span class="dh-ico">' + HINT_ARROW + '</span>' + DIR_LABEL[dir];
+    h.dataset.label = label;
+    h.innerHTML = '<span class="dh-ico">' + HINT_ARROW + '</span>' + label;
   }
   h.classList.add('show');
 }
@@ -347,7 +358,7 @@ deckView.addEventListener('pointerdown', (e) => {
   const back = card.classList.contains('flipped') && !!e.target.closest('.face.back');
   dragState = {id:e.pointerId, card, x:e.clientX, y:e.clientY, dx:0, dy:0, moved:false, back, fired:false,
     onOpt:!!e.target.closest('[data-ex-deck-opt]')};
-  if(!back) card.style.transition = 'none';
+  if(!back || card.classList.contains('deck-exam')) card.style.transition = 'none';
 });
 deckView.addEventListener('pointermove', (e) => {
   if(!dragState || e.pointerId !== dragState.id) return;
@@ -357,15 +368,23 @@ deckView.addEventListener('pointermove', (e) => {
   if(!st.moved && Math.hypot(st.dx, st.dy) > 8) st.moved = true;
   if(!st.moved) return;
   if(st.back){
-    /* 背面不做位移反馈，只在横向明显滑动时切卡；纵向交给浏览器滚动 */
-    if(!st.fired && Math.abs(st.dx) > Math.abs(st.dy) && Math.abs(st.dx) > 55){
-      st.fired = true;
-      advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
+    /* 单词卡背面不做位移反馈，只在横向明显滑动时切卡；纵向交给浏览器滚动 */
+    if(!st.card.classList.contains('deck-exam')){
+      if(!st.fired && Math.abs(st.dx) > Math.abs(st.dy) && Math.abs(st.dx) > 55){
+        st.fired = true;
+        advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
+      }
+      return;
     }
-    return;
   }
+  st.cardDrag = true;
   st.card.style.transform = 'translate(' + st.dx + 'px,' + st.dy + 'px) rotate(' + (st.dx / 45) + 'deg)';
   hintDir(st.card, st.dx, st.dy);
+  /* 题卡背面横向滑到头就切题 */
+  if(st.back && !st.fired && Math.abs(st.dx) > Math.abs(st.dy) && Math.abs(st.dx) > 55){
+    st.fired = true;
+    advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
+  }
 });
 /* 触屏单独接管：手机上原生滚动会让 pointermove 中途断掉，改用 touch 事件才滑得动 */
 deckView.addEventListener('touchstart', (e) => {
@@ -379,7 +398,7 @@ deckView.addEventListener('touchstart', (e) => {
   const back = card.classList.contains('flipped') && !!e.target.closest('.face.back');
   dragState = {id:'touch', card, x:t.clientX, y:t.clientY, dx:0, dy:0, moved:false, back, fired:false,
     onOpt:!!e.target.closest('[data-ex-deck-opt]')};
-  if(!back) card.style.transition = 'none';
+  if(!back || card.classList.contains('deck-exam')) card.style.transition = 'none';
 }, {passive:true});
 deckView.addEventListener('touchmove', (e) => {
   if(!dragState || dragState.id !== 'touch' || e.touches.length !== 1) return;
@@ -390,18 +409,33 @@ deckView.addEventListener('touchmove', (e) => {
   if(!st.moved && Math.hypot(st.dx, st.dy) > 8) st.moved = true;
   if(!st.moved) return;
   if(st.back){
-    /* 背面纵向留给阅读滚动，只有明显横向才切题 */
-    if(Math.abs(st.dx) <= Math.abs(st.dy)) return;
-    e.preventDefault();
-    if(!st.fired && Math.abs(st.dx) > 55){
-      st.fired = true;
-      advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
+    /* 单词卡背面纵向留给阅读滚动，只有明显横向才切题 */
+    if(!st.card.classList.contains('deck-exam')){
+      if(Math.abs(st.dx) <= Math.abs(st.dy)) return;
+      e.preventDefault();
+      if(!st.fired && Math.abs(st.dx) > 55){
+        st.fired = true;
+        advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
+      }
+      return;
     }
-    return;
+    /* 题卡背面：纵向还能滚就先让浏览器滚，滚到头再整张跟手 */
+    const body = st.card.querySelector('.back-body');
+    const vertical = Math.abs(st.dy) > Math.abs(st.dx);
+    if(body && vertical && body.scrollHeight > body.clientHeight + 4){
+      const atTop = body.scrollTop <= 0;
+      const atBottom = body.scrollTop + body.clientHeight >= body.scrollHeight - 2;
+      if((st.dy > 0 && !atTop) || (st.dy < 0 && !atBottom)) return;
+    }
   }
   e.preventDefault();
+  st.cardDrag = true;
   st.card.style.transform = 'translate(' + st.dx + 'px,' + st.dy + 'px) rotate(' + (st.dx / 45) + 'deg)';
   hintDir(st.card, st.dx, st.dy);
+  if(st.back && !st.fired && Math.abs(st.dx) > Math.abs(st.dy) && Math.abs(st.dx) > 55){
+    st.fired = true;
+    advance(st.dx > 0 ? 2 : 0, st.dx > 0 ? 'right' : 'left');
+  }
 }, {passive:false});
 deckView.addEventListener('touchend', () => { if(dragState && dragState.id === 'touch') endDrag(); });
 deckView.addEventListener('touchcancel', () => { if(dragState && dragState.id === 'touch') endDrag(); });
@@ -410,16 +444,23 @@ function endDrag(e){
   if(!dragState) return;
   /* 触屏状态只由 touchend 收尾，别被同一手势的 pointerup 抢先处理 */
   if(dragState.id === 'touch' && e && e.type && e.type.indexOf('pointer') === 0) return;
-  const {card, dx, dy, moved, back, onOpt} = dragState;
+  const {card, dx, dy, moved, back, onOpt, fired, cardDrag} = dragState;
+  const freeBack = back && card.classList.contains('deck-exam');
   dragState = null;
-  if(!back){
+  if(!back || freeBack){
     card.style.transition = '';
     card.style.transform = '';
     hideHint(card);
   }
   if(!moved) return; /* 没有位移 → 交给 click 判定为点按翻面 */
-  if(back){
-    /* 背面有位移就不当点按：横向已切卡，纵向是滚动，都不该翻回正面 */
+  if(back && !freeBack){
+    /* 单词卡背面有位移就不当点按：横向已切卡，纵向是滚动，都不该翻回正面 */
+    suppressTap = true;
+    setTimeout(() => { suppressTap = false; }, 80);
+    return;
+  }
+  if(back && !cardDrag){
+    /* 刚才是在背面上滚动内容，没拖动卡片：不当点按，也不翻面 */
     suppressTap = true;
     setTimeout(() => { suppressTap = false; }, 80);
     return;
@@ -431,10 +472,12 @@ function endDrag(e){
     suppressTap = true;
     setTimeout(() => { suppressTap = false; }, 80);
   }
+  if(fired) return; /* 触屏滑动中途已经切过卡，松手不再切一次 */
   if(ax > ay){
     if(ax > TH) advance(dx > 0 ? 2 : 0, dx > 0 ? 'right' : 'left');
   } else if(ay > TH){
-    advance(dy < 0 ? null : 1, dy < 0 ? 'up' : 'down');
+    /* 题卡背面上下拖就是翻回正面 */
+    advance(freeBack ? null : (dy < 0 ? null : 1), dy < 0 ? 'up' : 'down');
   }
 }
 window.addEventListener('pointerup', endDrag);

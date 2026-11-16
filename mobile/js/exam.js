@@ -1692,6 +1692,18 @@ function examTransStepPrev(){
   examTransSave();
   renderExamTrans();
 }
+/* 点顶部刻度：跳到指定那一句单独练 */
+function examTransJump(i){
+  const n = (examTransRun.parts || []).length;
+  if(!(i >= 0 && i < n) || i === examTransRun.idx) return;
+  examTransRun.idx = i;
+  examTransRun.lastCommitPos = -1;
+  examTransRun.lastPick = null;
+  clearTimeout(examTransAutoTimer);
+  examTransSave();
+  renderExamTrans();
+  sfxPlay('pick');
+}
 
 /* ---------------- 页面片段 ---------------- */
 function examTransChips(words){
@@ -1699,14 +1711,14 @@ function examTransChips(words){
   return '<span class="ex-tr-miss-k">没写到的关键词</span>' +
     '<div class="ex-tr-chips">' + words.map(w => '<span class="ex-tr-chip">' + esc(w) + '</span>').join('') + '</div>';
 }
-/* 顶部刻度：已检查的是实色，当前格是半透明，没到的是发丝线 */
+/* 顶部刻度：已检查的是实色，当前格是半透明，没到的是发丝线；点任意一格直接练那一句 */
 function examTransTicks(){
   const n = (examTransRun.parts || []).length;
   const step = examTransRun.idx;
   let out = '<div class="ex-tr-ticks">';
   for(let i = 0; i < n; i++){
     const cls = (((examTransRun.checked || [])[i] ? 'done' : '') + (i === step ? ' cur' : '')).trim();
-    out += '<i class="' + cls + '"></i>';
+    out += '<i class="' + cls + '" data-ex-tr-tick="' + i + '" title="练第 ' + (i + 1) + ' 句"></i>';
   }
   return out + '</div>';
 }
@@ -2149,6 +2161,7 @@ function examDeckBegin(){
   examRun.right = 0;
   examRun.wrong = [];
   examRun.answers = {};
+  examRun.wrongTries = {};
   examRun.card = true;
   examRun.flipped = false;
   deckExam = true;
@@ -2252,10 +2265,16 @@ function examDeckAdvance(level, dir){
 function examDeckFlip(){
   const card = document.querySelector('#cardStack .swipe-card');
   if(!card) return;
-  card.classList.toggle('flipped');
+  if(card.classList.contains('flipped')){
+    /* 翻回正面时重画一遍：清掉上次判题的痕迹，可以重做这一题 */
+    examDeckRender();
+    sfxPlay('flip');
+    return;
+  }
+  card.classList.add('flipped');
   sfxPlay('flip');
 }
-/* 正面点选项：判对错、标出正确答案，随后自动翻到背面看解析 */
+/* 正面点选项：判对错；错第二次才把正确项亮出来，并停在正面让你看清楚 */
 function examDeckAnswer(i, btn){
   if(!deckExam || examRun.idx >= examRun.items.length) return;
   const box = btn.closest('.ex-deck-opts');
@@ -2263,14 +2282,25 @@ function examDeckAnswer(i, btn){
   const cur = examRun.items[examRun.idx];
   const right = i === cur.item.a;
   box.dataset.done = '1';
+  let tries = 0;
+  if(!right){
+    examRun.wrongTries = examRun.wrongTries || {};
+    const k = examKey(cur.item, cur.gid);
+    tries = (examRun.wrongTries[k] || 0) + 1;
+    examRun.wrongTries[k] = tries;
+  }
   Array.from(box.querySelectorAll('[data-ex-deck-opt]')).forEach(b => {
     const bi = Number(b.dataset.exDeckOpt);
-    if(bi === cur.item.a) b.classList.add('right');
+    if(bi === cur.item.a){
+      if(right || tries >= 2) b.classList.add('right');
+      else b.classList.add('dim');
+    }
     else if(bi === i) b.classList.add('wrong');
     else b.classList.add('dim');
   });
   sfxPlay(right ? 'ok' : 'bad');
   const at = examRun.idx;
+  if(!right && tries >= 2) return; /* 第二次选错：正确项已经亮着，不再自动翻面 */
   setTimeout(() => {
     if(!deckExam || examRun.idx !== at) return;
     const card = document.querySelector('#cardStack .swipe-card');
@@ -2606,6 +2636,12 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
   if(lvBtn){
     e.preventDefault(); e.stopPropagation();
     examTransSetLevel(Number(lvBtn.dataset.exLv));
+    return;
+  }
+  const tickBtn = t.closest('[data-ex-tr-tick]');
+  if(tickBtn){
+    e.preventDefault(); e.stopPropagation();
+    examTransJump(Number(tickBtn.dataset.exTrTick));
     return;
   }
   const sortBtn = t.closest('[data-ex-sort]');
