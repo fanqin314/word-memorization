@@ -151,7 +151,7 @@ document.getElementById('view-deck').addEventListener('click', (e) => {
   if(e.target.closest('[data-flip]')){ e.preventDefault(); e.stopPropagation(); }
   const card = e.target.closest('.swipe-card');
   if(card){
-    /* 题卡翻回正面要重画一次，清掉上次判题痕迹 */
+    /* 题卡走自己的翻面逻辑：翻回正面时顺手清掉上次判题痕迹 */
     if(card.classList.contains('deck-exam')){ examDeckFlip(); return; }
     card.classList.toggle('flipped');
     sfxPlay('flip');

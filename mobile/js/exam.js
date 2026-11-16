@@ -2264,8 +2264,13 @@ function examDeckFlip(){
   const card = document.querySelector('#cardStack .swipe-card');
   if(!card) return;
   if(card.classList.contains('flipped')){
-    /* 翻回正面时重画一遍：清掉上次判题的痕迹，可以重做这一题 */
-    examDeckRender();
+    /* 先播翻回正面的动画，再原地清掉上次判题的痕迹，这样不用重绘、不闪 */
+    card.classList.remove('flipped');
+    const box = card.querySelector('.ex-deck-opts');
+    if(box){
+      box.removeAttribute('data-done');
+      box.querySelectorAll('[data-ex-deck-opt]').forEach(b => b.classList.remove('right', 'wrong', 'dim'));
+    }
     sfxPlay('flip');
     return;
   }
