@@ -401,12 +401,13 @@
 .ex-tr-word.picked.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);}
 .ex-tr-word.picked.bad{border-color:var(--miss);background:var(--miss-soft);color:var(--miss);}
 .ex-tr-word.hint{
-  border-color:var(--accent);background:var(--accent-soft);color:var(--accent);
+  border-color:var(--ink);background:color-mix(in srgb,var(--ink) 9%,var(--card));color:var(--ink);
+  font-weight:900;
   animation:exTrHintPulse 1.3s ease-in-out infinite;
 }
 @keyframes exTrHintPulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(46,58,89,0);transform:scale(1);}
-  50%{box-shadow:0 0 0 5px rgba(46,58,89,.1);transform:scale(1.04);}
+  0%,100%{box-shadow:0 0 0 0 rgba(32,36,42,0);transform:scale(1);}
+  50%{box-shadow:0 0 0 5px rgba(32,36,42,.12);transform:scale(1.04);}
 }
 .ex-tr-word.just-ok{animation:exTrChipOk .38s cubic-bezier(.2,.8,.3,1);}
 .ex-tr-word.just-bad{animation:exTrChipBad .38s ease;}

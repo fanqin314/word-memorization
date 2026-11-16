@@ -1046,7 +1046,7 @@ const TRANS_KEY = 'trans_final_v1';
 const examTransRun = {
   id:'', parts:[], refs:[], cues:[], level:2, idx:0, phase:'write',
   inputs:[], currentWord:[], checked:[], covers:[], missed:[],
-  orderPicks:[], shuffled:[], expanded:[], pct:0,
+  orderPicks:[], shuffled:[], expanded:[], pct:0, sortMiss:[],
   lastCommitPos:-1, freshDone:false, lastPick:null
 };
 let examTransAutoTimer = null;
@@ -1541,6 +1541,9 @@ function examTransPick(k){
   const pos = picks.length;
   /* 重复词（the / of / is）按词面判对错，谁先点都算对，不强制点某一个副本 */
   const ok = examTransExact(words[k], words[pos]);
+  /* 连续选错的次数：用来决定要不要把正确词块直接亮出来 */
+  examTransRun.sortMiss = examTransRun.sortMiss || [];
+  examTransRun.sortMiss[step] = ok ? 0 : (examTransRun.sortMiss[step] || 0) + 1;
   picks.push(k);
   examTransRun.lastPick = { pos:pos, ok:ok, at:Date.now() };
   sfxPlay(ok ? 'pick' : 'drop');
@@ -1591,6 +1594,7 @@ function examStartTrans(id, restart){
   examTransRun.covers = s ? s.covers : new Array(n).fill(0);
   examTransRun.missed = s ? s.missed : new Array(n).fill(null).map(() => []);
   examTransRun.orderPicks = s ? s.orderPicks : new Array(n).fill(null).map(() => []);
+  examTransRun.sortMiss = new Array(n).fill(0);
   examTransRun.shuffled = s ? s.shuffled : new Array(n).fill(null);
   examTransRun.expanded = new Array(n).fill(false);
   examTransRun.pct = 0;
@@ -1615,6 +1619,7 @@ function examTransSetLevel(lv){
   examTransRun.missed[step] = [];
   if(lv === 1){
     examTransRun.orderPicks[step] = [];
+    examTransRun.sortMiss[step] = 0;
     examTransRun.shuffled[step] = null;
   }
   examTransRun.lastCommitPos = -1;
@@ -1755,10 +1760,19 @@ function examTransSortHtml(step){
   const picks = (examTransRun.orderPicks || [])[step] || [];
   const used = {};
   picks.forEach(k => { used[k] = 1; });
+  /* 连续选错两次以上，直接把该填的词块点亮：先救已经填错的那一格，再提示下一格 */
+  const miss = (examTransRun.sortMiss || [])[step] || 0;
+  let wantAt = picks.length;
+  for(let i = 0; i < picks.length; i++){
+    if(!examTransExact(words[picks[i]], words[i])){ wantAt = i; break; }
+  }
+  const want = wantAt < words.length ? words[wantAt] : '';
+  const reveal = miss >= 2 && !!want;
   const pool = shuf.map(k => {
     if(typeof words[k] !== 'string') return '';
     const on = !!used[k];
-    return '<button class="ex-tr-word' + (on ? ' used' : '') + '" type="button" data-ex-sort="' + k + '"' +
+    const hint = reveal && !on && examTransExact(words[k], want) ? ' hint' : '';
+    return '<button class="ex-tr-word' + (on ? ' used' : '') + hint + '" type="button" data-ex-sort="' + k + '"' +
       (on ? ' disabled' : '') + '>' + esc(words[k]) + '</button>';
   }).join('');
   const answer = picks.length ? picks.map((k, pos) => {
