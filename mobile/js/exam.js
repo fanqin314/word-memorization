@@ -1513,8 +1513,12 @@ function examTransHintTick(){
     if(examTransRun.idx !== step) return;
     if(examTransRun.level !== 1 || (examTransRun.checked || [])[step]) return;
     const next = ((examTransRun.orderPicks || [])[step] || []).length;
-    const el = document.querySelector('#view-exam .ex-tr-sort [data-ex-sort="' + next + '"]');
-    if(el) el.classList.add('hint');
+    const want = words[next];
+    /* 要的这个词有多个副本时，全都点亮，不逼你猜是哪一个 */
+    document.querySelectorAll('#view-exam .ex-tr-sort [data-ex-sort]').forEach(el => {
+      const k = Number(el.dataset.exSort);
+      if(!el.disabled && examTransExact(words[k], want)) el.classList.add('hint');
+    });
   }, 5000);
 }
 function examTransPlayPickAnim(){
@@ -1647,7 +1651,7 @@ function examTransCheck(){
     const words = examTransRefTokens(step);
     const picks = (examTransRun.orderPicks || [])[step] || [];
     let right = 0;
-    picks.forEach((k, pos) => { if(k === pos) right++; });
+    picks.forEach((k, pos) => { if(examTransExact(words[k], words[pos])) right++; });
     pct = words.length ? Math.round(right / words.length * 100) : 0;
   } else {
     if(String(examTransRun.currentWord[step] || '')){
