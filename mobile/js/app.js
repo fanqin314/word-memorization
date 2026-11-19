@@ -33,7 +33,10 @@ function switchTab(name){
 }
 
 document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  btn.addEventListener('click', () => {
+    sfxPlay('tap');
+    switchTab(btn.dataset.tab);
+  });
 });
 
 /* 贡献墙：点一格看当天的刷词记录 */

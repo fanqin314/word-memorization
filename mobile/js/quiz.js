@@ -84,6 +84,7 @@ function quizCheck(){
           || val === quizNorm(item.word)
           || val === quizNorm(first + item.a);
   if(ok) quiz.right++; else quiz.wrong++;
+  sfxPlay(ok ? 'ok' : 'bad');
 
   const blank = document.querySelector('#quizBody .qz-blank');
   if(blank){ blank.textContent = item.a; blank.classList.add('on'); }
@@ -111,12 +112,13 @@ function quizCheck(){
 function quizNext(){
   quiz.idx++;
   if(quiz.idx >= quiz.list.length) renderQuizResult();
-  else renderQuizQuestion();
+  else { sfxPlay('tap'); renderQuizQuestion(); }
 }
 
 function renderQuizResult(){
   const body = document.getElementById('quizBody');
   if(!body) return;
+  sfxPlay('done');
   const total = quiz.right + quiz.wrong;
   const rate = total ? Math.round(quiz.right / total * 100) : 0;
   const stat = quizStat();

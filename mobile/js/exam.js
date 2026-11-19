@@ -539,6 +539,7 @@ function examChrome(on){
 function examEnterRun(){
   examInRun = true;
   examChrome(true);
+  sfxPlay('panelOpen');
   /* 每次开新的一轮都退回「选项答题」，卡片模式由 examStartMix(true) 单独打开 */
   examRun.card = false;
   examRun.flipped = false;
@@ -1553,7 +1554,7 @@ function examTransPick(k){
   examTransRun.sortMiss[step] = ok ? 0 : (examTransRun.sortMiss[step] || 0) + 1;
   picks.push(k);
   examTransRun.lastPick = { pos:pos, ok:ok, at:Date.now() };
-  sfxPlay(ok ? 'pick' : 'drop');
+  sfxPlay(ok ? 'pick' : 'nudge');
   examTransSave();
   renderExamTrans();
 }
@@ -1697,7 +1698,7 @@ function examTransStepNext(){
   examTransRun.lastPick = null;
   clearTimeout(examTransAutoTimer);
   examTransSave();
-  sfxPlay('ok');
+  sfxPlay('tap');
   renderExamTrans();
 }
 function examTransStepPrev(){
@@ -1707,6 +1708,7 @@ function examTransStepPrev(){
   examTransRun.lastPick = null;
   clearTimeout(examTransAutoTimer);
   examTransSave();
+  sfxPlay('tap');
   renderExamTrans();
 }
 /* 点顶部刻度：跳到指定那一句单独练 */
@@ -2357,6 +2359,7 @@ function examDeckPrev(){
 }
 function examDeckDone(){
   examDeckForget();
+  sfxPlay('done');
   const host = document.getElementById('cardStack');
   if(!host) return;
   host.innerHTML = '<div class="deck-empty">' +
@@ -2642,6 +2645,7 @@ document.getElementById('view-exam').addEventListener('click', (e) => {
   const mmRow = t.closest('[data-ex-mm-row]');
   if(mmRow){
     e.preventDefault(); e.stopPropagation();
+    sfxPlay('tap');
     examMemoToggle(mmRow.dataset.exMmRow);
     return;
   }

@@ -141,8 +141,15 @@ function sfxCtxGet(){
   try{
     sfxCtx = new AC();
     sfxMaster = sfxCtx.createGain();
-    sfxMaster.gain.value = .2; /* master gain 固定在 .25 以下 */
-    sfxMaster.connect(sfxCtx.destination);
+    sfxMaster.gain.value = .55; /* 手机外放偏小，整体抬上来，后面接一个限幅器兜底 */
+    const lim = sfxCtx.createDynamicsCompressor();
+    lim.threshold.value = -8;
+    lim.knee.value = 6;
+    lim.ratio.value = 8;
+    lim.attack.value = .003;
+    lim.release.value = .2;
+    sfxMaster.connect(lim);
+    lim.connect(sfxCtx.destination);
   }catch(e){ sfxCtx = null; sfxMaster = null; }
   return sfxCtx;
 }
@@ -155,16 +162,17 @@ function sfxTone(freq, offset, dur, type, vol, freqEnd){
   /* 带一点滑音：从 freq 滑到 freqEnd，刷词的「嗖」感就靠它 */
   if(freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd, t + dur);
   g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(vol, t + .008);
+  g.gain.linearRampToValueAtTime(vol, t + .004);
   g.gain.exponentialRampToValueAtTime(.0001, t + dur);
   o.connect(g); g.connect(sfxMaster);
   o.start(t); o.stop(t + dur + .02);
 }
-/* 小铃铛：基音 + 两个泛音，比单纯正弦更有「叮」的质感 */
+/* 小铃铛：基音 + 轻微失谐 + 两个泛音，比单纯正弦更厚、更有「叮」的质感 */
 function sfxBell(freq, offset, dur, vol){
   sfxTone(freq, offset, dur, 'sine', vol);
-  sfxTone(freq * 2, offset, dur * .55, 'sine', vol * .34);
-  sfxTone(freq * 3, offset, dur * .3, 'sine', vol * .13);
+  sfxTone(freq * 1.002, offset, dur * .92, 'sine', vol * .32);
+  sfxTone(freq * 2, offset, dur * .55, 'sine', vol * .3);
+  sfxTone(freq * 3, offset, dur * .3, 'sine', vol * .12);
 }
 function sfxNoise(offset, dur, filterType, freq, vol, freqEnd, q){
   if(!sfxCtx) return;
@@ -230,16 +238,18 @@ function sfxPlay(name){
       sfxHaptic(6);
       break;
     case 'flip':
-      /* 翻面：两段纸声——先掀起，再落下 */
-      sfxNoise(0, .08, 'bandpass', 2200, .24, 900, 1.1);
-      sfxNoise(.07, .1, 'lowpass', 1300, .2, 700, .8);
-      sfxTone(170, .07, .07, 'sine', .1);
+      /* 翻面：先掀起再落下的三段纸声，末了垫一点低频，像整张卡翻过去 */
+      sfxNoise(0, .06, 'highpass', 3200, .14, 4200, .8);
+      sfxNoise(0, .08, 'bandpass', 2200, .26, 900, 1.1);
+      sfxNoise(.07, .1, 'lowpass', 1300, .22, 700, .8);
+      sfxTone(170, .07, .08, 'sine', .12);
       sfxHaptic(6);
       break;
     case 'drop':
-      /* 拼写落格：一粒小扣子落进格子的「哒」 */
-      sfxNoise(0, .03, 'bandpass', 1700, .22, 2400, 2);
-      sfxTone(880, 0, .025, 'square', .1);
+      /* 拼写落格：一粒小扣子落进格子的「哒」，收尾带一点高频亮点 */
+      sfxNoise(0, .03, 'bandpass', 1700, .26, 2400, 2);
+      sfxTone(880, 0, .03, 'square', .13, 820);
+      sfxTone(1760, 0, .02, 'sine', .08);
       sfxHaptic(4);
       break;
     case 'ok':
@@ -250,10 +260,30 @@ function sfxPlay(name){
       sfxHaptic([10, 24, 12]);
       break;
     case 'bad':
-      /* 拼错：两声轻闷的「嘟嘟」，音量压得很低 */
-      sfxTone(190, 0, .08, 'square', .18, 176);
-      sfxTone(150, .09, .1, 'square', .15, 140);
+      /* 拼错：两声轻闷的「嘟嘟」，响度抬高但仍不刺耳 */
+      sfxTone(190, 0, .09, 'square', .26, 172);
+      sfxTone(150, .09, .11, 'square', .22, 138);
+      sfxNoise(0, .05, 'lowpass', 500, .1);
       sfxHaptic(18);
+      break;
+    case 'nudge':
+      /* 排序点错：不算失败，一声短促的「嗯？」把人拉回来 */
+      sfxTone(233, 0, .07, 'triangle', .3, 208);
+      sfxNoise(0, .04, 'lowpass', 700, .14);
+      sfxHaptic(10);
+      break;
+    case 'tap':
+      /* 通用轻点：切页、翻句、展开收起，短到不抢戏 */
+      sfxNoise(0, .025, 'bandpass', 2400, .18, 3000, 2.4);
+      sfxTone(660, 0, .05, 'sine', .16, 610);
+      sfxHaptic(3);
+      break;
+    case 'done':
+      /* 一轮做完：两音上扬 + 一层细亮片，比答题音更长更松 */
+      sfxBell(587.33, 0, .32, .36);
+      sfxBell(880, .12, .46, .4);
+      sfxNoise(.12, .26, 'highpass', 2600, .12, 4200, 1.2);
+      sfxHaptic([8, 24, 10]);
       break;
     case 'goal':
       /* 今日达标：四音上行 + 一把细碎亮片 */
@@ -330,6 +360,7 @@ document.addEventListener('click', (e) => {
   e.stopPropagation();
   const on = !sfxOn();
   setSfx(on);
+  if(on) sfxPlay('tap'); /* 开启时给一声，确认音量合不合适 */
   toast(on ? '音效已开启' : '音效已关闭');
 });
 
@@ -367,6 +398,7 @@ document.addEventListener('click', (e) => {
   e.stopPropagation();
   const to = !glossHidden();
   setGloss(to);
+  sfxPlay('tap');
   toast(to ? '已遮住：正面释义 · 背面单词' : '已显示释义与单词');
 });
 applyGloss();
