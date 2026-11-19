@@ -833,14 +833,19 @@ function renderExam(){
       '</div>';
 
   [1, 2, 3, 4].forEach(u => {
-    html += '<div class="ex-unit"><div class="ex-unit-head">UNIT ' + u + ' · ' + esc(EXAM_UNITS[u]) + '</div>';
+    html += '<div class="ex-unit"><div class="ex-unit-head">' +
+      '<i class="ex-unit-no">0' + u + '</i>' +
+      '<span>UNIT ' + u + ' · ' + esc(EXAM_UNITS[u]) + '</span>' +
+      '</div>';
     EXAM_GROUPS.filter(g => g.unit === u).forEach(g => {
       const info = examInfo(g.id);
       const hasBest = info.best >= 0;
       const pct = hasBest ? Math.max(0, Math.min(100, info.best)) : 0;
+      const isWord = g.kind === 'word';
       html += '<button class="ex-row" type="button" data-ex-group="' + g.id + '">' +
+          '<span class="ex-row-tag' + (isWord ? '' : ' ghost') + '">' + (isWord ? 'W' : 'E') + '</span>' +
           '<span class="ex-row-main">' +
-            '<span class="ex-row-t">' + (g.kind === 'word' ? '3 · Words in use' : '6 · Expressions in use') + '</span>' +
+            '<span class="ex-row-t">' + (isWord ? 'Words in use · 单词填空' : 'Expressions in use · 短语填空') + '</span>' +
             '<span class="ex-row-s">' + esc(g.ref) + '</span>' +
           '</span>' +
           '<span class="ex-row-side">' +
@@ -863,6 +868,7 @@ function renderExam(){
     const info = examTransInfo(t.id);
     const hasBest = info.best >= 0;
     html += '<button class="ex-row" type="button" data-ex-tr="' + t.id + '">' +
+        '<span class="ex-row-tag ghost">译</span>' +
         '<span class="ex-row-main">' +
           '<span class="ex-row-t">Unit ' + t.unit + ' · 汉译英</span>' +
           '<span class="ex-row-s">' + esc(t.ref.replace(' · Translation', '')) + '</span>' +
@@ -882,6 +888,7 @@ function renderExam(){
       '<span class="ex-count">' + memoTotal + ' 条 · 背诵版</span>' +
     '</div>' +
     '<button class="ex-row" type="button" data-ex-mm="all">' +
+      '<span class="ex-row-tag ghost">背</span>' +
       '<span class="ex-row-main">' +
         '<span class="ex-row-t">第 3/6 题 · 全部词条</span>' +
         '<span class="ex-row-s">词形 + 搭配 + 中文</span>' +
@@ -2147,15 +2154,37 @@ function renderExamCardDone(){
 }
 
 /* ---------------- 期末填空借刷词页那张卡：只换卡里的内容 ---------------- */
+/* 把当前这套题和看到第几张存下来，下次进来接着看，不用每次从第 1 张重来 */
+const EXAM_DECK_KEY = 'wc_exam_deck_v1';
+function examDeckForget(){ try{ localStorage.removeItem(EXAM_DECK_KEY); }catch(e){} }
+function examDeckSave(){
+  if(!deckExam) return;
+  if(examRun.idx >= examRun.items.length){ examDeckForget(); return; }
+  persist(EXAM_DECK_KEY, {
+    keys: examRun.items.map(x => examKey(x.item, x.gid)),
+    idx: examRun.idx
+  });
+}
+function examDeckSaved(){
+  const raw = loadJSON(EXAM_DECK_KEY, null);
+  if(!raw || !Array.isArray(raw.keys) || !raw.keys.length) return null;
+  const map = {};
+  EXAM_GROUPS.forEach(g => g.items.forEach(it => { map[examKey(it, g.id)] = { gid:g.id, item:it }; }));
+  const items = raw.keys.map(k => map[k]).filter(Boolean);
+  if(items.length !== raw.keys.length) return null;
+  const idx = Math.max(0, Math.min(Number(raw.idx) || 0, items.length - 1));
+  return { items, idx };
+}
 /* 从球阵进来：不切页、不开新视图，直接把题目渲染进 #cardStack */
 function examDeckBegin(){
+  const saved = examDeckSaved();
   examRun.mode = 'mix';
   examRun.gid = '';
   examRun.title = '全部混合';
-  examRun.items = examMixItems();
+  examRun.items = saved ? saved.items : examMixItems();
   examRun.groupPool = examRun.items.slice();
   examRun.combo = 0;
-  examRun.idx = 0;
+  examRun.idx = saved ? saved.idx : 0;
   examRun.right = 0;
   examRun.wrong = [];
   examRun.answers = {};
@@ -2165,9 +2194,10 @@ function examDeckBegin(){
   deckExam = true;
   sfxPlay('pick');
   renderDeckShell();
+  if(saved && saved.idx > 0) toast('接着上次 · 第 ' + (saved.idx + 1) + ' 张');
 }
 
-function examDeckRestart(){ examDeckBegin(); }
+function examDeckRestart(){ examDeckForget(); examDeckBegin(); }
 
 /* 小卡里的题面摘要：去掉标签，把空格压成一个 */
 function examDeckMiniText(){
@@ -2314,16 +2344,19 @@ function examDeckAnswer(i, btn){
   }, right ? 480 : 760);
 }
 function examDeckNext(){
-  if(examRun.idx >= examRun.items.length - 1){ examRun.idx = examRun.items.length; examDeckRender(); return; }
+  if(examRun.idx >= examRun.items.length - 1){ examRun.idx = examRun.items.length; examDeckForget(); examDeckRender(); return; }
   examRun.idx++;
+  examDeckSave();
   examDeckRender();
 }
 function examDeckPrev(){
   if(examRun.idx <= 0) return;
   examRun.idx--;
+  examDeckSave();
   examDeckRender();
 }
 function examDeckDone(){
+  examDeckForget();
   const host = document.getElementById('cardStack');
   if(!host) return;
   host.innerHTML = '<div class="deck-empty">' +
