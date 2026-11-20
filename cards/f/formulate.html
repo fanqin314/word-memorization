@@ -9,207 +9,330 @@
 
 <style>
 /* ==========================================================================
-   formulate 专属样式：配色 / hero / 意象卡动画
+   formulate 专属样式：墨色铸模版
+   配色是铁锈橙 + 深松绿 + 旧黄铜，和 comply（冷蓝灰）刻意区分。
    ========================================================================== */
 
 :root{
-  --paper:#F4F1EA;
-  --paper-2:#E5E0D2;
-  --cb-accent:#5B7C8D;      /* 石墨蓝：模具、墨线 */
-  --cb-accent-soft:#DCE6EA;
-  --cb-2:#8A9A5B;           /* 苔绿：念头、液体 */
-  --cb-2-soft:#E6EBDC;
-  --cb-3:#B08968;           /* 陶土：标注、虚线 */
-  --cb-3-soft:#EDE2D6;
-  --ink:#1F262B;
-  --deep:#2C3A42;
-  --cb-deep:#2C3A42;
+  --paper:#F5F0E6;
+  --paper-2:#E7DECB;
+  --cb-accent:#A85C2E;      /* 铁锈橙：铁水、强调 */
+  --cb-accent-soft:#F1DED0;
+  --cb-2:#3E5C50;           /* 深松绿：模具、次强调 */
+  --cb-2-soft:#DCE5DF;
+  --cb-3:#C0A052;           /* 旧黄铜：标注 */
+  --cb-3-soft:#EFE6CC;
+  --ink:#201C17;
+  --deep:#332A20;
+  --cb-deep:#332A20;
 
-  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard:8px 8px 0 var(--ink);
   --shadow-hard-sm:4px 4px 0 var(--ink);
-  --radius-lg:28px;
-  --radius-md:20px;
+  --radius-lg:24px;
+  --radius-md:18px;
 }
 
+/* 横线稿纸：只有行线，没有网格，和 comply 的蓝图底纹区分开 */
 body::before{
   content:"";
   position:fixed;inset:0;
   pointer-events:none;z-index:0;
-  background-image:
-    repeating-linear-gradient(0deg,
-      transparent 0 46px,
-      rgba(91,124,141,.05) 46px 47px,
-      transparent 47px 92px),
-    repeating-linear-gradient(90deg,
-      transparent 0 46px,
-      rgba(91,124,141,.035) 46px 47px,
-      transparent 47px 92px);
-  animation:bgDrift 22s linear infinite;
+  background-image:repeating-linear-gradient(0deg,
+    transparent 0 33px,
+    rgba(62,92,80,.07) 33px 34px);
 }
-@keyframes bgDrift{ to{ background-position:0 92px, 92px 0; } }
 
-/* ---------- hero 区 ---------- */
+/* ---------- hero：墨色底，衬线大字 ---------- */
 .hero{
   position:relative;
-  padding:80px 64px 60px;
-  border-bottom:3px solid var(--ink);
-  background:linear-gradient(180deg,#EDF3F5 0%,#DCE6EA 45%,#C9D9E0 100%);
+  padding:84px 64px 60px;
+  background:var(--ink);
+  border-bottom:0;
+  color:var(--paper);
   overflow:hidden;
+  text-align:left;
 }
-.hero-band{
-  position:absolute;top:0;left:0;right:0;height:18px;
-  background:repeating-linear-gradient(90deg,
-    var(--cb-accent) 0 22px, transparent 22px 24px,
-    var(--cb-2) 24px 46px, transparent 46px 48px,
-    var(--cb-3) 48px 70px, transparent 70px 72px);
-  border-bottom:3px solid var(--ink);
-  z-index:3;
+/* 左侧一条铁锈色"浇口"，是这张卡的识别色 */
+.hero::before{
+  content:"";
+  position:absolute;left:0;top:0;bottom:0;width:16px;
+  background:var(--cb-accent);
 }
+/* 右下角巨大的 FORM 水印，像模具上的钢印 */
+.hero::after{
+  content:"FORM";
+  position:absolute;right:-.04em;bottom:-.18em;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:34vw;font-weight:900;line-height:1;letter-spacing:-.05em;
+  color:rgba(245,240,230,.045);
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:2;max-width:1100px;}
 
-.hero-inner{position:relative;z-index:2;text-align:center;}
+.hero-kicker{
+  font-family:Consolas,monospace;
+  font-size:11px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--cb-3);
+  opacity:0;animation:fadeUp .7s ease-out .1s forwards;
+}
 
 .word-anim{
-  display:inline-block;
-  font-family:"Helvetica Neue",Arial,sans-serif;
-  font-size:96px;font-weight:900;line-height:1.05;letter-spacing:-.02em;
-  color:var(--ink);
-  filter:drop-shadow(6px 6px 0 var(--cb-accent));
+  display:block;margin-top:16px;
+  font-family:Georgia,"Times New Roman","Songti SC",serif;
+  font-size:128px;font-weight:700;line-height:.92;letter-spacing:-.035em;
+  color:var(--paper);
 }
 .word-anim .letter{
   display:inline-block;opacity:0;
-  animation:letterStamp 1.2s cubic-bezier(.4,1.4,.6,1) forwards;
-  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+  transform:translateY(52%) rotate(3deg);
+  animation:letterRise .95s cubic-bezier(.2,.9,.2,1) forwards;
+  transition:color .25s ease,transform .25s ease;
 }
-.word-anim .l1{animation-delay:.10s;color:var(--cb-accent);}
-.word-anim .l2{animation-delay:.24s;}
-.word-anim .l3{animation-delay:.38s;color:var(--cb-2);}
-.word-anim .l4{animation-delay:.52s;}
-.word-anim .l5{animation-delay:.66s;color:var(--cb-3);}
-.word-anim .l6{animation-delay:.80s;}
-.word-anim .l7{animation-delay:.94s;color:var(--cb-accent);}
-.word-anim .l8{animation-delay:1.08s;}
-.word-anim .l9{animation-delay:1.22s;color:var(--cb-2);}
-@keyframes letterStamp{
-  0%{opacity:0;transform:translateY(-46px) scale(1.5) rotate(-8deg);filter:blur(8px);}
-  55%{opacity:1;filter:blur(0);transform:translateY(4px) scale(.94) rotate(1deg);}
-  80%{transform:translateY(-2px) scale(1.03);}
-  100%{opacity:1;transform:translateY(0) scale(1);color:var(--ink);}
+.word-anim .l1{animation-delay:.10s;color:var(--paper);}
+.word-anim .l2{animation-delay:.18s;color:var(--paper);}
+.word-anim .l3{animation-delay:.26s;color:var(--paper);}
+.word-anim .l4{animation-delay:.34s;color:var(--paper);}
+.word-anim .l5{animation-delay:.46s;color:#D97A45;}
+.word-anim .l6{animation-delay:.54s;color:#D97A45;}
+.word-anim .l7{animation-delay:.66s;color:var(--cb-3);}
+.word-anim .l8{animation-delay:.74s;color:var(--cb-3);}
+.word-anim .l9{animation-delay:.82s;color:var(--cb-3);}
+@keyframes letterRise{
+  to{opacity:1;transform:translateY(0) rotate(0);}
 }
-.word-anim .letter:hover{
-  color:var(--cb-accent);
-  transform:translateY(-8px) scale(1.12);
-  filter:drop-shadow(0 0 14px var(--cb-accent));
+.word-anim .letter:hover{color:var(--cb-accent);transform:translateY(-6px);}
+
+/* 词根切成两段上色：form 白、ulate 橙铜 —— 一眼看出构词 */
+.word-cn{
+  margin-top:18px;
+  font-size:13px;font-weight:700;letter-spacing:.34em;
+  color:rgba(245,240,230,.62);
+  opacity:0;animation:fadeUp .8s ease-out .95s forwards;
+}
+
+.hero-foot{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;
+  margin-top:28px;padding-top:18px;
+  border-top:1px dashed rgba(245,240,230,.26);
+  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
 }
 
 .speak-btn{
   display:inline-flex;align-items:center;justify-content:center;
-  width:46px;height:46px;margin-left:14px;vertical-align:middle;
-  background:var(--cb-accent);border:3px solid var(--ink);
-  border-radius:50%;cursor:pointer;font-size:20px;
-  box-shadow:4px 4px 0 var(--cb-3);
+  width:42px;height:42px;flex:none;
+  background:var(--cb-accent);border:2px solid rgba(245,240,230,.85);
+  border-radius:50%;cursor:pointer;font-size:17px;
+  box-shadow:3px 3px 0 rgba(245,240,230,.28);
   transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
-  opacity:0;animation:fadeUp .8s ease-out 1.05s forwards;
 }
-.speak-btn:hover{transform:translate(-2px,-2px) rotate(12deg);box-shadow:6px 6px 0 var(--cb-3);}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(10deg);box-shadow:5px 5px 0 rgba(245,240,230,.32);}
 .speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
-@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15) rotate(-6deg);}}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14) rotate(-6deg);}}
 
 .ipa-anim{
-  margin-top:20px;
-  font-family:"Helvetica Neue",Arial,sans-serif;
-  font-size:15px;font-weight:700;color:var(--ink);letter-spacing:.06em;
-  background:var(--cb-2-soft);border:2.5px solid var(--ink);
-  display:inline-block;padding:5px 18px;border-radius:999px;
-  box-shadow:3px 3px 0 var(--cb-accent);
-  cursor:pointer;transform:rotate(-1.5deg);
-  opacity:0;animation:fadeUp .8s ease-out 1.1s forwards;
+  font-family:Consolas,monospace;
+  font-size:13px;font-weight:700;letter-spacing:.03em;
+  color:var(--paper);
+  padding:6px 10px;
+  border:1px dashed rgba(245,240,230,.42);
+  cursor:pointer;
 }
 .pos-anim{
-  margin-top:14px;
-  font-family:"Helvetica Neue",Arial,sans-serif;
-  font-size:12px;color:var(--paper);letter-spacing:.22em;text-transform:uppercase;
-  background:var(--deep);display:inline-block;padding:5px 16px;border-radius:999px;
-  border:2px solid var(--ink);transform:rotate(1.2deg);
-  opacity:0;animation:fadeUp .8s ease-out 1.25s forwards;
+  display:inline-block;
+  padding:3px 9px;
+  font-family:Consolas,monospace;
+  font-size:12px;font-weight:900;letter-spacing:.1em;
+  color:var(--ink);background:var(--cb-3);
+  transform:rotate(-2deg);
 }
 .spell-hint{
-  display:inline-block;margin-top:24px;padding:9px 20px;
-  font-family:"Helvetica Neue",Arial,sans-serif;
-  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink);background:var(--cb-3-soft);
-  border:2.5px solid var(--ink);border-radius:999px;
-  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-1deg);
-  opacity:0;animation:fadeUp .8s ease-out 1.45s forwards;
+  display:inline-block;
+  padding-left:10px;
+  border-left:3px solid var(--cb-accent);
+  font-family:Consolas,monospace;
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(245,240,230,.72);
 }
 @keyframes fadeUp{0%{opacity:0;transform:translateY(8px);}100%{opacity:1;transform:translateY(0);}}
 
-/* ---------- 意象卡动画 ----------
-   画面：散落的念头一滴滴落进模具，压成一块有棱角的砖。 */
-.fm-frame{
-  fill:none;stroke:var(--cb-accent);stroke-width:3;
+/* ---------- 意象卡：上下结构，深色铸模剖面 ---------- */
+.image-card{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+  padding:0!important;
+  background:#fff!important;
+  border:3px solid var(--ink);
+  border-radius:4px!important;
+  box-shadow:var(--shadow-hard);
+  overflow:hidden;
+  transform:none!important;
+}
+.ic-text{padding:24px 26px 20px;border-bottom:3px solid var(--ink);}
+.ic-label{
+  font-family:Consolas,monospace;
+  font-size:10px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--cb-accent);
+  margin-bottom:8px;
+}
+.ic-main{font-size:19px;line-height:1.75;margin:0;}
+.ic-main .hl{
+  color:var(--cb-accent);
+  border-bottom:3px solid currentColor;
+  font-weight:900;
+}
+.ic-sub{margin-top:8px;font-size:14px;line-height:1.9;color:rgba(32,28,23,.72);}
+.ic-svg{background:var(--ink);padding:0;margin:0;}
+.ic-svg svg{display:block;width:100%;max-width:620px;margin:0 auto;}
+
+/* 铸模剖面动画 */
+.fp-crucible,.fp-mold{
+  fill:none;stroke:var(--paper);stroke-width:3;
   stroke-linecap:round;stroke-linejoin:round;
-  stroke-dasharray:620;stroke-dashoffset:620;
-  animation:fmFrameDraw 4.6s ease-in-out infinite;
+  stroke-dasharray:520;stroke-dashoffset:520;
+  animation:fpDraw 5s ease-in-out infinite;
 }
-@keyframes fmFrameDraw{
-  0%{stroke-dashoffset:620;opacity:.3;}
-  30%,74%{stroke-dashoffset:0;opacity:1;}
-  100%{stroke-dashoffset:0;opacity:.3;}
+@keyframes fpDraw{
+  0%{stroke-dashoffset:520;opacity:.35;}
+  34%,80%{stroke-dashoffset:0;opacity:1;}
+  100%{stroke-dashoffset:0;opacity:.35;}
 }
-.fm-d1,.fm-d2,.fm-d3{
-  fill:var(--cb-2);
+.fp-liquid{
+  fill:var(--cb-accent);
   transform-box:fill-box;transform-origin:center;
-  animation:fmDropFall 4.6s cubic-bezier(.34,1.2,.64,1) infinite;
+  animation:fpGlow 2.4s ease-in-out infinite;
 }
-.fm-d1{animation-delay:0s;}
-.fm-d2{animation-delay:.22s;}
-.fm-d3{animation-delay:.44s;}
-@keyframes fmDropFall{
-  0%{opacity:0;transform:translateY(-26px) scale(.55);}
-  16%,34%{opacity:1;transform:translateY(0) scale(1);}
-  52%,100%{opacity:0;transform:translateY(42px) scale(.6);}
+@keyframes fpGlow{0%,100%{opacity:.55;}50%{opacity:1;}}
+.fp-stream{
+  fill:none;stroke:var(--cb-accent);stroke-width:5;
+  stroke-linecap:round;stroke-dasharray:9 13;
+  animation:fpPour 1.5s linear infinite;
 }
-.fm-cast{
-  opacity:0;
+@keyframes fpPour{to{stroke-dashoffset:-44;}}
+.fp-block{
+  fill:var(--cb-accent);stroke:var(--ink);stroke-width:2;
   transform-box:fill-box;transform-origin:center bottom;
-  animation:fmCastLand 4.6s cubic-bezier(.34,1.56,.64,1) infinite;
+  animation:fpRise 5s cubic-bezier(.34,1.3,.64,1) infinite;
 }
-@keyframes fmCastLand{
-  0%,26%{opacity:0;transform:translateY(10px) scale(.72);}
-  46%,76%{opacity:1;transform:translateY(0) scale(1);}
-  94%,100%{opacity:0;transform:translateY(0) scale(1.02);}
+@keyframes fpRise{
+  0%,26%{transform:scaleY(.08);opacity:.35;}
+  50%,78%{transform:scaleY(1);opacity:1;}
+  96%,100%{transform:scaleY(.08);opacity:.35;}
 }
-.fm-line{
-  stroke:var(--ink);stroke-width:3;stroke-linecap:round;
-  stroke-dasharray:110;stroke-dashoffset:110;
-  animation:fmLineWrite 4.6s ease-in-out infinite;
+.fp-dim{
+  fill:none;stroke:var(--cb-3);stroke-width:2;
+  stroke-dasharray:6 6;stroke-linecap:round;
+  animation:fpDimMove 2.6s linear infinite;
 }
-@keyframes fmLineWrite{
-  0%,42%{stroke-dashoffset:110;}
-  62%,86%{stroke-dashoffset:0;}
-  100%{stroke-dashoffset:110;}
+@keyframes fpDimMove{to{stroke-dashoffset:-24;}}
+.fp-spark{fill:var(--cb-3);transform-box:fill-box;transform-origin:center;}
+.fp-spark.s1{animation:fpSpark 5s ease-out infinite;}
+.fp-spark.s2{animation:fpSpark 5s ease-out .18s infinite;}
+.fp-spark.s3{animation:fpSpark 5s ease-out .36s infinite;}
+@keyframes fpSpark{
+  0%,42%{opacity:0;transform:translateY(0) scale(.4);}
+  50%{opacity:1;transform:translateY(-8px) scale(1);}
+  72%,100%{opacity:0;transform:translateY(-18px) scale(.5);}
 }
-.fm-flow{
-  fill:none;stroke:var(--cb-3);stroke-width:2.5;
-  stroke-linecap:round;stroke-dasharray:7 7;
-  animation:fmFlowMove 2.4s linear infinite;
-}
-@keyframes fmFlowMove{ to{ stroke-dashoffset:-28; } }
-.fm-tag{
-  font-family:"Helvetica Neue",Arial,sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:.08em;
-  fill:var(--deep);
+.fp-tag{
+  font-family:Consolas,monospace;
+  font-size:11px;font-weight:700;letter-spacing:.16em;
+  fill:rgba(245,240,230,.62);
 }
 
+/* ---------- 区块标题：左侧铁锈粗线，不走 base 的胶囊旋转 ---------- */
+.section-title{
+  background:transparent!important;
+  color:var(--ink)!important;
+  transform:none!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  border-left:8px solid var(--cb-accent);
+  padding:3px 0 3px 14px!important;
+  font-size:21px!important;
+}
+.section-title .num{
+  background:var(--ink)!important;
+  color:var(--paper)!important;
+  border-radius:2px!important;
+  transform:none!important;
+}
+
+/* ---------- 搭配区：配方清单，不用卡片 ---------- */
+.collocations{
+  counter-reset:collo;
+  display:flex!important;
+  flex-direction:column;
+  border-top:2px solid var(--ink);
+}
+.collo{
+  counter-increment:collo;
+  display:grid!important;
+  grid-template-columns:48px 1fr;
+  gap:2px 14px;
+  padding:14px 4px!important;
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid rgba(32,28,23,.16)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.collo::before{
+  content:"0" counter(collo);
+  grid-row:span 2;
+  font-family:Georgia,serif;
+  font-size:26px;font-weight:700;line-height:1.1;
+  color:var(--cb-accent);
+}
+.collo .pattern{font-size:18px;font-weight:800;letter-spacing:.01em;}
+.collo .meaning{grid-column:2;font-size:13px;color:rgba(32,28,23,.68);}
+
+/* ---------- 辨析表：首行整条铁锈色 ---------- */
+.compare-table .highlight td{
+  background:var(--cb-accent)!important;
+  color:var(--paper)!important;
+}
+.compare-table .highlight .chant{color:var(--cb-3-soft)!important;}
+
+/* ---------- 打卡：改成竖向清单，带"钢印"感 ---------- */
+.review-grid{
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+}
+.review-day{
+  border:2px solid var(--ink)!important;
+  border-radius:0!important;
+  background:#fff!important;
+  box-shadow:var(--shadow-hard-sm)!important;
+  transform:none!important;
+}
+.review-day .day{
+  font-family:Georgia,serif!important;
+  color:var(--cb-accent)!important;
+}
+.review-day.done{
+  background:var(--ink)!important;
+  color:var(--paper)!important;
+}
+.review-day.done .day{color:var(--cb-3)!important;}
+
 @media (max-width:640px){
-  .hero{padding:50px 18px 40px;}
-  .word-anim{font-size:47px;}
-  .word-anim{letter-spacing:-.03em;}
+  .hero{padding:48px 20px 40px 26px;}
+  .hero::before{width:10px;}
+  .hero::after{font-size:44vw;}
+  .word-anim{font-size:52px;}
+  .hero-foot{gap:8px 10px;margin-top:22px;padding-top:14px;}
+  .ipa-anim{font-size:11px;}
+  .section-title{font-size:17px!important;}
+  .ic-main{font-size:16px;}
+  .ic-sub{font-size:13px;}
+  .collo .pattern{font-size:16px;}
+  .review-grid{grid-template-columns:1fr!important;}
 }
 @media (min-width:1100px){
-  .hero{padding:100px 80px 80px;}
-  .hero-band{height:24px;}
-  .word-anim{font-size:128px;}
+  .hero{padding:104px 80px 76px 96px;}
+  .word-anim{font-size:150px;}
 }
 </style>
 </head>
@@ -221,17 +344,18 @@ body::before{
 <article class="page">
 
   <section class="hero">
-    <div class="hero-band" aria-hidden="true"></div>
     <div class="hero-inner">
-      <div>
-        <span class="word-anim" aria-label="formulate">
-          <span class="letter l1">f</span><span class="letter l2">o</span><span class="letter l3">r</span><span class="letter l4">m</span><span class="letter l5">u</span><span class="letter l6">l</span><span class="letter l7">a</span><span class="letter l8">t</span><span class="letter l9">e</span>
-        </span>
-        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      <div class="hero-kicker">NO.05 &nbsp;/&nbsp; VERB &nbsp;/&nbsp; FORMULATE</div>
+      <div class="word-anim" aria-label="formulate">
+        <span class="letter l1">f</span><span class="letter l2">o</span><span class="letter l3">r</span><span class="letter l4">m</span><span class="letter l5">u</span><span class="letter l6">l</span><span class="letter l7">a</span><span class="letter l8">t</span><span class="letter l9">e</span>
       </div>
-      <div class="ipa-anim" id="ipaBtn">英 /ˈfɔːmjuleɪt/ &nbsp;·&nbsp; 美 /ˈfɔːrmjuleɪt/</div>
-      <div class="pos-anim">v.</div>
-      <div class="spell-hint">formulate &nbsp; 制定 · 构想 · 系统阐述</div>
+      <div class="word-cn">制定 · 构想 · 系统阐述</div>
+      <div class="hero-foot">
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+        <span class="ipa-anim" id="ipaBtn">英 /ˈfɔːmjuleɪt/ &nbsp;·&nbsp; 美 /ˈfɔːrmjuleɪt/</span>
+        <span class="pos-anim">v.</span>
+        <span class="spell-hint">form + -ul- + -ate → 让想法成形</span>
+      </div>
     </div>
   </section>
 
@@ -267,34 +391,27 @@ body::before{
           <p class="ic-sub">form（形状）+ -ulate（使……）——先有原料，再定形状。<br>政策、计划、理论都是这样被"压"出来的：<b>formulate a plan</b>。<br>空想停在液态，formulate 才是让它凝固成形。</p>
         </div>
         <div class="ic-svg" aria-hidden="true">
-          <svg viewBox="0 0 360 280" role="img" aria-label="念头滴进模具，压成有形的方块">
-            <defs>
-              <linearGradient id="fmCastFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="var(--cb-accent-soft)"/>
-                <stop offset="1" stop-color="#C9D9E0"/>
-              </linearGradient>
-            </defs>
-
-            <!-- 三滴念头 -->
-            <circle class="fm-d1" cx="132" cy="66" r="8"/>
-            <circle class="fm-d2" cx="180" cy="50" r="10"/>
-            <circle class="fm-d3" cx="228" cy="70" r="7"/>
-
-            <!-- 模具外框 -->
-            <path class="fm-frame" d="M92 112 h176 v112 h-176 z"/>
-            <path class="fm-frame" d="M92 112 l24 -22 h176 l-24 22"/>
-            <path class="fm-frame" d="M268 112 l24 -22 v112 l-24 22"/>
-
-            <!-- 压出来的方块 -->
-            <rect class="fm-cast" x="112" y="146" width="136" height="60" rx="7"
-                  fill="url(#fmCastFill)" stroke="var(--ink)" stroke-width="3"/>
-            <line class="fm-line" x1="128" y1="166" x2="222" y2="166"/>
-            <line class="fm-line" x1="128" y1="184" x2="204" y2="184"/>
-
-            <!-- 标注虚线：idea → form -->
-            <path class="fm-flow" d="M292 196 C 320 190, 320 150, 296 142"/>
-            <text class="fm-tag" x="238" y="246">想法 → 定形</text>
-            <text class="fm-tag" x="104" y="96">mold</text>
+          <svg viewBox="0 0 620 300" role="img" aria-label="铁水从坩埚浇进模具，冷却成有形的方块">
+            <!-- 坩埚与铁水 -->
+            <path class="fp-crucible" d="M74 96 h72 l-12 46 h-48 z"/>
+            <path class="fp-crucible" d="M84 96 v-18 h52 v18"/>
+            <path class="fp-liquid" d="M80 98 h60 l-4 14 h-52 z"/>
+            <!-- 浇注流 -->
+            <path class="fp-stream" d="M120 126 C 124 162, 186 158, 196 186"/>
+            <!-- 模具 -->
+            <path class="fp-mold" d="M196 186 h224 v96 h-224 z"/>
+            <path class="fp-mold" d="M196 186 l28 -24 h224 l-28 24"/>
+            <!-- 冷却成型的方块 -->
+            <rect class="fp-block" x="226" y="222" width="164" height="44" rx="3"/>
+            <!-- 尺寸线 -->
+            <path class="fp-dim" d="M226 292 h164"/>
+            <path class="fp-dim" d="M434 222 v62"/>
+            <text class="fp-tag" x="232" y="308">mold → form</text>
+            <text class="fp-tag" x="58" y="66">IDEA</text>
+            <!-- 火花 -->
+            <circle class="fp-spark s1" cx="212" cy="180" r="3"/>
+            <circle class="fp-spark s2" cx="248" cy="172" r="2.5"/>
+            <circle class="fp-spark s3" cx="380" cy="180" r="3"/>
           </svg>
         </div>
       </div>
