@@ -182,8 +182,11 @@ body::before{
   font-weight:900;
 }
 .ic-sub{margin-top:8px;font-size:14px;line-height:1.9;color:rgba(32,28,23,.72);}
-.ic-svg{background:var(--ink);padding:0;margin:0;}
-.ic-svg svg{display:block;width:100%;max-width:620px;margin:0 auto;}
+.ic-svg{
+  width:100%!important;height:auto!important;
+  background:var(--ink);padding:0;margin:0;
+}
+.ic-svg svg{display:block;width:100%;height:auto!important;max-width:620px;margin:0 auto;}
 
 /* 铸模剖面动画 */
 .fp-crucible,.fp-mold{
@@ -263,6 +266,7 @@ body::before{
   counter-reset:collo;
   display:flex!important;
   flex-direction:column;
+  gap:0!important;
   border-top:2px solid var(--ink);
 }
 .collo{
@@ -280,13 +284,34 @@ body::before{
 }
 .collo::before{
   content:"0" counter(collo);
-  grid-row:span 2;
-  font-family:Georgia,serif;
-  font-size:26px;font-weight:700;line-height:1.1;
+  /* 覆盖 card-base 的绝对定位竖条，否则编号会被压进 6px 宽里 */
+  position:static!important;
+  left:auto!important;top:auto!important;bottom:auto!important;
+  width:auto!important;height:auto!important;
+  background:none!important;
+  grid-column:1;
+  grid-row:1 / span 2;
+  align-self:start;
+  font-family:Georgia,"Songti SC",serif;
+  font-size:27px;font-weight:700;line-height:1;
   color:var(--cb-accent);
 }
-.collo .pattern{font-size:18px;font-weight:800;letter-spacing:.01em;}
-.collo .meaning{grid-column:2;font-size:13px;color:rgba(32,28,23,.68);}
+.collo .pattern{
+  grid-column:2;grid-row:1;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:17px;font-weight:800;letter-spacing:.01em;
+  background:none!important;
+  color:var(--ink)!important;
+  padding:0!important;
+  margin-left:0!important;
+  border-radius:0!important;
+  white-space:normal!important;
+}
+.collo .meaning{
+  grid-column:2;grid-row:2;
+  margin-top:4px;
+  font-size:13px;color:rgba(32,28,23,.68);
+}
 
 /* ---------- 辨析表：首行整条铁锈色 ---------- */
 .compare-table .highlight td{
