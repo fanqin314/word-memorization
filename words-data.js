@@ -1,6 +1,6 @@
 /* 本文件由「更新单词数据.ps1 / .bat」自动生成，请勿手工编辑。 */
 window.WORDS_DATA = {
-    "generated":  "2026-11-20 15:44:02",
+    "generated":  "2026-11-20 15:54:47",
     "words":  [
                   {
                       "word":  "about",
@@ -1005,7 +1005,7 @@ window.WORDS_DATA = {
                   },
                   {
                       "word":  "formulate",
-                      "gloss":  "form + -ul- + -ate → 让想法成形",
+                      "gloss":  "制定 · 构想 · 系统阐述",
                       "ipa":  "/ˈfɔːmjuleɪt/",
                       "pos":  "v.",
                       "file":  "cards/f/formulate.html",
