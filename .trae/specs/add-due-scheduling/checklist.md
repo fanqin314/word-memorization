@@ -1,0 +1,12 @@
+- [x] `store[word]` 存在 `dueAt` 字段，缺省为 `0` 且不影响旧存档
+- [x] 评级间隔为「天」粒度：不认识=今天 0 点、有点印象=明天 0 点、认识=3 天后 0 点（实测 `dueAfter(0/1/2)` 相对页面 `startOfDay()` 三项等式成立）
+- [x] 23:50 评级「认识」的词，D3 早上已算到期（`dueAt` 只取当天 0 点，实测点击后写入 `2026-11-10 00:00 +08`）
+- [x] `buildQueue` 主序为 `dueAt` 升序，`0` 在昨天之前、昨天在明天之前，结果稳定可复现（实测前三张 accordingly → advance → anniversary）
+- [x] 「今天已评级」的词仍排到队尾，`buildQueue(true)` 仍只含今天未评级词
+- [x] `buildQueue` 不再调用 `isDue`，仓库内无 `isDue` 残留定义与调用（`Grep isDue` 计数 0）
+- [x] 数据页「待复习」= `dueAt <= 今天 0 点` 的词数，且今天评「不认识」后 +1（实测页面 2 = 计算 2）
+- [x] `reviewDone` 保留，词库详情「打卡 x/4」仍正常
+- [x] 「复习今天刷过的」评级照常写 `dueAt`（未新增「只看不记」标记）
+- [x] 未新增 localStorage 键，未改动 `wc_mobile_v1` 结构
+- [x] 同一天刷新仍停在同一张卡；把 `mb.pos.date` 改成昨天后按 `dueAt` 重排（实测刷新后仍在 `convert`，改日期后 `queue[0]` 变为最早到期的 `accordingly`）
+- [x] `node check_mobile.js` 语法 0 错误；分组刷词、复习今天、空态三按钮回归正常（复习入口 `queue.length = ratedToday().size = 4`，A 组 `.deck-tag` 正常）
