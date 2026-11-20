@@ -244,21 +244,20 @@ body::before{
 }
 .fq-ing{
   transform-box:fill-box;transform-origin:center;
-  animation:fqStamp 5s ease-in-out infinite;
+  animation:fqStamp .9s cubic-bezier(.2,.9,.2,1) both;
 }
 .fq-i2{animation-delay:.45s;}
 .fq-i3{animation-delay:.9s;}
 @keyframes fqStamp{
-  0%,4%{opacity:0;transform:scale(.8);}
-  10%,86%{opacity:1;transform:scale(1);}
-  94%,100%{opacity:0;transform:scale(.8);}
+  from{opacity:0;transform:scale(.8);}
+  to{opacity:1;transform:scale(1);}
 }
 .fq-plus{
   font-family:Georgia,serif;font-size:30px;
   fill:var(--cb-3);
-  animation:fqBlink 5s ease-in-out infinite;
+  animation:fqIn .8s ease-out 1.35s both;
 }
-@keyframes fqBlink{0%,18%{opacity:0;}30%,100%{opacity:1;}}
+@keyframes fqIn{from{opacity:0;}to{opacity:1;}}
 .fq-arrow{
   fill:none;stroke:var(--cb-3);stroke-width:2.4;
   stroke-dasharray:7 8;stroke-linecap:round;
@@ -326,10 +325,10 @@ body::before{
   width:26px!important;height:26px!important;
   display:grid;place-content:center;
   border-radius:50%;
-  background:var(--cb-accent);
-  color:var(--ink);
+  background:var(--cb-accent)!important;
+  color:var(--ink)!important;
   font-family:Consolas,monospace;
-  font-size:13px;font-weight:900;line-height:1;
+  font-size:12px;font-weight:900;line-height:1;
   grid-column:1;grid-row:1 / span 2;
   align-self:start;
 }
@@ -338,12 +337,13 @@ body::before{
   font-family:Consolas,monospace;
   font-size:16.5px;font-weight:800;letter-spacing:.01em;
   color:var(--ink)!important;
+  background-color:transparent!important;
+  background-image:linear-gradient(180deg,transparent 62%,rgba(217,180,90,.5) 62%)!important;
   padding:0 2px!important;
   margin:0!important;
   border-radius:0!important;
   white-space:normal!important;
   justify-self:start;
-  background-image:linear-gradient(180deg,transparent 60%,rgba(217,180,90,.55) 60%)!important;
 }
 .collo .meaning{
   grid-column:2;grid-row:2;
