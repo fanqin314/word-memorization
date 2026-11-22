@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>reduce · 减少 · 降低 · 归纳</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   reduce 专属样式：下降曲线版
+   砖红 + 炭黑；斜纹警示带、柱状下降图。
+   ========================================================================== */
+
+:root{
+  --paper:#F5EDE8;
+  --paper-2:#EADCD4;
+  --cb-accent:#B5533C;
+  --cb-accent-soft:#F0DDD6;
+  --cb-2:#2E3A3F;
+  --cb-2-soft:#DDE3E4;
+  --cb-3:#C99A5B;
+  --cb-3-soft:#F1E4CC;
+  --ink:#262423;
+  --deep:#3A2B26;
+  --cb-deep:#3A2B26;
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:14px;
+  --radius-md:8px;
+}
+
+body::before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:repeating-linear-gradient(90deg,
+    transparent 0 63px, rgba(181,83,60,.06) 63px 64px);
+}
+
+/* ---------- hero：炭黑 + 斜纹警示带 ---------- */
+.hero{
+  position:relative;
+  padding:72px 44px 56px;
+  color:#F6F1EC;
+  border-bottom:5px solid var(--ink);
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(181,83,60,.22), transparent 55%),
+    linear-gradient(160deg,#31383C 0%,#272D31 60%,#1E2326 100%);
+}
+/* 右侧斜纹警示带 */
+.hero::after{
+  content:"";
+  position:absolute;right:-40px;top:-60px;bottom:-60px;width:200px;
+  background:repeating-linear-gradient(135deg,
+    rgba(181,83,60,.9) 0 13px,
+    rgba(181,83,60,.45) 13px 26px);
+  transform:rotate(9deg);
+  opacity:.55;
+  pointer-events:none;
+}
+/* 大大的下箭头 */
+.hero::before{
+  content:"↓";
+  position:absolute;right:12%;bottom:-24%;
+  font-family:Georgia,serif;
+  font-size:34vw;line-height:1;
+  color:rgba(246,241,236,.06);
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:2;max-width:900px;margin:0 auto;}
+
+.hero-kicker{
+  font-family:Consolas,monospace;
+  font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--cb-3);
+  opacity:0;animation:fadeIn .7s ease-out .1s forwards;
+}
+.word-anim{
+  display:inline-block;margin-top:14px;padding-bottom:6px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:116px;font-weight:900;font-style:italic;
+  line-height:1;letter-spacing:-.035em;
+  color:#F6F1EC;
+  text-shadow:0 14px 40px rgba(0,0,0,.35);
+  border-bottom:5px solid var(--cb-accent);
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  transform:translateY(-30px) rotate(-6deg);
+  animation:dropIn .6s cubic-bezier(.3,1.1,.5,1) forwards;
+  transition:transform .22s ease,color .22s ease;
+}
+.word-anim .l1{animation-delay:.10s;}
+.word-anim .l2{animation-delay:.18s;}
+.word-anim .l3{animation-delay:.26s;color:#E08A72;}
+.word-anim .l4{animation-delay:.34s;}
+.word-anim .l5{animation-delay:.42s;color:#E08A72;}
+.word-anim .l6{animation-delay:.50s;}
+@keyframes dropIn{from{opacity:0;transform:translateY(-30px) rotate(-6deg);}to{opacity:1;transform:none;}}
+.word-anim .letter:hover{transform:translateY(4px);color:#F0A88F;}
+
+.word-cn{
+  margin-top:16px;
+  font-size:13px;font-weight:700;letter-spacing:.3em;
+  color:#C9B9B2;
+  opacity:0;animation:fadeIn .8s ease-out .9s forwards;
+}
+.hero-foot{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;
+  margin-top:24px;padding-top:16px;
+  border-top:1px dashed rgba(246,241,236,.24);
+  opacity:0;animation:fadeIn .8s ease-out 1.05s forwards;
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:42px;height:42px;flex:none;
+  background:var(--cb-accent);border:2px solid var(--ink);border-radius:50%;
+  cursor:pointer;font-size:17px;
+  transition:transform .2s ease;
+}
+.speak-btn:hover{transform:translateY(-2px) scale(1.06);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.ipa-anim{
+  font-family:Consolas,monospace;
+  font-size:12.5px;font-weight:700;
+  padding:5px 10px;
+  border:1px solid rgba(246,241,236,.4);
+  cursor:pointer;
+}
+.pos-anim{
+  display:inline-block;padding:3px 10px;
+  font-family:Consolas,monospace;
+  font-size:12px;font-weight:900;
+  color:var(--ink);background:var(--cb-3);
+  transform:skewX(-8deg);
+}
+.spell-hint{
+  display:inline-block;padding-left:10px;
+  border-left:3px solid var(--cb-accent);
+  font-family:Consolas,monospace;
+  font-size:11px;letter-spacing:.08em;
+  color:rgba(246,241,236,.76);
+}
+@keyframes fadeIn{to{opacity:1;}}
+
+/* ---------- 区块标题：砖红方块编号 + 粗底线 ---------- */
+.section-title{
+  display:flex!important;align-items:center;gap:12px;
+  background:transparent!important;
+  border-radius:0!important;box-shadow:none!important;transform:none!important;
+  padding:0 0 8px!important;
+  border-bottom:3px solid var(--ink)!important;
+  font-size:20px!important;
+}
+.section-title .num{
+  display:inline-grid!important;place-content:center;
+  width:28px!important;height:28px!important;
+  background:var(--cb-accent)!important;color:#fff!important;
+  border-radius:2px!important;
+  font-family:Consolas,monospace;
+  font-size:13px!important;
+  transform:rotate(-4deg);
+}
+
+/* ---------- 词根 ---------- */
+.root-line{background:var(--cb-accent-soft)!important;border-left:6px solid var(--cb-accent)!important;border-radius:2px!important;}
+
+/* ---------- 意象卡：报表 ---------- */
+.image-card{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 320px!important;
+  gap:26px!important;align-items:center!important;
+  padding:26px 28px!important;
+  background:#FCF7F2!important;
+  background-image:repeating-linear-gradient(0deg,
+    transparent 0 27px, rgba(46,58,63,.09) 27px 28px)!important;
+  border:2px solid var(--ink)!important;
+  border-radius:4px!important;
+  box-shadow:8px 8px 0 var(--cb-accent-soft)!important;
+  transform:none!important;
+  color:var(--ink)!important;
+}
+.ic-label{
+  display:inline-block;margin-bottom:12px;
+  font-family:Consolas,monospace;
+  font-size:10px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;
+  background:var(--cb-accent);color:#fff;
+  padding:4px 9px;
+}
+.ic-main{font-size:18.5px;line-height:1.8;margin:0;}
+.ic-main .hl{
+  color:var(--cb-accent)!important;font-weight:900;
+  border-bottom:3px solid var(--cb-3);
+}
+.ic-sub{margin-top:10px;font-size:13.5px;line-height:1.9;color:rgba(38,36,35,.7);}
+.ic-svg{width:100%!important;height:auto!important;background:none!important;}
+.ic-svg svg{display:block;width:100%;height:auto!important;max-width:320px;margin:0 auto;}
+
+.rd-bar{fill:var(--cb-2);animation:rdRise 1.1s cubic-bezier(.2,.9,.3,1) both;}
+.rd-bar.hot{fill:var(--cb-accent);}
+.rd-b2{animation-delay:.10s;}
+.rd-b3{animation-delay:.20s;}
+.rd-b4{animation-delay:.30s;}
+.rd-b5{animation-delay:.40s;}
+@keyframes rdRise{from{transform:translateY(26px);opacity:0;}to{transform:none;opacity:1;}}
+.rd-grid{stroke:rgba(38,36,35,.16);stroke-width:1.4;stroke-dasharray:4 5;}
+.rd-trend{
+  fill:none;stroke:var(--cb-accent);stroke-width:3.4;stroke-linecap:round;
+  stroke-dasharray:420;stroke-dashoffset:420;
+  animation:rdDraw 1.6s ease-out .4s forwards;
+}
+@keyframes rdDraw{to{stroke-dashoffset:0;}}
+.rd-tag{fill:#FCF7F2;stroke:var(--cb-accent);stroke-width:2.4;}
+.rd-tagtxt{font-family:Consolas,monospace;font-size:17px;font-weight:900;fill:var(--cb-accent);}
+.rd-note{font-family:Consolas,monospace;font-size:9.5px;letter-spacing:.14em;fill:rgba(38,36,35,.55);}
+
+/* ---------- 核心搭配：指标行 ---------- */
+.collocations{
+  display:flex!important;flex-direction:column;gap:0!important;
+  border-top:3px solid var(--ink);
+}
+.collo{
+  counter-increment:none;
+  display:grid!important;
+  grid-template-columns:1fr auto;
+  align-items:baseline;
+  gap:2px 16px;
+  padding:13px 2px!important;
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid rgba(38,36,35,.22)!important;
+  border-radius:0!important;
+  box-shadow:none!important;transform:none!important;
+  overflow:visible!important;
+}
+.collo::before{
+  content:none!important;display:none!important;
+}
+.collo .pattern{
+  grid-column:1;grid-row:1;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:17px;font-weight:900;font-style:italic;
+  color:var(--ink)!important;
+  background:none!important;
+  padding:0!important;margin:0!important;border-radius:0!important;
+  white-space:normal!important;
+}
+.collo .pattern::before{
+  content:"↓";
+  display:inline-block;
+  margin-right:9px;
+  color:var(--cb-accent);
+  font-style:normal;
+  font-size:15px;
+}
+.collo .meaning{
+  grid-column:2;grid-row:1;
+  font-size:12.5px;color:rgba(38,36,35,.62);
+  text-align:right;
+}
+
+/* ---------- 例句 ---------- */
+.real-ex{
+  background:#FCF7F2!important;
+  border:0!important;
+  border-left:6px solid var(--cb-accent)!important;
+  border-radius:0!important;
+  box-shadow:none!important;transform:none!important;
+  padding:4px 0 16px 18px!important;
+}
+.real-ex + .real-ex{border-top:1px dashed rgba(38,36,35,.25)!important;padding-top:16px!important;}
+.real-ex .src{font-family:Consolas,monospace;font-size:10.5px;font-weight:700;letter-spacing:.12em;color:var(--cb-accent);}
+.real-ex .en{font-family:Georgia,"Songti SC",serif;font-size:17px;line-height:1.8;}
+.real-ex .en .hl{
+  font-style:normal;font-weight:900;color:var(--cb-accent);
+  background:linear-gradient(180deg,transparent 62%,rgba(201,154,91,.4) 62%);
+}
+
+/* ---------- 易错 ---------- */
+.pitfall{background:var(--cb-3-soft)!important;border-radius:4px!important;transform:none!important;}
+.pitfall::before{background-image:none!important;}
+.pitfall-item{background:#FCF7F2!important;border-left-color:var(--cb-accent)!important;border-radius:0!important;}
+.pitfall-item .tip{background:var(--cb-accent)!important;border-radius:2px!important;}
+.pitfall-item .right{background:var(--cb-2-soft)!important;}
+
+/* ---------- 辨析 ---------- */
+.compare-table .highlight td{background:var(--cb-accent-soft)!important;}
+.compare-table .highlight td:first-child{background:var(--cb-accent)!important;color:#fff!important;}
+.compare-table .highlight td:first-child::after{content:"★";color:#fff!important;}
+
+/* ---------- 填空 ---------- */
+.self-test .hint{background:var(--cb-accent-soft)!important;border-radius:3px!important;}
+.fill-item{background:#FCF7F2!important;border-radius:3px!important;box-shadow:3px 3px 0 rgba(38,36,35,.7)!important;}
+
+/* ---------- 造句 / 打卡 ---------- */
+.write-practice{background:var(--cb-2-soft)!important;border-radius:4px!important;transform:none!important;}
+.write-practice textarea{background:#FCF7F2!important;border-radius:3px!important;}
+.review-day{border-radius:4px!important;}
+
+@media (max-width:640px){
+  .hero{padding:44px 18px 36px;}
+  .word-anim{font-size:50px;}
+  .hero::after{width:110px;right:-50px;}
+  .section-title{font-size:16px!important;}
+  .image-card{grid-template-columns:1fr!important;padding:20px 16px!important;gap:18px!important;}
+  .ic-main{font-size:16px;}
+  .collo .pattern{font-size:15.5px;}
+  .collo{grid-template-columns:1fr;gap:0;}
+  .collo .meaning{grid-column:1;grid-row:2;text-align:left;margin-top:3px;}
+}
+@media (min-width:1100px){
+  .hero{padding:90px 64px 66px;}
+  .word-anim{font-size:136px;}
+}
+</style>
+</head>
+
+<body data-word="reduce">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">TREND SHEET &nbsp;/&nbsp; NO.09 &nbsp;/&nbsp; VERB</div>
+      <div class="word-anim" aria-label="reduce">
+        <span class="letter l1">r</span><span class="letter l2">e</span><span class="letter l3">d</span><span class="letter l4">u</span><span class="letter l5">c</span><span class="letter l6">e</span>
+      </div>
+      <div class="word-cn">减少 · 降低 · 归纳</div>
+      <div class="hero-foot">
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+        <span class="ipa-anim" id="ipaBtn">英 /rɪˈdjuːs/ &nbsp;·&nbsp; 美 /rɪˈduːs/</span>
+        <span class="pos-anim">v.</span>
+        <span class="spell-hint">re-（回）+ duc（引导） &nbsp; 减少 · 降低 · 归纳</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">re-</span>（往回）+ <span class="stem">duc</span>（引导）&nbsp;→&nbsp; "往回带" → <b>减少 · 降低 · 归纳</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">n.</div><div class="w">reduction</div><div class="p">/rɪˈdʌkʃn/</div><div class="m">减少；削减；降价</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">deduce</div><div class="p">/dɪˈdjuːs/</div><div class="m">推断；演绎</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">induce</div><div class="p">/ɪnˈdjuːs/</div><div class="m">引起；诱导；劝说</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">produce</div><div class="p">/prəˈdjuːs/</div><div class="m">生产；产生</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">introduce</div><div class="p">/ˌɪntrəˈdjuːs/</div><div class="m">介绍；引入</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">conduct</div><div class="p">/kənˈdʌkt/</div><div class="m">实施；指挥；传导</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">educate</div><div class="p">/ˈedʒukeɪt/</div><div class="m">教育；培养</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">reduced</div><div class="p">/rɪˈdjuːst/</div><div class="m">减少的；打折的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">reduce</span> = 把数量往回带，一路走低；走到最后就"归纳"成一个结论。</p>
+          <p class="ic-sub">三个高频义：<b>减少</b>数量、<b>降低</b>程度、<b>归纳为</b>（reduce A to B）。<br>搭配方向别混：reduce <b>by</b> 10% 是"降了 10%"，reduce <b>to</b> 10% 是"降到 10%"。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 340 280" role="img" aria-label="柱状图逐级下降，趋势线画出下降百分之三十二">
+            <path class="rd-grid" d="M26 226 h292"/>
+            <path class="rd-grid" d="M26 172 h292"/>
+            <path class="rd-grid" d="M26 118 h292"/>
+            <path class="rd-grid" d="M26 64 h292"/>
+            <rect class="rd-bar rd-b1" x="34" y="92" width="34" height="134" rx="3"/>
+            <rect class="rd-bar rd-b2" x="92" y="112" width="34" height="114" rx="3"/>
+            <rect class="rd-bar rd-b3" x="150" y="136" width="34" height="90" rx="3"/>
+            <rect class="rd-bar rd-b4" x="208" y="158" width="34" height="68" rx="3"/>
+            <rect class="rd-bar hot rd-b5" x="266" y="180" width="34" height="46" rx="3"/>
+            <path class="rd-trend" d="M51 78 L109 98 L167 122 L225 146 L283 168"/>
+            <rect class="rd-tag" x="220" y="24" width="86" height="34" rx="4"/>
+            <text class="rd-tagtxt" x="263" y="47" text-anchor="middle">-32%</text>
+            <text class="rd-note" x="170" y="262" text-anchor="middle">KEEP BRINGING IT DOWN</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">reduce costs</div><div class="meaning">削减成本</div></div>
+        <div class="collo"><div class="pattern">reduce the risk of</div><div class="meaning">降低……的风险</div></div>
+        <div class="collo"><div class="pattern">reduce by 20%</div><div class="meaning">降低了 20%</div></div>
+        <div class="collo"><div class="pattern">reduce to</div><div class="meaning">降到（to 表结果）；也可指"归纳为 / 沦为"</div></div>
+        <div class="collo"><div class="pattern">reduce waste</div><div class="meaning">减少浪费</div></div>
+        <div class="collo"><div class="pattern">be reduced to tears</div><div class="meaning">被逼得流泪（固定表达）</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2021 考研英语 · 阅读改编</div>
+          <p class="en">Companies are under pressure to <em class="hl">reduce</em> costs without cutting jobs.</p>
+          <p class="cn">公司面临在不裁员的前提下削减成本的压力。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 六级 · 翻译改编</div>
+          <p class="en">Regular exercise can <em class="hl">reduce</em> the risk of heart disease.</p>
+          <p class="cn">规律运动能降低患心脏病的风险。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 四级 · 阅读改编</div>
+          <p class="en">Prices have been <em class="hl">reduced</em> by 20 percent since last year.</p>
+          <p class="cn">自去年以来价格已下降 20%。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2018 专四 · 写作改编</div>
+          <p class="en">The whole argument can be <em class="hl">reduced</em> to one simple question.</p>
+          <p class="cn">整个论证可以归纳成一个简单的问题。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">by / to</span>
+          reduce by 是"下降了"，reduce to 是"降到"。数字题最常在这里扣分。<br>
+          <span class="wrong">reduced to 20%</span>（想表达下降 20%）→ <span class="right">reduced by 20%</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">及物</span>
+          reduce 是及物动词，不能说 "prices reduce"。<br>
+          <span class="wrong">Prices reduced last year.</span> → <span class="right">Prices were reduced last year.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          名词 reduction 是 -duction，不是 -duction 前的 c 写成 t。<br>
+          <span class="wrong">reductation</span> → <span class="right">reduction</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>reduce</td><td>人为把数量或程度往下降，及物</td><td class="chant">reduce 靠人降</td>
+          </tr>
+          <tr><td>decrease</td><td>数量自然或人为变小，可不及物</td><td class="chant">decrease 变少</td></tr>
+          <tr><td>decline</td><td>下滑、衰退，常指趋势或拒绝</td><td class="chant">decline 一路走低</td></tr>
+          <tr><td>lower</td><td>把位置或水平放低</td><td class="chant">lower 往下放</td></tr>
+          <tr><td>cut</td><td>砍掉一块，口语化的削减</td><td class="chant">cut 一刀切</td>
+          </tr>
+          <tr><td>reduction</td><td>reduce 的名词：减少、折扣</td><td class="chant">名词 -tion</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The company plans to <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">educe</span> costs by ten percent.</p>
+          <p class="fill-hint">提示：<b>reduce costs</b>，削减成本。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Exercise can <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">educe</span> the risk of heart disease.</p>
+          <p class="fill-hint">提示：<b>reduce the risk of</b>，降低……的风险。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The new policy led to a sharp <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">eduction</span> in waste.</p>
+          <p class="fill-hint">提示：名词 <b>reduction</b>，减少。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Prices were <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">educed</span> by 20 percent last year.</p>
+          <p class="fill-hint">提示：过去分词 <b>reduced</b>；reduce by，下降了。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The problem can be <span class="first-letter">r</span><span class="blank" onclick="this.classList.toggle('revealed')">educed</span> to a single question.</p>
+          <p class="fill-hint">提示：<b>reduce to</b>，归纳为。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>reduce</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="Turning off the lights can reduce your electricity bill by a third."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>背 6 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>默写 5 道填空</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>用它造 3 句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>复盘易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>
