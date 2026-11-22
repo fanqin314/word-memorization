@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>establish · 建立 · 确立 · 证实</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   establish 专属样式：红章公文版
+   米黄公文纸 + 正红公章 + 墨黑衬线；浅色卡。
+   ========================================================================== */
+
+:root{
+  --paper:#F3ECDC;
+  --paper-2:#E8DFC9;
+  --red:#A8322A;
+  --red-2:#C0453B;
+  --red-soft:#F1DFD8;
+  --cream:#FFFDF7;
+  --cb-accent:#A8322A;
+  --cb-accent-soft:#EFE2D0;
+  --cb-2:#5C6B5E;
+  --cb-2-soft:#E3E7DF;
+  --cb-3:#8A7558;
+  --cb-3-soft:#EAE2D2;
+  --ink:#211E1A;
+  --deep:#211E1A;
+  --cb-deep:#211E1A;
+  --shadow-hard:6px 6px 0 rgba(168,50,42,.16);
+  --shadow-hard-sm:4px 4px 0 rgba(33,30,26,.16);
+  --radius-lg:6px;
+  --radius-md:4px;
+}
+
+body{
+  background:#241F1B;
+  padding:44px 16px 90px;
+}
+
+/* 极淡纸纤维纹理 */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(239,231,212,.08) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 70% 60%, rgba(239,231,212,.06) 0 1px, transparent 1.6px),
+    repeating-linear-gradient(90deg, rgba(239,231,212,.03) 0 1px, transparent 1px 5px);
+  background-size:37px 37px, 53px 53px, auto;
+}
+
+.page{
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(circle at 12% 22%, rgba(138,117,88,.05) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 68% 74%, rgba(138,117,88,.04) 0 1px, transparent 1.4px);
+  background-size:29px 31px, 43px 47px;
+  box-shadow:
+    0 0 0 3px var(--ink),
+    12px 12px 0 var(--red),
+    -4px 4px 0 var(--cb-2),
+    0 20px 60px rgba(0,0,0,.8);
+}
+
+/* 页边红色装订线 */
+.page::before{
+  content:"";position:absolute;left:14px;top:0;bottom:0;width:2px;z-index:4;
+  background:repeating-linear-gradient(180deg,
+    rgba(168,50,42,.55) 0 11px,
+    transparent 11px 22px);
+  pointer-events:none;
+}
+.page::after{
+  content:"";position:absolute;left:9px;top:26px;width:12px;height:12px;z-index:4;
+  border-radius:50%;border:1.5px solid rgba(168,50,42,.5);
+  background:rgba(255,253,247,.7);
+  pointer-events:none;
+}
+
+/* ---------- hero：米黄公文纸 ---------- */
+.hero{
+  position:relative;
+  padding:58px 48px 50px 64px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 46%),
+    #EFE7D4;
+  border-bottom:3px solid var(--ink);
+  overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:10px;
+  background:var(--red);
+  z-index:1;
+}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(138,117,88,.055) 0 1px, transparent 1px 9px),
+    radial-gradient(circle at 30% 40%, rgba(138,117,88,.05) 0 1px, transparent 1.4px);
+  background-size:auto, 41px 43px;
+  opacity:.7;
+}
+.hero-grid{
+  position:relative;z-index:2;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 196px;
+  align-items:center;
+  gap:18px;
+}
+.hero-main{min-width:0;}
+
+.hero-kicker{
+  display:inline-block;
+  padding-bottom:6px;
+  border-bottom:1.5px solid rgba(168,50,42,.5);
+  font-family:"Courier New",Consolas,monospace;
+  font-size:10.5px;font-weight:700;letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--red);
+  opacity:0;animation:fadeUp .7s ease-out .05s forwards;
+}
+
+.word-anim{
+  display:inline-block;
+  margin-top:14px;
+  padding-bottom:5px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(46px,9vw,94px);
+  font-weight:700;
+  line-height:1.08;
+  letter-spacing:.015em;
+  color:var(--ink)!important;
+  filter:none!important;
+  border-bottom:3px solid rgba(168,50,42,.32);
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+.word-anim .letter{
+  display:inline-block;
+  opacity:0;
+  transform:scale(1.6);
+  animation:esStamp .38s cubic-bezier(.2,.85,.3,1.05) forwards;
+  transition:transform .25s ease,color .25s ease;
+}
+.word-anim .l1{animation-delay:.10s;}
+.word-anim .l2{animation-delay:.18s;}
+.word-anim .l3{animation-delay:.26s;}
+.word-anim .l4{animation-delay:.34s;}
+.word-anim .l5{animation-delay:.42s;}
+.word-anim .l6{animation-delay:.50s;}
+.word-anim .l7{animation-delay:.58s;}
+.word-anim .l8{animation-delay:.66s;}
+.word-anim .l9{animation-delay:.74s;}
+.word-anim .letter:hover{transform:translateY(-4px) scale(1.05);color:var(--red);}
+@keyframes esStamp{
+  0%{opacity:0;transform:scale(1.6);}
+  58%{opacity:1;transform:scale(.94);}
+  82%{transform:scale(1.015);}
+  100%{opacity:1;transform:scale(1);}
+}
+
+.hero-foot{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;
+  margin-top:24px;
+}
+.speak-btn{
+  width:42px;height:42px;flex:none;
+  background:var(--red);
+  border:2px solid var(--ink);
+  border-radius:2px;
+  color:#FFF6E8;
+  font-size:17px;
+  box-shadow:3px 3px 0 var(--ink);
+}
+.speak-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+
+.ipa-anim{
+  font-family:"Courier New",Consolas,monospace;
+  font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  background:transparent!important;
+  border:1.5px solid rgba(33,30,26,.45)!important;
+  border-radius:2px!important;
+  box-shadow:none!important;
+  padding:5px 11px!important;
+  color:var(--ink);
+}
+
+.pos-anim{
+  background:var(--red)!important;
+  color:#FFF6E8!important;
+  border:0!important;
+  border-radius:2px!important;
+  font-family:"Courier New",Consolas,monospace;
+  letter-spacing:.12em!important;
+  padding:4px 12px!important;
+}
+
+.spell-hint{
+  background:transparent!important;
+  border:0!important;
+  border-left:3px solid var(--red)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  padding:2px 0 2px 10px!important;
+  font-family:Georgia,serif!important;
+  font-size:12px!important;
+  letter-spacing:.05em!important;
+  text-transform:none!important;
+  color:var(--ink)!important;
+}
+
+/* 右侧巨大红章 */
+.seal-wrap{
+  position:relative;z-index:2;
+  width:100%;max-width:196px;
+  justify-self:end;
+  opacity:0;
+  animation:esSealDrop .5s cubic-bezier(.2,.8,.3,1) 1.2s forwards;
+}
+.es-seal{display:block;width:100%;height:auto;transform:rotate(-7deg);}
+.es-seal-ringline{fill:none;stroke:var(--red);}
+.es-seal-text{
+  font-family:Georgia,serif;
+  font-size:12px;font-weight:700;letter-spacing:2.4px;
+  fill:var(--red);
+}
+.es-seal-star{fill:var(--red);}
+@keyframes esSealDrop{
+  0%{opacity:0;transform:scale(2.2);}
+  70%{opacity:1;transform:scale(.94);}
+  100%{opacity:1;transform:scale(1);}
+}
+
+/* ---------- 区块标题：公文条款 ---------- */
+.section{margin:0 0 54px;}
+.body-wrap .section .section-title{
+  display:flex!important;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  margin:0 0 20px!important;
+  padding:0 0 9px!important;
+  background:none!important;
+  background-color:transparent!important;
+  border:0!important;
+  border-bottom:1.5px solid var(--ink)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  font-family:Georgia,"Songti SC",serif!important;
+  font-size:clamp(17px,2.4vw,21px)!important;
+  font-weight:700!important;
+  letter-spacing:.02em;
+  color:var(--ink)!important;
+}
+.section-title .num{
+  display:inline-grid!important;
+  place-content:center;
+  width:26px!important;height:26px!important;
+  flex:none;
+  background:var(--red)!important;
+  color:#FFF6E8!important;
+  border:0!important;
+  border-radius:2px!important;
+  font-family:Georgia,serif!important;
+  font-size:13px!important;
+  transform:rotate(-3deg);
+}
+.section-title span:last-child{line-height:1.35;}
+
+/* ---------- 1 词根 · 词族 ---------- */
+.root-family{
+  background:var(--cream)!important;
+  border:2px solid var(--ink)!important;
+  border-radius:4px!important;
+  box-shadow:6px 6px 0 rgba(168,50,42,.14)!important;
+  padding:24px 22px!important;
+}
+.root-line{
+  background:#FBF4E4!important;
+  border:1.5px dashed rgba(168,50,42,.62)!important;
+  border-radius:3px!important;
+  font-size:16px;
+  line-height:2.1;
+}
+.root-line .stem{
+  background:var(--red)!important;
+  color:#FFF6E8!important;
+  border:0!important;
+  border-radius:2px!important;
+  transform:none!important;
+  padding:2px 9px!important;
+}
+.root-line b{color:var(--red);}
+.fam-card{
+  background:var(--cream)!important;
+  border:1.5px solid var(--ink)!important;
+  border-top:3px solid var(--red)!important;
+  border-radius:3px!important;
+  box-shadow:3px 3px 0 rgba(33,30,26,.14)!important;
+}
+.fam-card .pos{
+  background:var(--red)!important;
+  color:#FFF6E8!important;
+  border-radius:2px!important;
+  letter-spacing:.1em;
+}
+.fam-card .w{
+  font-family:Georgia,serif!important;
+  color:var(--ink)!important;
+  letter-spacing:.01em;
+}
+.fam-card .p{color:#8A7B68!important;}
+
+/* ---------- 2 意象卡：立柱 + 横梁 + 压章 ---------- */
+.image-card{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 300px!important;
+  gap:26px!important;
+  align-items:center!important;
+  padding:28px 28px!important;
+  background:var(--cream)!important;
+  color:var(--ink)!important;
+  border:2px solid var(--ink)!important;
+  border-radius:4px!important;
+  box-shadow:7px 7px 0 rgba(168,50,42,.15)!important;
+  transform:none!important;
+}
+.image-card .ic-label{
+  background:var(--red)!important;
+  color:#FFF6E8!important;
+  border:0!important;
+  border-radius:2px!important;
+  transform:none!important;
+  font-family:"Courier New",Consolas,monospace;
+  letter-spacing:.18em;
+  padding:3px 10px!important;
+}
+.image-card .ic-main{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:20px;
+  line-height:1.72;
+  color:var(--ink);
+}
+.image-card .ic-main .hl{
+  background:none!important;
+  color:var(--red)!important;
+  border-bottom:3px solid rgba(168,50,42,.45);
+  border-radius:0!important;
+  padding:0 2px!important;
+}
+.image-card .ic-sub{color:#5C564B!important;opacity:1!important;}
+.image-card .ic-sub b{color:var(--red-2);}
+.image-card .ic-svg{
+  width:100%!important;
+  height:auto!important;
+}
+.image-card .ic-svg svg{
+  display:block;
+  width:100%;
+  height:auto!important;
+  max-width:320px;
+  margin:0 auto;
+  overflow:visible;
+}
+.es-floor{fill:#D8CBB0;stroke:var(--ink);stroke-width:2;}
+.es-pillar{
+  fill:#E7DCC3;stroke:var(--ink);stroke-width:2;
+  transform-box:fill-box;
+  transform-origin:50% 100%;
+  transform:scaleY(0);
+  animation:esRise 2.5s cubic-bezier(.2,.8,.3,1) forwards;
+}
+.es-p1{animation-delay:.10s;}
+.es-p2{animation-delay:.34s;}
+.es-p3{animation-delay:.58s;}
+@keyframes esRise{
+  0%{transform:scaleY(0);opacity:.2;}
+  8%{opacity:1;}
+  22%,100%{transform:scaleY(1);opacity:1;}
+}
+.es-beam{
+  fill:#D9C9A8;stroke:var(--ink);stroke-width:2;
+  transform-box:fill-box;
+  transform-origin:50% 50%;
+  opacity:0;
+  animation:esBeamDrop 2.5s ease-out forwards;
+}
+@keyframes esBeamDrop{
+  0%,48%{opacity:0;transform:translateY(-46px);}
+  60%{opacity:1;transform:translateY(0);}
+  68%{transform:translateY(-3px);}
+  74%,100%{transform:translateY(0);opacity:1;}
+}
+.es-seal-img{
+  transform-box:fill-box;
+  transform-origin:50% 50%;
+  opacity:0;
+  animation:esSealPress 2.5s cubic-bezier(.2,.8,.3,1) forwards;
+}
+@keyframes esSealPress{
+  0%,74%{opacity:0;transform:scale(1.7) rotate(-9deg);}
+  85%{opacity:1;transform:scale(.95) rotate(-1deg);}
+  92%,100%{opacity:1;transform:scale(1) rotate(0);}
+}
+
+/* ---------- 3 核心搭配：公文条款表 ---------- */
+.collocations{
+  display:block!important;
+  background:var(--cream);
+  border:2px solid var(--ink);
+  border-radius:4px;
+  box-shadow:5px 5px 0 rgba(33,30,26,.12);
+  overflow:hidden;
+  counter-reset:clause;
+}
+.collo{
+  counter-increment:clause;
+  display:grid!important;
+  grid-template-columns:94px minmax(0,1fr)!important;
+  grid-template-rows:auto auto;
+  column-gap:14px;
+  row-gap:2px;
+  align-items:start;
+  margin:0!important;
+  padding:13px 18px!important;
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid rgba(33,30,26,.18)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  overflow:visible!important;
+}
+.collo:last-child{border-bottom:0!important;}
+.collo:hover{transform:none!important;box-shadow:none!important;background:rgba(168,50,42,.045)!important;}
+.collo::before{
+  content:"第 " counter(clause) " 条";
+  position:static!important;
+  left:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  width:auto!important;
+  height:auto!important;
+  background:none!important;
+  grid-column:1;
+  grid-row:1 / span 2;
+  align-self:center;
+  padding-right:12px;
+  border-right:1px solid rgba(33,30,26,.22);
+  color:var(--red);
+  font-family:"Courier New",Consolas,monospace;
+  font-size:11.5px;
+  font-weight:700;
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+.collo .pattern{
+  grid-column:2;
+  margin:0!important;
+  padding:0!important;
+  background:none!important;
+  border-radius:0!important;
+  color:var(--ink)!important;
+  font-family:Georgia,serif!important;
+  font-size:15.5px!important;
+  font-weight:700!important;
+  letter-spacing:.01em;
+  white-space:normal!important;
+  line-height:1.55;
+}
+.collo .meaning{
+  grid-column:2;
+  font-size:13.5px!important;
+  color:#6B6257;
+  line-height:1.6;
+}
+
+/* ---------- 4 真题例句 ---------- */
+.real-ex{
+  background:var(--cream)!important;
+  border:1.5px solid var(--ink)!important;
+  border-left:5px solid var(--red)!important;
+  border-radius:2px!important;
+  box-shadow:4px 4px 0 rgba(33,30,26,.12)!important;
+  transform:none!important;
+}
+.real-ex:nth-child(even){transform:none!important;}
+.real-ex:hover{transform:translate(-2px,-2px)!important;box-shadow:6px 6px 0 rgba(168,50,42,.2)!important;}
+.real-ex::before{display:none!important;}
+.real-ex .src{
+  background:none!important;
+  border:0!important;
+  padding:0 0 4px!important;
+  color:var(--red)!important;
+  font-family:Georgia,serif!important;
+  font-size:11px!important;
+  font-weight:700;
+  letter-spacing:.16em!important;
+  border-bottom:1px dotted rgba(168,50,42,.4);
+}
+.real-ex .en{font-family:Georgia,serif!important;font-size:16px!important;}
+.real-ex .en .hl{
+  background:rgba(168,50,42,.13)!important;
+  color:var(--red)!important;
+  border-radius:0!important;
+  padding:0 3px!important;
+}
+.real-ex .cn{
+  border-left:2px solid rgba(168,50,42,.4)!important;
+  color:#6B6257!important;
+}
+
+/* ---------- 5 易错提醒 ---------- */
+.pitfall{
+  background:#F6EBD8!important;
+  border:2px solid var(--ink)!important;
+  border-radius:3px!important;
+  box-shadow:6px 6px 0 rgba(168,50,42,.14)!important;
+  transform:none!important;
+}
+.pitfall::before{
+  height:7px!important;
+  background-image:repeating-linear-gradient(90deg,var(--red) 0 18px,transparent 18px 30px)!important;
+  background-size:auto!important;
+  border-bottom:0!important;
+}
+.pitfall-item{
+  background:var(--cream)!important;
+  border-left:5px solid var(--red)!important;
+  border-radius:0!important;
+}
+.pitfall-item .tip{
+  background:var(--red)!important;
+  color:#FFF6E8!important;
+  border:0!important;
+  border-radius:2px!important;
+}
+.pitfall-item .right{
+  background:#EFE2D0!important;
+  color:var(--ink)!important;
+  border-radius:2px!important;
+}
+.pitfall-item .wrong{color:var(--red-2)!important;}
+
+/* ---------- 6 易混辨析 ---------- */
+.compare-table tbody tr{filter:drop-shadow(3px 3px 0 rgba(33,30,26,.14))!important;}
+.compare-table td{
+  background:var(--cream)!important;
+  border-color:var(--ink)!important;
+  border-width:1.5px!important;
+}
+.compare-table td:first-child{
+  background:#F0E3CE!important;
+  border-radius:0!important;
+  font-family:Georgia,serif!important;
+  color:var(--ink)!important;
+}
+.compare-table td:last-child{border-radius:0!important;}
+.compare-table .chant{color:var(--red)!important;}
+.compare-table tr.highlight td{background:var(--red-soft)!important;}
+.compare-table tr.highlight td:first-child{background:var(--red)!important;color:#FFF6E8!important;}
+.compare-table tr.highlight td:first-child::after{color:#FFF6E8!important;}
+
+/* ---------- 7 首字母填空 ---------- */
+.self-test .hint{
+  background:#F6EBD8!important;
+  border:1.5px dashed var(--red)!important;
+  border-radius:3px!important;
+}
+.fill-item{
+  background:var(--cream)!important;
+  border:1.5px solid var(--ink)!important;
+  border-top:3px solid var(--red)!important;
+  border-radius:3px!important;
+  box-shadow:3px 3px 0 rgba(33,30,26,.12)!important;
+}
+.first-letter{color:var(--red)!important;font-family:Georgia,serif!important;}
+.blank.revealed{
+  background:rgba(168,50,42,.12)!important;
+  border-color:var(--red)!important;
+  color:var(--ink)!important;
+}
+.fill-hint b{color:var(--red)!important;}
+
+/* ---------- 8 造句练习 ---------- */
+.write-practice{
+  background:#F6EBD8!important;
+  border:2px solid var(--ink)!important;
+  border-radius:3px!important;
+  box-shadow:6px 6px 0 rgba(168,50,42,.14)!important;
+  transform:none!important;
+}
+.write-practice textarea{
+  background-color:var(--cream)!important;
+  border:1.5px solid var(--ink)!important;
+  border-radius:2px!important;
+  background-image:repeating-linear-gradient(180deg,transparent 0 31px,rgba(168,50,42,.13) 31px 32px);
+}
+.wp-btn{
+  background:var(--red)!important;
+  color:#FFF6E8!important;
+  border:2px solid var(--ink)!important;
+  border-radius:2px!important;
+  box-shadow:3px 3px 0 var(--ink)!important;
+  letter-spacing:.06em;
+}
+.wp-btn.ghost{background:transparent!important;color:var(--ink)!important;}
+.wp-btn:hover{box-shadow:5px 5px 0 var(--ink)!important;}
+.wp-saved{color:var(--red)!important;}
+
+/* ---------- 9 复习打卡 ---------- */
+.review-day{
+  border:2px solid var(--ink)!important;
+  border-radius:3px!important;
+  background:var(--cream)!important;
+  box-shadow:4px 4px 0 rgba(168,50,42,.16)!important;
+}
+.review-day .day{
+  font-family:Georgia,serif!important;
+  color:var(--red)!important;
+  letter-spacing:.02em;
+}
+.review-day .task{color:#5C564B!important;opacity:1!important;}
+.review-day.done{background:var(--red)!important;}
+.review-day.done .day,.review-day.done .task{color:#FFF6E8!important;}
+.review-day.done::after{color:#FFF6E8!important;text-shadow:none!important;}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:640px){
+  .hero{padding:38px 18px 34px 28px;}
+  .hero-grid{grid-template-columns:minmax(0,1fr);gap:10px;}
+  .word-anim{font-size:54px;}
+  .seal-wrap{justify-self:center;width:132px;max-width:132px;margin-top:6px;}
+  .es-seal{transform:rotate(-5deg);}
+  .body-wrap{padding:34px 18px 0!important;}
+  .collocations{border-radius:3px;}
+  .collo{
+    grid-template-columns:minmax(0,1fr)!important;
+    padding:12px 14px!important;
+    row-gap:4px;
+  }
+  .collo::before{
+    grid-column:1!important;
+    grid-row:auto!important;
+    align-self:start;
+    padding:0 0 3px;
+    border-right:0;
+    border-bottom:1px dotted rgba(168,50,42,.35);
+    width:100%!important;
+  }
+  .collo .pattern,.collo .meaning{grid-column:1;}
+  .image-card{
+    grid-template-columns:minmax(0,1fr)!important;
+    padding:20px 16px!important;
+    gap:16px!important;
+  }
+  .image-card .ic-main{font-size:17px!important;}
+  .section-title .num{width:24px!important;height:24px!important;font-size:12px!important;}
+}
+@media (min-width:1100px){
+  .hero{padding:76px 64px 66px 84px;}
+  .hero-grid{grid-template-columns:minmax(0,1fr) 232px;gap:30px;}
+  .seal-wrap{max-width:232px;}
+  .word-anim{font-size:118px;}
+  .section-title .num{width:30px!important;height:30px!important;font-size:15px!important;}
+}
+</style>
+</head>
+
+<body data-word="establish">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-main">
+        <div class="hero-kicker">FORM EST-1998 &nbsp;/&nbsp; VERB &nbsp;/&nbsp; FILE</div>
+        <div class="word-anim" aria-label="establish">
+          <span class="letter l1">e</span><span class="letter l2">s</span><span class="letter l3">t</span><span class="letter l4">a</span><span class="letter l5">b</span><span class="letter l6">l</span><span class="letter l7">i</span><span class="letter l8">s</span><span class="letter l9">h</span>
+        </div>
+        <div class="hero-foot">
+          <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+          <span class="ipa-anim" id="ipaBtn">英 /ɪˈstæblɪʃ/ &nbsp;·&nbsp; 美 /ɪˈstæblɪʃ/</span>
+          <span class="pos-anim">v.</span>
+          <span class="spell-hint">establish &nbsp; 建立 · 确立 · 证实</span>
+        </div>
+      </div>
+      <div class="seal-wrap" aria-hidden="true">
+        <svg class="es-seal" viewBox="0 0 200 200" role="img" aria-label="EST. 1998 红色公章">
+          <defs>
+            <path id="esSealArc" d="M100,100 m-84,0 a84,84 0 1,1 168,0 a84,84 0 1,1 -168,0"/>
+          </defs>
+          <circle class="es-seal-ringline" cx="100" cy="100" r="95" stroke-width="5"/>
+          <circle class="es-seal-ringline" cx="100" cy="100" r="79" stroke-width="2"/>
+          <text class="es-seal-text">
+            <textPath href="#esSealArc" startOffset="0">EST. 1998 · EST. 1998 · EST. 1998 · EST. 1998 ·</textPath>
+          </text>
+          <polygon class="es-seal-star" points="100,64 108.8,87.9 134.2,88.9 114.3,104.6 121.2,129.1 100,115 78.8,129.1 85.7,104.6 65.8,88.9 91.2,87.9"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">e-</span>（出）+ <span class="stem">stabl</span>（站立、稳固，同 stand / stable）&nbsp;→&nbsp; "让它稳稳站住" → <b>建立 · 确立 · 证实</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">n.</div><div class="w">establishment</div><div class="p">/ɪˈstæblɪʃmənt/</div><div class="m">建立；机构</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">established</div><div class="p">/ɪˈstæblɪʃt/</div><div class="m">既定的；知名的</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">reestablish</div><div class="p">/ˌriːɪˈstæblɪʃ/</div><div class="m">重建；恢复</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">stable</div><div class="p">/ˈsteɪbl/</div><div class="m">稳定的；牢固的</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">stability</div><div class="p">/stəˈbɪləti/</div><div class="m">稳定；稳定性</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">stabilize</div><div class="p">/ˈsteɪbəlaɪz/</div><div class="m">使稳定</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">unstable</div><div class="p">/ʌnˈsteɪbl/</div><div class="m">不稳定的</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">instability</div><div class="p">/ˌɪnstəˈbɪləti/</div><div class="m">不稳定；动荡</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">establish</span> = 三根柱子稳稳立起，横梁压住，再盖上一枚红章。</p>
+          <p class="ic-sub">柱子 = stabl（站立、稳固）；横梁搭好，结构才算立住。<br>所以 establish 的宾语常是 <b>制度、关系、事实、声誉</b>——要经得起时间。<br>章一盖上，就是"已经确立、有据可查"。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 320 300" role="img" aria-label="三根立柱升起、横梁落下，最后盖上红章">
+            <rect class="es-floor" x="26" y="246" width="268" height="9" rx="1"/>
+            <rect class="es-pillar es-p1" x="72" y="140" width="34" height="106"/>
+            <rect class="es-pillar es-p2" x="143" y="140" width="34" height="106"/>
+            <rect class="es-pillar es-p3" x="214" y="140" width="34" height="106"/>
+            <rect class="es-beam" x="52" y="118" width="216" height="22"/>
+            <g class="es-seal-img">
+              <circle cx="160" cy="212" r="36" fill="rgba(168,50,42,.10)" stroke="rgba(168,50,42,.34)" stroke-width="2"/>
+              <circle cx="160" cy="212" r="27" fill="none" stroke="#A8322A" stroke-width="3"/>
+              <polygon points="160,197 164.4,208.9 177.1,208.9 166.8,216.5 170.6,228.7 160,221 149.4,228.7 153.2,216.5 142.9,208.9 155.6,208.9" fill="#A8322A"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">establish a company</div><div class="meaning">建立一家公司</div></div>
+        <div class="collo"><div class="pattern">establish a relationship</div><div class="meaning">建立（人际 / 合作关系）</div></div>
+        <div class="collo"><div class="pattern">establish the fact that…</div><div class="meaning">证实……这一事实</div></div>
+        <div class="collo"><div class="pattern">establish oneself as</div><div class="meaning">使自己确立为（某种身份）</div></div>
+        <div class="collo"><div class="pattern">establish a system</div><div class="meaning">建立一套制度 / 体系</div></div>
+        <div class="collo"><div class="pattern">be well established</div><div class="meaning">根基稳固；广受认可</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2022 四级写作</div>
+          <p class="en">The new company hopes to <em class="hl">establish</em> a good relationship with local suppliers.</p>
+          <p class="cn">这家新公司希望与本地供应商建立良好关系。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级阅读</div>
+          <p class="en">Researchers have <em class="hl">established</em> the fact that sleep loss weakens memory.</p>
+          <p class="cn">研究者已经证实，睡眠不足会削弱记忆。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 考研英语 · 翻译</div>
+          <p class="en">She soon <em class="hl">established</em> herself as one of the best teachers in the school.</p>
+          <p class="cn">她很快确立了自己在全校最优秀教师之列的地位。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 四级选词填空</div>
+          <p class="en">A sound system was <em class="hl">established</em> to protect the ancient town.</p>
+          <p class="cn">一套健全的制度被建立起来，以保护这座古镇。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">选词</span>
+          establish 强调"使之稳固地存在"，宾语多是制度、关系、事实；found 强调出资创办机构，build 强调一点点建造。<br>
+          <span class="wrong">establish a university（指出资建校）</span> → <span class="right">found a university</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词性</span>
+          established 作形容词是"既定的、公认的"，不是只当过过去式。<br>
+          <span class="wrong">the establish rules</span> → <span class="right">the established rules</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          中间是 stabl，不是 stabel；-ish 结尾别丢 i。<br>
+          <span class="wrong">estabelish</span> → <span class="right">establish</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>establish</td><td>使稳固地存在；建立制度、关系、声誉</td><td class="chant">立得住，才算 establish</td>
+          </tr>
+          <tr><td>found</td><td>出资创办机构（学校、公司、国家）</td><td class="chant">found 出钱办</td></tr>
+          <tr><td>build</td><td>一块块建造实体，或慢慢建立关系</td><td class="chant">build 慢慢垒</td></tr>
+          <tr><td>set up</td><td>口语化的"搭建、开办"，规模偏小</td><td class="chant">set up 先支起来</td></tr>
+          <tr><td>create</td><td>从无到有地创造</td><td class="chant">create 凭空造</td></tr>
+          <tr><td>erect</td><td>竖立建筑物、雕像，偏实体</td><td class="chant">erect 竖起来</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The firm plans to <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">stablish</span> a branch in Shanghai.</p>
+          <p class="fill-hint">提示：<b>establish a company</b>，建立分公司。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The rules were <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">stablished</span> after a long discussion.</p>
+          <p class="fill-hint">提示：过去分词 <b>established</b>，被确立。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">stablishment</span> of the new lab took two years.</p>
+          <p class="fill-hint">提示：名词形式 <b>establishment</b>，建立。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">They are <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">stablishing</span> closer ties with Europe.</p>
+          <p class="fill-hint">提示：现在分词 <b>establishing</b>；establish ties，建立联系。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Every term she <span class="first-letter">e</span><span class="blank" onclick="this.classList.toggle('revealed')">stablishes</span> a new study plan.</p>
+          <p class="fill-hint">提示：第三人称单数 <b>establishes</b>，注意 -es。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>establish</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="The school has established a system to help new students adapt quickly."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>背 6 条搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>默写 5 道填空</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>用它造 3 句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>复盘易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>
