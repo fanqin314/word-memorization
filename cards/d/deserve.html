@@ -268,6 +268,7 @@ body::before{
 .ds-glow{fill:rgba(176,134,63,.07);opacity:0;animation:dsGlow 1.4s ease-out .2s forwards;}
 @keyframes dsGlow{to{opacity:1;}}
 .ds-beam{
+  transform-box:view-box;
   transform-origin:170px 74px;
   animation:dsBeamSway 2.9s cubic-bezier(.22,.68,.24,1) .15s both;
 }
@@ -279,6 +280,7 @@ body::before{
   100%{transform:rotate(0);}
 }
 .ds-pan-l{
+  transform-box:view-box;
   transform-origin:62px 74px;
   animation:dsPanL 2.9s cubic-bezier(.22,.68,.24,1) .15s both;
 }
@@ -289,6 +291,7 @@ body::before{
   100%{transform:translateY(0);}
 }
 .ds-pan-r{
+  transform-box:view-box;
   transform-origin:278px 74px;
   animation:dsPanR 2.9s cubic-bezier(.22,.68,.24,1) .15s both;
 }
@@ -299,6 +302,7 @@ body::before{
   100%{transform:translateY(0);}
 }
 .ds-needle{
+  transform-box:view-box;
   transform-origin:170px 64px;
   animation:dsNeedle 2.9s cubic-bezier(.22,.68,.24,1) .15s both;
 }

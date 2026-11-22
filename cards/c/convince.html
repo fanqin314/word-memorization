@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>convince · 使确信 · 说服 · 使信服</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   convince 专属样式：深夜电波版
+   午夜蓝 + 电青 + 柠檬黄；扫描线、频率刻度、声波推倒问号。
+   ========================================================================== */
+
+:root{
+  --paper:#F2F1EC;
+  --paper-2:#E4E6E2;
+  --cb-accent:#37A3B8;       /* 电青 */
+  --cb-accent-soft:#D9E9EC;
+  --cb-2:#E0B93F;            /* 柠檬黄 */
+  --cb-2-soft:#F6ECC9;
+  --cb-3:#6C7F8C;
+  --cb-3-soft:#E3E8EA;
+  --ink:#141C24;
+  --deep:#101A24;
+  --cb-deep:#101A24;
+
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:20px;
+  --radius-md:14px;
+}
+
+/* ---------- 全页：极淡扫描线 + 右下角光晕 ---------- */
+body{
+  background:#0B1116;
+}
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 88% 92%, rgba(55,163,184,.18) 0, rgba(55,163,184,.06) 24%, transparent 52%),
+    repeating-linear-gradient(0deg,
+      rgba(242,241,236,.035) 0 1px,
+      transparent 1px 6px);
+}
+.page{
+  box-shadow:
+    0 0 0 2px #0A1015,
+    10px 10px 0 rgba(55,163,184,.55),
+    -3px 3px 0 rgba(224,185,63,.55),
+    0 30px 80px rgba(0,0,0,.7);
+}
+
+/* ---------- hero：午夜蓝电台 ---------- */
+.hero{
+  position:relative;
+  padding:74px 46px 52px;
+  color:#F2F1EC;
+  border-bottom:1px solid rgba(242,241,236,.16);
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 82% 8%, rgba(55,163,184,.16), transparent 55%),
+    linear-gradient(178deg,#101A24 0%,#0E1720 62%,#0B1319 100%);
+}
+.hero::before{
+  content:"";
+  position:absolute;inset:0;
+  pointer-events:none;
+  background-image:repeating-linear-gradient(0deg,
+    rgba(55,163,184,.09) 0 1px,
+    transparent 1px 4px);
+  opacity:.55;
+}
+.hero::after{
+  content:"ON AIR";
+  position:absolute;right:-26px;bottom:-24px;
+  font-family:"Arial Black",Impact,Helvetica,Arial,sans-serif;
+  font-weight:900;font-size:158px;line-height:.8;
+  letter-spacing:-.045em;
+  color:rgba(55,163,184,.07);
+  white-space:nowrap;
+  pointer-events:none;
+  z-index:0;
+}
+.hero-inner{position:relative;z-index:2;max-width:900px;margin:0 auto;text-align:left;}
+
+.hero-kicker{
+  font-family:Consolas,"Courier New",monospace;
+  font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  color:#54C0D2;
+  opacity:0;animation:cvFadeIn .7s ease-out .1s forwards;
+}
+.word-line{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-top:10px;}
+.word-anim{
+  display:inline-block;
+  font-family:"Arial Black","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:112px;font-weight:900;line-height:1;letter-spacing:-.035em;
+  color:#F2F1EC;
+  text-shadow:0 0 26px rgba(55,163,184,.28);
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:cvTune .92s cubic-bezier(.2,.9,.25,1) forwards;
+  transition:transform .25s ease,color .25s ease;
+  will-change:transform;
+}
+.word-anim .l1{animation-delay:.10s;}
+.word-anim .l2{animation-delay:.17s;}
+.word-anim .l3{animation-delay:.24s;}
+.word-anim .l4{animation-delay:.31s;}
+.word-anim .l5{animation-delay:.38s;}
+.word-anim .l6{animation-delay:.45s;}
+.word-anim .l7{animation-delay:.52s;}
+.word-anim .l8{animation-delay:.59s;}
+@keyframes cvTune{
+  0%{opacity:0;transform:translateX(96px) skewX(-16deg);filter:blur(7px);}
+  44%{opacity:1;transform:translateX(-6px) skewX(5deg);filter:blur(0);}
+  56%{transform:translateX(4px) skewX(-3deg);}
+  68%{transform:translateX(-2px) skewX(2deg);}
+  80%{transform:translateX(1px) skewX(-1deg);}
+  100%{opacity:1;transform:translateX(0) skewX(0);filter:blur(0);}
+}
+.word-anim .letter:hover{
+  color:var(--cb-2);
+  transform:translateY(-6px);
+  text-shadow:0 0 18px rgba(224,185,63,.45);
+}
+
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;flex:none;margin-bottom:12px;
+  background:var(--cb-2);border:2px solid #0B1116;border-radius:50%;
+  cursor:pointer;font-size:17px;
+  box-shadow:0 0 0 4px rgba(55,163,184,.18);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.speak-btn:hover{transform:translateY(-2px) rotate(8deg);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+
+.hero-foot{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;
+  margin-top:24px;padding-top:18px;
+  border-top:1px dashed rgba(242,241,236,.22);
+  opacity:0;animation:cvFadeIn .8s ease-out 1.05s forwards;
+}
+.ipa-anim{
+  display:inline-block;
+  font-family:Consolas,"Courier New",monospace;
+  font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  color:#BFE3EA;
+  background:rgba(55,163,184,.1);
+  border:1px solid rgba(55,163,184,.55);
+  border-radius:2px;
+  padding:4px 10px;
+  cursor:pointer;
+  transform:none;
+  box-shadow:none;
+}
+.pos-anim{
+  display:inline-block;
+  font-family:Consolas,"Courier New",monospace;
+  font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink);background:var(--cb-2);
+  border:0;border-radius:2px;
+  padding:4px 10px;
+  transform:rotate(-1.5deg);
+}
+.spell-hint{
+  display:inline-block;
+  font-family:Consolas,"Courier New",monospace;
+  font-size:12px;letter-spacing:.06em;
+  color:rgba(242,241,236,.78);
+  background:none;border:0;border-left:2px solid var(--cb-2);
+  border-radius:0;box-shadow:none;
+  padding:3px 0 3px 11px;
+  transform:none;
+}
+@keyframes cvFadeIn{to{opacity:1;}}
+
+/* ---------- 区块标题：等宽字 + 柠檬黄下划线 + 两位编号 ---------- */
+.section-title{
+  display:flex!important;align-items:center;gap:10px;
+  width:100%!important;
+  padding:0 0 9px!important;
+  margin:0 0 22px!important;
+  background:none!important;
+  border:0!important;
+  border-bottom:2px solid var(--cb-2)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  font-family:Consolas,"Courier New",monospace!important;
+  font-size:14px!important;font-weight:700!important;
+  letter-spacing:.2em;
+  color:var(--ink);
+}
+.section-title::after{
+  content:"";flex:1;height:1px;margin-left:4px;
+  background:repeating-linear-gradient(90deg,
+    rgba(20,28,36,.22) 0 2px, transparent 2px 6px);
+}
+.section-title .num{
+  display:inline-block!important;
+  width:auto!important;height:auto!important;flex:none;
+  padding:0!important;
+  background:none!important;color:var(--cb-accent)!important;
+  border-radius:0!important;
+  font-family:Consolas,"Courier New",monospace!important;
+  font-size:11px!important;font-weight:700!important;letter-spacing:.1em;
+}
+.section:nth-of-type(even) .section-title,
+.section:nth-of-type(3n) .section-title{
+  background:none!important;transform:none!important;
+}
+
+/* ---------- 1 词根 · 词族 ---------- */
+.root-family{
+  background:#FBFAF6;
+  border:1px solid rgba(20,28,36,.16);
+  border-radius:8px;
+  box-shadow:none;
+  padding:24px 22px;
+}
+.root-line{
+  background:var(--cb-accent-soft);
+  border:0;border-left:3px solid var(--cb-accent);
+  border-radius:0;
+  text-align:left;
+  font-size:16px;line-height:2;
+  padding:14px 18px;
+  margin-bottom:20px;
+}
+.root-line .stem{
+  background:var(--cb-accent);color:#08141A;
+  border:0;border-radius:2px;transform:none;
+  font-family:Consolas,"Courier New",monospace;
+  padding:2px 8px;margin:0 2px;
+}
+.root-line .affix{
+  background:var(--cb-2);color:var(--ink);
+  border:0;border-radius:2px;transform:none;
+  font-family:Consolas,"Courier New",monospace;
+  padding:2px 8px;margin:0 2px;
+}
+.fam-grid{gap:9px;}
+.fam-card{
+  background:#fff;
+  border:1px solid rgba(20,28,36,.18);
+  border-radius:3px;
+  box-shadow:none;
+  padding:10px 12px;
+}
+.fam-card:hover{transform:translateY(-2px);border-color:var(--cb-accent);}
+.fam-card .pos{
+  background:var(--ink);color:#F2F1EC;
+  border-radius:2px;
+  font-family:Consolas,"Courier New",monospace;
+  letter-spacing:.06em;
+  font-size:9.5px;
+}
+.fam-card .w{
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight:800;font-size:15px;color:var(--ink);
+}
+.fam-card .w .hl{color:var(--cb-accent);}
+.fam-card .p{
+  font-family:Consolas,"Courier New",monospace;
+  color:#6C7F8C;font-size:10.5px;
+}
+.fam-card .m{font-size:12px;color:#4B5860;}
+
+/* ---------- 2 意象卡：深蓝声波 ---------- */
+.image-card{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 300px!important;
+  gap:24px!important;
+  align-items:center!important;
+  background:linear-gradient(160deg,#101A24 0%,#0E1720 70%,#0B1319 100%)!important;
+  color:#E9EFF0!important;
+  border:1px solid rgba(55,163,184,.42)!important;
+  border-radius:12px!important;
+  box-shadow:0 12px 32px rgba(11,17,22,.35)!important;
+  padding:28px 28px!important;
+  transform:none!important;
+  overflow:visible!important;
+}
+.image-card .ic-label{
+  background:var(--cb-2)!important;color:var(--ink)!important;
+  border:0!important;border-radius:2px!important;
+  font-family:Consolas,"Courier New",monospace!important;
+  font-size:10px!important;font-weight:700!important;letter-spacing:.22em;
+  padding:3px 9px!important;margin-bottom:14px!important;
+  transform:none!important;
+}
+.image-card .ic-main{
+  color:#F2F1EC;
+  font-size:20px;line-height:1.75;
+  margin:0 0 12px;
+}
+.image-card .ic-main .hl{
+  background:none!important;color:var(--cb-2)!important;
+  padding:0!important;border-radius:0!important;
+  border-bottom:2px solid var(--cb-2);
+}
+.image-card .ic-sub{
+  color:rgba(242,241,236,.72)!important;
+  font-size:13.5px;line-height:1.9;margin:0;
+}
+.image-card .ic-sub b{color:#BFE3EA;font-weight:700;}
+.image-card .ic-svg{
+  width:100%!important;height:auto!important;
+  max-width:320px!important;margin:0 auto!important;
+}
+.image-card .ic-svg svg{
+  display:block;width:100%!important;height:auto!important;
+  max-width:320px;overflow:visible;
+}
+.cv-head{
+  fill:#16242F;stroke:#37A3B8;stroke-width:2.2;
+  stroke-linejoin:round;
+}
+.cv-eye{fill:#E0B93F;}
+.cv-wave{
+  fill:none;stroke:#37A3B8;stroke-width:2.4;stroke-linecap:round;
+  transform-box:view-box;transform-origin:176px 160px;
+  animation:cvEmit 3.4s ease-out infinite;
+}
+.cv-w2{animation-delay:.45s;}
+.cv-w3{animation-delay:.9s;}
+@keyframes cvEmit{
+  0%{opacity:0;transform:scale(.88);}
+  18%{opacity:.95;}
+  60%{opacity:.5;}
+  100%{opacity:0;transform:scale(1.12);}
+}
+.cv-qbox{
+  opacity:0;
+  transform-box:view-box;transform-origin:256px 128px;
+  animation:cvSlip 3.4s cubic-bezier(.3,1.2,.5,1) .8s forwards;
+}
+@keyframes cvSlip{
+  0%{opacity:0;transform:translate(28px,-8px) rotate(-7deg);}
+  16%{opacity:1;transform:translate(0,0) rotate(-2deg);}
+  28%{transform:rotate(6deg);}
+  38%{transform:rotate(-3deg);}
+  50%{transform:rotate(3deg);}
+  66%{transform:rotate(15deg) translate(3px,4px);}
+  100%{opacity:1;transform:rotate(23deg) translate(7px,10px);}
+}
+.cv-qrect{fill:#0B1319;stroke:#E0B93F;stroke-width:2.4;}
+.cv-crack{fill:none;stroke:#E0B93F;stroke-width:1.5;stroke-linecap:round;}
+.cv-qmark{
+  font-family:"Arial Black",Arial,sans-serif;
+  font-size:30px;fill:#F2F1EC;
+}
+.cv-base{stroke:rgba(55,163,184,.3);stroke-width:1;stroke-dasharray:2 7;}
+.cv-cap{
+  font-family:Consolas,"Courier New",monospace;
+  font-size:7.5px;letter-spacing:.2em;fill:rgba(84,192,210,.7);
+}
+
+/* ---------- 3 核心搭配：电台频率刻度 ---------- */
+.collocations{
+  counter-reset:cvfm;
+  display:block!important;
+  border-top:1px solid rgba(20,28,36,.2);
+}
+.collo{
+  counter-increment:cvfm;
+  display:grid!important;
+  grid-template-columns:56px minmax(0,1fr) auto;
+  align-items:baseline;
+  gap:14px;
+  background:none!important;
+  border:0!important;
+  border-bottom:1px solid rgba(20,28,36,.16)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  padding:15px 4px!important;
+  overflow:visible!important;
+  transform:none!important;
+  transition:background .25s;
+}
+.collo::before{
+  content:"FM " counter(cvfm,decimal-leading-zero);
+  position:static!important;
+  left:auto!important;top:auto!important;bottom:auto!important;
+  width:auto!important;height:auto!important;
+  background:none!important;
+  display:block;
+  color:var(--cb-accent);
+  font-family:Consolas,"Courier New",monospace;
+  font-size:10.5px;font-weight:700;letter-spacing:.08em;
+}
+.collo .pattern{
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight:800;font-size:15px;line-height:1.5;
+  color:var(--ink);
+  background:none!important;
+  white-space:normal!important;
+  padding:0!important;margin:0!important;
+  border-radius:0!important;
+  flex-shrink:1!important;
+}
+.collo .meaning{
+  font-size:12.5px;line-height:1.6;
+  color:#5F6B74;
+  text-align:right;
+  white-space:nowrap;
+}
+.collo:hover{
+  background:rgba(224,185,63,.12)!important;
+  transform:none!important;
+  box-shadow:none!important;
+}
+.collo:hover::before{width:auto!important;}
+.collo:last-child{border-bottom:2px solid var(--ink)!important;}
+
+/* ---------- 4 真题例句 ---------- */
+.real-exs{gap:14px;}
+.real-ex{
+  background:#FBFAF6!important;
+  border:1px solid rgba(20,28,36,.16)!important;
+  border-left:4px solid var(--cb-accent)!important;
+  border-radius:0 10px 10px 0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  padding:18px 22px!important;
+}
+.real-ex:nth-child(even){transform:none!important;}
+.real-ex:hover{transform:none!important;box-shadow:0 8px 20px rgba(20,28,36,.08)!important;}
+.real-ex::before{display:none!important;}
+.real-ex .src{
+  background:var(--ink)!important;
+  color:#F2F1EC!important;
+  border:0!important;border-radius:2px!important;
+  font-family:Consolas,"Courier New",monospace!important;
+  font-size:9.5px!important;font-weight:700!important;letter-spacing:.16em;
+  padding:3px 9px!important;
+  margin-bottom:10px!important;
+}
+.real-ex .en{
+  font-family:Georgia,"Songti SC",serif;
+  font-size:16px;line-height:1.8;
+  margin:0 0 9px;
+}
+.real-ex .en .hl{
+  background:linear-gradient(180deg,transparent 62%,rgba(224,185,63,.55) 62%)!important;
+  color:var(--ink)!important;
+  padding:0 2px!important;border-radius:0!important;
+  font-weight:900;font-style:normal;
+}
+.real-ex .cn{
+  color:#5F6B74;
+  border-left:2px solid var(--cb-2);
+  padding-left:12px;
+  font-size:13px;
+}
+
+/* ---------- 5 易错提醒 ---------- */
+.pitfall{
+  background:#FBFAF6!important;
+  border:1px solid rgba(20,28,36,.16)!important;
+  border-radius:6px!important;
+  box-shadow:6px 6px 0 rgba(55,163,184,.14)!important;
+  padding:26px 28px!important;
+  transform:none!important;
+}
+.pitfall::before{
+  height:5px!important;
+  border-bottom:0!important;
+  background-image:repeating-linear-gradient(90deg,
+    var(--cb-2) 0 16px, transparent 16px 30px)!important;
+  opacity:.9;
+}
+.pitfall-item{
+  background:#fff!important;
+  border-left:4px solid var(--cb-2)!important;
+  border-radius:0 4px 4px 0!important;
+  font-size:14.5px;line-height:1.85;
+  padding:13px 16px;
+}
+.pitfall-item:hover{transform:translateX(5px);}
+.pitfall-item .tip{
+  background:var(--cb-2)!important;
+  color:var(--ink)!important;
+  border:0!important;border-radius:2px!important;
+  font-family:Consolas,"Courier New",monospace;
+  font-size:10.5px!important;font-weight:700;
+  letter-spacing:.06em;
+  padding:2px 8px!important;
+}
+.pitfall-item .wrong{color:#B6452F;}
+.pitfall-item .right{
+  background:var(--cb-accent-soft)!important;
+  color:var(--ink);
+}
+
+/* ---------- 6 易混辨析 ---------- */
+.compare-table{border-spacing:0 7px;font-size:14.5px;}
+.compare-table tbody tr{filter:none!important;}
+.compare-table tbody tr:hover{filter:none!important;transform:none!important;}
+.compare-table td{
+  background:#FBFAF6;
+  border-top:1px solid rgba(20,28,36,.2);
+  border-bottom:1px solid rgba(20,28,36,.2);
+  padding:13px 16px;
+}
+.compare-table td:first-child{
+  background:#EDF0EF;
+  border-left:1px solid rgba(20,28,36,.2);
+  border-radius:4px 0 0 4px!important;
+  font-family:Consolas,"Courier New",monospace;
+  font-size:15px;
+  width:132px;
+}
+.compare-table td:last-child{
+  border-right:1px solid rgba(20,28,36,.2);
+  border-radius:0 4px 4px 0!important;
+}
+.compare-table .chant{
+  font-size:12.5px;
+  color:#3E7E8C;
+  font-style:normal;
+  font-weight:700;
+}
+.compare-table tr.highlight td{background:var(--cb-2-soft)!important;}
+.compare-table tr.highlight td:first-child{
+  background:var(--cb-2)!important;
+  color:var(--ink)!important;
+}
+.compare-table tr.highlight td:first-child::after{content:"★";color:var(--ink)!important;}
+
+/* ---------- 7 首字母填空 ---------- */
+.self-test .hint{
+  background:#EDF0EF!important;
+  border:1px dashed rgba(20,28,36,.35)!important;
+  border-radius:4px!important;
+  font-size:13.5px;
+}
+.fill-item{
+  background:#FBFAF6!important;
+  border:1px solid rgba(20,28,36,.16)!important;
+  border-left:3px solid var(--cb-accent)!important;
+  border-radius:0 6px 6px 0!important;
+  box-shadow:none!important;
+  padding:16px 20px!important;
+}
+.fill-item:hover{transform:none!important;box-shadow:0 6px 16px rgba(20,28,36,.07)!important;}
+.fill-sentence{font-size:16px;line-height:1.95;}
+.first-letter{
+  color:var(--cb-accent);
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight:900;
+}
+.blank{
+  border-bottom-color:var(--cb-accent);
+  font-family:Consolas,"Courier New",monospace;
+  font-size:15px;
+}
+.blank:hover{background:var(--cb-2-soft);border-color:var(--cb-2);}
+.blank.revealed{
+  color:var(--ink);
+  background:var(--cb-2-soft);
+  border-color:var(--cb-2);
+  border-radius:3px 3px 0 0;
+}
+.fill-hint{font-size:12.5px;opacity:.8;}
+.fill-hint b{color:#3E7E8C;}
+
+/* ---------- 8 造句练习 ---------- */
+.write-practice{
+  background:#EDF0EF!important;
+  border:1px solid rgba(20,28,36,.18)!important;
+  border-radius:6px!important;
+  box-shadow:6px 6px 0 rgba(224,185,63,.28)!important;
+  transform:none!important;
+}
+.write-practice .wp-hint{font-size:13.5px;}
+.write-practice textarea{
+  background:#FBFAF6;
+  border:1px solid rgba(20,28,36,.25);
+  border-radius:4px;
+  box-shadow:inset 0 1px 3px rgba(20,28,36,.06);
+}
+.write-practice textarea:focus{
+  box-shadow:0 0 0 3px rgba(55,163,184,.35);
+}
+.wp-btn{
+  background:var(--ink);color:#F2F1EC;
+  border:0;border-radius:3px;
+  box-shadow:none;
+  font-family:Consolas,"Courier New",monospace;
+  letter-spacing:.06em;
+}
+.wp-btn:hover{transform:translateY(-2px);box-shadow:4px 4px 0 var(--cb-2);}
+.wp-btn.ghost{background:transparent;color:var(--ink);border:1px solid rgba(20,28,36,.35);}
+.wp-saved{color:var(--cb-accent);font-family:Consolas,monospace;}
+
+/* ---------- 9 复习打卡 ---------- */
+.review-day{
+  background:#FBFAF6!important;
+  border:1px solid rgba(20,28,36,.18)!important;
+  border-radius:4px!important;
+  box-shadow:none!important;
+  padding:18px 8px 16px;
+}
+.review-day:hover{
+  transform:translateY(-3px)!important;
+  box-shadow:0 6px 0 rgba(55,163,184,.25)!important;
+}
+.review-day.done{
+  background:var(--cb-2)!important;
+  border-color:var(--ink)!important;
+}
+.review-day.done::after{color:var(--cb-accent)!important;}
+.review-day .day{
+  font-family:Consolas,"Courier New",monospace;
+  font-size:26px;
+}
+.review-day .task{font-size:11.5px;}
+.review-tip{font-size:12px;}
+
+@media (max-width:640px){
+  .hero{padding:44px 18px 34px;}
+  .word-anim{font-size:56px;letter-spacing:-.03em;}
+  .hero::after{font-size:66px;right:-10px;bottom:-6px;}
+  .word-line{gap:10px;}
+  .speak-btn{width:38px;height:38px;font-size:15px;margin-bottom:8px;}
+  .pos-anim,.ipa-anim{font-size:11px;}
+  .spell-hint{font-size:11px;letter-spacing:.02em;}
+  .section-title{font-size:13px!important;letter-spacing:.14em;}
+  .image-card{
+    grid-template-columns:minmax(0,1fr)!important;
+    padding:20px 16px!important;
+    gap:16px!important;
+  }
+  .image-card .ic-main{font-size:17px!important;}
+  .image-card .ic-sub{font-size:12.5px!important;}
+  .image-card .ic-svg{
+    width:100%!important;max-width:100%!important;
+    height:auto!important;aspect-ratio:auto!important;
+  }
+  .image-card .ic-svg svg{
+    width:100%!important;height:auto!important;
+    max-width:300px!important;overflow:visible!important;
+  }
+  .collo{
+    grid-template-columns:38px minmax(0,1fr)!important;
+    gap:4px 10px!important;
+    padding:12px 2px!important;
+  }
+  .collo::before{font-size:9.5px;}
+  .collo .pattern{font-size:14px!important;padding:0!important;}
+  .collo .meaning{
+    grid-column:2;
+    text-align:left!important;
+    white-space:normal!important;
+    font-size:12px!important;
+  }
+  .compare-table td{font-size:12.5px!important;}
+  .compare-table td:first-child{width:auto!important;font-size:13px!important;}
+  .compare-table .chant{font-size:11.5px!important;}
+}
+@media (min-width:1100px){
+  .hero{padding:92px 66px 64px;}
+  .word-anim{font-size:136px;}
+  .hero::after{font-size:196px;}
+  .image-card{grid-template-columns:1.2fr 320px!important;padding:36px 34px!important;}
+}
+</style>
+</head>
+
+<body data-word="convince">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">FM 88.7 &nbsp;/&nbsp; NIGHT WAVE &nbsp;/&nbsp; NO.03</div>
+      <div class="word-line">
+        <div class="word-anim" aria-label="convince">
+          <span class="letter l1">c</span><span class="letter l2">o</span><span class="letter l3">n</span><span class="letter l4">v</span><span class="letter l5">i</span><span class="letter l6">n</span><span class="letter l7">c</span><span class="letter l8">e</span>
+        </div>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      </div>
+      <div class="hero-foot">
+        <span class="ipa-anim" id="ipaBtn">英 /kənˈvɪns/ &nbsp;·&nbsp; 美 /kənˈvɪns/</span>
+        <span class="pos-anim">v.</span>
+        <span class="spell-hint">convince &nbsp; 使确信 · 说服 · 使信服</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">01</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">con-</span>（完全）+ <span class="affix">vinc</span>（征服、战胜）&nbsp;→&nbsp; 彻底征服对方的想法 → <b>使确信 · 说服</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">convincing</div><div class="p">/kənˈvɪnsɪŋ/</div><div class="m">有说服力的</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">convinced</div><div class="p">/kənˈvɪnst/</div><div class="m">确信的；被说服的</div></div>
+          <div class="fam-card"><div class="pos">adv.</div><div class="w">convincingly</div><div class="p">/kənˈvɪnsɪŋli/</div><div class="m">令人信服地</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">unconvincing</div><div class="p">/ˌʌnkənˈvɪnsɪŋ/</div><div class="m">缺乏说服力的</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">unconvinced</div><div class="p">/ˌʌnkənˈvɪnst/</div><div class="m">未被说服的</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">conviction</div><div class="p">/kənˈvɪkʃn/</div><div class="m">坚信；定罪</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">invincible</div><div class="p">/ɪnˈvɪnsəbl/</div><div class="m">不可战胜的</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">vincible</div><div class="p">/ˈvɪnsəbl/</div><div class="m">可战胜的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">02</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">convince</span> = 用电波把对方脑子里的“?”推到歪倒，彻底征服他的想法。</p>
+          <p class="ic-sub">con-（完全）+ vinc（征服）= 不是劝一劝，而是让那个问号再也立不住。<br>声波一圈圈扩散，问号框晃两下，最后倒向一边。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 320 280" role="img" aria-label="侧脸发出三圈声波，把带问号的方框推倒">
+            <path class="cv-head" d="M64 246 C46 222 40 192 48 166 C56 138 74 118 98 110 C116 104 132 108 140 122 C146 132 144 140 152 144 C160 148 172 150 174 158 C176 166 168 168 166 174 C164 180 166 184 162 188 C158 192 152 192 152 198 C152 206 160 210 156 218 C152 226 140 226 134 232 L134 252 C112 256 96 264 84 280 L34 280 C42 264 54 254 64 246 Z"/>
+            <circle class="cv-eye" cx="124" cy="150" r="3.2"/>
+            <path class="cv-wave cv-w1" d="M186 134 A 30 30 0 0 1 186 186"/>
+            <path class="cv-wave cv-w2" d="M200 122 A 48 48 0 0 1 200 198"/>
+            <path class="cv-wave cv-w3" d="M214 110 A 66 66 0 0 1 214 210"/>
+            <g class="cv-qbox">
+              <rect class="cv-qrect" x="226" y="98" width="60" height="60" rx="2"/>
+              <path class="cv-crack" d="M268 100 L262 118 L270 131 L258 148 L262 158"/>
+              <text class="cv-qmark" x="252" y="140" text-anchor="middle">?</text>
+            </g>
+            <path class="cv-base" d="M28 254 H300"/>
+            <text class="cv-cap" x="28" y="270">FM 88.7 — SIGNAL LOCKED</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">03</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">convince sb of sth</div><div class="meaning">使某人相信某事</div></div>
+        <div class="collo"><div class="pattern">convince sb to do sth</div><div class="meaning">说服某人做某事</div></div>
+        <div class="collo"><div class="pattern">convince yourself</div><div class="meaning">说服自己；让自己相信</div></div>
+        <div class="collo"><div class="pattern">be convinced that…</div><div class="meaning">确信……</div></div>
+        <div class="collo"><div class="pattern">a convincing argument</div><div class="meaning">有说服力的论据</div></div>
+        <div class="collo"><div class="pattern">utterly convinced</div><div class="meaning">完全确信的</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">04</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2022 四级阅读</div>
+          <p class="en">It is hard to <em class="hl">convince</em> people that a habit they trust is actually hurting them.</p>
+          <p class="cn">很难让人相信，一个他们信赖的习惯其实正在伤害他们。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级阅读</div>
+          <p class="en">After reading the report, she was <em class="hl">convinced</em> that the plan would work.</p>
+          <p class="cn">读完报告后，她确信这个方案会奏效。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 考研英语 · 阅读</div>
+          <p class="en">A <em class="hl">convincing</em> argument rests on evidence, not on a louder voice.</p>
+          <p class="cn">有说服力的论证靠证据，而不是靠更大的嗓门。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 四级翻译</div>
+          <p class="en">He spoke so <em class="hl">convincingly</em> that even his critics changed their minds.</p>
+          <p class="cn">他说得如此令人信服，连批评他的人都改变了看法。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">05</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          convince 后面不能接 to believe，别说“说服某人相信”就用 believe。<br>
+          <span class="wrong">convince him to believe the story</span> → <span class="right">convince him of the story / convince him that it is true</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词性</span>
+          convincing 修饰事物，convinced 修饰人：论据令人信服，人感到确信。<br>
+          <span class="wrong">I am convincing that he is right.</span> → <span class="right">I am convinced that he is right.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          两个 c 中间夹一个 o，结尾是 -ce，不是 -se。<br>
+          <span class="wrong">convice / convinse</span> → <span class="right">convince</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">06</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>convince</td><td>用证据或情感让人彻底信服</td><td class="chant">彻底打赢想法</td>
+          </tr>
+          <tr><td>persuade</td><td>侧重劝服对方去做，动作导向</td><td class="chant">persuade 劝人做</td></tr>
+          <tr><td>advise</td><td>只给建议，不保证对方接受</td><td class="chant">advise 只是建议</td></tr>
+          <tr><td>urge</td><td>强烈催促，语气最急</td><td class="chant">urge 催着做</td></tr>
+          <tr><td>assure</td><td>让人放心，消除担忧</td><td class="chant">assure 让人安心</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">07</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">It took the lawyer two hours to <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onvince</span> the jury of his innocence.</p>
+          <p class="fill-hint">提示：<b>convince sb of sth</b>，使某人相信某事。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">I am <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onvinced</span> that hard work will finally pay off.</p>
+          <p class="fill-hint">提示：<b>be convinced that…</b>，人作主语用 -ed 形式。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She made a <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onvincing</span> argument for changing the plan.</p>
+          <p class="fill-hint">提示：<b>a convincing argument</b>，论据本身“令人信服”。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He spoke so <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onvincingly</span> that everyone in the room agreed.</p>
+          <p class="fill-hint">提示：修饰动词 spoke，用副词 <b>convincingly</b>。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Her voice carried real <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">onviction</span>, and no one doubted her.</p>
+          <p class="fill-hint">提示：名词形式 <b>conviction</b>，坚信；定罪。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">08</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>convince</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="The data convinced me that an hour of review beats three hours of cramming."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">09</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>听两遍 + 记住画面</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>默写 6 个搭配</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>用它造 3 句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>复盘 -ing / -ed</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>
