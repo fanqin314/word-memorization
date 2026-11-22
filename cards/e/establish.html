@@ -138,6 +138,7 @@ body::before{
 }
 .word-anim .letter{
   display:inline-block;
+  color:var(--ink)!important;
   opacity:0;
   transform:scale(1.6);
   animation:esStamp .38s cubic-bezier(.2,.85,.3,1.05) forwards;
@@ -165,7 +166,9 @@ body::before{
   margin-top:24px;
 }
 .speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
   width:42px;height:42px;flex:none;
+  cursor:pointer;
   background:var(--red);
   border:2px solid var(--ink);
   border-radius:2px;
