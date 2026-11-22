@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>assume · 假定 · 承担 · 呈现</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   assume 专属样式：紫雾假说版
+   靛紫气泡 + 虚线推理链；正文浅紫纸。
+   ========================================================================== */
+
+:root{
+  --paper:#F4F1F8;
+  --paper-2:#E7E1F0;
+  --cb-accent:#6C5B9E;
+  --cb-accent-soft:#E6E0F3;
+  --cb-2:#4F7C86;
+  --cb-2-soft:#DCE8EA;
+  --cb-3:#C08A52;
+  --cb-3-soft:#F1E3CF;
+  --ink:#232135;
+  --deep:#332E4A;
+  --cb-deep:#332E4A;
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:24px;
+  --radius-md:18px;
+}
+
+body::before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(108,91,158,.09) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 72% 52%, rgba(79,124,134,.08) 0 2px, transparent 2.5px);
+  background-size:46px 46px, 62px 62px;
+}
+
+/* ---------- hero：深靛紫，左侧大字 ---------- */
+.hero{
+  position:relative;
+  padding:74px 44px 54px;
+  color:#F4F1F8;
+  border-bottom:4px solid var(--ink);
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 78% 22%, rgba(150,130,210,.22), transparent 58%),
+    linear-gradient(165deg,#332E4A 0%,#2A2640 58%,#211E33 100%);
+}
+/* 飘浮的虚线气泡 */
+.hero::before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:radial-gradient(circle, rgba(244,241,248,.14) 1.4px, transparent 1.6px);
+  background-size:24px 24px;
+  opacity:.5;
+}
+/* 巨大的问号水印 */
+.hero::after{
+  content:"?";
+  position:absolute;right:2%;bottom:-26%;
+  font-family:Georgia,serif;
+  font-size:38vw;line-height:1;
+  color:rgba(230,224,243,.06);
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:2;max-width:900px;margin:0 auto;text-align:left;}
+
+.hero-kicker{
+  font-family:Consolas,monospace;
+  font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  color:#B9A9E4;
+  opacity:0;animation:fadeIn .7s ease-out .1s forwards;
+}
+.word-anim{
+  display:inline-block;margin-top:16px;padding-bottom:10px;
+  border-bottom:4px dashed rgba(185,169,228,.55);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:112px;font-weight:900;line-height:1;letter-spacing:-.03em;
+  color:#F4F1F8;
+  text-shadow:0 10px 40px rgba(108,91,158,.35);
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  transform:translateY(-24px) scale(1.15);
+  animation:letterFall .75s cubic-bezier(.3,1.2,.5,1) forwards;
+  transition:transform .25s ease,color .25s ease;
+}
+.word-anim .l1{animation-delay:.10s;}
+.word-anim .l2{animation-delay:.20s;color:#B9A9E4;}
+.word-anim .l3{animation-delay:.30s;color:#B9A9E4;}
+.word-anim .l4{animation-delay:.40s;}
+.word-anim .l5{animation-delay:.50s;color:#8FCFD9;}
+.word-anim .l6{animation-delay:.60s;}
+@keyframes letterFall{
+  from{opacity:0;transform:translateY(-24px) scale(1.15);}
+  to{opacity:1;transform:none;}
+}
+.word-anim .letter:hover{transform:translateY(-6px);color:#D6C8FF;}
+
+.word-cn{
+  margin-top:16px;
+  font-size:13px;font-weight:700;letter-spacing:.3em;
+  color:#C9BEE8;
+  opacity:0;animation:fadeIn .8s ease-out .9s forwards;
+}
+.hero-foot{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;
+  margin-top:26px;padding-top:18px;
+  border-top:1px dashed rgba(244,241,248,.28);
+  opacity:0;animation:fadeIn .8s ease-out 1.05s forwards;
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;flex:none;
+  background:#B9A9E4;border:2px solid var(--ink);border-radius:50%;
+  cursor:pointer;font-size:18px;
+  box-shadow:0 0 0 3px rgba(185,169,228,.22);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(10deg);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.13) rotate(-6deg);}}
+.ipa-anim{
+  font-family:Consolas,monospace;
+  font-size:12.5px;font-weight:700;letter-spacing:.03em;
+  padding:5px 10px;border:1px dashed rgba(244,241,248,.55);
+  cursor:pointer;
+}
+.pos-anim{
+  display:inline-block;padding:3px 10px;
+  font-family:Consolas,monospace;
+  font-size:12px;font-weight:900;letter-spacing:.1em;
+  color:var(--ink);background:#8FCFD9;transform:rotate(-2deg);
+}
+.spell-hint{
+  display:inline-block;padding-left:10px;
+  border-left:3px solid #C08A52;
+  font-family:Consolas,monospace;
+  font-size:11px;letter-spacing:.1em;
+  color:rgba(244,241,248,.78);
+  text-align:left;
+}
+@keyframes fadeIn{to{opacity:1;}}
+
+/* ---------- 区块标题：紫圆编号 + 虚线下划线 ---------- */
+.section-title{
+  display:flex!important;align-items:center;gap:10px;
+  background:transparent!important;
+  border-radius:0!important;box-shadow:none!important;transform:none!important;
+  padding:0 0 8px!important;
+  border-bottom:2px dashed rgba(108,91,158,.42)!important;
+  font-size:19px!important;
+}
+.section-title .num{
+  display:inline-grid!important;place-content:center;
+  width:26px!important;height:26px!important;
+  background:var(--cb-accent)!important;color:#fff!important;
+  border-radius:50%!important;
+  font-family:Consolas,monospace;
+  font-size:12px!important;
+}
+
+/* ---------- 词根 ---------- */
+.root-line{background:var(--cb-accent-soft)!important;border-radius:14px!important;}
+
+/* ---------- 意象卡：气泡对话 ---------- */
+.image-card{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 300px!important;
+  gap:24px!important;align-items:center!important;
+  padding:26px 28px!important;
+  background:#FBF9FE!important;
+  border:2px dashed var(--cb-accent)!important;
+  border-radius:26px!important;
+  box-shadow:6px 6px 0 var(--cb-accent-soft)!important;
+  transform:none!important;
+  color:var(--ink)!important;
+}
+.ic-label{
+  display:inline-block;margin-bottom:12px;
+  font-family:Consolas,monospace;font-size:10px;font-weight:900;
+  letter-spacing:.24em;text-transform:uppercase;
+  background:var(--cb-accent-soft);color:var(--cb-accent);
+  padding:4px 10px;border-radius:999px;
+}
+.ic-main{font-size:18.5px;line-height:1.8;margin:0;}
+.ic-main .hl{
+  background:linear-gradient(180deg,transparent 58%,rgba(108,91,158,.28) 58%)!important;
+  color:var(--cb-accent)!important;padding:0!important;font-weight:900;
+}
+.ic-sub{margin-top:10px;font-size:13.5px;line-height:1.9;color:rgba(35,33,53,.7);}
+.ic-svg{width:100%!important;height:auto!important;background:none!important;}
+.ic-svg svg{display:block;width:100%;height:auto!important;max-width:300px;margin:0 auto;}
+
+.as-bub{fill:#F1EDFB;stroke:var(--cb-accent);stroke-width:2.6;}
+.as-bub2{fill:#E6E0F3;stroke:var(--cb-accent);stroke-width:2.6;}
+.as-txt{font-family:Consolas,monospace;font-size:20px;font-weight:700;fill:var(--ink);}
+.as-q{font-family:Georgia,serif;font-size:34px;fill:var(--cb-accent);animation:asFloat 3.4s ease-in-out infinite;}
+.as-arrow{fill:none;stroke:var(--cb-3);stroke-width:2.6;stroke-dasharray:7 8;stroke-linecap:round;animation:asFlow 1.1s linear infinite;}
+@keyframes asFlow{to{stroke-dashoffset:-30;}}
+.as-out{fill:#E9F3F4;stroke:var(--cb-2);stroke-width:2.8;animation:asPop 4s ease-in-out infinite;}
+@keyframes asPop{0%,100%{opacity:.75;}50%{opacity:1;}}
+.as-outtxt{font-family:Consolas,monospace;font-size:15px;font-weight:900;fill:var(--cb-2);}
+.as-dot{fill:var(--cb-accent);animation:asBub 4s ease-in-out infinite;}
+.as-dot.d2{animation-delay:.6s;}
+.as-dot.d3{animation-delay:1.2s;}
+@keyframes asBub{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+@keyframes asFloat{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-6px) rotate(3deg);}}
+
+/* ---------- 核心搭配：两列气泡标签 ---------- */
+.collocations{
+  display:grid!important;
+  grid-template-columns:1fr 1fr;
+  gap:10px!important;
+  border-top:0!important;
+}
+.collo{
+  counter-increment:none;
+  display:block!important;
+  background:var(--cb-accent-soft)!important;
+  border:2px solid var(--ink)!important;
+  border-radius:16px!important;
+  padding:12px 14px!important;
+  box-shadow:3px 3px 0 rgba(35,33,53,.85)!important;
+  transform:none!important;
+  overflow:visible!important;
+}
+.collo::before{content:none!important;display:none!important;}
+.collo .pattern{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:15.5px;font-weight:800;
+  color:var(--ink)!important;
+  background:none!important;
+  padding:0!important;margin:0!important;border-radius:0!important;
+  white-space:normal!important;
+}
+.collo .meaning{margin-top:4px;font-size:12.5px;color:rgba(35,33,53,.66);}
+
+/* ---------- 例句 ---------- */
+.real-ex{
+  background:#FBF9FE!important;
+  border:2px solid var(--cb-2-soft)!important;
+  border-left:5px solid var(--cb-accent)!important;
+  border-radius:0 14px 14px 0!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.real-ex .src{color:var(--cb-accent);font-weight:800;}
+.real-ex .en{font-family:Georgia,"Songti SC",serif;font-size:17px;line-height:1.8;}
+.real-ex .en .hl{
+  font-style:normal;font-weight:900;color:var(--cb-accent);
+  background:linear-gradient(180deg,transparent 60%,rgba(108,91,158,.24) 60%);
+}
+
+/* ---------- 易错 ---------- */
+.pitfall{background:var(--cb-accent-soft)!important;border-radius:18px!important;transform:none!important;}
+.pitfall::before{background-image:radial-gradient(circle,var(--cb-accent) 3px,transparent 3.5px)!important;}
+.pitfall-item{background:#FBF9FE!important;border-left-color:var(--cb-accent)!important;border-radius:0 12px 12px 0!important;}
+.pitfall-item .tip{background:var(--cb-accent)!important;}
+.pitfall-item .right{background:#DCE8EA!important;}
+
+/* ---------- 辨析 ---------- */
+.compare-table .highlight td{background:var(--cb-accent-soft)!important;}
+.compare-table .highlight td:first-child{background:var(--cb-accent)!important;color:#fff!important;}
+.compare-table .highlight td:first-child::after{content:"★";color:#fff!important;}
+
+/* ---------- 填空 ---------- */
+.self-test .hint{background:var(--cb-3-soft)!important;border-radius:12px!important;}
+.fill-item{background:#FBF9FE!important;border-radius:14px!important;box-shadow:3px 3px 0 rgba(35,33,53,.7)!important;}
+
+/* ---------- 造句 / 打卡 ---------- */
+.write-practice{background:var(--cb-2-soft)!important;border-radius:18px!important;transform:none!important;}
+.write-practice textarea{background:#FBF9FE!important;border-radius:12px!important;}
+.review-day{border-radius:18px!important;}
+
+@media (max-width:640px){
+  .hero{padding:44px 18px 36px;}
+  .word-anim{font-size:50px;}
+  .hero::after{font-size:64vw;}
+  .section-title{font-size:16px!important;}
+  .image-card{grid-template-columns:1fr!important;padding:20px 16px!important;gap:18px!important;}
+  .ic-main{font-size:16px;}
+  .collocations{grid-template-columns:1fr;}
+}
+@media (min-width:1100px){
+  .hero{padding:92px 64px 64px;}
+  .word-anim{font-size:132px;}
+}
+</style>
+</head>
+
+<body data-word="assume">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">NO.07 &nbsp;/&nbsp; VERB &nbsp;/&nbsp; ASSUME</div>
+      <div class="word-anim" aria-label="assume">
+        <span class="letter l1">a</span><span class="letter l2">s</span><span class="letter l3">s</span><span class="letter l4">u</span><span class="letter l5">m</span><span class="letter l6">e</span>
+      </div>
+      <div class="word-cn">假定 · 承担 · 呈现</div>
+      <div class="hero-foot">
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+        <span class="ipa-anim" id="ipaBtn">英 /əˈsjuːm/ &nbsp;·&nbsp; 美 /əˈsuːm/</span>
+        <span class="pos-anim">v.</span>
+        <span class="spell-hint">as- + sume（拿） &nbsp; 假定 · 承担 · 呈现</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">sum</span>（拉丁语 sumere，拿、取）&nbsp;→&nbsp; "先拿过来当真的" → <b>假定 · 承担 · 呈现</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">n.</div><div class="w">assumption</div><div class="p">/əˈsʌmpʃn/</div><div class="m">假设；承担</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">consume</div><div class="p">/kənˈsjuːm/</div><div class="m">消耗；消费</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">consumer</div><div class="p">/kənˈsjuːmə/</div><div class="m">消费者</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">resume</div><div class="p">/rɪˈzjuːm/</div><div class="m">重新开始；继续</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">presume</div><div class="p">/prɪˈzjuːm/</div><div class="m">推测；擅自</div></div>
+          <div class="fam-card"><div class="pos">adv.</div><div class="w">presumably</div><div class="p">/prɪˈzjuːməbli/</div><div class="m">大概；想必</div></div>
+          <div class="fam-card"><div class="pos">n. / v.</div><div class="w">sum</div><div class="p">/sʌm/</div><div class="m">总数；总结</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">assumed</div><div class="p">/əˈsjuːmd/</div><div class="m">假定的；假装的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">assume</span> = 手里没证据，先把一个说法拿过来当成真的。</p>
+          <p class="ic-sub">它有三层：<b>假定</b>（assume that…）、<b>承担</b>（assume responsibility）、<b>呈现</b>（assume a new form）。<br>名词是 assumption；assume 本身没有"假设"这个名词义。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 320 300" role="img" aria-label="假设气泡经过虚线推理，得到一个结论">
+            <rect class="as-bub" x="24" y="38" width="150" height="62" rx="20"/>
+            <text class="as-txt" x="99" y="78" text-anchor="middle">IF ?</text>
+            <rect class="as-bub2" x="24" y="130" width="150" height="62" rx="20"/>
+            <text class="as-txt" x="99" y="170" text-anchor="middle">NO PROOF</text>
+            <path class="as-arrow" d="M180 118 q40 22 62 44"/>
+            <path class="as-arrow" d="M180 190 q40 -22 62 -28"/>
+            <rect class="as-out" x="196" y="206" width="104" height="58" rx="14"/>
+            <text class="as-outtxt" x="248" y="241" text-anchor="middle">THEN</text>
+            <text class="as-q" x="258" y="96" text-anchor="middle">?</text>
+            <circle class="as-dot d1" cx="62" cy="228" r="4"/>
+            <circle class="as-dot d2" cx="108" cy="244" r="3"/>
+            <circle class="as-dot d3" cx="152" cy="226" r="3.6"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">assume that…</div><div class="meaning">假定……（后接从句）</div></div>
+        <div class="collo"><div class="pattern">assume responsibility</div><div class="meaning">承担责任</div></div>
+        <div class="collo"><div class="pattern">assume control</div><div class="meaning">接管控制权</div></div>
+        <div class="collo"><div class="pattern">assume a role</div><div class="meaning">承担 / 扮演一个角色</div></div>
+        <div class="collo"><div class="pattern">let's assume</div><div class="meaning">假设一下（口语常用）</div></div>
+        <div class="collo"><div class="pattern">assume the worst</div><div class="meaning">往最坏处想</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2021 考研英语 · 阅读改编</div>
+          <p class="en">We should not <em class="hl">assume</em> that technology always makes life easier.</p>
+          <p class="cn">我们不该假定技术总能让生活更轻松。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 六级 · 完形改编</div>
+          <p class="en">She will <em class="hl">assume</em> full responsibility for the failure.</p>
+          <p class="cn">她将为这次失败承担全部责任。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 专四 · 阅读改编</div>
+          <p class="en">After the merger, the new manager <em class="hl">assumed</em> control of the branch.</p>
+          <p class="cn">合并之后，新经理接管了这家分公司。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2018 四级 · 翻译改编</div>
+          <p class="en">The problem <em class="hl">assumed</em> a completely different shape overnight.</p>
+          <p class="cn">一夜间，这个问题呈现出完全不同的面貌。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">名词</span>
+          "假设"的名词是 assumption，不是 assume。<br>
+          <span class="wrong">make an assume</span> → <span class="right">make an assumption</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          assumption 双 s、双 p 之间只隔一个 u，别漏字母。<br>
+          <span class="wrong">asumption</span> → <span class="right">assumption</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">语义</span>
+          assume 表示"想当然地认为"，语气比 believe 弱，常带"未必对"的暗示。<br>
+          <span class="wrong">I assume it is true.（当成确定事实）</span> → <span class="right">I assume it is true, but let's check.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>assume</td><td>没证据先当真；也可指承担、呈现</td><td class="chant">先拿了再说</td>
+          </tr>
+          <tr><td>presume</td><td>有一定依据地推测，或"擅自"</td><td class="chant">presume 有底</td></tr>
+          <tr><td>suppose</td><td>口语化的"猜想"，常放句首</td><td class="chant">suppose 随口猜</td></tr>
+          <tr><td>consume</td><td>消耗、消费，与"拿"同源</td><td class="chant">consume 吃光</td></tr>
+          <tr><td>resume</td><td>重新开始、继续，重音在第二音节</td><td class="chant">resume 接着来</td>
+          </tr>
+          <tr><td>assumption</td><td>assume 的名词：假设；承担</td><td class="chant">名词多 -ption</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">I <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">ssume</span> that the meeting starts at nine.</p>
+          <p class="fill-hint">提示：<b>assume that…</b>，假定……</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She will <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">ssume</span> responsibility for the project.</p>
+          <p class="fill-hint">提示：<b>assume responsibility</b>，承担责任。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">ssumption</span> that prices will fall proved wrong.</p>
+          <p class="fill-hint">提示：名词形式 <b>assumption</b>，假设。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">ssumed</span> control of the company last year.</p>
+          <p class="fill-hint">提示：过去式 <b>assumed</b>；assume control，接管。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Let's not <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">ssume</span> the worst before we have facts.</p>
+          <p class="fill-hint">提示：<b>assume the worst</b>，往最坏处想。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>assume</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="Let's assume the train is late: we should leave an hour earlier."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>背 6 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>默写 5 道填空</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>用它造 3 句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>复盘易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>
