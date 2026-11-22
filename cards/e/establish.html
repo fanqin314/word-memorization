@@ -153,7 +153,7 @@ body::before{
 .word-anim .l7{animation-delay:.58s;}
 .word-anim .l8{animation-delay:.66s;}
 .word-anim .l9{animation-delay:.74s;}
-.word-anim .letter:hover{transform:translateY(-4px) scale(1.05);color:var(--red);}
+.word-anim .letter:hover{transform:translateY(-4px) scale(1.05);color:var(--red)!important;}
 @keyframes esStamp{
   0%{opacity:0;transform:scale(1.6);}
   58%{opacity:1;transform:scale(.94);}
@@ -178,6 +178,7 @@ body::before{
 }
 .speak-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink);}
 .speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12) rotate(-5deg);}}
 
 .ipa-anim{
   font-family:"Courier New",Consolas,monospace;
