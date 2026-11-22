@@ -140,7 +140,11 @@ body::before{
   font-size:14px;letter-spacing:.04em;
   color:#EADFC8;
   padding:4px 12px;
-  border:1px solid rgba(176,134,63,.55);
+  background:transparent!important;
+  border:1px solid rgba(176,134,63,.55)!important;
+  border-radius:2px!important;
+  box-shadow:none!important;
+  transform:none!important;
   cursor:pointer;
 }
 .pos-anim{
@@ -148,16 +152,22 @@ body::before{
   font-family:Georgia,serif;
   font-size:12px;font-weight:700;letter-spacing:.16em;
   color:#2A1116;background:#C9A469;
-  border:1px solid #2A1116;
-  transform:rotate(-2deg);
+  border:1px solid #2A1116!important;
+  border-radius:2px!important;
+  transform:rotate(-2deg)!important;
 }
 .spell-hint{
   display:inline-block;
   font-family:Georgia,"Songti SC",serif;
   font-size:12px;letter-spacing:.1em;
-  color:rgba(246,239,227,.72);
-  padding-left:11px;
-  border-left:2px solid #B0863F;
+  color:rgba(246,239,227,.8)!important;
+  padding:4px 11px;
+  background:rgba(176,134,63,.1)!important;
+  border:1px solid rgba(176,134,63,.42)!important;
+  border-left:2px solid #B0863F!important;
+  border-radius:2px!important;
+  box-shadow:none!important;
+  transform:none!important;
 }
 @keyframes dsFade{to{opacity:1;}}
 
