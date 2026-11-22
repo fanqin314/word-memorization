@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>approach · 接近 · 方法 · 途径</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   approach 专属样式：路径地图版
+   森林绿 + 沙黄；虚线路线、坐标点、行进圆点。
+   ========================================================================== */
+
+:root{
+  --paper:#F1EFE4;
+  --paper-2:#E3E0CF;
+  --cb-accent:#3F6B4F;
+  --cb-accent-soft:#DFE9DD;
+  --cb-2:#C6A15B;
+  --cb-2-soft:#F0E5CB;
+  --cb-3:#7C8F6B;
+  --cb-3-soft:#E5EADD;
+  --ink:#242A22;
+  --deep:#2C3527;
+  --cb-deep:#2C3527;
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:16px;
+  --radius-md:10px;
+}
+
+/* 坐标点阵 */
+body::before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(rgba(63,107,79,.14) 1px, transparent 1.3px);
+  background-size:28px 28px;
+}
+
+/* ---------- hero：深林 + 路线水印 ---------- */
+.hero{
+  position:relative;
+  padding:74px 44px 56px;
+  color:#F5F2E6;
+  border-bottom:5px solid var(--cb-2);
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 82% 16%, rgba(198,161,91,.2), transparent 55%),
+    linear-gradient(162deg,#31452F 0%,#253528 58%,#1B281E 100%);
+}
+.hero::before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(245,242,230,.12) 1.4px, transparent 1.6px);
+  background-size:34px 34px;
+  opacity:.45;
+}
+.hero::after{
+  content:"◎";
+  position:absolute;right:3%;bottom:-16%;
+  font-family:Georgia,serif;
+  font-size:30vw;line-height:1;
+  color:rgba(198,161,91,.09);
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:2;max-width:900px;margin:0 auto;}
+
+.hero-kicker{
+  font-family:Consolas,monospace;
+  font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--cb-2);
+  opacity:0;animation:fadeIn .7s ease-out .1s forwards;
+}
+.word-anim{
+  display:inline-block;margin-top:16px;padding-bottom:8px;
+  border-bottom:3px dashed rgba(198,161,91,.65);
+  font-family:Georgia,"Songti SC",serif;
+  font-size:114px;font-weight:700;line-height:1;letter-spacing:-.02em;
+  color:#F5F2E6;
+  text-shadow:0 12px 36px rgba(0,0,0,.3);
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  transform:translateY(18px);
+  animation:walkIn .62s cubic-bezier(.2,.9,.3,1) forwards;
+  transition:transform .22s ease,color .22s ease;
+}
+.word-anim .l1{animation-delay:.10s;}
+.word-anim .l2{animation-delay:.17s;}
+.word-anim .l3{animation-delay:.24s;color:#B9CC9E;}
+.word-anim .l4{animation-delay:.31s;}
+.word-anim .l5{animation-delay:.38s;color:var(--cb-2);}
+.word-anim .l6{animation-delay:.45s;}
+.word-anim .l7{animation-delay:.52s;color:var(--cb-2);}
+.word-anim .l8{animation-delay:.59s;}
+@keyframes walkIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+.word-anim .letter:hover{transform:translateY(-5px);color:#E9D6A4;}
+
+.word-cn{
+  margin-top:15px;
+  font-size:13px;font-weight:700;letter-spacing:.3em;
+  color:#BFCDB4;
+  opacity:0;animation:fadeIn .8s ease-out .9s forwards;
+}
+.hero-foot{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;
+  margin-top:24px;padding-top:16px;
+  border-top:1px dashed rgba(245,242,230,.26);
+  opacity:0;animation:fadeIn .8s ease-out 1.05s forwards;
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:42px;height:42px;flex:none;
+  background:var(--cb-2);border:2px solid var(--ink);border-radius:50%;
+  cursor:pointer;font-size:17px;
+  transition:transform .2s ease;
+}
+.speak-btn:hover{transform:translateY(-2px) scale(1.05);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.ipa-anim{
+  font-family:Consolas,monospace;
+  font-size:12.5px;font-weight:700;
+  padding:5px 10px;border:1px dashed rgba(245,242,230,.5);
+  cursor:pointer;
+}
+.pos-anim{
+  display:inline-block;padding:3px 10px;
+  font-family:Consolas,monospace;
+  font-size:12px;font-weight:900;
+  color:var(--ink);background:#B9CC9E;
+  transform:rotate(-1.5deg);
+}
+.spell-hint{
+  display:inline-block;padding-left:10px;
+  border-left:3px solid var(--cb-2);
+  font-family:Consolas,monospace;
+  font-size:11px;letter-spacing:.08em;
+  color:rgba(245,242,230,.76);
+}
+@keyframes fadeIn{to{opacity:1;}}
+
+/* ---------- 区块标题：方框编号 + 点线引导 ---------- */
+.section-title{
+  display:flex!important;align-items:center;gap:12px;
+  background:transparent!important;
+  border-radius:0!important;box-shadow:none!important;transform:none!important;
+  padding:0!important;
+  border-bottom:0!important;
+  font-size:19px!important;
+}
+.section-title::after{
+  content:"";
+  flex:1;
+  border-bottom:2px dotted rgba(63,107,79,.5);
+  margin-left:4px;
+}
+.section-title .num{
+  display:inline-grid!important;place-content:center;
+  width:28px!important;height:28px!important;
+  background:transparent!important;
+  color:var(--cb-accent)!important;
+  border:2px solid var(--cb-accent);
+  border-radius:6px!important;
+  font-family:Consolas,monospace;
+  font-size:12px!important;
+}
+
+/* ---------- 词根 ---------- */
+.root-line{background:var(--cb-accent-soft)!important;border-radius:10px!important;}
+
+/* ---------- 意象卡：地图纸 ---------- */
+.image-card{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 310px!important;
+  gap:26px!important;align-items:center!important;
+  padding:26px 28px!important;
+  background:#FAF8EE!important;
+  border:2px solid var(--ink)!important;
+  border-radius:3px!important;
+  box-shadow:var(--shadow-hard);
+  transform:none!important;
+  color:var(--ink)!important;
+}
+.ic-label{
+  display:inline-block;margin-bottom:12px;
+  font-family:Consolas,monospace;
+  font-size:10px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--cb-accent);
+  border:1.5px solid var(--cb-accent);
+  padding:3px 9px;
+}
+.ic-main{font-size:18.5px;line-height:1.8;margin:0;}
+.ic-main .hl{
+  color:var(--cb-accent)!important;font-weight:900;
+  background:linear-gradient(180deg,transparent 62%,rgba(198,161,91,.45) 62%);
+}
+.ic-sub{margin-top:10px;font-size:13.5px;line-height:1.9;color:rgba(36,42,34,.7);}
+.ic-svg{width:100%!important;height:auto!important;background:none!important;}
+.ic-svg svg{display:block;width:100%;height:auto!important;max-width:310px;margin:0 auto;}
+
+.ap-path{
+  fill:none;stroke:var(--cb-accent);stroke-width:3;
+  stroke-dasharray:6 8;stroke-linecap:round;
+  animation:apFlow 1.3s linear infinite;
+}
+@keyframes apFlow{to{stroke-dashoffset:-28;}}
+.ap-start{fill:var(--cb-2);stroke:var(--ink);stroke-width:2;}
+.ap-stop{fill:#FAF8EE;stroke:var(--cb-3);stroke-width:2.6;}
+.ap-pin{fill:var(--cb-accent);stroke:var(--ink);stroke-width:2.2;}
+.ap-pin-hole{fill:#FAF8EE;}
+.ap-run{fill:var(--cb-2);stroke:var(--ink);stroke-width:1.6;}
+.ap-note{font-family:Consolas,monospace;font-size:9.5px;letter-spacing:.12em;fill:rgba(36,42,34,.55);}
+
+/* ---------- 核心搭配：路标 ---------- */
+.collocations{
+  display:flex!important;flex-direction:column;gap:0!important;
+  border-top:2px solid var(--ink);
+}
+.collo{
+  counter-increment:none;
+  display:grid!important;
+  grid-template-columns:28px 1fr;
+  gap:2px 10px;
+  padding:13px 2px!important;
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px dotted rgba(36,42,34,.4)!important;
+  border-radius:0!important;
+  box-shadow:none!important;transform:none!important;
+  overflow:visible!important;
+}
+.collo::before{
+  content:"→";
+  position:static!important;
+  left:auto!important;top:auto!important;bottom:auto!important;
+  width:auto!important;height:auto!important;
+  background:none!important;
+  color:var(--cb-accent);
+  font-size:16px;font-weight:900;line-height:1.5;
+  grid-column:1;grid-row:1 / span 2;
+}
+.collo .pattern{
+  grid-column:2;grid-row:1;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:16.5px;font-weight:800;
+  color:var(--ink)!important;
+  background:none!important;
+  padding:0!important;margin:0!important;border-radius:0!important;
+  white-space:normal!important;
+}
+.collo .meaning{grid-column:2;grid-row:2;margin-top:3px;font-size:12.5px;color:rgba(36,42,34,.65);}
+
+/* ---------- 例句 ---------- */
+.real-ex{
+  background:#FAF8EE!important;
+  border:0!important;
+  border-left:5px solid var(--cb-accent)!important;
+  border-radius:0!important;
+  box-shadow:none!important;transform:none!important;
+  padding:4px 0 16px 18px!important;
+}
+.real-ex + .real-ex{border-top:1px dotted rgba(36,42,34,.3)!important;padding-top:16px!important;}
+.real-ex .src{font-family:Consolas,monospace;font-size:10.5px;font-weight:700;letter-spacing:.12em;color:var(--cb-3);}
+.real-ex .en{font-family:Georgia,"Songti SC",serif;font-size:17px;line-height:1.8;}
+.real-ex .en .hl{
+  font-style:normal;font-weight:900;color:var(--cb-accent);
+  background:linear-gradient(180deg,transparent 62%,rgba(198,161,91,.4) 62%);
+}
+
+/* ---------- 易错 ---------- */
+.pitfall{background:var(--cb-3-soft)!important;border-radius:10px!important;transform:none!important;}
+.pitfall::before{background-image:none!important;}
+.pitfall-item{background:#FAF8EE!important;border-left-color:var(--cb-3)!important;border-radius:0 8px 8px 0!important;}
+.pitfall-item .tip{background:var(--cb-3)!important;border-radius:4px!important;}
+.pitfall-item .right{background:var(--cb-accent-soft)!important;}
+
+/* ---------- 辨析 ---------- */
+.compare-table .highlight td{background:var(--cb-accent-soft)!important;}
+.compare-table .highlight td:first-child{background:var(--cb-accent)!important;color:#F5F2E6!important;}
+.compare-table .highlight td:first-child::after{content:"★";color:#F5F2E6!important;}
+
+/* ---------- 填空 ---------- */
+.self-test .hint{background:var(--cb-2-soft)!important;border-radius:8px!important;}
+.fill-item{background:#FAF8EE!important;border-radius:8px!important;box-shadow:3px 3px 0 rgba(36,42,34,.7)!important;}
+
+/* ---------- 造句 / 打卡 ---------- */
+.write-practice{background:var(--cb-accent-soft)!important;border-radius:10px!important;transform:none!important;}
+.write-practice textarea{background:#FAF8EE!important;border-radius:8px!important;}
+.review-day{border-radius:50%!important;}
+
+@media (max-width:640px){
+  .hero{padding:44px 18px 36px;}
+  .word-anim{font-size:48px;}
+  .hero::after{font-size:60vw;}
+  .section-title{font-size:15.5px!important;}
+  .image-card{grid-template-columns:1fr!important;padding:20px 16px!important;gap:18px!important;}
+  .ic-main{font-size:16px;}
+}
+@media (min-width:1100px){
+  .hero{padding:90px 64px 66px;}
+  .word-anim{font-size:132px;}
+}
+</style>
+</head>
+
+<body data-word="approach">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">ROUTE MAP &nbsp;/&nbsp; NO.10 &nbsp;/&nbsp; VERB · NOUN</div>
+      <div class="word-anim" aria-label="approach">
+        <span class="letter l1">a</span><span class="letter l2">p</span><span class="letter l3">p</span><span class="letter l4">r</span><span class="letter l5">o</span><span class="letter l6">a</span><span class="letter l7">c</span><span class="letter l8">h</span>
+      </div>
+      <div class="word-cn">接近 · 方法 · 途径</div>
+      <div class="hero-foot">
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+        <span class="ipa-anim" id="ipaBtn">英 /əˈprəʊtʃ/ &nbsp;·&nbsp; 美 /əˈproʊtʃ/</span>
+        <span class="pos-anim">v. / n.</span>
+        <span class="spell-hint">ap-（朝向）+ proach（近） &nbsp; 接近 · 方法 · 途径</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">ap-</span>（朝向）+ <span class="stem">proach</span>（近，拉丁语 prope）&nbsp;→&nbsp; "朝近处走" → <b>接近 · 方法 · 途径</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">approachable</div><div class="p">/əˈprəʊtʃəbl/</div><div class="m">平易近人的；可接近的</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">approximate</div><div class="p">/əˈprɒksɪmət/</div><div class="m">大约的；近似的</div></div>
+          <div class="fam-card"><div class="pos">adv.</div><div class="w">approximately</div><div class="p">/əˈprɒksɪmətli/</div><div class="m">大约；将近</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">proximity</div><div class="p">/prɒkˈsɪməti/</div><div class="m">接近；邻近</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">reproach</div><div class="p">/rɪˈprəʊtʃ/</div><div class="m">责备；指责（形近，义不同）</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">approval</div><div class="p">/əˈpruːvl/</div><div class="m">批准；赞成</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">approve</div><div class="p">/əˈpruːv/</div><div class="m">批准；赞成</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">access</div><div class="p">/ˈækses/</div><div class="m">通道；进入权（近义辨析）</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">approach</span> = 沿着一条路走过去：既是"接近"这个动作，也是"走的这条路线"。</p>
+          <p class="ic-sub">所以它同时是动词（approach the station）和名词（a new approach）。<br>名词搭配永远是 <b>approach to sth / doing sth</b>——to 是介词，后面跟名词或动名词，不跟动词原形。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 320 300" role="img" aria-label="虚线路径从起点经过两个路标，接近终点的定位针">
+            <path id="apRoute" class="ap-path" d="M30 236 C 86 232, 92 168, 150 166 S 216 214, 242 150 S 262 108, 278 96"/>
+            <circle class="ap-start" cx="30" cy="236" r="8"/>
+            <circle class="ap-stop" cx="150" cy="166" r="6"/>
+            <circle class="ap-stop" cx="242" cy="150" r="6"/>
+            <circle class="ap-run" r="5">
+              <animateMotion dur="5s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#apRoute"/>
+              </animateMotion>
+            </circle>
+            <path class="ap-pin" d="M278 62 a16 16 0 0 1 16 16 c0 12 -16 26 -16 26 s-16 -14 -16 -26 a16 16 0 0 1 16 -16z"/>
+            <circle class="ap-pin-hole" cx="278" cy="78" r="5.5"/>
+            <text class="ap-note" x="160" y="282" text-anchor="middle">START → WAYPOINTS → TARGET</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">approach to (doing) sth</div><div class="meaning">……的方法 / 途径（to 是介词）</div></div>
+        <div class="collo"><div class="pattern">a new approach</div><div class="meaning">一种新方法</div></div>
+        <div class="collo"><div class="pattern">adopt an approach</div><div class="meaning">采用一种方法</div></div>
+        <div class="collo"><div class="pattern">approach the problem</div><div class="meaning">着手处理这个问题</div></div>
+        <div class="collo"><div class="pattern">at the approach of</div><div class="meaning">在……临近时</div></div>
+        <div class="collo"><div class="pattern">the approach of winter</div><div class="meaning">冬天的临近</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2021 考研英语 · 阅读改编</div>
+          <p class="en">We need a completely new <em class="hl">approach</em> to teaching grammar.</p>
+          <p class="cn">我们需要一套全新的语法教学方法。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 六级 · 写作改编</div>
+          <p class="en">As winter <em class="hl">approached</em>, the streets grew quieter.</p>
+          <p class="cn">随着冬天临近，街道越来越安静。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 四级 · 阅读改编</div>
+          <p class="en">She <em class="hl">approached</em> the problem from a different angle.</p>
+          <p class="cn">她从另一个角度来处理这个问题。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2018 专四 · 完形改编</div>
+          <p class="en">The best <em class="hl">approach</em> is to listen first and speak later.</p>
+          <p class="cn">最好的方法是先听、后说。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">介词</span>
+          approach to 里的 to 是介词，后面跟名词或动名词，不能跟动词原形。<br>
+          <span class="wrong">an approach to solve it</span> → <span class="right">an approach to solving it</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">及物</span>
+          动词 approach 直接带宾语，不加 to。<br>
+          <span class="wrong">approach to the station</span> → <span class="right">approach the station</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">形近</span>
+          reproach 是"责备"，和 approach 长得像，意思完全无关。<br>
+          <span class="wrong">He approached me for being late.</span> → <span class="right">He reproached me for being late.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>approach</td><td>接近的动作；处理问题的方法、路子</td><td class="chant">approach 走路线</td>
+          </tr>
+          <tr><td>method</td><td>系统的、成体系的具体方法</td><td class="chant">method 有步骤</td></tr>
+          <tr><td>way</td><td>最通用的"方式"，搭配 way to do / of doing</td><td class="chant">way 最随意</td></tr>
+          <tr><td>means</td><td>手段、工具，单复数同形</td><td class="chant">means 靠工具</td></tr>
+          <tr><td>manner</td><td>举止、方式，偏"怎么做"的姿态</td><td class="chant">manner 看姿态</td></tr>
+          <tr><td>access</td><td>进入的通道或权利，不是方法</td><td class="chant">access 是入口</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">We need a new <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">pproach</span> to solving the problem.</p>
+          <p class="fill-hint">提示：<b>approach to doing sth</b>，做某事的方法。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">pproached</span> the problem from a different angle.</p>
+          <p class="fill-hint">提示：过去式 <b>approached</b>；approach 直接带宾语。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">As winter <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">pproached</span>, the streets grew quiet.</p>
+          <p class="fill-hint">提示：<b>approach</b> 作不及物动词，表示"临近"。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The teacher is friendly and <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">pproachable</span> after class.</p>
+          <p class="fill-hint">提示：形容词 <b>approachable</b>，平易近人的。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The best <span class="first-letter">a</span><span class="blank" onclick="this.classList.toggle('revealed')">pproach</span> is to listen before you speak.</p>
+          <p class="fill-hint">提示：名词 <b>approach</b>，方法。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>approach</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="My approach to memorizing words is simple: use them the same day."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>背 6 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>默写 5 道填空</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>用它造 3 句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>复盘易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>
