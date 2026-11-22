@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>distinguish · 区分 · 辨别 · 使杰出</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   distinguish 专属样式：瑞士对照版
+   纸白 + 石墨 + 玫红；左侧粗竖条、细网格、无圆角，与深色卡形成反差。
+   ========================================================================== */
+
+:root{
+  --paper:#FBFAF7;
+  --paper-2:#EFEDE8;
+  --cb-accent:#C2607A;
+  --cb-accent-soft:#F6E4E9;
+  --cb-2:#24262B;
+  --cb-2-soft:#E4E2DD;
+  --cb-3:#8A8D93;
+  --cb-3-soft:#DCD9D2;
+  --ink:#1E2024;
+  --deep:#24262B;
+  --cb-deep:#24262B;
+
+  --shadow-hard:6px 6px 0 var(--ink);
+  --shadow-hard-sm:3px 3px 0 var(--ink);
+  --radius-lg:2px;
+  --radius-md:2px;
+}
+
+body{
+  background:#E9E7E1;
+  font-family:"Helvetica Neue",Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+body::after{opacity:.10!important;}
+body::before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(30,32,36,.13) 1px,transparent 1.3px);
+  background-size:16px 16px;
+  opacity:.55;
+}
+.page{
+  background:var(--paper);
+  border-radius:4px;
+  box-shadow:0 0 0 2px var(--ink), 10px 10px 0 rgba(194,96,122,.55);
+}
+.progress-bar{
+  background:#C2607A;
+  border-bottom:1px solid var(--ink);
+}
+
+/* ---------- hero：米白纸底 + 玫红竖条 + 右侧细网格 ---------- */
+.hero{
+  position:relative;
+  padding:70px 40px 54px 60px;
+  background:#F0EEE9;
+  border-bottom:2px solid var(--ink);
+  overflow:hidden;
+  color:var(--ink);
+}
+.hero::before{
+  content:"";
+  position:absolute;left:0;top:0;bottom:0;width:14px;
+  background:#C2607A;
+}
+.hero::after{
+  content:"";
+  position:absolute;top:0;right:0;bottom:0;width:46%;
+  background-image:
+    linear-gradient(90deg,rgba(36,38,43,.11) 1px,transparent 1px),
+    linear-gradient(0deg,rgba(36,38,43,.11) 1px,transparent 1px);
+  background-size:22px 22px;
+  pointer-events:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 45%);
+  mask-image:linear-gradient(90deg,transparent,#000 45%);
+}
+.hero-inner{position:relative;z-index:2;text-align:left;}
+.hero-kicker{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10.5px;font-weight:700;letter-spacing:.34em;text-transform:uppercase;
+  color:#7C7F85;
+  opacity:0;animation:dgFade .6s ease-out .05s forwards;
+}
+.hero-wordline{display:flex;align-items:flex-end;flex-wrap:wrap;gap:14px;margin-top:10px;}
+
+.word-anim{
+  display:inline-block;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:104px;font-weight:900;line-height:1;letter-spacing:-.045em;
+  color:var(--ink);
+  white-space:nowrap;
+  filter:none;
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:dgInL .62s cubic-bezier(.2,.9,.3,1) forwards;
+  transition:transform .2s ease,color .2s ease;
+}
+.word-anim .letter:nth-of-type(even){color:var(--cb-accent);animation-name:dgInR;}
+.word-anim .l1{animation-delay:.06s;}
+.word-anim .l2{animation-delay:.13s;}
+.word-anim .l3{animation-delay:.20s;}
+.word-anim .l4{animation-delay:.27s;}
+.word-anim .l5{animation-delay:.34s;}
+.word-anim .l6{animation-delay:.41s;}
+.word-anim .l7{animation-delay:.48s;}
+.word-anim .l8{animation-delay:.55s;}
+.word-anim .l9{animation-delay:.62s;}
+.word-anim .l10{animation-delay:.69s;}
+.word-anim .l11{animation-delay:.76s;}
+@keyframes dgInL{
+  0%{opacity:0;transform:translateX(-64px);}
+  70%{opacity:1;transform:translateX(5px);}
+  100%{opacity:1;transform:translateX(0);}
+}
+@keyframes dgInR{
+  0%{opacity:0;transform:translateX(64px);}
+  70%{opacity:1;transform:translateX(-5px);}
+  100%{opacity:1;transform:translateX(0);}
+}
+.word-anim .letter:hover{transform:translateY(-7px);}
+
+.speak-btn{
+  width:46px;height:46px;margin-left:0;flex:none;
+  background:#C2607A;color:#FBFAF7;
+  border:2px solid var(--ink);border-radius:0;
+  box-shadow:none;font-size:18px;
+  opacity:0;animation:dgFade .6s ease-out 1.05s forwards;
+}
+.speak-btn:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+
+.ipa-anim{
+  display:inline-block;margin-top:24px;
+  padding:4px 0 5px;
+  background:none;border:0;border-bottom:1px solid var(--ink);
+  border-radius:0;box-shadow:none;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:13px;font-weight:600;letter-spacing:.04em;
+  color:#33363C;cursor:pointer;transform:none;
+  opacity:0;animation:dgFade .6s ease-out .92s forwards;
+}
+.pos-anim{
+  display:inline-block;margin:16px 0 0;
+  padding:4px 10px;
+  background:var(--ink);color:#FBFAF7;
+  border:0;border-radius:0;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+  transform:none;
+  opacity:0;animation:dgFade .6s ease-out 1.05s forwards;
+}
+.spell-hint{
+  display:block;margin-top:20px;
+  padding:10px 0 0;
+  background:none;border:0;border-top:1px solid var(--cb-3-soft);
+  border-radius:0;box-shadow:none;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:none;
+  color:#C2607A;transform:none;
+  opacity:0;animation:dgFade .7s ease-out 1.18s forwards;
+}
+@keyframes dgFade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ---------- 区块标题：黑方块编号 + 黑字 + 右延细线 ---------- */
+.section-title{
+  display:flex!important;align-items:center;gap:14px;
+  width:100%;
+  margin:0 0 24px!important;
+  padding:0 0 10px!important;
+  background:none!important;
+  border:0!important;border-bottom:1px solid var(--ink)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  font-family:"Helvetica Neue",Arial,sans-serif!important;
+  font-size:19px!important;font-weight:900!important;letter-spacing:.01em;
+  color:var(--ink)!important;
+}
+.section-title::after{
+  content:"";flex:1 1 auto;height:1px;
+  background:var(--ink);opacity:.32;
+}
+.section-title .num{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:26px!important;height:26px!important;flex:0 0 26px;
+  background:var(--ink)!important;color:#FBFAF7!important;
+  border-radius:0!important;
+  font-family:"Helvetica Neue",Arial,sans-serif!important;
+  font-size:12px!important;font-weight:900!important;
+}
+
+/* ---------- 1 词根 · 词族 ---------- */
+.root-family{
+  background:#fff;
+  border:1px solid var(--ink);
+  border-radius:0;
+  box-shadow:none;
+  padding:24px 22px;
+}
+.root-line{
+  margin-bottom:20px;
+  padding:16px 18px;
+  background:var(--paper-2);
+  border:0;border-left:5px solid #C2607A;
+  border-radius:0;
+  font-size:15.5px;line-height:2;
+  text-align:left;
+}
+.root-line .stem{
+  background:#C2607A;color:#FBFAF7;
+  border:0;border-radius:0;
+  padding:2px 9px;margin:0 3px;
+  transform:none;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-weight:800;
+}
+.root-line b{color:#C2607A;}
+.fam-grid{gap:8px;}
+.fam-card{
+  background:#fff;
+  border:1px solid #DCD9D2;
+  border-top:2px solid var(--ink);
+  border-radius:0;
+  box-shadow:none;
+  padding:11px 13px;
+}
+.fam-card:hover{transform:translateY(-3px);}
+.fam-card .pos{
+  background:var(--ink);color:#FBFAF7;
+  border-radius:0;
+  letter-spacing:.12em;
+}
+.fam-card .w{font-family:"Helvetica Neue",Arial,sans-serif;color:var(--ink);}
+.fam-card .w .hl{color:#C2607A;}
+.fam-card .p{color:#8A8D93;}
+.fam-card .m{color:#3D4046;}
+
+/* ---------- 2 意象卡 ---------- */
+.image-card{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 320px!important;
+  gap:28px!important;align-items:center!important;
+  padding:32px 32px!important;
+  background:#fff!important;
+  background-image:
+    linear-gradient(90deg,rgba(36,38,43,.06) 1px,transparent 1px),
+    linear-gradient(0deg,rgba(36,38,43,.06) 1px,transparent 1px)!important;
+  background-size:24px 24px!important;
+  color:var(--ink)!important;
+  border:1px solid var(--ink)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.image-card .ic-label{
+  display:inline-block;margin-bottom:12px;
+  padding:4px 10px;
+  background:#C2607A!important;color:#FBFAF7!important;
+  border:0;border-radius:0;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:10px;font-weight:900;letter-spacing:.22em;
+  transform:none;
+}
+.image-card .ic-main{
+  margin:0 0 14px;
+  font-size:21px;font-weight:800;line-height:1.65;
+  color:var(--ink);
+}
+.image-card .ic-main .hl{
+  background:none!important;color:#C2607A!important;
+  padding:0!important;border-radius:0!important;
+  box-shadow:inset 0 -3px 0 rgba(194,96,122,.35);
+}
+.image-card .ic-sub{
+  margin:0;
+  font-size:14px;line-height:1.9;
+  color:#4C4F55;opacity:1;
+}
+.image-card .ic-svg{width:100%!important;height:auto!important;background:none!important;}
+.image-card .ic-svg svg{display:block;width:100%!important;height:auto!important;max-width:320px;margin:0 auto;}
+
+.dg-div{
+  fill:none;stroke:#24262B;stroke-width:1.5;
+  stroke-dasharray:230;stroke-dashoffset:230;
+  animation:dgDraw 1.1s cubic-bezier(.3,.8,.3,1) .35s forwards;
+}
+@keyframes dgDraw{to{stroke-dashoffset:0;}}
+.dg-lens{
+  fill:none;
+  opacity:0;
+  animation:dgLens 1.1s cubic-bezier(.3,.9,.3,1) .75s forwards;
+}
+@keyframes dgLens{
+  0%{opacity:0;transform:translateY(-14px);}
+  55%{opacity:1;}
+  100%{opacity:1;transform:translateY(7px);}
+}
+.dg-mark{
+  opacity:0;transform-origin:center;
+  animation:dgMark .5s cubic-bezier(.3,1.6,.5,1) 1.5s forwards;
+}
+@keyframes dgMark{0%{opacity:0;transform:scale(.2);}100%{opacity:1;transform:scale(1);}}
+
+/* ---------- 3 核心搭配：瑞士两栏 ---------- */
+.collocations{
+  display:block!important;
+  border-top:1px solid var(--ink);
+}
+.collo{
+  display:grid!important;
+  grid-template-columns:1.15fr 1fr;
+  align-items:center!important;
+  gap:0!important;
+  padding:13px 2px!important;
+  background:none!important;
+  border:0!important;border-bottom:1px solid var(--cb-3-soft)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  transform:none!important;
+}
+.collo::before{
+  content:none!important;display:none!important;
+  position:static!important;left:auto!important;top:auto!important;bottom:auto!important;
+  width:auto!important;height:auto!important;background:none!important;
+}
+.collo:hover{transform:none!important;box-shadow:none!important;}
+.collo:hover::before{width:auto!important;}
+.collo .pattern{
+  margin:0!important;padding:0!important;
+  background:none!important;
+  color:var(--ink)!important;
+  border-radius:0!important;
+  font-family:"Helvetica Neue",Arial,sans-serif!important;
+  font-size:16px!important;font-weight:800!important;
+  letter-spacing:-.01em;
+  white-space:normal!important;
+}
+.collo .meaning{
+  padding-left:18px;
+  border-left:1px solid var(--cb-3-soft);
+  font-size:14px;line-height:1.6;
+  color:#55585E;
+}
+
+/* ---------- 4 真题例句 ---------- */
+.real-exs{gap:14px;}
+.real-ex{
+  background:#fff;
+  border:1px solid var(--cb-3-soft);
+  border-left:4px solid #C2607A;
+  border-radius:0;
+  box-shadow:none;
+  transform:none;
+  padding:18px 22px;
+}
+.real-ex:nth-child(even){transform:none;}
+.real-ex:hover{transform:none;box-shadow:none;}
+.real-ex::before{content:none;display:none;}
+.real-ex .src{
+  margin-bottom:10px;
+  padding:3px 10px;
+  background:var(--ink);color:#FBFAF7;
+  border:0;border-radius:0;
+  font-size:10px;font-weight:800;letter-spacing:.16em;
+}
+.real-ex .en{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:16.5px;line-height:1.8;
+  color:#24262B;
+}
+.real-ex .en .hl{
+  background:none;
+  color:#C2607A;
+  padding:0;border-radius:0;
+  font-weight:900;
+  box-shadow:inset 0 -2px 0 rgba(194,96,122,.45);
+}
+.real-ex .cn{
+  padding-left:14px;
+  border-left:2px solid #DCD9D2;
+  color:#7A7D83;
+}
+
+/* ---------- 5 易错提醒 ---------- */
+.pitfall{
+  padding:26px 26px 18px;
+  background:#F0EEE9;
+  border:1px solid var(--ink);
+  border-radius:0;
+  box-shadow:none;
+  transform:none;
+}
+.pitfall::before{
+  height:5px;
+  background:#C2607A;
+  background-image:none;
+  border-bottom:0;
+}
+.pitfall-item{
+  margin-bottom:12px;
+  padding:13px 16px;
+  background:#fff;
+  border-left:4px solid #C2607A;
+  border-radius:0;
+  font-size:14.5px;
+}
+.pitfall-item:hover{transform:none;}
+.pitfall-item:last-child{margin-bottom:0;}
+.pitfall-item .tip{
+  background:#C2607A;color:#FBFAF7;
+  border:0;border-radius:0;
+  font-size:11.5px;letter-spacing:.06em;
+}
+.pitfall-item .wrong{color:#B03E58;}
+.pitfall-item .right{background:#fff;border-bottom:2px solid #24262B;border-radius:0;padding:0 2px;color:var(--ink);}
+
+/* ---------- 6 易混辨析 ---------- */
+.compare-table{
+  border-spacing:0!important;
+  font-size:14.5px;
+}
+.compare-table tbody tr{
+  filter:none!important;
+  opacity:1!important;
+  transform:none!important;
+}
+.compare-table tbody tr:hover{transform:none!important;filter:none!important;}
+.compare-table td{
+  background:#fff!important;
+  border-top:1px solid var(--cb-3-soft)!important;
+  border-bottom:1px solid var(--cb-3-soft)!important;
+  border-radius:0!important;
+  padding:12px 14px!important;
+  vertical-align:top;
+}
+.compare-table td:first-child{
+  width:126px!important;
+  background:#F0EEE9!important;
+  border-left:1px solid var(--cb-3-soft)!important;
+  border-top-left-radius:0!important;border-bottom-left-radius:0!important;
+  font-family:"Helvetica Neue",Arial,sans-serif!important;
+  font-size:14px!important;
+  white-space:nowrap!important;
+}
+.compare-table td:nth-child(2){width:auto!important;}
+.compare-table td:last-child{
+  border-right:1px solid var(--cb-3-soft)!important;
+  border-top-right-radius:0!important;border-bottom-right-radius:0!important;
+}
+.compare-table .chant{
+  color:#C2607A;
+  font-style:normal;
+  font-weight:700;
+  font-size:12.5px;
+}
+.compare-table tr.highlight td{background:#F6E4E9!important;}
+.compare-table tr.highlight td:first-child{
+  background:var(--ink)!important;color:#FBFAF7!important;
+}
+.compare-table tr.highlight td:first-child::after{
+  content:"◆";color:#C2607A!important;font-size:9px;margin-left:6px;
+}
+.compare-table tr.highlight .chant{color:#8E3750;}
+
+/* ---------- 7 首字母填空 ---------- */
+.self-test .hint{
+  background:#F0EEE9;
+  border:1px solid var(--ink);
+  border-radius:0;
+  font-size:13.5px;
+  color:#4C4F55;
+}
+.fill-item{
+  background:#fff;
+  border:1px solid var(--cb-3-soft);
+  border-left:4px solid var(--ink);
+  border-radius:0;
+  box-shadow:none;
+  padding:16px 22px;
+}
+.fill-item:hover{transform:translateX(4px);box-shadow:none;}
+.fill-sentence{font-size:16px;line-height:1.95;}
+.first-letter{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  color:#C2607A;font-size:18px;
+}
+.blank{
+  border-bottom:2px solid var(--ink);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  color:transparent;
+}
+.blank:hover{background:#F6E4E9;border-color:#C2607A;}
+.blank.revealed{
+  color:var(--ink);
+  background:#F6E4E9;
+  border-color:#C2607A;
+  border-radius:0;
+}
+.fill-hint{color:#6D7076;opacity:1;font-size:13px;}
+.fill-hint b{color:#C2607A;}
+
+/* ---------- 8 造句练习 ---------- */
+.write-practice{
+  background:#F0EEE9;
+  border:1px solid var(--ink);
+  border-radius:0;
+  box-shadow:none;
+  transform:none;
+  padding:24px 26px;
+}
+.write-practice .wp-hint{color:#4C4F55;opacity:1;font-size:13.5px;}
+.write-practice textarea{
+  background:#fff;
+  border:1px solid var(--ink);
+  border-radius:0;
+  font-family:"Helvetica Neue",Arial,"PingFang SC",sans-serif;
+  font-size:15.5px;
+  box-shadow:none;
+}
+.write-practice textarea:focus{box-shadow:0 0 0 3px rgba(194,96,122,.28);}
+.wp-btn{
+  background:var(--ink);color:#FBFAF7;
+  border:0;border-radius:0;
+  box-shadow:none;
+  font-size:13px;letter-spacing:.04em;
+}
+.wp-btn:hover{transform:none;box-shadow:none;background:#C2607A;}
+.wp-btn:active{transform:translateY(1px);}
+.wp-btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink);}
+.wp-btn.ghost:hover{background:#fff;color:#C2607A;border-color:#C2607A;}
+.wp-saved{color:#C2607A;}
+
+/* ---------- 9 复习打卡 ---------- */
+.review-grid{gap:12px;}
+.review-day{
+  background:#fff;
+  border:1px solid var(--ink);
+  border-radius:0;
+  box-shadow:none;
+  padding:18px 10px 16px;
+}
+.review-day:hover{transform:translateY(-3px);box-shadow:none;}
+.review-day.done{background:#C2607A;color:#FBFAF7;}
+.review-day.done .day,.review-day.done .task{color:#FBFAF7;opacity:1;}
+.review-day.done::after{color:#FBFAF7;text-shadow:none;}
+.review-day .day{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  letter-spacing:-.02em;
+}
+.review-day:nth-child(1) .day{color:#C2607A;}
+.review-day:nth-child(2) .day{color:#24262B;}
+.review-day:nth-child(3) .day{color:#C2607A;}
+.review-day:nth-child(4) .day{color:#24262B;}
+.review-day .task{color:#55585E;opacity:1;}
+.review-tip{color:#7A7D83;opacity:1;font-style:normal;}
+
+@media (max-width:640px){
+  .hero{padding:46px 18px 36px 32px;}
+  .hero::after{width:40%;}
+  .word-anim{font-size:54px;letter-spacing:-.06em;}
+  .hero-wordline{gap:10px;}
+  .speak-btn{width:40px;height:40px;font-size:16px;}
+  .section-title{font-size:16px!important;gap:10px;}
+  .section-title .num{width:22px!important;height:22px!important;flex-basis:22px;font-size:10.5px!important;}
+  .image-card{
+    grid-template-columns:1fr!important;
+    gap:16px!important;
+    padding:20px 16px!important;
+  }
+  .image-card .ic-main{font-size:18px!important;line-height:1.62!important;}
+  .image-card .ic-sub{font-size:13px!important;line-height:1.85!important;}
+  .image-card .ic-svg svg{max-width:280px;}
+  .collocations{display:block!important;}
+  .collo{
+    grid-template-columns:1fr!important;
+    gap:4px!important;
+    padding:11px 0!important;
+  }
+  .collo .pattern{font-size:14.5px!important;}
+  .collo .meaning{
+    padding-left:0!important;
+    border-left:0!important;
+    font-size:13px!important;
+  }
+  .compare-table td{padding:9px 8px!important;}
+  .compare-table td:first-child{width:auto!important;font-size:13px!important;}
+  .fill-item{padding:14px 16px!important;}
+  .pitfall{padding:20px 14px 14px!important;}
+  .write-practice{padding:18px 16px!important;}
+}
+@media (max-width:360px){
+  .word-anim{font-size:46px;}
+}
+@media (min-width:1100px){
+  .hero{padding:88px 56px 64px 76px;}
+  .word-anim{font-size:124px;}
+}
+</style>
+</head>
+
+<body data-word="distinguish">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">WORD CARD &nbsp;/&nbsp; 011 &nbsp;/&nbsp; VERB</div>
+      <div class="hero-wordline">
+        <span class="word-anim" aria-label="distinguish">
+          <span class="letter l1">d</span><span class="letter l2">i</span><span class="letter l3">s</span><span class="letter l4">t</span><span class="letter l5">i</span><span class="letter l6">n</span><span class="letter l7">g</span><span class="letter l8">u</span><span class="letter l9">i</span><span class="letter l10">s</span><span class="letter l11">h</span>
+        </span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      </div>
+      <div class="ipa-anim" id="ipaBtn">英 /dɪˈstɪŋɡwɪʃ/ &nbsp;·&nbsp; 美 /dɪˈstɪŋɡwɪʃ/</div>
+      <div><span class="pos-anim">v.</span></div>
+      <div class="spell-hint">distinguish &nbsp; 区分 · 辨别 · 使杰出</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">dis-</span>（分开）+ <span class="stem">stingu</span>（刺、做记号）&nbsp;→&nbsp; 做上记号把两者分开 → <b>区分</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">di<span class="hl">stingu</span>ishable</div><div class="p">/dɪˈstɪŋɡwɪʃəbl/</div><div class="m">可区分的</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">di<span class="hl">stingu</span>ished</div><div class="p">/dɪˈstɪŋɡwɪʃt/</div><div class="m">杰出的；显赫的</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">di<span class="hl">stingu</span>ishing</div><div class="p">/dɪˈstɪŋɡwɪʃɪŋ/</div><div class="m">有区别的；特有的</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">indi<span class="hl">stingu</span>ishable</div><div class="p">/ˌɪndɪˈstɪŋɡwɪʃəbl/</div><div class="m">难以区分的</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">ex<span class="hl">tingu</span>ish</div><div class="p">/ɪkˈstɪŋɡwɪʃ/</div><div class="m">熄灭；扑灭</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">ex<span class="hl">tinct</span></div><div class="p">/ɪkˈstɪŋkt/</div><div class="m">灭绝的</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">in<span class="hl">stinct</span></div><div class="p">/ˈɪnstɪŋkt/</div><div class="m">本能；直觉</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">di<span class="hl">stinct</span></div><div class="p">/dɪˈstɪŋkt/</div><div class="m">不同的；清晰的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">distinguish</span> = 在两个几乎一样的东西上做记号，把它们分开。</p>
+          <p class="ic-sub">左边石墨圆、右边玫红圆，远看一模一样。<br>放大镜下才发现玫红小方块这一处差别——<br>dis-（分开）+ stingu（刺、做记号）：做了记号，才分得清。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 360 280" role="img" aria-label="两个几乎相同的圆，用放大镜找出差异">
+            <line class="dg-div" x1="180" y1="30" x2="180" y2="250"/>
+            <circle cx="108" cy="140" r="52" fill="#24262B"/>
+            <circle cx="252" cy="140" r="52" fill="#C2607A"/>
+            <circle cx="108" cy="140" r="17" fill="#F0EEE9" opacity=".88"/>
+            <circle cx="252" cy="140" r="17" fill="#F0EEE9" opacity=".88"/>
+            <rect class="dg-mark" x="96" y="168" width="10" height="10" fill="#C2607A"/>
+            <rect x="236" y="168" width="10" height="10" fill="#F0EEE9" opacity=".45"/>
+            <g class="dg-lens">
+              <circle cx="180" cy="146" r="38" fill="none" stroke="#1E2024" stroke-width="1.8"/>
+              <line x1="208" y1="174" x2="230" y2="196" stroke="#1E2024" stroke-width="2.6" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">distinguish A from B</div><div class="meaning">把 A 与 B 区分开</div></div>
+        <div class="collo"><div class="pattern">distinguish between A and B</div><div class="meaning">在 A 和 B 之间分辨</div></div>
+        <div class="collo"><div class="pattern">be distinguished for</div><div class="meaning">因……而著称</div></div>
+        <div class="collo"><div class="pattern">a distinguished scientist</div><div class="meaning">一位杰出的科学家</div></div>
+        <div class="collo"><div class="pattern">distinguish right from wrong</div><div class="meaning">分辨是非</div></div>
+        <div class="collo"><div class="pattern">clearly distinguish</div><div class="meaning">清晰地区分</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2021 四级阅读</div>
+          <p class="en">Children soon learn to <em class="hl">distinguish</em> fantasy from reality.</p>
+          <p class="cn">孩子们很快学会把幻想与现实区分开。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 六级阅读</div>
+          <p class="en">What <em class="hl">distinguishes</em> this study from earlier ones is its large sample.</p>
+          <p class="cn">这项研究与早期研究的不同之处在于样本量大。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 考研英语一</div>
+          <p class="en">She was <em class="hl">distinguished</em> for her contributions to modern physics.</p>
+          <p class="cn">她因对现代物理学的贡献而著称。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2022 专四阅读</div>
+          <p class="en">Even experts find it hard to <em class="hl">distinguish</em> the two species.</p>
+          <p class="cn">即便是专家也难以区分这两个物种。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          from 后面直接跟被排除的一方；between 后面接两者，用 and。<br>
+          <span class="wrong">distinguish between right from wrong</span> → <span class="right">distinguish right from wrong / distinguish between right and wrong</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词义</span>
+          distinguished 是"杰出的、显赫的"，不是"被区分的"。<br>
+          <span class="wrong">a distinguished mistake</span> → <span class="right">a distinguished scientist</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          词根 stingu 中间是 gu，不是 giu，也不是 gue。<br>
+          <span class="wrong">distingiush</span> → <span class="right">distinguish</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>distinguish</td><td>做记号把两物分开，常接 from / between</td><td class="chant">做记号，分得清</td>
+          </tr>
+          <tr><td>differentiate</td><td>偏学术、技术上的区分</td><td class="chant">术语上分家</td></tr>
+          <tr><td>discriminate</td><td>辨别细微差别；也可指歧视</td><td class="chant">辨得细，别歧视</td></tr>
+          <tr><td>tell</td><td>口语常用 tell A from B</td><td class="chant">口语 tell apart</td></tr>
+          <tr><td>identify</td><td>认出、确认身份，不强调对比</td><td class="chant">认出来是谁</td></tr>
+          <tr><td>distinct</td><td>形容词：截然不同的、清晰的</td><td class="chant">形容词，差得远</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Good teachers help students <span class="first-letter">d</span><span class="blank" onclick="this.classList.toggle('revealed')">istinguish</span> fact from opinion.</p>
+          <p class="fill-hint">提示：<b>distinguish fact from opinion</b>，分辨事实与观点。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">What <span class="first-letter">d</span><span class="blank" onclick="this.classList.toggle('revealed')">istinguishes</span> her from other candidates is her patience.</p>
+          <p class="fill-hint">提示：第三人称单数 <b>distinguishes</b>；distinguish A from B。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He is a <span class="first-letter">d</span><span class="blank" onclick="this.classList.toggle('revealed')">istinguished</span> scientist in the field of physics.</p>
+          <p class="fill-hint">提示：<b>a distinguished scientist</b>，杰出的科学家。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The two shades are barely <span class="first-letter">d</span><span class="blank" onclick="this.classList.toggle('revealed')">istinguishable</span> in dim light.</p>
+          <p class="fill-hint">提示：<b>be distinguishable</b>，可区分的。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The twins are almost <span class="first-letter">i</span><span class="blank" onclick="this.classList.toggle('revealed')">ndistinguishable</span> from each other.</p>
+          <p class="fill-hint">提示：<b>indistinguishable</b>，难以区分的（in- 表否定）。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>distinguish</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="It is hard to distinguish real news from rumour online."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>背 6 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>默写 5 道填空</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>区分 5 个近义词</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>用 from / between 造句</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>
