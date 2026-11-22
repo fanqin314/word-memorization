@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>maintain · 维持 · 保养 · 坚称</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   maintain 专属样式：维修工单版
+   钢青 + 黄铜；等宽字、铆钉面板、齿轮运转。
+   ========================================================================== */
+
+:root{
+  --paper:#ECEFEA;
+  --paper-2:#DCE2DA;
+  --cb-accent:#4A6B72;
+  --cb-accent-soft:#DCE7E8;
+  --cb-2:#C9973F;
+  --cb-2-soft:#F0E4CC;
+  --cb-3:#A85A46;
+  --cb-3-soft:#EEDDD7;
+  --ink:#212729;
+  --deep:#2F3B3E;
+  --cb-deep:#2F3B3E;
+  --shadow-hard:7px 7px 0 var(--ink);
+  --shadow-hard-sm:4px 4px 0 var(--ink);
+  --radius-lg:10px;
+  --radius-md:6px;
+}
+
+/* 细密铆钉网格 */
+body::before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(rgba(33,39,41,.08) 1.2px, transparent 1.4px);
+  background-size:18px 18px;
+}
+
+/* ---------- hero：钢板 + 刻度尺 ---------- */
+.hero{
+  position:relative;
+  padding:70px 44px 58px;
+  color:#F3F6F4;
+  border-bottom:4px solid var(--ink);
+  overflow:hidden;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 42px),
+    linear-gradient(160deg,#3A4A4E 0%,#2C393C 58%,#1F292B 100%);
+}
+/* 右上角工单编号水印 */
+.hero::after{
+  content:"LOG 08";
+  position:absolute;right:3%;bottom:6%;
+  font-family:Consolas,monospace;font-weight:900;
+  font-size:72px;letter-spacing:.06em;
+  color:rgba(201,151,63,.12);
+  pointer-events:none;
+}
+/* 底部黄铜刻度 */
+.hero::before{
+  content:"";
+  position:absolute;left:0;right:0;bottom:0;height:14px;
+  background-image:repeating-linear-gradient(90deg,
+    rgba(201,151,63,.75) 0 2px, transparent 2px 16px);
+  background-size:auto 8px;
+  background-repeat:repeat-x;
+  background-position:bottom;
+  opacity:.9;
+}
+.hero-inner{position:relative;z-index:2;max-width:900px;margin:0 auto;}
+
+.hero-kicker{
+  font-family:Consolas,monospace;
+  font-size:11px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--cb-2);
+  opacity:0;animation:fadeIn .7s ease-out .1s forwards;
+}
+.word-anim{
+  display:inline-block;margin-top:16px;padding-bottom:8px;
+  border-bottom:3px solid rgba(201,151,63,.7);
+  font-family:Consolas,"Courier New",monospace;
+  font-size:104px;font-weight:700;line-height:1;letter-spacing:-.03em;
+  color:#F3F6F4;
+  text-shadow:0 0 22px rgba(201,151,63,.18);
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  transform:translateX(-14px);
+  animation:slideIn .55s cubic-bezier(.2,.9,.3,1) forwards;
+  transition:transform .2s ease,color .2s ease;
+}
+.word-anim .l1{animation-delay:.08s;}
+.word-anim .l2{animation-delay:.16s;}
+.word-anim .l3{animation-delay:.24s;color:#C9973F;}
+.word-anim .l4{animation-delay:.32s;}
+.word-anim .l5{animation-delay:.40s;color:#C9973F;}
+.word-anim .l6{animation-delay:.48s;}
+.word-anim .l7{animation-delay:.56s;color:#8FB4BA;}
+.word-anim .l8{animation-delay:.64s;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
+.word-anim .letter:hover{transform:translateY(-4px);color:#E8C87D;}
+
+.word-cn{
+  margin-top:14px;
+  font-family:Consolas,monospace;
+  font-size:13px;font-weight:700;letter-spacing:.24em;
+  color:#A9C3C7;
+  opacity:0;animation:fadeIn .8s ease-out .9s forwards;
+}
+.hero-foot{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;
+  margin-top:24px;padding-top:16px;
+  border-top:1px dashed rgba(243,246,244,.26);
+  opacity:0;animation:fadeIn .8s ease-out 1.05s forwards;
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:42px;height:42px;flex:none;
+  background:var(--cb-2);border:2px solid var(--ink);border-radius:6px;
+  cursor:pointer;font-size:17px;
+  transition:transform .2s ease;
+}
+.speak-btn:hover{transform:translateY(-2px) rotate(-4deg);}
+.speak-btn.speaking{animation:speakPulse .6s ease-in-out infinite;}
+@keyframes speakPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.ipa-anim{
+  font-family:Consolas,monospace;
+  font-size:12.5px;font-weight:700;
+  padding:5px 10px;border:1px solid rgba(243,246,244,.4);
+  cursor:pointer;
+}
+.pos-anim{
+  display:inline-block;padding:4px 10px;
+  font-family:Consolas,monospace;
+  font-size:12px;font-weight:900;letter-spacing:.08em;
+  color:#1F292B;background:#8FB4BA;
+}
+.spell-hint{
+  display:inline-block;padding-left:10px;
+  border-left:3px solid var(--cb-2);
+  font-family:Consolas,monospace;
+  font-size:11px;letter-spacing:.08em;
+  color:rgba(243,246,244,.76);
+}
+@keyframes fadeIn{to{opacity:1;}}
+
+/* ---------- 区块标题：工单标签 ---------- */
+.section-title{
+  display:flex!important;align-items:center;gap:12px;
+  background:#F7F9F7!important;
+  border:2px solid var(--ink)!important;
+  border-left:10px solid var(--cb-accent)!important;
+  border-radius:4px!important;
+  box-shadow:4px 4px 0 rgba(33,39,41,.15)!important;
+  transform:none!important;
+  padding:8px 16px 8px 12px!important;
+  font-size:19px!important;
+}
+.section-title .num{
+  display:inline-grid!important;place-content:center;
+  width:26px!important;height:24px!important;
+  background:var(--cb-accent)!important;color:#fff!important;
+  border-radius:3px!important;
+  font-family:Consolas,monospace;
+  font-size:12px!important;
+}
+
+/* ---------- 词根 ---------- */
+.root-line{background:var(--cb-2-soft)!important;border-left:5px solid var(--cb-2)!important;}
+
+/* ---------- 意象卡：带铆钉的检修面板 ---------- */
+.image-card{
+  position:relative;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 290px!important;
+  gap:24px!important;align-items:center!important;
+  padding:28px 28px!important;
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.35) 0 6px, transparent 6px 12px),
+    #E3E9E4!important;
+  border:3px solid var(--ink)!important;
+  border-radius:6px!important;
+  box-shadow:var(--shadow-hard);
+  transform:none!important;
+  color:var(--ink)!important;
+}
+/* 四角铆钉 */
+.image-card::before,
+.image-card::after{
+  content:"";
+  position:absolute;width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #F7F9F7, #8A979A 70%);
+  box-shadow:0 1px 0 rgba(0,0,0,.25);
+}
+.image-card::before{top:9px;left:9px;box-shadow:calc(100% + 250px) 0 0 #8A979A, 0 calc(100% + 150px) 0 #8A979A, calc(100% + 250px) calc(100% + 150px) 0 #8A979A;}
+.ic-label{
+  display:inline-block;margin-bottom:12px;
+  font-family:Consolas,monospace;
+  font-size:10px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;
+  background:var(--ink);color:#F3F6F4;
+  padding:4px 9px;border-radius:2px;
+}
+.ic-main{font-size:18.5px;line-height:1.8;margin:0;}
+.ic-main .hl{
+  color:var(--cb-accent)!important;
+  border-bottom:3px solid var(--cb-2);
+  padding-bottom:1px;font-weight:900;
+}
+.ic-sub{margin-top:10px;font-size:13.5px;line-height:1.9;color:rgba(33,39,41,.72);}
+.ic-svg{width:100%!important;height:auto!important;background:none!important;}
+.ic-svg svg{display:block;width:100%;height:auto!important;max-width:290px;margin:0 auto;}
+
+.mt-gear{
+  fill:none;stroke:var(--cb-accent);stroke-width:9;
+  stroke-dasharray:10 8;
+  transform-box:fill-box;transform-origin:center;
+  animation:mtSpin 14s linear infinite;
+}
+.mt-gear.g2{stroke:var(--cb-2);stroke-width:7;animation:mtSpin 9s linear infinite reverse;}
+@keyframes mtSpin{to{transform:rotate(360deg);}}
+.mt-hub{fill:var(--ink);}
+.mt-drop{
+  fill:var(--cb-2);
+  animation:mtDrip 3.6s ease-in infinite;
+}
+@keyframes mtDrip{
+  0%,55%{opacity:0;transform:translateY(-10px);}
+  65%{opacity:1;transform:translateY(0);}
+  92%,100%{opacity:0;transform:translateY(46px);}
+}
+.mt-line{stroke:rgba(33,39,41,.4);stroke-width:2;stroke-dasharray:5 6;}
+.mt-note{
+  font-family:Consolas,monospace;font-size:9.5px;
+  letter-spacing:.14em;fill:rgba(33,39,41,.55);
+}
+
+/* ---------- 核心搭配：检修清单 ---------- */
+.collocations{
+  display:flex!important;flex-direction:column;gap:0!important;
+  border-top:2px solid var(--ink);
+}
+.collo{
+  counter-increment:none;
+  display:grid!important;
+  grid-template-columns:34px 1fr;
+  gap:2px 12px;
+  padding:13px 2px!important;
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px dashed rgba(33,39,41,.32)!important;
+  border-radius:0!important;
+  box-shadow:none!important;transform:none!important;
+  overflow:visible!important;
+}
+.collo::before{
+  content:"✓";
+  position:static!important;
+  left:auto!important;top:auto!important;bottom:auto!important;
+  width:22px!important;height:22px!important;
+  display:grid;place-content:center;
+  border:2px solid var(--cb-accent);
+  border-radius:3px;
+  color:var(--cb-accent);
+  font-size:12px;font-weight:900;line-height:1;
+  grid-column:1;grid-row:1 / span 2;
+  align-self:start;
+  background:#F7F9F7!important;
+}
+.collo .pattern{
+  grid-column:2;grid-row:1;
+  font-family:Consolas,monospace;
+  font-size:16px;font-weight:700;
+  color:var(--ink)!important;
+  background:none!important;
+  padding:0!important;margin:0!important;border-radius:0!important;
+  white-space:normal!important;
+}
+.collo .meaning{grid-column:2;grid-row:2;margin-top:3px;font-size:12.5px;color:rgba(33,39,41,.65);}
+
+/* ---------- 例句 ---------- */
+.real-ex{
+  background:#F7F9F7!important;
+  border:2px solid var(--ink)!important;
+  border-radius:4px!important;
+  box-shadow:4px 4px 0 rgba(33,39,41,.14)!important;
+  transform:none!important;
+}
+.real-ex .src{
+  font-family:Consolas,monospace;
+  font-size:10.5px;font-weight:700;letter-spacing:.12em;
+  color:var(--cb-accent);
+}
+.real-ex .en{font-family:Georgia,"Songti SC",serif;font-size:17px;line-height:1.8;}
+.real-ex .en .hl{
+  font-style:normal;font-weight:900;color:var(--cb-accent);
+  background:linear-gradient(180deg,transparent 62%,rgba(201,151,63,.38) 62%);
+}
+
+/* ---------- 易错 ---------- */
+.pitfall{background:var(--cb-3-soft)!important;border-radius:6px!important;transform:none!important;}
+.pitfall::before{background-image:none!important;}
+.pitfall-item{background:#F7F9F7!important;border-left-color:var(--cb-3)!important;border-radius:0 4px 4px 0!important;}
+.pitfall-item .tip{background:var(--cb-3)!important;border-radius:2px!important;}
+.pitfall-item .right{background:var(--cb-accent-soft)!important;}
+
+/* ---------- 辨析 ---------- */
+.compare-table .highlight td{background:var(--cb-accent-soft)!important;}
+.compare-table .highlight td:first-child{background:var(--cb-accent)!important;color:#fff!important;}
+.compare-table .highlight td:first-child::after{content:"★";color:#fff!important;}
+
+/* ---------- 填空 ---------- */
+.self-test .hint{background:var(--cb-2-soft)!important;border-radius:4px!important;}
+.fill-item{background:#F7F9F7!important;border-radius:4px!important;box-shadow:3px 3px 0 rgba(33,39,41,.72)!important;}
+
+/* ---------- 造句 / 打卡 ---------- */
+.write-practice{background:var(--cb-accent-soft)!important;border-radius:6px!important;transform:none!important;}
+.write-practice textarea{background:#F7F9F7!important;border-radius:4px!important;}
+.review-day{border-radius:8px!important;border:2px solid var(--ink)!important;}
+
+@media (max-width:640px){
+  .hero{padding:44px 18px 36px;}
+  .word-anim{font-size:46px;}
+  .hero::after{font-size:40px;}
+  .section-title{font-size:15.5px!important;}
+  .image-card{grid-template-columns:1fr!important;padding:20px 16px!important;gap:16px!important;}
+  .ic-main{font-size:16px;}
+}
+@media (min-width:1100px){
+  .hero{padding:88px 64px 68px;}
+  .word-anim{font-size:122px;}
+}
+</style>
+</head>
+
+<body data-word="maintain">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">SERVICE LOG &nbsp;/&nbsp; NO.08 &nbsp;/&nbsp; VERB</div>
+      <div class="word-anim" aria-label="maintain">
+        <span class="letter l1">m</span><span class="letter l2">a</span><span class="letter l3">i</span><span class="letter l4">n</span><span class="letter l5">t</span><span class="letter l6">a</span><span class="letter l7">i</span><span class="letter l8">n</span>
+      </div>
+      <div class="word-cn">维持 · 保养 · 坚称</div>
+      <div class="hero-foot">
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+        <span class="ipa-anim" id="ipaBtn">英 /meɪnˈteɪn/ &nbsp;·&nbsp; 美 /meɪnˈteɪn/</span>
+        <span class="pos-anim">v.</span>
+        <span class="spell-hint">main（手）+ tain（握住） &nbsp; 维持 · 保养 · 坚称</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">main</span>（手，来自拉丁语 manus）+ <span class="stem">tain</span>（握住）&nbsp;→&nbsp; "用手一直握住" → <b>维持 · 保养 · 坚称</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">n.</div><div class="w">maintenance</div><div class="p">/ˈmeɪntənəns/</div><div class="m">维护；保养；维持</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">obtain</div><div class="p">/əbˈteɪn/</div><div class="m">获得；得到</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">contain</div><div class="p">/kənˈteɪn/</div><div class="m">包含；容纳；控制</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">retain</div><div class="p">/rɪˈteɪn/</div><div class="m">保留；记住；聘请</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">sustain</div><div class="p">/səˈsteɪn/</div><div class="m">支撑；持续；遭受</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">detain</div><div class="p">/dɪˈteɪn/</div><div class="m">拘留；耽搁</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">attain</div><div class="p">/əˈteɪn/</div><div class="m">达到；获得</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">sustainable</div><div class="p">/səˈsteɪnəbl/</div><div class="m">可持续的</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">maintain</span> = 手上一直握着，不让它掉、不让它坏。</p>
+          <p class="ic-sub">三件事都是"握着"：<b>维持</b>一种状态、<b>保养</b>一台机器、<b>坚称</b>一个说法。<br>名词是 maintenance，拼写里藏着 main + tenance，别写成 maintainance。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+          <svg viewBox="0 0 300 300" role="img" aria-label="两个齿轮持续啮合运转，油滴落下做保养">
+            <circle class="mt-gear" cx="118" cy="118" r="62"/>
+            <circle class="mt-gear g2" cx="212" cy="186" r="40"/>
+            <circle class="mt-hub" cx="118" cy="118" r="13"/>
+            <circle class="mt-hub" cx="212" cy="186" r="9"/>
+            <path class="mt-line" d="M24 250 h252"/>
+            <path class="mt-drop" d="M150 34 c8 12 14 19 14 26 a14 14 0 0 1 -28 0 c0 -7 6 -14 14 -26z"/>
+            <text class="mt-note" x="150" y="272" text-anchor="middle">KEEP IT RUNNING</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">maintain a balance</div><div class="meaning">保持平衡</div></div>
+        <div class="collo"><div class="pattern">maintain contact with</div><div class="meaning">与……保持联系</div></div>
+        <div class="collo"><div class="pattern">maintain that…</div><div class="meaning">坚称……（后接从句）</div></div>
+        <div class="collo"><div class="pattern">maintain order</div><div class="meaning">维持秩序</div></div>
+        <div class="collo"><div class="pattern">maintain a car</div><div class="meaning">保养汽车</div></div>
+        <div class="collo"><div class="pattern">maintain standards</div><div class="meaning">维持标准 / 水准</div></div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2021 考研英语 · 阅读改编</div>
+          <p class="en">It is hard to <em class="hl">maintain</em> a healthy balance between work and rest.</p>
+          <p class="cn">在工作和休息之间保持健康的平衡很难。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 六级 · 听力改编</div>
+          <p class="en">The two countries have <em class="hl">maintained</em> close contact for decades.</p>
+          <p class="cn">两国几十年来一直保持着密切联系。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 专四 · 完形改编</div>
+          <p class="en">The witness <em class="hl">maintained</em> that he had never seen the man before.</p>
+          <p class="cn">证人坚称自己从未见过那个人。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2017 四级 · 阅读改编</div>
+          <p class="en">Regular <em class="hl">maintenance</em> can double the life of a machine.</p>
+          <p class="cn">定期保养能让机器的寿命延长一倍。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          名词 maintenance 中间是 ten，不是 tain。<br>
+          <span class="wrong">maintainance</span> → <span class="right">maintenance</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">及物</span>
+          maintain 是及物动词，后面必须带宾语，不能单独说 "it maintains"。<br>
+          <span class="wrong">The machine maintains well.</span> → <span class="right">The machine is well maintained.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          remain 是"保持、仍然是"（不及物）；maintain 是"使……保持"（及物）。<br>
+          <span class="wrong">maintain silent</span> → <span class="right">remain silent / maintain silence</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight">
+            <td>maintain</td><td>使某物保持原状；保养；坚称</td><td class="chant">握着不放</td>
+          </tr>
+          <tr><td>remain</td><td>自己保持某状态，不及物</td><td class="chant">remain 自己待着</td></tr>
+          <tr><td>obtain</td><td>通过努力获得</td><td class="chant">obtain 拿到手</td></tr>
+          <tr><td>contain</td><td>里面装着、包含</td><td class="chant">contain 装得下</td></tr>
+          <tr><td>retain</td><td>保留住、不流失</td><td class="chant">retain 留住</td></tr>
+          <tr><td>sustain</td><td>从下面托住，强调持续支撑</td><td class="chant">sustain 托住</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">It is important to <span class="first-letter">m</span><span class="blank" onclick="this.classList.toggle('revealed')">aintain</span> a balance between study and life.</p>
+          <p class="fill-hint">提示：<b>maintain a balance</b>，保持平衡。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">We should <span class="first-letter">m</span><span class="blank" onclick="this.classList.toggle('revealed')">aintain</span> contact with our old friends.</p>
+          <p class="fill-hint">提示：<b>maintain contact with</b>，与……保持联系。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Regular <span class="first-letter">m</span><span class="blank" onclick="this.classList.toggle('revealed')">aintenance</span> keeps the equipment safe.</p>
+          <p class="fill-hint">提示：名词 <b>maintenance</b>，保养。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">He <span class="first-letter">m</span><span class="blank" onclick="this.classList.toggle('revealed')">aintained</span> that the report was accurate.</p>
+          <p class="fill-hint">提示：过去式 <b>maintained</b>；maintain that…，坚称。</p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The police were called in to <span class="first-letter">m</span><span class="blank" onclick="this.classList.toggle('revealed')">aintain</span> order.</p>
+          <p class="fill-hint">提示：<b>maintain order</b>，维持秩序。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>maintain</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="She maintains a strict routine: run at six, read at nine."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>背 6 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>默写 5 道填空</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>用它造 3 句</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>复盘易混词</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>
