@@ -1,0 +1,103 @@
+{
+  "word": "evaluate",
+  "ipaUK": "ɪˈvæljueɪt",
+  "ipaUS": "ɪˈvæljueɪt",
+  "pos": "v.",
+  "gloss": "评估 · 评价 · 估算",
+  "theme": "radio",
+  "root": {
+    "stem": "e- + valu + -ate",
+    "origin": "valere＝有价值",
+    "sense": "把价值算清楚"
+  },
+  "family": [
+    { "pos": "v.", "w": "evaluate", "p": "/ɪˈvæljueɪt/", "m": "评估；评价" },
+    { "pos": "n.", "w": "evaluation", "p": "/ɪˌvæljuˈeɪʃn/", "m": "评估；评价" },
+    { "pos": "n.", "w": "value", "p": "/ˈvæljuː/", "m": "价值；重视" },
+    { "pos": "adj.", "w": "valuable", "p": "/ˈvæljuəbl/", "m": "有价值的；宝贵的" },
+    { "pos": "adj.", "w": "invaluable", "p": "/ɪnˈvæljuəbl/", "m": "无价的；极宝贵的" },
+    { "pos": "adj.", "w": "valid", "p": "/ˈvælɪd/", "m": "有效的；合理的" },
+    { "pos": "v.", "w": "validate", "p": "/ˈvælɪdeɪt/", "m": "验证；使生效" },
+    { "pos": "adj.", "w": "equivalent", "p": "/ɪˈkwɪvələnt/", "m": "等价的；相当的" }
+  ],
+  "scene": {
+    "main": "两只量筒并排对照同一批样品，最后在评分表上逐项打分",
+    "sub": "e-（向外）+ valu（价值）+ -ate → 把价值一项项算清楚：评估、评价。",
+    "template": "gauges",
+    "labels": ["打分", "对照"]
+  },
+  "collocations": [
+    { "pattern": "evaluate the results", "meaning": "评估结果" },
+    { "pattern": "evaluate performance", "meaning": "评估表现" },
+    { "pattern": "a fair evaluation", "meaning": "公正的评价" },
+    { "pattern": "evaluate the impact", "meaning": "评估影响" },
+    { "pattern": "evaluate against", "meaning": "对照…进行评估" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 阅读",
+      "en": "We need more data to {{w}} the policy's impact.",
+      "cn": "我们需要更多数据来评估这项政策的影响。"
+    },
+    {
+      "src": "2019 六级 · 听力",
+      "en": "Each proposal will be {{w}}d by an independent panel.",
+      "cn": "每份提案都将由一个独立小组评估。"
+    },
+    {
+      "src": "2021 考研 · 翻译",
+      "en": "Teachers {{w}} student work against a clear standard.",
+      "cn": "教师依据明确的标准评价学生作业。"
+    },
+    {
+      "src": "2018 雅思 · 写作",
+      "en": "It is hard to {{w}} progress without clear goals.",
+      "cn": "没有明确目标，很难评估进展。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "evaluate 开头是 e-v-a-l，不要多写一个 i 变成 ivaluate。",
+      "wrong": "ivaluate",
+      "right": "evaluate"
+    },
+    {
+      "tip": "词性",
+      "text": "名词是 evaluation，不是 evalution。",
+      "wrong": "evalution",
+      "right": "evaluation"
+    },
+    {
+      "tip": "搭配",
+      "text": "evaluate 是及物动词，直接跟宾语，不加 on。",
+      "wrong": "evaluate on the results",
+      "right": "evaluate the results"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["evaluate", "按标准衡量价值或效果", "evaluate the results"],
+      ["assess", "评估状况、风险，偏专业", "assess the risk"],
+      ["estimate", "估算数量，不要求精确", "estimate the cost"],
+      ["judge", "下判断、评判人", "judge by appearance"],
+      ["measure", "测量具体数值", "measure the length"],
+      ["appraise", "专业估价（房产、绩效）", "appraise the house"]
+    ],
+    "chant": "evaluate 看效果，assess 看风险，estimate 猜数值，measure 量尺寸。"
+  },
+  "fills": [
+    { "sentence": "We need more data to ___ the policy's impact.", "answer": "evaluate", "hint": "不定式后动词原形" },
+    { "sentence": "Each proposal will be ___ by an independent panel.", "answer": "evaluated", "hint": "被动语态：be + 过去分词" },
+    { "sentence": "The ___ of teachers' performance is a sensitive issue.", "answer": "evaluation", "hint": "名词：评估" },
+    { "sentence": "It is hard to ___ progress without clear standards.", "answer": "evaluate", "hint": "不定式后动词原形" },
+    { "sentence": "Researchers are ___ the effects of the new drug.", "answer": "evaluating", "hint": "are + -ing" }
+  ],
+  "review": [
+    "说出 evaluate 的 3 个搭配",
+    "区分 evaluate / assess / estimate",
+    "默写 valu 词族 8 个词",
+    "遮住释义，复述两只量筒对照的画面"
+  ],
+  "writeSample": "Evaluate the process, not just the result."
+}

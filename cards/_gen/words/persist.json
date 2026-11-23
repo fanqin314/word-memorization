@@ -1,0 +1,103 @@
+{
+  "word": "persist",
+  "ipaUK": "pəˈsɪst",
+  "ipaUS": "pərˈsɪst",
+  "pos": "v.",
+  "gloss": "坚持 · 持续存在",
+  "theme": "puzzle",
+  "root": {
+    "stem": "per- + sist",
+    "origin": "per-＝始终，sistere＝站立",
+    "sense": "一直站着不倒"
+  },
+  "family": [
+    { "pos": "v.", "w": "persist", "p": "/pəˈsɪst/", "m": "坚持；持续存在" },
+    { "pos": "n.", "w": "persistence", "p": "/pəˈsɪstəns/", "m": "坚持不懈；持续" },
+    { "pos": "adj.", "w": "persistent", "p": "/pəˈsɪstənt/", "m": "持续的；执着的" },
+    { "pos": "v.", "w": "insist", "p": "/ɪnˈsɪst/", "m": "坚持主张；坚持要求" },
+    { "pos": "v.", "w": "consist", "p": "/kənˈsɪst/", "m": "由…组成" },
+    { "pos": "v.", "w": "resist", "p": "/rɪˈzɪst/", "m": "抵抗；抵制" },
+    { "pos": "v.", "w": "assist", "p": "/əˈsɪst/", "m": "协助；帮助" },
+    { "pos": "v.", "w": "subsist", "p": "/səbˈsɪst/", "m": "维持生存" }
+  ],
+  "scene": {
+    "main": "一个人在环形跑道上绕圈，脚步不停，圈数一点点累积",
+    "sub": "per-（始终）+ sist（站立）→ 一直站着不倒下：坚持、持续。",
+    "template": "loop",
+    "labels": ["不停", "累积"]
+  },
+  "collocations": [
+    { "pattern": "persist in doing", "meaning": "坚持做某事" },
+    { "pattern": "persist with", "meaning": "坚持（某项工作）" },
+    { "pattern": "a persistent problem", "meaning": "顽固的问题" },
+    { "pattern": "persist for years", "meaning": "持续多年" },
+    { "pattern": "persistent efforts", "meaning": "持续的努力" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 阅读",
+      "en": "If the symptoms {{w}}, see a doctor immediately.",
+      "cn": "如果症状持续，请立即就医。"
+    },
+    {
+      "src": "2019 六级 · 写作",
+      "en": "She {{w}}ed in her research despite repeated failures.",
+      "cn": "尽管屡次失败，她仍坚持研究。"
+    },
+    {
+      "src": "2021 考研 · 完形",
+      "en": "A {{w}}ent gap between rich and poor remains.",
+      "cn": "贫富之间的顽固差距依然存在。"
+    },
+    {
+      "src": "2018 雅思 · 口语",
+      "en": "Old habits can {{w}} long after they are formed.",
+      "cn": "旧习惯形成后可能长期存在。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "搭配",
+      "text": "persist 表示坚持做某事用 persist in doing，不用 persist to do。",
+      "wrong": "persist to ask",
+      "right": "persist in asking"
+    },
+    {
+      "tip": "辨析",
+      "text": "persist 是坚持做或持续存在，insist 是坚持说或坚持要求。",
+      "wrong": "She persisted that she was right.",
+      "right": "She insisted that she was right."
+    },
+    {
+      "tip": "拼写",
+      "text": "形容词 persistent 结尾是 -ent，不是 -ant。",
+      "wrong": "persistant",
+      "right": "persistent"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["persist", "坚持做；问题持续存在", "persist in asking"],
+      ["insist", "坚持说、坚持要求", "insist on leaving"],
+      ["persevere", "面对困难仍不懈努力", "persevere in research"],
+      ["continue", "继续，语气中性", "continue the work"],
+      ["last", "持续一段时间", "the rain lasted"],
+      ["endure", "忍受；长期存在", "endure the pain"]
+    ],
+    "chant": "persist 不停，insist 不改口，persevere 不放弃。"
+  },
+  "fills": [
+    { "sentence": "If the pain ___ , stop taking the medicine.", "answer": "persists", "hint": "第三人称单数" },
+    { "sentence": "She ___ in her research despite repeated failures.", "answer": "persisted", "hint": "过去式：坚持了" },
+    { "sentence": "His ___ finally paid off.", "answer": "persistence", "hint": "名词：坚持" },
+    { "sentence": "The country faces a ___ shortage of skilled workers.", "answer": "persistent", "hint": "形容词：持续的" },
+    { "sentence": "Old habits can ___ long after they are formed.", "answer": "persist", "hint": "情态动词后用原形" }
+  ],
+  "review": [
+    "说出 persist 的 3 个搭配",
+    "区分 persist / insist / persevere",
+    "默写 sist 词族 8 个词",
+    "遮住释义，复述跑道绕圈的画​面"
+  ],
+  "writeSample": "If you persist in small daily efforts, the results will persist."
+}

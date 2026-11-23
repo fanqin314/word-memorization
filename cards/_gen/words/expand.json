@@ -1,0 +1,103 @@
+{
+  "word": "expand",
+  "ipaUK": "ɪkˈspænd",
+  "ipaUS": "ɪkˈspænd",
+  "pos": "v.",
+  "gloss": "扩大 · 扩张 · 展开",
+  "theme": "neon",
+  "root": {
+    "stem": "ex- + pand",
+    "origin": "ex-＝向外，pandere＝展开",
+    "sense": "向外摊开"
+  },
+  "family": [
+    { "pos": "v.", "w": "expand", "p": "/ɪkˈspænd/", "m": "扩大；膨胀；展开" },
+    { "pos": "n.", "w": "expansion", "p": "/ɪkˈspænʃn/", "m": "扩张；膨胀" },
+    { "pos": "adj.", "w": "expansive", "p": "/ɪkˈspænsɪv/", "m": "广阔的；扩张的" },
+    { "pos": "n.", "w": "expanse", "p": "/ɪkˈspæns/", "m": "广阔区域" },
+    { "pos": "n.", "w": "pandemic", "p": "/pænˈdemɪk/", "m": "大流行病；大范围流行的" },
+    { "pos": "n.", "w": "panorama", "p": "/ˌpænəˈrɑːmə/", "m": "全景；全貌" },
+    { "pos": "n.", "w": "panacea", "p": "/ˌpænəˈsiːə/", "m": "万灵药；万能方案" },
+    { "pos": "adj.", "w": "spacious", "p": "/ˈspeɪʃəs/", "m": "宽敞的" }
+  ],
+  "scene": {
+    "main": "一滴墨落进清水，圆圈一圈圈向外扩散，越铺越大",
+    "sub": "ex-（向外）+ pand（展开）→ 向外摊开：扩大、扩张。",
+    "template": "ripple",
+    "labels": ["扩散", "扩大"]
+  },
+  "collocations": [
+    { "pattern": "expand the market", "meaning": "扩大市场" },
+    { "pattern": "expand production", "meaning": "扩大生产" },
+    { "pattern": "expand into", "meaning": "扩展到（新领域）" },
+    { "pattern": "rapid expansion", "meaning": "快速扩张" },
+    { "pattern": "expand one's horizons", "meaning": "开阔眼界" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 阅读",
+      "en": "The company plans to {{w}} into overseas markets.",
+      "cn": "这家公司计划向海外市场扩张。"
+    },
+    {
+      "src": "2019 六级 · 阅读",
+      "en": "Online sales {{w}}ed by 40 percent last year.",
+      "cn": "去年线上销售额增长了 40%。"
+    },
+    {
+      "src": "2021 考研 · 翻译",
+      "en": "The city has {{w}}ed rapidly over the past decade.",
+      "cn": "这座城市在过去十年里迅速扩张。"
+    },
+    {
+      "src": "2018 雅思 · 写作",
+      "en": "Reading widely helps {{w}} your horizons.",
+      "cn": "广泛阅读有助于开阔眼界。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "expand 结尾是 -and；expend 是“花费”，两个词别混。",
+      "wrong": "expended the market",
+      "right": "expanded the market"
+    },
+    {
+      "tip": "搭配",
+      "text": "扩展到新市场用 expand into，不用 expand to。",
+      "wrong": "expand to overseas markets",
+      "right": "expand into overseas markets"
+    },
+    {
+      "tip": "词性",
+      "text": "名词扩张是 expansion，没有 expandment 这个词。",
+      "wrong": "expandment",
+      "right": "expansion"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["expand", "体积、规模、业务变大", "expand the market"],
+      ["extend", "延长长度或期限", "extend the deadline"],
+      ["enlarge", "放大尺寸、照片", "enlarge the photo"],
+      ["broaden", "拓宽范围、眼界", "broaden your horizons"],
+      ["stretch", "拉伸材料或身体", "stretch the rope"],
+      ["inflate", "充气膨胀；物价上涨", "inflate the balloon"]
+    ],
+    "chant": "规模 expand，长度 extend，尺寸 enlarge，眼界 broaden。"
+  },
+  "fills": [
+    { "sentence": "The company plans to ___ into overseas markets.", "answer": "expand", "hint": "不定式后动词原形" },
+    { "sentence": "Online sales ___ by 40% last year.", "answer": "expanded", "hint": "过去式：扩大了" },
+    { "sentence": "Rapid ___ has put pressure on the city's roads.", "answer": "expansion", "hint": "名词：扩张" },
+    { "sentence": "The ___ of the desert can be seen from space.", "answer": "expanse", "hint": "名词：广阔区域" },
+    { "sentence": "They are ___ their research into new areas.", "answer": "expanding", "hint": "are + -ing" }
+  ],
+  "review": [
+    "说出 expand 的 3 个搭配",
+    "区分 expand / extend / broaden",
+    "默写 pand 词族 8 个词",
+    "遮住释义，复述墨水扩散的画面"
+  ],
+  "writeSample": "Small conversations can expand into lasting friendships."
+}

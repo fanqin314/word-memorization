@@ -1,0 +1,103 @@
+{
+  "word": "prevent",
+  "ipaUK": "prɪˈvent",
+  "ipaUS": "prɪˈvent",
+  "pos": "v.",
+  "gloss": "阻止 · 预防 · 妨碍",
+  "theme": "seal",
+  "root": {
+    "stem": "pre- + vent",
+    "origin": "pre-＝在前，venire＝来",
+    "sense": "先来一步，挡在门口"
+  },
+  "family": [
+    { "pos": "v.", "w": "prevent", "p": "/prɪˈvent/", "m": "阻止；预防" },
+    { "pos": "n.", "w": "prevention", "p": "/prɪˈvenʃn/", "m": "预防；阻止" },
+    { "pos": "adj.", "w": "preventive", "p": "/prɪˈventɪv/", "m": "预防性的" },
+    { "pos": "v.", "w": "convene", "p": "/kənˈviːn/", "m": "召集；开会" },
+    { "pos": "n.", "w": "convention", "p": "/kənˈvenʃn/", "m": "大会；惯例" },
+    { "pos": "v.", "w": "invent", "p": "/ɪnˈvent/", "m": "发明；编造" },
+    { "pos": "n.", "w": "avenue", "p": "/ˈævənjuː/", "m": "大街；途径" },
+    { "pos": "v.", "w": "intervene", "p": "/ˌɪntəˈviːn/", "m": "干预；介入" }
+  ],
+  "scene": {
+    "main": "门卫先一步跨到门口，把冲过来的人稳稳拦住",
+    "sub": "pre-（在前）+ vent（来）→ 先来一步挡住：阻止、预防。",
+    "template": "shield",
+    "labels": ["挡住", "预防"]
+  },
+  "collocations": [
+    { "pattern": "prevent sb from doing", "meaning": "阻止某人做某事" },
+    { "pattern": "prevent the spread of", "meaning": "阻止…蔓延" },
+    { "pattern": "prevent disease", "meaning": "预防疾病" },
+    { "pattern": "take preventive measures", "meaning": "采取预防措施" },
+    { "pattern": "prevent accidents", "meaning": "防止事故" }
+  ],
+  "examples": [
+    {
+      "src": "2021 考研 · 阅读",
+      "en": "Regular exercise can help {{w}} heart disease.",
+      "cn": "规律运动有助于预防心脏病。"
+    },
+    {
+      "src": "2019 六级 · 翻译",
+      "en": "Heavy rain {{w}}ed the rescue team from reaching the village.",
+      "cn": "暴雨使救援队无法抵达村庄。"
+    },
+    {
+      "src": "2020 考研 · 完形",
+      "en": "Nothing could {{w}} him from speaking his mind.",
+      "cn": "什么也阻止不了他说出自己的想法。"
+    },
+    {
+      "src": "2018 雅思 · 写作",
+      "en": "Stricter rules are needed to {{w}} the spread of false information.",
+      "cn": "需要更严格的规则来阻止虚假信息传播。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "搭配",
+      "text": "prevent sb from doing sth 中的 from 在书面语里不能省。",
+      "wrong": "prevent him to leave",
+      "right": "prevent him from leaving"
+    },
+    {
+      "tip": "拼写",
+      "text": "prevent 是 p-r-e-v-e-n-t，开头是 pre-，别写成 pervent。",
+      "wrong": "pervent",
+      "right": "prevent"
+    },
+    {
+      "tip": "词性",
+      "text": "名词是 prevention，形容词是 preventive，没有 preventful。",
+      "wrong": "preventful measures",
+      "right": "preventive measures"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["prevent", "提前设防，阻止发生", "prevent disease"],
+      ["stop", "直接让动作停下", "stop the machine"],
+      ["avoid", "自己避开，不接触", "avoid the crowd"],
+      ["prohibit", "规则明令禁止", "prohibit smoking"],
+      ["hinder", "拖慢、妨碍进程", "hinder progress"],
+      ["deter", "吓阻，让人不敢做", "deter crime"]
+    ],
+    "chant": "prevent 先挡，stop 叫停，avoid 绕开，prohibit 明令禁止。"
+  },
+  "fills": [
+    { "sentence": "Vaccines help ___ the spread of the virus.", "answer": "prevent", "hint": "help do sth，动词原形" },
+    { "sentence": "The injury ___ him from playing in the final.", "answer": "prevented", "hint": "过去式：阻止了" },
+    { "sentence": "Better road design can ___ many accidents.", "answer": "prevent", "hint": "情态动词后用原形" },
+    { "sentence": "___ measures are cheaper than treatment.", "answer": "Preventive", "hint": "形容词：预防性的" },
+    { "sentence": "The government promised to ___ the crisis from worsening.", "answer": "prevent", "hint": "prevent sth from doing" }
+  ],
+  "review": [
+    "说出 prevent 的 3 个搭配",
+    "区分 prevent / stop / avoid",
+    "默写 vent 词族 8 个词",
+    "遮住释义，复述门卫拦人的画面"
+  ],
+  "writeSample": "Clear rules prevent small mistakes from becoming big problems."
+}

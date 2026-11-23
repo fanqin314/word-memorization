@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>persist · 坚持 · 持续存在</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   persist —— 由 _gen/build.js 生成（theme: puzzle）
+   改动请改 JSON / 主题，不要手改本文件。
+   ========================================================================== */
+/* ==========================================================================
+   _hero.css —— 生成卡公共骨架（hero / 意象 SVG / 组件纠偏 / 响应式）
+   主题文件只负责：:root 配色、body::before 底纹、.hero 背景、少量装饰。
+   ========================================================================== */
+
+.hero{
+  position:relative;overflow:hidden;
+  border-bottom:3px solid var(--ink);
+  background:var(--hero-bg,linear-gradient(180deg,#F4E3D4 0%,#E2C2A6 100%));
+  color:var(--hero-ink,var(--ink));
+}
+.hero-inner{
+  position:relative;z-index:2;
+  padding:var(--hero-pad,76px 64px 56px);
+  text-align:var(--hero-align,center);
+}
+.word-row{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.word-anim{
+  display:inline-block;
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:var(--word-size,100px);font-weight:900;line-height:1.02;letter-spacing:-.02em;
+  color:var(--hero-word,var(--hero-ink,var(--ink)));
+  filter:drop-shadow(6px 6px 0 var(--word-shadow,var(--cb-accent)));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:mtLetter .9s cubic-bezier(.4,1.4,.6,1) forwards;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+}
+.word-anim .letter:nth-child(1){animation-delay:.05s}
+.word-anim .letter:nth-child(2){animation-delay:.13s}
+.word-anim .letter:nth-child(3){animation-delay:.21s}
+.word-anim .letter:nth-child(4){animation-delay:.29s}
+.word-anim .letter:nth-child(5){animation-delay:.37s}
+.word-anim .letter:nth-child(6){animation-delay:.45s}
+.word-anim .letter:nth-child(7){animation-delay:.53s}
+.word-anim .letter:nth-child(8){animation-delay:.61s}
+.word-anim .letter:nth-child(9){animation-delay:.69s}
+.word-anim .letter:nth-child(10){animation-delay:.77s}
+.word-anim .letter:nth-child(11){animation-delay:.85s}
+.word-anim .letter:nth-child(12){animation-delay:.93s}
+.word-anim .letter:nth-child(13){animation-delay:1.01s}
+.word-anim .letter:nth-child(14){animation-delay:1.09s}
+.word-anim .letter:nth-child(15){animation-delay:1.17s}
+.word-anim .letter:nth-child(16){animation-delay:1.25s}
+@keyframes mtLetter{
+  0%{opacity:0;transform:translateY(-34px) scale(1.45) rotate(-7deg);filter:blur(7px);}
+  60%{opacity:1;filter:blur(0);transform:translateY(3px) scale(.95);}
+  100%{opacity:1;filter:blur(0);transform:translateY(0) scale(1);}
+}
+@keyframes mtLetterBounce{
+  0%{opacity:0;transform:translateY(-30px) scale(.6);}
+  62%{opacity:1;transform:translateY(6px) scale(1.08);}
+  100%{opacity:1;transform:translateY(0) scale(1);}
+}
+.word-anim .letter:hover{color:var(--cb-accent);transform:translateY(-7px) scale(1.08);}
+
+.hero-meta{
+  margin-top:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.ipa-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:14px;font-weight:700;letter-spacing:.05em;
+  background:var(--cb-2-soft);color:var(--hero-ink,var(--ink));
+  border:2.5px solid var(--ink);padding:5px 16px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-accent);cursor:pointer;transform:rotate(-1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .86s forwards;
+}
+.pos-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--deep);color:var(--paper);
+  padding:5px 14px;border-radius:999px;border:2px solid var(--ink);
+  transform:rotate(1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .98s forwards;
+}
+.spell-hint{
+  display:inline-block;margin-top:20px;padding:8px 18px;
+  font-size:12px;letter-spacing:.12em;
+  background:var(--cb-3-soft);border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-.8deg);
+  color:var(--hero-hint,var(--ink));
+  opacity:0;animation:mtUp .7s ease-out 1.12s forwards;
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;flex-shrink:0;
+  background:var(--cb-accent);border:3px solid var(--ink);border-radius:50%;
+  cursor:pointer;font-size:19px;
+  box-shadow:4px 4px 0 var(--cb-3);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(10deg);box-shadow:6px 6px 0 var(--cb-3);}
+.speak-btn.speaking{animation:mtPulse .6s ease-in-out infinite;}
+@keyframes mtPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14) rotate(-5deg);}}
+@keyframes mtUp{0%{opacity:0;transform:translateY(9px);}100%{opacity:1;transform:translateY(0);}}
+
+/* 意象卡 SVG 纠偏：避免继承尺寸把画面拉变形 */
+.image-card .ic-svg{width:100%!important;height:auto!important;}
+.image-card .ic-svg svg{width:100%!important;height:auto!important;max-width:340px;overflow:visible;}
+
+/* 搭配条：主题若要自绘装饰请用 ::after，base 的 ::before 色条保留 */
+.collo .pattern{white-space:normal!important;}
+
+/* 意象卡：暗底 + 主题辉光 + 点阵，给插画留出层次 */
+.image-card::before{
+  content:"";position:absolute;right:-80px;top:-90px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,var(--cb-accent),transparent 66%);
+  opacity:.2;pointer-events:none;z-index:0;
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,252,245,.18) 1px,transparent 1.4px);
+  background-size:18px 18px;opacity:.45;
+  -webkit-mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+  mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+}
+.image-card .ic-text,.image-card .ic-svg{position:relative;z-index:2;}
+
+/* 场景插画：浅色描边 + 标注芯片，保证深色卡上看得清 */
+.ic-svg{--sc-line:#FBF6EC;--sc-dim:rgba(251,246,236,.55);}
+.sc-pop{transform-origin:center;animation:scPop 5.6s cubic-bezier(.34,1.56,.64,1) infinite;}
+@keyframes scPop{
+  0%,8%{opacity:0;transform:translateY(14px) scale(.86) rotate(-3deg);}
+  24%,76%{opacity:1;transform:translateY(0) scale(1) rotate(0);}
+  92%,100%{opacity:0;transform:translateY(-6px) scale(.97);}
+}
+.sc-float{animation:scFloat 5.6s ease-in-out infinite;}
+@keyframes scFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.sc-link{fill:none;stroke:var(--sc-dim);stroke-width:1.5;stroke-dasharray:4 5;animation:scLink 5.6s linear infinite;}
+@keyframes scLink{to{stroke-dashoffset:-18;}}
+.sc-label text{font-family:"Songti SC","Noto Serif SC",serif;font-size:10px;font-weight:700;fill:var(--ink);}
+
+@media (max-width:640px){
+  .hero-inner{padding:46px 20px 34px;}
+  .word-anim{font-size:var(--word-size-sm,54px);}
+  .word-row{gap:8px;}
+  .speak-btn{width:38px;height:38px;font-size:16px;}
+  .hero-meta{gap:8px;}
+  .ipa-anim{font-size:12px;}
+  .image-card{grid-template-columns:1fr!important;padding:26px 20px;}
+}
+
+/* 主题：拼图工坊 —— 米色纸、青绿主色、字母弹跳入场、右下拼图块 */
+:root{
+  --paper:#F4EDDF;--paper-2:#E8DDC8;
+  --cb-accent:#2F6F73;--cb-accent-soft:#DCEBE9;
+  --cb-2:#C4763C;--cb-2-soft:#F3E2D3;
+  --cb-3:#7C8C58;--cb-3-soft:#E8EDDA;
+  --ink:#22201B;--deep:#2A3B34;--cb-deep:#2A3B34;
+  --hero-bg:linear-gradient(160deg,#F1E6D2 0%,#E9D8BC 100%);
+  --hero-ink:#22201B;--hero-word:#22201B;--word-shadow:#2F6F73;
+  --hero-pad:84px 54px 66px;
+  --word-size:110px;--word-size-sm:52px;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='74' height='74'%3E%3Crect x='7' y='7' width='60' height='60' rx='14' fill='none' stroke='%232F6F73' stroke-opacity='0.12' stroke-width='2'/%3E%3C/svg%3E");
+  background-size:74px 74px;
+}
+.hero::after{
+  content:"";position:absolute;right:-34px;bottom:-48px;width:190px;height:190px;
+  border-radius:26px;background:var(--cb-2-soft);
+  border:3px solid var(--ink);transform:rotate(14deg);
+}
+.word-anim .letter:nth-child(even){transform-origin:bottom;animation-name:mtLetterBounce;}
+.hero .ipa-anim{transform:rotate(-2deg);}
+.hero .pos-anim{transform:rotate(2deg);}
+.hero .spell-hint{transform:rotate(-1deg);}
+</style>
+</head>
+
+<body data-word="persist">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="word-row">
+        <span class="word-anim" aria-label="persist"><span class="letter l1">p</span><span class="letter l2">e</span><span class="letter l3">r</span><span class="letter l4">s</span><span class="letter l5">i</span><span class="letter l6">s</span><span class="letter l7">t</span></span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      </div>
+      <div class="hero-meta">
+        <div class="ipa-anim" id="ipaBtn">英 /pəˈsɪst/ &nbsp;·&nbsp; 美 /pərˈsɪst/</div>
+        <div class="pos-anim">v.</div>
+      </div>
+      <div class="spell-hint">persist &nbsp; 坚持 · 持续存在</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">per- + sist</span>（per-＝始终，sistere＝站立）&nbsp;→&nbsp; "一直站着不倒" → <b>坚持</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">v.</div><div class="w">persist</div><div class="p">/pəˈsɪst/</div><div class="m">坚持；持续存在</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">persistence</div><div class="p">/pəˈsɪstəns/</div><div class="m">坚持不懈；持续</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">persistent</div><div class="p">/pəˈsɪstənt/</div><div class="m">持续的；执着的</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">insist</div><div class="p">/ɪnˈsɪst/</div><div class="m">坚持主张；坚持要求</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">consist</div><div class="p">/kənˈsɪst/</div><div class="m">由…组成</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">resist</div><div class="p">/rɪˈzɪst/</div><div class="m">抵抗；抵制</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">assist</div><div class="p">/əˈsɪst/</div><div class="m">协助；帮助</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">subsist</div><div class="p">/səbˈsɪst/</div><div class="m">维持生存</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">persist</span> = 一个人在环形跑道上绕圈，脚步不停，圈数一点点累积。</p>
+          <p class="ic-sub">per-（始终）+ sist（站立）→ 一直站着不倒下：坚持、持续。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+      <svg viewBox="0 0 360 280" role="img" aria-hidden="true"><circle cx="180" cy="142" r="112" fill="var(--cb-accent)" opacity=".13"/><circle cx="180" cy="142" r="104" fill="none" stroke="var(--sc-dim)" stroke-width="1.5" stroke-dasharray="3 8"/>
+          <path class="sc-pop" d="M180 74a66 66 0 1 1-46-17" fill="none" stroke="var(--sc-line)" stroke-width="4" stroke-linecap="round"/>
+          <path d="M134 57l-4 22 22-6" fill="none" stroke="var(--cb-accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle class="sc-float" cx="180" cy="74" r="8" fill="var(--cb-accent)"/>
+          <g stroke="var(--sc-line)" stroke-width="2.5" stroke-linecap="round" opacity=".55">
+            <path d="M180 120v14M180 176v14M124 150h-14M250 150h-14"/>
+          </g>
+          <g class="sc-label"><rect x="160" y="227" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="180" y="242" text-anchor="middle">不停</text></g>
+          <g class="sc-label"><rect x="272" y="81" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="292" y="96" text-anchor="middle">累积</text></g></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">persist in doing</div><div class="meaning">坚持做某事</div></div>
+        <div class="collo"><div class="pattern">persist with</div><div class="meaning">坚持（某项工作）</div></div>
+        <div class="collo"><div class="pattern">a persistent problem</div><div class="meaning">顽固的问题</div></div>
+        <div class="collo"><div class="pattern">persist for years</div><div class="meaning">持续多年</div></div>
+        <div class="collo"><div class="pattern">persistent efforts</div><div class="meaning">持续的努力</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2020 考研 · 阅读</div>
+          <p class="en">If the symptoms <em class="hl">persist</em>, see a doctor immediately.</p>
+          <p class="cn">如果症状持续，请立即就医。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 六级 · 写作</div>
+          <p class="en">She <em class="hl">persist</em>ed in her research despite repeated failures.</p>
+          <p class="cn">尽管屡次失败，她仍坚持研究。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 考研 · 完形</div>
+          <p class="en">A <em class="hl">persist</em>ent gap between rich and poor remains.</p>
+          <p class="cn">贫富之间的顽固差距依然存在。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2018 雅思 · 口语</div>
+          <p class="en">Old habits can <em class="hl">persist</em> long after they are formed.</p>
+          <p class="cn">旧习惯形成后可能长期存在。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          persist 表示坚持做某事用 persist in doing，不用 persist to do。<br>
+          <span class="wrong">persist to ask</span> → <span class="right">persist in asking</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">辨析</span>
+          persist 是坚持做或持续存在，insist 是坚持说或坚持要求。<br>
+          <span class="wrong">She persisted that she was right.</span> → <span class="right">She insisted that she was right.</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          形容词 persistent 结尾是 -ent，不是 -ant。<br>
+          <span class="wrong">persistant</span> → <span class="right">persistent</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>persist</td><td>坚持做；问题持续存在</td><td class="chant">persist in asking</td></tr>
+          <tr><td>insist</td><td>坚持说、坚持要求</td><td class="chant">insist on leaving</td></tr>
+          <tr><td>persevere</td><td>面对困难仍不懈努力</td><td class="chant">persevere in research</td></tr>
+          <tr><td>continue</td><td>继续，语气中性</td><td class="chant">continue the work</td></tr>
+          <tr><td>last</td><td>持续一段时间</td><td class="chant">the rain lasted</td></tr>
+          <tr><td>endure</td><td>忍受；长期存在</td><td class="chant">endure the pain</td></tr>
+        </tbody>
+      </table>
+      <p class="review-tip">口诀：persist 不停，insist 不改口，persevere 不放弃。</p>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">If the pain <span class="first-letter">p</span><span class="blank" onclick="this.classList.toggle('revealed')">ersists</span> , stop taking the medicine.</p>
+          <p class="fill-hint">提示：<b>第三人称单数</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She <span class="first-letter">p</span><span class="blank" onclick="this.classList.toggle('revealed')">ersisted</span> in her research despite repeated failures.</p>
+          <p class="fill-hint">提示：<b>过去式：坚持了</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">His <span class="first-letter">p</span><span class="blank" onclick="this.classList.toggle('revealed')">ersistence</span> finally paid off.</p>
+          <p class="fill-hint">提示：<b>名词：坚持</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The country faces a <span class="first-letter">p</span><span class="blank" onclick="this.classList.toggle('revealed')">ersistent</span> shortage of skilled workers.</p>
+          <p class="fill-hint">提示：<b>形容词：持续的</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Old habits can <span class="first-letter">p</span><span class="blank" onclick="this.classList.toggle('revealed')">ersist</span> long after they are formed.</p>
+          <p class="fill-hint">提示：<b>情态动词后用原形</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>persist</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="If you persist in small daily efforts, the results will persist."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>说出 persist 的 3 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>区分 persist / insist / persevere</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>默写 sist 词族 8 个词</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>遮住释义，复述跑道绕圈的画​面</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>

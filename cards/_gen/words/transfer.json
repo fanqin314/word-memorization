@@ -1,0 +1,103 @@
+{
+  "word": "transfer",
+  "ipaUK": "trænsˈfɜː",
+  "ipaUS": "trænsˈfɜːr",
+  "pos": "v. · n.",
+  "gloss": "转移 · 转让 · 换乘",
+  "theme": "wine",
+  "root": {
+    "stem": "trans- + fer",
+    "origin": "trans-＝越过，ferre＝携带",
+    "sense": "带着东西越过边界"
+  },
+  "family": [
+    { "pos": "v.", "w": "transfer", "p": "/trænsˈfɜː/", "m": "转移；转让；换乘" },
+    { "pos": "v.", "w": "transform", "p": "/trænsˈfɔːm/", "m": "改变；使变形" },
+    { "pos": "v.", "w": "transport", "p": "/trænˈspɔːt/", "m": "运输；运送" },
+    { "pos": "v.", "w": "translate", "p": "/trænsˈleɪt/", "m": "翻译；转化" },
+    { "pos": "v.", "w": "transmit", "p": "/trænsˈmɪt/", "m": "传送；传播" },
+    { "pos": "n.", "w": "ferry", "p": "/ˈferi/", "m": "渡船；渡运" },
+    { "pos": "v.", "w": "offer", "p": "/ˈɒfə/", "m": "提供；提议" },
+    { "pos": "v.", "w": "refer", "p": "/rɪˈfɜː/", "m": "提到；参考；指向" }
+  ],
+  "scene": {
+    "main": "一座桥把左边仓库的货物一件件送到右边的车上",
+    "sub": "trans-（越过）+ fer（携带）→ 带着东西越过边界：转移、转让、换乘。",
+    "template": "bridge",
+    "labels": ["转移", "过渡"]
+  },
+  "collocations": [
+    { "pattern": "transfer money", "meaning": "转账" },
+    { "pattern": "transfer to", "meaning": "转到；换乘到" },
+    { "pattern": "transfer skills", "meaning": "迁移技能" },
+    { "pattern": "a bank transfer", "meaning": "银行转账" },
+    { "pattern": "transfer of power", "meaning": "权力交接" }
+  ],
+  "examples": [
+    {
+      "src": "2020 六级 · 听力",
+      "en": "Please {{w}} the money to this account.",
+      "cn": "请把钱转到这个账户。"
+    },
+    {
+      "src": "2019 考研 · 阅读",
+      "en": "He {{w}}red to another department last month.",
+      "cn": "他上个月调到了另一个部门。"
+    },
+    {
+      "src": "2021 考研 · 完形",
+      "en": "She is {{w}}ring her files to the new laptop.",
+      "cn": "她正在把文件传到新笔记本电脑上。"
+    },
+    {
+      "src": "2018 雅思 · 写作",
+      "en": "These skills are {{w}}able to almost any job.",
+      "cn": "这些技能几乎可以迁移到任何工作中。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "transfer 加 -ed / -ing 时要双写 r：transferred、transferring。",
+      "wrong": "transfered",
+      "right": "transferred"
+    },
+    {
+      "tip": "发音",
+      "text": "名词重音在前 /ˈtrænsfɜː/，动词重音在后 /trænsˈfɜː/。",
+      "wrong": "a transFER of money",
+      "right": "a TRANSfer of money"
+    },
+    {
+      "tip": "搭配",
+      "text": "换乘到某条线路用 transfer to，不用 transfer on。",
+      "wrong": "transfer on Line 2",
+      "right": "transfer to Line 2"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["transfer", "把人和物从一处转到另一处", "transfer money"],
+      ["transform", "彻底改变形态", "transform the city"],
+      ["transport", "运输货物或人", "transport goods"],
+      ["transmit", "传送信号、传播疾病", "transmit signals"],
+      ["translate", "翻译；转化为", "translate the text"],
+      ["shift", "位置或注意力移动", "shift the focus"]
+    ],
+    "chant": "带着走 transfer，改形态 transform，运货物 transport，传信号 transmit。"
+  },
+  "fills": [
+    { "sentence": "Please ___ the money to this account.", "answer": "transfer", "hint": "祈使句用动词原形" },
+    { "sentence": "He ___ to another department last month.", "answer": "transferred", "hint": "过去式，双写 r" },
+    { "sentence": "She is ___ her files to the new laptop.", "answer": "transferring", "hint": "is + -ing，双写 r" },
+    { "sentence": "The ___ of power took place peacefully.", "answer": "transfer", "hint": "名词：交接" },
+    { "sentence": "These skills are ___ to almost any job.", "answer": "transferable", "hint": "形容词：可迁移的" }
+  ],
+  "review": [
+    "说出 transfer 的 3 个搭配",
+    "区分 transfer / transform / transport",
+    "默写 fer 词族 8 个词",
+    "遮住释义，复述桥上运货的画面"
+  ],
+  "writeSample": "Good habits transfer easily from study to work."
+}
