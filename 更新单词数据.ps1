@@ -324,7 +324,8 @@ $cardsDir = Join-Path $dir 'cards'
 $files = @()
 $files += @(Get-ChildItem -LiteralPath $cardsDir -Filter '*.html' -File -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Name -notmatch '^_' })
 # 根目录里尚未归位的卡片（下载得到的新卡）也一并纳入
-$files += @(Get-ChildItem -LiteralPath $dir -Filter '*.html' -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'index.html' -and $_.Name -notmatch '^_' })
+# roots.html 是词根图谱页面而不是单词卡，必须排除，否则会被当成卡片搬进 cards/other/
+$files += @(Get-ChildItem -LiteralPath $dir -Filter '*.html' -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -ne 'index.html' -and $_.Name -ne 'roots.html' -and $_.Name -notmatch '^_' })
 $words = New-Object System.Collections.ArrayList
 $art = [ordered]@{}
 $artCss = [ordered]@{}
