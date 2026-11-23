@@ -186,6 +186,7 @@ h1{
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px;
 }
 .empty{
+  grid-column:1/-1;
   padding:70px 20px;text-align:center;color:var(--mute);
 }
 .empty b{display:block;font-family:var(--serif);font-size:22px;color:var(--ink);margin-bottom:8px;}
@@ -242,6 +243,7 @@ footer{
 <main class="wrap">
   <aside class="index" id="index"></aside>
   <div class="groups" id="groups"></div>
+  <div class="empty" id="empty" hidden><b>没有匹配的词根或单词</b>换个关键词试试，或清空搜索框。</div>
 </main>
 
 <footer>词根分组来自每张卡片的「词根拆解」；内容更新后重新运行「更新单词数据」即可同步。</footer>
