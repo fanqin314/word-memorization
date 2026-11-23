@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>词根图谱 · 按词根查看单词</title>
+
+<style>
+/* ==========================================================================
+   词根图谱 roots.html —— 只读页面：从 words-data.js 读取单词，按词根归组展示
+   ========================================================================== */
+:root{
+  --paper:#F6F1E7;
+  --paper-2:#EBE3D4;
+  --ink:#1C1A17;
+  --deep:#2B2721;
+  --accent:#C2352B;
+  --accent-soft:#F4DCD7;
+  --mute:#6F6A62;
+  --line:rgba(28,26,23,.16);
+  --serif:"Songti SC","Noto Serif SC",Georgia,"Times New Roman",serif;
+  --sans:"PingFang SC","Helvetica Neue",Arial,sans-serif;
+  --shadow:5px 5px 0 var(--ink);
+  --shadow-sm:3px 3px 0 var(--ink);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+/* 极淡方格底纹 */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(28,26,23,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(28,26,23,.045) 1px,transparent 1px);
+  background-size:56px 56px;
+}
+a{color:inherit;text-decoration:none;}
+
+/* ---------- 顶部 ---------- */
+.top{
+  position:relative;z-index:2;
+  display:flex;align-items:flex-end;gap:22px;flex-wrap:wrap;
+  padding:38px 40px 26px;
+  border-bottom:3px solid var(--ink);
+  background:linear-gradient(180deg,var(--paper) 0%,var(--paper-2) 100%);
+}
+.top::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:8px;background:var(--accent);
+}
+.back{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;font-weight:700;
+  padding:7px 14px;border:2px solid var(--ink);border-radius:999px;
+  background:var(--paper);box-shadow:var(--shadow-sm);
+  transition:transform .18s,box-shadow .18s;
+  white-space:nowrap;
+}
+.back:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink);}
+.title-wrap{flex:1 1 320px;min-width:0;}
+.eyebrow{
+  font-family:var(--sans);font-size:10.5px;font-weight:800;
+  letter-spacing:.34em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:6px;
+}
+h1{
+  margin:0;
+  font-family:var(--serif);font-size:clamp(30px,4.4vw,46px);
+  font-weight:900;line-height:1.08;letter-spacing:-.01em;
+}
+.title-wrap p{margin:8px 0 0;color:var(--mute);font-size:13.5px;}
+.stat{
+  font-family:var(--serif);font-size:13px;font-weight:700;
+  padding:9px 16px;border:2px solid var(--ink);border-radius:14px;
+  background:var(--accent-soft);box-shadow:var(--shadow-sm);
+  white-space:nowrap;
+}
+.stat b{font-size:19px;margin:0 2px;}
+
+/* ---------- 工具条 ---------- */
+.toolbar{
+  position:sticky;top:0;z-index:6;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:14px 40px;
+  background:rgba(246,241,231,.93);
+  backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--ink);
+}
+.search{
+  flex:1 1 300px;display:flex;align-items:center;gap:9px;
+  padding:9px 15px;min-width:0;
+  background:#FFFDF7;border:2px solid var(--ink);border-radius:12px;
+  box-shadow:var(--shadow-sm);
+}
+.search svg{width:16px;height:16px;flex:none;stroke:var(--mute);}
+.search input{
+  flex:1;min-width:0;border:0;outline:0;background:transparent;
+  font-family:var(--sans);font-size:14px;color:var(--ink);
+}
+.search input::placeholder{color:#9C968C;}
+.legend{font-size:12px;color:var(--mute);display:flex;gap:14px;flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:5px;}
+.legend i{width:9px;height:9px;border-radius:3px;border:1.5px solid var(--ink);display:inline-block;}
+
+/* ---------- 主体 ---------- */
+.wrap{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:210px minmax(0,1fr);gap:28px;
+  align-items:start;
+  max-width:1180px;margin:0 auto;padding:30px 40px 80px;
+}
+
+/* 左侧词根索引 */
+.index{
+  position:sticky;top:86px;
+  display:flex;flex-direction:column;gap:5px;
+  max-height:calc(100vh - 110px);overflow:auto;
+  padding-right:4px;
+}
+.index-title{
+  font-family:var(--serif);font-size:12px;font-weight:900;letter-spacing:.16em;
+  color:var(--mute);margin:2px 0 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 10px;border-radius:9px;border:2px solid transparent;
+  font-size:13px;color:var(--mute);cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s;
+}
+.nav-item b{
+  font-family:var(--serif);font-size:13.5px;font-weight:800;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.nav-item small{margin-left:auto;font-size:11px;color:var(--mute);flex:none;}
+.nav-item:hover{background:rgba(28,26,23,.06);}
+.nav-item.on{background:var(--accent-soft);border-color:var(--ink);color:var(--ink);}
+
+/* 词根分组 */
+.groups{display:flex;flex-direction:column;gap:26px;min-width:0;}
+.root{
+  border:3px solid var(--ink);border-radius:22px;
+  background:#FFFCF5;
+  box-shadow:var(--shadow);
+  padding:22px 24px 24px;
+  scroll-margin-top:88px;
+  transition:transform .2s;
+}
+.root:hover{transform:translate(-1px,-1px);}
+.root-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.stem{
+  font-family:var(--serif);font-size:26px;font-weight:900;line-height:1.1;
+  letter-spacing:-.01em;
+}
+.stem::after{content:"";display:block;height:4px;margin-top:5px;background:var(--accent);border-radius:2px;}
+.meaning{
+  font-size:13.5px;font-weight:700;color:var(--accent);
+  padding:2px 10px;border-radius:999px;background:var(--accent-soft);border:1.5px solid var(--accent);
+}
+.cnt{
+  margin-left:auto;font-size:12px;font-weight:700;color:var(--mute);
+  padding:3px 10px;border-radius:999px;border:1.5px dashed var(--line);
+}
+.root-origin{
+  margin:10px 0 16px;padding:8px 12px;
+  font-size:12.5px;line-height:1.7;color:var(--mute);
+  background:var(--paper-2);border-radius:10px;border:1.5px solid var(--line);
+}
+.words{display:flex;flex-wrap:wrap;gap:10px;}
+.w{
+  display:flex;flex-direction:column;gap:1px;
+  min-width:132px;max-width:260px;
+  padding:9px 14px;border:2px solid var(--ink);border-radius:12px;
+  background:#FFFDF7;box-shadow:2px 2px 0 rgba(28,26,23,.85);
+  transition:transform .16s,box-shadow .16s,background .16s;
+}
+.w:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--accent);background:#FFF;}
+.w b{font-family:var(--serif);font-size:17px;font-weight:900;letter-spacing:-.01em;}
+.w .g{
+  font-size:11.5px;color:var(--mute);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px;
+}
+.empty{
+  padding:70px 20px;text-align:center;color:var(--mute);
+}
+.empty b{display:block;font-family:var(--serif);font-size:22px;color:var(--ink);margin-bottom:8px;}
+
+footer{
+  position:relative;z-index:2;
+  padding:26px 40px 40px;text-align:center;
+  font-size:12px;color:var(--mute);border-top:2px solid var(--line);
+}
+
+@media (max-width:860px){
+  .top{padding:30px 20px 22px;}
+  .toolbar{padding:12px 20px;}
+  .wrap{grid-template-columns:1fr;padding:22px 20px 60px;gap:18px;}
+  .index{
+    position:static;max-height:none;flex-direction:row;flex-wrap:wrap;
+    gap:6px;padding-bottom:4px;
+  }
+  .index-title{display:none;}
+  .nav-item{padding:5px 10px;border:2px solid var(--line);background:#FFFCF5;}
+  .nav-item b{font-size:12.5px;}
+  .nav-item small{display:none;}
+  .root{padding:18px 16px 20px;}
+  .stem{font-size:22px;}
+  .w{min-width:118px;padding:8px 12px;}
+  .w b{font-size:15.5px;}
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <a class="back" href="index.html">← 返回词库</a>
+  <div class="title-wrap">
+    <div class="eyebrow">Root Atlas</div>
+    <h1>词根图谱</h1>
+    <p>每个词根下带着哪些单词——点单词直接翻卡。</p>
+  </div>
+  <div class="stat" id="stat">—</div>
+</header>
+
+<div class="toolbar">
+  <label class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+    <input id="q" type="text" placeholder="搜索词根 / 单词 / 释义…（按 / 聚焦）" autocomplete="off" spellcheck="false">
+  </label>
+  <div class="legend">
+    <span><i style="background:var(--accent-soft)"></i>核心词根</span>
+    <span><i style="background:#FFFDF7"></i>拆解出的词根</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <aside class="index" id="index"></aside>
+  <div class="groups" id="groups"></div>
+</main>
+
+<footer>词根分组来自每张卡片的「词根拆解」；内容更新后重新运行「更新单词数据」即可同步。</footer>
+
+<script src="words-data.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  const D = window.WORDS_DATA || { words: [] };
+  const WORDS = Array.isArray(D.words) ? D.words : [];
+
+  /* 与 index.html 保持一致的 5 组核心词根 */
+  const OFFICIAL = {
+    vers:   { label: 'vers · vert',     meaning: '转' },
+    un:     { label: 'un · uni',        meaning: '一' },
+    ann:    { label: 'ann',             meaning: '年' },
+    contra: { label: 'contra · contro', meaning: '相反·对抗' },
+    cor:    { label: 'cor',             meaning: '心·一致' }
+  };
+  const OFFICIAL_ORDER = ['vers', 'un', 'ann', 'contra', 'cor'];
+
+  /* 词根拆解里常见的词尾，不当作词根 */
+  const SUFFIX = new Set([
+    'ate','ary','ry','ion','ual','ation','ition','ite','ive','y','e','al','ic','ous',
+    'ify','ize','ise','ment','ence','ance','ty','er','or','ist','ism','ing','ed','s',
+    'at','um','a','en','ant','ent','able','ible'
+  ]);
+
+  const esc = s => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  /* 从 morph（词根拆解文本）里提炼核心词干 */
+  function stemOf(morph){
+    let t = String(morph || '');
+    t = t.split('→')[0];                       // 去掉“→ 含义”部分
+    t = t.replace(/（[^）]*）/g, ' ').replace(/\([^)]*\)/g, ' ');
+    t = t.replace(/^(拉丁语|拉丁|古英语|古法语|中古英语|古诺斯语|古高地德语|希腊语|现代英语)\s*/, '');
+    t = t.split(/\s*\/\s*/)[0];                 // “tain / ten” 取第一个
+    const parts = t.split(/\s*\+\s*/)
+      .map(s => s.trim().replace(/^-+|-+$/g, '').toLowerCase())
+      .filter(s => /^[a-z]{2,}$/.test(s) && !SUFFIX.has(s));
+    return parts.length ? parts[parts.length - 1] : '';
+  }
+
+  /* 从括号里的“拉丁词＝中文”里取出该词根的含义 */
+  function glossOf(morph, stem){
+    const m = String(morph || '');
+    const pairs = [...m.matchAll(/([a-zA-Z]{2,})\s*[＝=:：]\s*([^，。；）)]+)/g)];
+    for(const p of pairs){
+      const latin = p[1].toLowerCase();
+      const k = Math.min(3, latin.length, stem.length);
+      if(k >= 3 && latin.slice(0, k) === stem.slice(0, k)) return p[2].trim();
+    }
+    return '';
+  }
+
+  /* ---------------- 归组 ---------------- */
+  const official = OFFICIAL_ORDER.map(k => ({ key: k, kind: 'official', label: OFFICIAL[k].label, meaning: OFFICIAL[k].meaning, words: [] }));
+  const byKey = Object.fromEntries(official.map(g => [g.key, g]));
+  const stems = new Map();
+
+  WORDS.forEach(w => {
+    const roots = Array.isArray(w.roots) ? w.roots : [];
+    const hit = roots.filter(r => OFFICIAL[r]);
+    if(hit.length){
+      hit.forEach(r => byKey[r].words.push(w));
+      return;
+    }
+    const stem = stemOf(w.morph);
+    if(!stem){                                  // 提不出词根 → 独立词源
+      if(!stems.has('__solo')) stems.set('__solo', { key: '__solo', kind: 'solo', label: '独立词源', meaning: '整体借词', words: [] });
+      stems.get('__solo').words.push(w);
+      return;
+    }
+    if(!stems.has(stem)) stems.set(stem, { key: stem, kind: 'stem', label: stem, meaning: '', words: [] });
+    stems.get(stem).words.push(w);
+  });
+
+  /* 词根含义用成员拆解补全；补齐后为空的就用第一条拆解做说明 */
+  stems.forEach(g => {
+    for(const w of g.words){
+      const gl = glossOf(w.morph, g.key);
+      if(gl && !g.meaning){ g.meaning = gl; break; }
+    }
+    const shortest = g.words.slice().sort((a, b) => String(a.morph).length - String(b.morph).length)[0];
+    g.origin = shortest ? shortest.morph : '';
+  });
+  official.forEach(g => {
+    const shortest = g.words.slice().sort((a, b) => String(a.morph).length - String(b.morph).length)[0];
+    g.origin = shortest ? shortest.morph : '';
+  });
+
+  const groups = official.filter(g => g.words.length)
+    .concat([...stems.values()].sort((a, b) => {
+      if(a.key === '__solo') return 1;
+      if(b.key === '__solo') return -1;
+      return b.words.length - a.words.length || a.label.localeCompare(b.label);
+    }));
+
+  /* 单词按字母排序，便于查 */
+  groups.forEach(g => g.words.sort((a, b) => a.word.localeCompare(b.word)));
+
+  const totalWords = WORDS.length;
+  const rootCount = groups.filter(g => g.kind !== 'solo').length;
+
+  /* ---------------- 渲染 ---------------- */
+  const indexEl = document.getElementById('index');
+  const groupsEl = document.getElementById('groups');
+  const statEl = document.getElementById('stat');
+
+  function sectionHTML(g, i){
+    const chips = g.words.map(w => {
+      const href = w.file || ('cards/' + String(w.word).charAt(0) + '/' + w.word + '.html');
+      return `<a class="w" href="${esc(href)}" title="${esc(w.word)} · ${esc(w.gloss)}">
+        <b>${esc(w.word)}</b><span class="g">${esc(w.gloss)}</span></a>`;
+    }).join('');
+    return `<section class="root" id="root-${esc(g.key)}" data-key="${esc(g.key)}">
+      <div class="root-head">
+        <span class="stem">${esc(g.label)}</span>
+        ${g.meaning ? `<span class="meaning">${esc(g.meaning)}</span>` : ''}
+        <span class="cnt">${g.words.length} 个词</span>
+      </div>
+      ${g.origin ? `<p class="root-origin">${esc(g.origin)}</p>` : ''}
+      <div class="words">${chips}</div>
+    </section>`;
+  }
+
+  function render(){
+    groupsEl.innerHTML = groups.map(sectionHTML).join('');
+    indexEl.innerHTML = '<p class="index-title">词根索引</p>' + groups.map(g =>
+      `<a class="nav-item" href="#root-${esc(g.key)}" data-jump="${esc(g.key)}">
+        <b>${esc(g.label)}</b><small>${g.words.length}</small></a>`).join('');
+    updateStat();
+    spy();
+  }
+
+  function updateStat(){
+    statEl.innerHTML = `共 <b>${totalWords}</b> 词 · <b>${rootCount}</b> 个词根`;
+  }
+
+  /* ---------------- 搜索 ---------------- */
+  const q = document.getElementById('q');
+  function applyFilter(){
+    const kw = q.value.trim().toLowerCase();
+    let shownWords = 0, shownRoots = 0;
+    document.querySelectorAll('.root').forEach(sec => {
+      const g = groups.find(x => String(x.key) === sec.dataset.key);
+      if(!g) return;
+      const rootHit = !kw || g.label.toLowerCase().includes(kw) || String(g.meaning || '').toLowerCase().includes(kw);
+      let n = 0;
+      sec.querySelectorAll('.w').forEach(a => {
+        const w = a.querySelector('b').textContent.toLowerCase();
+        const gl = a.querySelector('.g').textContent.toLowerCase();
+        const ok = rootHit || w.includes(kw) || gl.includes(kw);
+        a.style.display = ok ? '' : 'none';
+        if(ok) n++;
+      });
+      sec.style.display = n ? '' : 'none';
+      const cnt = sec.querySelector('.cnt');
+      if(cnt) cnt.textContent = n + ' 个词';
+      if(n){ shownRoots++; shownWords += n; }
+    });
+    document.querySelectorAll('.nav-item').forEach(a => {
+      const sec = document.getElementById('root-' + a.dataset.jump);
+      a.style.display = sec && sec.style.display !== 'none' ? '' : 'none';
+    });
+    if(!shownRoots){
+      groupsEl.innerHTML = `<div class="empty"><b>没有匹配的词根或单词</b>换个关键词试试，或清空搜索框。</div>`;
+      return;
+    }
+    if(shownWords){
+      statEl.innerHTML = `匹配 <b>${shownWords}</b> 词 · <b>${shownRoots}</b> 个词根`;
+    }
+    spy();
+  }
+  q.addEventListener('input', applyFilter);
+  q.addEventListener('search', applyFilter);
+
+  /* ---------------- 索引高亮 ---------------- */
+  const seen = new Map();
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => seen.set(e.target.dataset.key, e.isIntersecting ? 1 : 0));
+    spy();
+  }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+
+  function spy(){
+    const navs = [...document.querySelectorAll('.nav-item')];
+    if(!navs.length) return;
+    let cur = null;
+    for(const a of navs){
+      const sec = document.getElementById('root-' + a.dataset.jump);
+      if(!sec || sec.style.display === 'none') continue;
+      if(sec.getBoundingClientRect().top <= 140) cur = a;
+      if(!cur && sec.getBoundingClientRect().top > 0) cur = cur || a;
+    }
+    navs.forEach(a => a.classList.toggle('on', a === cur));
+  }
+  window.addEventListener('scroll', spy, { passive: true });
+
+  render();
+  document.querySelectorAll('.root').forEach(el => io.observe(el));
+
+  /* “/” 聚焦搜索 */
+  document.addEventListener('keydown', e => {
+    if(e.key === '/' && document.activeElement !== q){ e.preventDefault(); q.focus(); }
+    if(e.key === 'Escape' && document.activeElement === q){ q.value = ''; applyFilter(); q.blur(); }
+  });
+})();
+</script>
+
+</body>
+</html>
