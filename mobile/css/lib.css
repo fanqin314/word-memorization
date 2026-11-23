@@ -132,6 +132,7 @@
 .spec .meta{
   flex:none;padding-top:5px;
   display:flex;flex-direction:column;gap:2px;
+  width:100%;max-width:100%;overflow:hidden;
   text-align:center;
   font-family:var(--mono);letter-spacing:.10em;text-transform:uppercase;
   line-height:1.2;white-space:nowrap;
@@ -192,6 +193,19 @@
 [data-style="u"] .gl{border-bottom:4px double currentColor;padding-bottom:2px;}
 [data-style="v"] .gl{transform:scale(1.1);}
 [data-style="w"] .gl{transform:scaleX(1.15);}
+/* 剩下的字母各给一种独立的版式装置，避免只剩「换字体」这一层差异 */
+[data-style="b"] .gl{background:#B98A3E;padding:0 4px;}
+[data-style="b"] .gl path{fill:#FFFFFF;}
+[data-style="g"] .gl{transform:rotate(-8deg);color:#3F6E73;}
+[data-style="i"] .glyph{width:62%;border-top:7px solid currentColor;border-bottom:7px solid currentColor;}
+[data-style="j"] .gl{transform:skewX(-12deg);}
+[data-style="k"] .gl{clip-path:polygon(0 0,100% 0,100% 80%,80% 100%,0 100%);}
+[data-style="m"] .gl{filter:drop-shadow(5px 0 0 #B98A3E);}
+[data-style="o"] .gl{border:2px solid currentColor;border-radius:50%;padding:5px 6px;}
+[data-style="q"] .gl{transform:rotate(9deg);}
+[data-style="x"] .gl{outline:1.5px dashed currentColor;outline-offset:3px;}
+[data-style="y"] .gl{border-bottom:6px solid #3F6E73;padding-bottom:1px;}
+[data-style="z"] .gl{color:#7A3B3B;}
 
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
