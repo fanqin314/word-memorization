@@ -1,0 +1,103 @@
+{
+  "word": "sustain",
+  "ipaUK": "səˈsteɪn",
+  "ipaUS": "səˈsteɪn",
+  "pos": "v.",
+  "gloss": "维持 · 支撑 · 遭受",
+  "theme": "wine",
+  "root": {
+    "stem": "tain / ten",
+    "origin": "拉丁 tenere＝握住",
+    "sense": "一直握住不放"
+  },
+  "family": [
+    { "pos": "v.", "w": "sustain", "p": "/səˈsteɪn/", "m": "维持；支撑；遭受" },
+    { "pos": "adj.", "w": "sustainable", "p": "/səˈsteɪnəbl/", "m": "可持续的；可承受的" },
+    { "pos": "n.", "w": "sustainability", "p": "/səˌsteɪnəˈbɪləti/", "m": "可持续性" },
+    { "pos": "v.", "w": "maintain", "p": "/meɪnˈteɪn/", "m": "维持；保养；主张" },
+    { "pos": "n.", "w": "maintenance", "p": "/ˈmeɪntənəns/", "m": "维护；保养；生活费" },
+    { "pos": "v.", "w": "retain", "p": "/rɪˈteɪn/", "m": "保留；留住；记住" },
+    { "pos": "v.", "w": "contain", "p": "/kənˈteɪn/", "m": "包含；容纳；抑制" },
+    { "pos": "n.", "w": "tenant", "p": "/ˈtenənt/", "m": "房客；租户" }
+  ],
+  "scene": {
+    "main": "双手从下方托住一根不断下沉的横梁，不让它落地",
+    "sub": "sus-（在下）+ tain（握住）→ 在下面一直握住：维持住、支撑住，也顺势引申为“承受住伤害”。",
+    "template": "arch",
+    "labels": ["承重", "托住"]
+  },
+  "collocations": [
+    { "pattern": "sustain growth", "meaning": "维持增长（经济 · 业绩）" },
+    { "pattern": "sustain an injury", "meaning": "遭受（身体）伤害" },
+    { "pattern": "sustain life", "meaning": "维持生命" },
+    { "pattern": "sustain the weight", "meaning": "承受住重量" },
+    { "pattern": "sustain attention", "meaning": "保持注意力" }
+  ],
+  "examples": [
+    {
+      "src": "2021 考研 · 阅读",
+      "en": "The economy cannot {{w}} such a rapid pace of expansion without triggering inflation.",
+      "cn": "若不引发通货膨胀，经济无法维持如此快速的扩张速度。"
+    },
+    {
+      "src": "2019 六级 · 翻译",
+      "en": "Volunteers {{w}}ed the elderly through the long, cold winter.",
+      "cn": "志愿者们支撑着老人们度过了漫长寒冷的冬天。"
+    },
+    {
+      "src": "2022 考研 · 完形",
+      "en": "Shared rituals help {{w}} a friendship across decades.",
+      "cn": "共同的习惯有助于让友谊维持数十年。"
+    },
+    {
+      "src": "2018 雅思 · 写作",
+      "en": "Cities must find ways to {{w}} clean water supplies as their populations grow.",
+      "cn": "随着人口增长，城市必须设法维持清洁水的供应。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "sustain 是 sus- + tain，中间没有 b，也不以 e 结尾。",
+      "wrong": "substain / sustane",
+      "right": "sustain"
+    },
+    {
+      "tip": "搭配",
+      "text": "表示“遭受（伤害、损失）”时，sustain 后面直接跟名词，不加 from。",
+      "wrong": "sustain from an injury",
+      "right": "sustain an injury"
+    },
+    {
+      "tip": "词性",
+      "text": "“支持某人”不能用 sustain，那是 support；sustain 的宾语多为生命、增长、重量、伤害。",
+      "wrong": "He sustained me in the debate.",
+      "right": "He supported me in the debate."
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["sustain", "强调长时间托住、不让中断", "长跑要 sustain 配速"],
+      ["maintain", "维持现状、保养、主张", "maintain 设备与秩序"],
+      ["support", "支持人／观点，也可承重", "support 人，sustain 物"],
+      ["withstand", "抵住冲击、经得起", "withstand 压力与考验"],
+      ["preserve", "保存原样、防止腐坏", "preserve 文物与食物"],
+      ["bear", "承受重量／痛苦，偏口语", "bear 疼痛，sustain 伤害"]
+    ],
+    "chant": "人靠 support，物靠 sustain；状态靠 maintain，冲击靠 withstand。"
+  },
+  "fills": [
+    { "sentence": "Regular rainfall helps the region ___ its farming output.", "answer": "sustain", "hint": "help sb do sth，填动词原形" },
+    { "sentence": "The old bridge can no longer ___ the weight of heavy trucks.", "answer": "sustain", "hint": "can no longer 后接动词原形" },
+    { "sentence": "She ___ a serious leg injury during the match.", "answer": "sustained", "hint": "过去式：遭受伤害" },
+    { "sentence": "Solar power is one of the most ___ energy sources.", "answer": "sustainable", "hint": "形容词：可持续的" },
+    { "sentence": "Without steady income, the family had trouble ___ itself.", "answer": "sustaining", "hint": "have trouble doing，用 -ing" }
+  ],
+  "review": [
+    "合上书，说出 3 个 sustain 搭配",
+    "默写 tain 词族 8 个词",
+    "用 sustain 造句 1 句 + 区分 maintain",
+    "遮住释义，复述“从下面托住”的画面"
+  ],
+  "writeSample": "Small daily habits sustain my motivation to learn English."
+}

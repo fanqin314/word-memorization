@@ -1,0 +1,103 @@
+{
+  "word": "correlate",
+  "ipaUK": "ˈkɒrəleɪt",
+  "ipaUS": "ˈkɔːrəleɪt",
+  "pos": "v.",
+  "gloss": "相互关联 · 使相关 · 有相关性",
+  "theme": "swiss",
+  "root": {
+    "stem": "cor- + relat",
+    "origin": "cor-＝共同，relat＝联系",
+    "sense": "一起被联系起来"
+  },
+  "family": [
+    { "pos": "v.", "w": "correlate", "p": "/ˈkɒrəleɪt/", "m": "相关联；使相关" },
+    { "pos": "n.", "w": "correlation", "p": "/ˌkɒrəˈleɪʃn/", "m": "相关性；关联" },
+    { "pos": "v.", "w": "relate", "p": "/rɪˈleɪt/", "m": "联系；讲述" },
+    { "pos": "adj.", "w": "relative", "p": "/ˈrelətɪv/", "m": "相对的；亲戚" },
+    { "pos": "n.", "w": "relationship", "p": "/rɪˈleɪʃnʃɪp/", "m": "关系；联系" },
+    { "pos": "v.", "w": "correspond", "p": "/ˌkɒrəˈspɒnd/", "m": "相符；通信" },
+    { "pos": "adj.", "w": "irrelevant", "p": "/ɪˈreləvənt/", "m": "不相关的" },
+    { "pos": "adj.", "w": "interrelated", "p": "/ˌɪntərɪˈleɪtɪd/", "m": "相互关联的" }
+  ],
+  "scene": {
+    "main": "两根温度计的水银柱总是一起上升、一起下降，却谁也不决定谁",
+    "sub": "cor-（共同）+ relate（联系）→ 一起变化、彼此相关；但相关不等于因果。",
+    "template": "gauges",
+    "labels": ["同升", "同降"]
+  },
+  "collocations": [
+    { "pattern": "correlate with", "meaning": "与…相关" },
+    { "pattern": "be closely correlated", "meaning": "密切相关" },
+    { "pattern": "a strong correlation", "meaning": "强相关" },
+    { "pattern": "positive correlation", "meaning": "正相关" },
+    { "pattern": "correlate data", "meaning": "关联数据" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 阅读",
+      "en": "Income levels {{w}} strongly with years of schooling.",
+      "cn": "收入水平与受教育年限高度相关。"
+    },
+    {
+      "src": "2019 六级 · 阅读",
+      "en": "Researchers found that exercise and mood are positively {{w}}d.",
+      "cn": "研究者发现运动与情绪呈正相关。"
+    },
+    {
+      "src": "2021 考研 · 完形",
+      "en": "The two trends are closely {{w}}d but not necessarily linked by cause.",
+      "cn": "这两种趋势密切相关，但未必存在因果关系。"
+    },
+    {
+      "src": "2018 雅思 · 写作",
+      "en": "It is hard to {{w}} test scores with teaching quality alone.",
+      "cn": "仅凭考试分数很难与教学质量建立关联。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "搭配",
+      "text": "表示“与…相关”用 correlate with，不用 correlate to。",
+      "wrong": "Height correlates to weight.",
+      "right": "Height correlates with weight."
+    },
+    {
+      "tip": "词性",
+      "text": "动词是 correlate，名词是 correlation，没有 correlateness 这种说法。",
+      "wrong": "There is a strong correlateness.",
+      "right": "There is a strong correlation."
+    },
+    {
+      "tip": "逻辑",
+      "text": "correlation 只说明相关，不能直接说成因果，写作里别写成 cause。",
+      "wrong": "The correlation proves that X causes Y.",
+      "right": "The correlation suggests a link between X and Y."
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["correlate", "两者同步变化，统计上的相关", "income correlates with education"],
+      ["relate", "把两事联系起来；也可“讲述”", "relate the two events"],
+      ["correspond", "一一对应、相符；通信", "the numbers correspond"],
+      ["connect", "物理或逻辑上连接", "connect cause and effect"],
+      ["associate", "把…与…联想到一起", "associate red with danger"],
+      ["link", "建立联系，语气中性", "link diet to health"]
+    ],
+    "chant": "correlate 看数据，correspond 看对不对得上，associate 看脑子里怎么联想。"
+  },
+  "fills": [
+    { "sentence": "Hours of sleep ___ with test performance.", "answer": "correlate", "hint": "主语复数，动词原形" },
+    { "sentence": "The study found a strong ___ between temperature and sales.", "answer": "correlation", "hint": "名词：相关性" },
+    { "sentence": "The two sets of figures are closely ___ .", "answer": "correlated", "hint": "be correlated with" },
+    { "sentence": "Her account does not ___ with the facts.", "answer": "correspond", "hint": "correspond with＝与…相符" },
+    { "sentence": "Researchers are still ___ diet with mood.", "answer": "correlating", "hint": "are + -ing" }
+  ],
+  "review": [
+    "说出 correlate 的 3 个搭配",
+    "用 correlation 不等于 causation 说一句话",
+    "默写 relat 词族 8 个词",
+    "遮住释义，复述两根温度计的画面"
+  ],
+  "writeSample": "Screen time correlates with poor sleep, but that does not prove cause."
+}

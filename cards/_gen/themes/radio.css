@@ -1,0 +1,32 @@
+/* 主题：午夜电台 —— 深海军蓝 hero、等宽字、左对齐、电台波纹 */
+:root{
+  --paper:#F2EFE9;--paper-2:#E4DFD4;
+  --cb-accent:#D97742;--cb-accent-soft:#F6E3D5;
+  --cb-2:#2B4A63;--cb-2-soft:#DCE5EC;
+  --cb-3:#6F7B5E;--cb-3-soft:#E6E9DC;
+  --ink:#1C2228;--deep:#152230;--cb-deep:#152230;
+  --hero-bg:linear-gradient(150deg,#1E3346 0%,#16283A 60%,#101D2B 100%);
+  --hero-ink:#EFE6D9;--hero-word:#F7EFE2;--word-shadow:#D97742;
+  --hero-align:left;--hero-justify:flex-start;
+  --hero-pad:84px 52px 60px 46px;
+  --font-display:"Courier New","Consolas",monospace;
+  --word-size:100px;--word-size-sm:48px;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle at 50% 120%,rgba(43,74,99,.10),transparent 60%);
+}
+.hero::before{
+  content:"ON AIR";position:absolute;right:30px;top:24px;
+  font-family:"Courier New",monospace;font-size:10px;letter-spacing:.3em;
+  color:#D97742;background:#0E1A26;border:2px solid #D97742;
+  padding:4px 9px;border-radius:2px;
+}
+.hero::after{
+  content:"";position:absolute;right:-70px;bottom:-90px;width:280px;height:280px;border-radius:50%;
+  background:repeating-radial-gradient(circle,transparent 0 22px,rgba(217,119,66,.18) 22px 24px);
+}
+.word-anim{letter-spacing:.02em;filter:drop-shadow(6px 6px 0 rgba(217,119,66,.55));}
+.ipa-anim{color:#1C2228;transform:none;}
+.spell-hint{color:#1C2228;}
+.pos-anim{background:#D97742;color:#101D2B;}

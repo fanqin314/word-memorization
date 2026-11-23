@@ -1,0 +1,103 @@
+{
+  "word": "contradict",
+  "ipaUK": "ˌkɒntrəˈdɪkt",
+  "ipaUS": "ˌkɑːntrəˈdɪkt",
+  "pos": "v.",
+  "gloss": "反驳 · 与…矛盾 · 否认",
+  "theme": "seal",
+  "root": {
+    "stem": "contra + dict",
+    "origin": "contra＝相反，dict＝说",
+    "sense": "说相反的话"
+  },
+  "family": [
+    { "pos": "v.", "w": "contradict", "p": "/ˌkɒntrəˈdɪkt/", "m": "反驳；与…矛盾" },
+    { "pos": "n.", "w": "contradiction", "p": "/ˌkɒntrəˈdɪkʃn/", "m": "矛盾；反驳" },
+    { "pos": "adj.", "w": "contradictory", "p": "/ˌkɒntrəˈdɪktəri/", "m": "自相矛盾的" },
+    { "pos": "v.", "w": "predict", "p": "/prɪˈdɪkt/", "m": "预言；预测" },
+    { "pos": "v.", "w": "dictate", "p": "/dɪkˈteɪt/", "m": "口述；命令" },
+    { "pos": "n.", "w": "verdict", "p": "/ˈvɜːdɪkt/", "m": "裁决；定论" },
+    { "pos": "n.", "w": "dictionary", "p": "/ˈdɪkʃənri/", "m": "词典" },
+    { "pos": "v.", "w": "dedicate", "p": "/ˈdedɪkeɪt/", "m": "奉献；致力于" }
+  ],
+  "scene": {
+    "main": "两个人站在长桌两端，一个说“向东”，另一个立刻说“向西”",
+    "sub": "contra（相反）+ dict（说）→ 说相反的话：反驳、与…矛盾。",
+    "template": "duel",
+    "labels": ["相反", "矛盾"]
+  },
+  "collocations": [
+    { "pattern": "contradict oneself", "meaning": "自相矛盾" },
+    { "pattern": "contradict the evidence", "meaning": "与证据矛盾" },
+    { "pattern": "flatly contradict", "meaning": "断然反驳" },
+    { "pattern": "a direct contradiction", "meaning": "直接矛盾" },
+    { "pattern": "contradict a claim", "meaning": "反驳某种说法" }
+  ],
+  "examples": [
+    {
+      "src": "2021 考研 · 阅读",
+      "en": "The witness's story {{w}}s the physical evidence.",
+      "cn": "证人的说法与物证相矛盾。"
+    },
+    {
+      "src": "2018 六级 · 写作",
+      "en": "It is easy to {{w}} yourself when you argue without facts.",
+      "cn": "没有事实依据地争论时，人很容易自相矛盾。"
+    },
+    {
+      "src": "2020 考研 · 翻译",
+      "en": "His actions flatly {{w}} the promises he made.",
+      "cn": "他的行为与他所作的承诺完全矛盾。"
+    },
+    {
+      "src": "2019 雅思 · 阅读",
+      "en": "The findings {{w}} the assumption that longer hours mean higher output.",
+      "cn": "这些发现与“工时越长产出越高”的假设相矛盾。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "搭配",
+      "text": "contradict 是及物动词，后面直接跟宾语，不加 with。",
+      "wrong": "contradict with the facts",
+      "right": "contradict the facts"
+    },
+    {
+      "tip": "拼写",
+      "text": "contradict 中间是 -tra-，不要写成 contredict 或 contraadict。",
+      "wrong": "contredict",
+      "right": "contradict"
+    },
+    {
+      "tip": "词性",
+      "text": "名词“矛盾”是 contradiction，形容词是 contradictory，别混用。",
+      "wrong": "His words are contradiction.",
+      "right": "His words are contradictory."
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["contradict", "说相反的话，强调互不相容", "言行 contradict 承诺"],
+      ["refute", "用证据驳倒对方", "refute a theory"],
+      ["deny", "否认某事存在或发生", "deny the charge"],
+      ["oppose", "反对计划、政策", "oppose the plan"],
+      ["conflict", "两者冲突（多作名词／不及物）", "interests conflict"],
+      ["dispute", "对说法有争议、质疑", "dispute the figures"]
+    ],
+    "chant": "contradict 靠“说”，refute 靠“证”，deny 靠“不认”。"
+  },
+  "fills": [
+    { "sentence": "His latest statement ___ what he said last week.", "answer": "contradicts", "hint": "第三人称单数" },
+    { "sentence": "The two reports ___ each other on almost every point.", "answer": "contradict", "hint": "主语复数，动词原形" },
+    { "sentence": "There is a clear ___ between his words and his actions.", "answer": "contradiction", "hint": "名词：矛盾" },
+    { "sentence": "The evidence is ___ to the official account.", "answer": "contradictory", "hint": "形容词：矛盾的" },
+    { "sentence": "I am not trying to ___ you, but the data say otherwise.", "answer": "contradict", "hint": "不定式后接动词原形" }
+  ],
+  "review": [
+    "说出 contradict 的 3 个搭配",
+    "区分 contradict / refute / deny",
+    "默写 dict 词族 8 个词",
+    "遮住释义，复述两人对桌喊话的画面"
+  ],
+  "writeSample": "His calm answer contradicted the angry tone of his email."
+}

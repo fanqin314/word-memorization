@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>contradict · 反驳 · 与…矛盾 · 否认</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   contradict —— 由 _gen/build.js 生成（theme: seal）
+   改动请改 JSON / 主题，不要手改本文件。
+   ========================================================================== */
+/* ==========================================================================
+   _hero.css —— 生成卡公共骨架（hero / 意象 SVG / 组件纠偏 / 响应式）
+   主题文件只负责：:root 配色、body::before 底纹、.hero 背景、少量装饰。
+   ========================================================================== */
+
+.hero{
+  position:relative;overflow:hidden;
+  border-bottom:3px solid var(--ink);
+  background:var(--hero-bg,linear-gradient(180deg,#F4E3D4 0%,#E2C2A6 100%));
+  color:var(--hero-ink,var(--ink));
+}
+.hero-inner{
+  position:relative;z-index:2;
+  padding:var(--hero-pad,76px 64px 56px);
+  text-align:var(--hero-align,center);
+}
+.word-row{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.word-anim{
+  display:inline-block;
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:var(--word-size,100px);font-weight:900;line-height:1.02;letter-spacing:-.02em;
+  color:var(--hero-word,var(--hero-ink,var(--ink)));
+  filter:drop-shadow(6px 6px 0 var(--word-shadow,var(--cb-accent)));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:mtLetter .9s cubic-bezier(.4,1.4,.6,1) forwards;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+}
+.word-anim .letter:nth-child(1){animation-delay:.05s}
+.word-anim .letter:nth-child(2){animation-delay:.13s}
+.word-anim .letter:nth-child(3){animation-delay:.21s}
+.word-anim .letter:nth-child(4){animation-delay:.29s}
+.word-anim .letter:nth-child(5){animation-delay:.37s}
+.word-anim .letter:nth-child(6){animation-delay:.45s}
+.word-anim .letter:nth-child(7){animation-delay:.53s}
+.word-anim .letter:nth-child(8){animation-delay:.61s}
+.word-anim .letter:nth-child(9){animation-delay:.69s}
+.word-anim .letter:nth-child(10){animation-delay:.77s}
+.word-anim .letter:nth-child(11){animation-delay:.85s}
+.word-anim .letter:nth-child(12){animation-delay:.93s}
+.word-anim .letter:nth-child(13){animation-delay:1.01s}
+.word-anim .letter:nth-child(14){animation-delay:1.09s}
+.word-anim .letter:nth-child(15){animation-delay:1.17s}
+.word-anim .letter:nth-child(16){animation-delay:1.25s}
+@keyframes mtLetter{
+  0%{opacity:0;transform:translateY(-34px) scale(1.45) rotate(-7deg);filter:blur(7px);}
+  60%{opacity:1;filter:blur(0);transform:translateY(3px) scale(.95);}
+  100%{opacity:1;filter:blur(0);transform:translateY(0) scale(1);}
+}
+@keyframes mtLetterBounce{
+  0%{opacity:0;transform:translateY(-30px) scale(.6);}
+  62%{opacity:1;transform:translateY(6px) scale(1.08);}
+  100%{opacity:1;transform:translateY(0) scale(1);}
+}
+.word-anim .letter:hover{color:var(--cb-accent);transform:translateY(-7px) scale(1.08);}
+
+.hero-meta{
+  margin-top:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.ipa-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:14px;font-weight:700;letter-spacing:.05em;
+  background:var(--cb-2-soft);color:var(--hero-ink,var(--ink));
+  border:2.5px solid var(--ink);padding:5px 16px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-accent);cursor:pointer;transform:rotate(-1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .86s forwards;
+}
+.pos-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--deep);color:var(--paper);
+  padding:5px 14px;border-radius:999px;border:2px solid var(--ink);
+  transform:rotate(1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .98s forwards;
+}
+.spell-hint{
+  display:inline-block;margin-top:20px;padding:8px 18px;
+  font-size:12px;letter-spacing:.12em;
+  background:var(--cb-3-soft);border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-.8deg);
+  color:var(--hero-hint,var(--ink));
+  opacity:0;animation:mtUp .7s ease-out 1.12s forwards;
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;flex-shrink:0;
+  background:var(--cb-accent);border:3px solid var(--ink);border-radius:50%;
+  cursor:pointer;font-size:19px;
+  box-shadow:4px 4px 0 var(--cb-3);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(10deg);box-shadow:6px 6px 0 var(--cb-3);}
+.speak-btn.speaking{animation:mtPulse .6s ease-in-out infinite;}
+@keyframes mtPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14) rotate(-5deg);}}
+@keyframes mtUp{0%{opacity:0;transform:translateY(9px);}100%{opacity:1;transform:translateY(0);}}
+
+/* 意象卡 SVG 纠偏：避免继承尺寸把画面拉变形 */
+.image-card .ic-svg{width:100%!important;height:auto!important;}
+.image-card .ic-svg svg{width:100%!important;height:auto!important;max-width:340px;overflow:visible;}
+
+/* 搭配条：主题若要自绘装饰请用 ::after，base 的 ::before 色条保留 */
+.collo .pattern{white-space:normal!important;}
+
+/* 意象卡：暗底 + 主题辉光 + 点阵，给插画留出层次 */
+.image-card::before{
+  content:"";position:absolute;right:-80px;top:-90px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,var(--cb-accent),transparent 66%);
+  opacity:.2;pointer-events:none;z-index:0;
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,252,245,.18) 1px,transparent 1.4px);
+  background-size:18px 18px;opacity:.45;
+  -webkit-mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+  mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+}
+.image-card .ic-text,.image-card .ic-svg{position:relative;z-index:2;}
+
+/* 场景插画：浅色描边 + 标注芯片，保证深色卡上看得清 */
+.ic-svg{--sc-line:#FBF6EC;--sc-dim:rgba(251,246,236,.55);}
+.sc-pop{transform-origin:center;animation:scPop 5.6s cubic-bezier(.34,1.56,.64,1) infinite;}
+@keyframes scPop{
+  0%,8%{opacity:0;transform:translateY(14px) scale(.86) rotate(-3deg);}
+  24%,76%{opacity:1;transform:translateY(0) scale(1) rotate(0);}
+  92%,100%{opacity:0;transform:translateY(-6px) scale(.97);}
+}
+.sc-float{animation:scFloat 5.6s ease-in-out infinite;}
+@keyframes scFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.sc-link{fill:none;stroke:var(--sc-dim);stroke-width:1.5;stroke-dasharray:4 5;animation:scLink 5.6s linear infinite;}
+@keyframes scLink{to{stroke-dashoffset:-18;}}
+.sc-label text{font-family:"Songti SC","Noto Serif SC",serif;font-size:10px;font-weight:700;fill:var(--ink);}
+
+@media (max-width:640px){
+  .hero-inner{padding:46px 20px 34px;}
+  .word-anim{font-size:var(--word-size-sm,54px);}
+  .word-row{gap:8px;}
+  .speak-btn{width:38px;height:38px;font-size:16px;}
+  .hero-meta{gap:8px;}
+  .ipa-anim{font-size:12px;}
+  .image-card{grid-template-columns:1fr!important;padding:26px 20px;}
+}
+
+/* 主题：公文红章 —— 米黄纸、双线红边、右侧大字水印、左对齐 */
+:root{
+  --paper:#F8F3E7;--paper-2:#EAE1CE;
+  --cb-accent:#B02A2A;--cb-accent-soft:#F5DEDC;
+  --cb-2:#4A5A46;--cb-2-soft:#E3E8DF;
+  --cb-3:#94734A;--cb-3-soft:#EFE4D1;
+  --ink:#211C18;--deep:#2E2823;--cb-deep:#2E2823;
+  --hero-bg:#F8F3E7;--hero-ink:#211C18;--hero-word:#211C18;--word-shadow:#B02A2A;
+  --hero-align:left;--hero-justify:flex-start;
+  --hero-pad:76px 56px 56px;
+  --word-size:112px;--word-size-sm:54px;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:repeating-linear-gradient(0deg,transparent 0 40px,rgba(176,42,42,.045) 40px 41px);
+}
+.hero{border-top:8px double var(--cb-accent);border-bottom:2px solid var(--ink);}
+.hero::after{
+  content:"档案";position:absolute;right:44px;top:50%;transform:translateY(-50%) rotate(-8deg);
+  font-size:70px;font-weight:900;line-height:1;
+  color:rgba(176,42,42,.14);border:4px solid rgba(176,42,42,.18);
+  padding:8px 16px;border-radius:8px;pointer-events:none;
+}
+.word-anim{filter:drop-shadow(7px 7px 0 rgba(176,42,42,.85));}
+.hero .ipa-anim,.hero .pos-anim,.hero .spell-hint{transform:none;}
+.spell-hint{color:#211C18;}
+</style>
+</head>
+
+<body data-word="contradict">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="word-row">
+        <span class="word-anim" aria-label="contradict"><span class="letter l1">c</span><span class="letter l2">o</span><span class="letter l3">n</span><span class="letter l4">t</span><span class="letter l5">r</span><span class="letter l6">a</span><span class="letter l7">d</span><span class="letter l8">i</span><span class="letter l9">c</span><span class="letter l10">t</span></span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      </div>
+      <div class="hero-meta">
+        <div class="ipa-anim" id="ipaBtn">英 /ˌkɒntrəˈdɪkt/ &nbsp;·&nbsp; 美 /ˌkɑːntrəˈdɪkt/</div>
+        <div class="pos-anim">v.</div>
+      </div>
+      <div class="spell-hint">contradict &nbsp; 反驳 · 与…矛盾 · 否认</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">contra + dict</span>（contra＝相反，dict＝说）&nbsp;→&nbsp; "说相反的话" → <b>反驳</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">v.</div><div class="w">contradict</div><div class="p">/ˌkɒntrəˈdɪkt/</div><div class="m">反驳；与…矛盾</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">contradiction</div><div class="p">/ˌkɒntrəˈdɪkʃn/</div><div class="m">矛盾；反驳</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">contradictory</div><div class="p">/ˌkɒntrəˈdɪktəri/</div><div class="m">自相矛盾的</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">predict</div><div class="p">/prɪˈdɪkt/</div><div class="m">预言；预测</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">dictate</div><div class="p">/dɪkˈteɪt/</div><div class="m">口述；命令</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">verdict</div><div class="p">/ˈvɜːdɪkt/</div><div class="m">裁决；定论</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">dictionary</div><div class="p">/ˈdɪkʃənri/</div><div class="m">词典</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">dedicate</div><div class="p">/ˈdedɪkeɪt/</div><div class="m">奉献；致力于</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">contradict</span> = 两个人站在长桌两端，一个说“向东”，另一个立刻说“向西”。</p>
+          <p class="ic-sub">contra（相反）+ dict（说）→ 说相反的话：反驳、与…矛盾。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+      <svg viewBox="0 0 360 280" role="img" aria-hidden="true"><circle cx="180" cy="142" r="112" fill="var(--cb-accent)" opacity=".13"/><circle cx="180" cy="142" r="104" fill="none" stroke="var(--sc-dim)" stroke-width="1.5" stroke-dasharray="3 8"/>
+          <g class="sc-pop">
+            <rect x="30" y="70" width="118" height="64" rx="18" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="3"/>
+            <path d="M148 118l24 18-9-26z" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="3" stroke-linejoin="round"/>
+            <text x="89" y="115" text-anchor="middle" font-size="30" font-weight="900" fill="var(--ink)">东</text>
+          </g>
+          <g class="sc-pop" style="animation-delay:-.5s">
+            <rect x="212" y="70" width="118" height="64" rx="18" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="3"/>
+            <path d="M212 118l-24 18 9-26z" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="3" stroke-linejoin="round"/>
+            <text x="271" y="115" text-anchor="middle" font-size="30" font-weight="900" fill="var(--ink)">西</text>
+          </g>
+          <g class="sc-float" stroke="var(--cb-accent)" stroke-width="3" stroke-linecap="round" fill="none">
+            <path d="M126 178h62M126 178l11-6M126 178l11 6"/>
+            <path d="M234 178h-62M234 178l-11-6M234 178l-11 6"/>
+          </g>
+          <g class="sc-label"><rect x="69" y="217" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="89" y="232" text-anchor="middle">相反</text></g><path class="sc-link" d="M89 217L89 138"/>
+          <g class="sc-label"><rect x="251" y="217" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="271" y="232" text-anchor="middle">矛盾</text></g><path class="sc-link" d="M271 217L271 138"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">contradict oneself</div><div class="meaning">自相矛盾</div></div>
+        <div class="collo"><div class="pattern">contradict the evidence</div><div class="meaning">与证据矛盾</div></div>
+        <div class="collo"><div class="pattern">flatly contradict</div><div class="meaning">断然反驳</div></div>
+        <div class="collo"><div class="pattern">a direct contradiction</div><div class="meaning">直接矛盾</div></div>
+        <div class="collo"><div class="pattern">contradict a claim</div><div class="meaning">反驳某种说法</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2021 考研 · 阅读</div>
+          <p class="en">The witness's story <em class="hl">contradict</em>s the physical evidence.</p>
+          <p class="cn">证人的说法与物证相矛盾。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2018 六级 · 写作</div>
+          <p class="en">It is easy to <em class="hl">contradict</em> yourself when you argue without facts.</p>
+          <p class="cn">没有事实依据地争论时，人很容易自相矛盾。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 考研 · 翻译</div>
+          <p class="en">His actions flatly <em class="hl">contradict</em> the promises he made.</p>
+          <p class="cn">他的行为与他所作的承诺完全矛盾。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 雅思 · 阅读</div>
+          <p class="en">The findings <em class="hl">contradict</em> the assumption that longer hours mean higher output.</p>
+          <p class="cn">这些发现与“工时越长产出越高”的假设相矛盾。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          contradict 是及物动词，后面直接跟宾语，不加 with。<br>
+          <span class="wrong">contradict with the facts</span> → <span class="right">contradict the facts</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          contradict 中间是 -tra-，不要写成 contredict 或 contraadict。<br>
+          <span class="wrong">contredict</span> → <span class="right">contradict</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">词性</span>
+          名词“矛盾”是 contradiction，形容词是 contradictory，别混用。<br>
+          <span class="wrong">His words are contradiction.</span> → <span class="right">His words are contradictory.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>contradict</td><td>说相反的话，强调互不相容</td><td class="chant">言行 contradict 承诺</td></tr>
+          <tr><td>refute</td><td>用证据驳倒对方</td><td class="chant">refute a theory</td></tr>
+          <tr><td>deny</td><td>否认某事存在或发生</td><td class="chant">deny the charge</td></tr>
+          <tr><td>oppose</td><td>反对计划、政策</td><td class="chant">oppose the plan</td></tr>
+          <tr><td>conflict</td><td>两者冲突（多作名词／不及物）</td><td class="chant">interests conflict</td></tr>
+          <tr><td>dispute</td><td>对说法有争议、质疑</td><td class="chant">dispute the figures</td></tr>
+        </tbody>
+      </table>
+      <p class="review-tip">口诀：contradict 靠“说”，refute 靠“证”，deny 靠“不认”。</p>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">His latest statement <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontradicts</span> what he said last week.</p>
+          <p class="fill-hint">提示：<b>第三人称单数</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The two reports <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontradict</span> each other on almost every point.</p>
+          <p class="fill-hint">提示：<b>主语复数，动词原形</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">There is a clear <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontradiction</span> between his words and his actions.</p>
+          <p class="fill-hint">提示：<b>名词：矛盾</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The evidence is <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontradictory</span> to the official account.</p>
+          <p class="fill-hint">提示：<b>形容词：矛盾的</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">I am not trying to <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ontradict</span> you, but the data say otherwise.</p>
+          <p class="fill-hint">提示：<b>不定式后接动词原形</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>contradict</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="His calm answer contradicted the angry tone of his email."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>说出 contradict 的 3 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>区分 contradict / refute / deny</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>默写 dict 词族 8 个词</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>遮住释义，复述两人对桌喊话的画面</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>

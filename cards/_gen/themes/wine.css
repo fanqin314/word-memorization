@@ -1,0 +1,30 @@
+/* 主题：酒红典籍 —— 深红渐变 hero + 双线装饰 + 竖向细纹 */
+:root{
+  --paper:#F6F0E7;--paper-2:#EADFD2;
+  --cb-accent:#8C2F39;--cb-accent-soft:#F1DEE1;
+  --cb-2:#3D5661;--cb-2-soft:#DFE7E9;
+  --cb-3:#8A7446;--cb-3-soft:#EEE6D3;
+  --ink:#251A18;--deep:#3C1F25;--cb-deep:#3C1F25;
+  --hero-bg:radial-gradient(130% 130% at 80% 8%,#A94A52 0%,#8C2F39 50%,#651E27 100%);
+  --hero-ink:#F8EFE5;--hero-word:#FCF5EB;--word-shadow:#3C1F25;
+  --hero-pad:88px 58px 66px;
+  --word-size:118px;--word-size-sm:56px;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:repeating-linear-gradient(90deg,transparent 0 58px,rgba(140,47,57,.055) 58px 60px);
+  animation:mtDrift 26s linear infinite;
+}
+@keyframes mtDrift{to{background-position:60px 0;}}
+.hero::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:14px;
+  background:repeating-linear-gradient(45deg,var(--cb-accent) 0 12px,transparent 12px 26px);
+  opacity:.45;
+}
+.hero::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,transparent,var(--cb-3),transparent);
+}
+.word-anim{filter:drop-shadow(8px 8px 0 #3C1F25);}
+.spell-hint{color:#3C1F25;box-shadow:3px 3px 0 #3C1F25;}
+.ipa-anim{color:#3C1F25;box-shadow:3px 3px 0 #3C1F25;}

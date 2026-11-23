@@ -1,0 +1,103 @@
+{
+  "word": "versatile",
+  "ipaUK": "ˈvɜːsətaɪl",
+  "ipaUS": "ˈvɜːrsətl",
+  "pos": "adj.",
+  "gloss": "多才多艺的 · 多用途的 · 适应性强的",
+  "theme": "neon",
+  "root": {
+    "stem": "vers / vert",
+    "origin": "拉丁 vertere＝转",
+    "sense": "能随时转向各种用途"
+  },
+  "family": [
+    { "pos": "adj.", "w": "versatile", "p": "/ˈvɜːsətaɪl/", "m": "多才多艺的；多用途的" },
+    { "pos": "n.", "w": "versatility", "p": "/ˌvɜːsəˈtæləti/", "m": "多才多艺；多功能" },
+    { "pos": "n.", "w": "version", "p": "/ˈvɜːʃn/", "m": "版本；说法" },
+    { "pos": "v.", "w": "convert", "p": "/kənˈvɜːt/", "m": "转换；改变" },
+    { "pos": "v.", "w": "reverse", "p": "/rɪˈvɜːs/", "m": "颠倒；倒转" },
+    { "pos": "adj.", "w": "diverse", "p": "/daɪˈvɜːs/", "m": "多样的；不同的" },
+    { "pos": "v.", "w": "diversify", "p": "/daɪˈvɜːsɪfaɪ/", "m": "使多样化" },
+    { "pos": "n.", "w": "diversion", "p": "/daɪˈvɜːʃn/", "m": "转移；消遣" }
+  ],
+  "scene": {
+    "main": "同一把瑞士军刀，一会儿当剪刀，一会儿当螺丝刀，一会儿当开瓶器",
+    "sub": "vers（转）+ -atile（能…的）→ 能随时转向不同用途：多才多艺的、多用途的。",
+    "template": "toolkit",
+    "labels": ["剪刀", "螺丝刀", "开瓶器"]
+  },
+  "collocations": [
+    { "pattern": "a versatile actor", "meaning": "多才多艺的演员" },
+    { "pattern": "a versatile tool", "meaning": "多用途工具" },
+    { "pattern": "versatile skills", "meaning": "多种技能" },
+    { "pattern": "a versatile player", "meaning": "全能球员" },
+    { "pattern": "highly versatile", "meaning": "用途极广的" }
+  ],
+  "examples": [
+    {
+      "src": "2019 考研 · 阅读",
+      "en": "Employers value graduates who are {{w}} and quick to learn.",
+      "cn": "雇主看重多才多艺、学得快的毕业生。"
+    },
+    {
+      "src": "2021 六级 · 听力",
+      "en": "This {{w}} little device works as a camera, a scanner and a projector.",
+      "cn": "这个多用途的小设备可以当相机、扫描仪和投影仪。"
+    },
+    {
+      "src": "2020 考研 · 翻译",
+      "en": "Bamboo is {{w}}: it can be used for food, tools and housing.",
+      "cn": "竹子用途广泛：可作食物、工具和建材。"
+    },
+    {
+      "src": "2018 雅思 · 口语",
+      "en": "She is a {{w}} musician who plays five instruments.",
+      "cn": "她是一位会五种乐器的多才多艺的音乐家。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "versatile 是 v-e-r-s-a-t-i-l-e，结尾 -tile，别写成 versitile。",
+      "wrong": "versitile",
+      "right": "versatile"
+    },
+    {
+      "tip": "词性",
+      "text": "名词是 versatility，不是 versatileness。",
+      "wrong": "versatileness",
+      "right": "versatility"
+    },
+    {
+      "tip": "用法",
+      "text": "versatile 修饰人或物都可以，但没有 versative 这个词。",
+      "wrong": "a versative player",
+      "right": "a versatile player"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["versatile", "一人／一物能干多种事，强调转换自如", "a versatile player"],
+      ["flexible", "可调整、可变通，强调不僵化", "flexible working hours"],
+      ["adaptable", "能适应新环境", "adaptable to change"],
+      ["all-round", "全面的，口语常用", "an all-round athlete"],
+      ["diverse", "种类多（主体是群体）", "a diverse team"],
+      ["multi-purpose", "一物多用途，偏产品", "a multi-purpose tool"]
+    ],
+    "chant": "人全能 versatile，时间灵活 flexible，群体多样 diverse，产品多用 multi-purpose。"
+  },
+  "fills": [
+    { "sentence": "She is a ___ performer who can sing, dance and act.", "answer": "versatile", "hint": "形容词：多才多艺的" },
+    { "sentence": "The tool's ___ makes it popular with campers.", "answer": "versatility", "hint": "名词：多功能" },
+    { "sentence": "A ___ employee can move between departments easily.", "answer": "versatile", "hint": "形容词修饰人" },
+    { "sentence": "This ___ app handles notes, tasks and calendars.", "answer": "versatile", "hint": "形容词修饰物" },
+    { "sentence": "His ___ as a teacher and writer opened many doors.", "answer": "versatility", "hint": "名词：多面手能力" }
+  ],
+  "review": [
+    "说出 versatile 的 3 个搭配",
+    "区分 versatile / flexible / diverse",
+    "默写 vers 词族 8 个词",
+    "遮住释义，复述瑞士军刀的画面"
+  ],
+  "writeSample": "A versatile learner treats every new skill as another tool in the bag."
+}

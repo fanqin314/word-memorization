@@ -1,0 +1,26 @@
+/* 主题：霓虹夜读 —— 浅紫纸、深紫 hero、洋红辉光 */
+:root{
+  --paper:#F4F1FA;--paper-2:#E6E1F0;
+  --cb-accent:#B32E8E;--cb-accent-soft:#F6DDF0;
+  --cb-2:#1E5E8C;--cb-2-soft:#DCE8F2;
+  --cb-3:#3E8E7E;--cb-3-soft:#DCEEE9;
+  --ink:#1A1726;--deep:#241C3A;--cb-deep:#241C3A;
+  --hero-bg:linear-gradient(135deg,#241C3A 0%,#33254C 60%,#1A1726 100%);
+  --hero-ink:#F3E9FF;--hero-word:#FFF3FB;--word-shadow:#B32E8E;
+  --hero-pad:86px 56px 64px;
+  --word-size:108px;--word-size-sm:52px;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(120deg,rgba(179,46,142,.06),transparent 42%,rgba(30,94,140,.06));
+}
+.hero::after{
+  content:"";position:absolute;right:-50px;bottom:-80px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(179,46,142,.55),transparent 65%);
+  filter:blur(18px);pointer-events:none;
+}
+.word-anim{
+  filter:drop-shadow(0 0 18px rgba(179,46,142,.55)) drop-shadow(6px 6px 0 #241C3A);
+}
+.hero .ipa-anim{color:#1A1726;box-shadow:3px 3px 0 #B32E8E;}
+.hero .spell-hint{color:#1A1726;}

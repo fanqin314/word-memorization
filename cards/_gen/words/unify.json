@@ -1,0 +1,103 @@
+{
+  "word": "unify",
+  "ipaUK": "ˈjuːnɪfaɪ",
+  "ipaUS": "ˈjuːnɪfaɪ",
+  "pos": "v.",
+  "gloss": "统一 · 使成一体 · 使一致",
+  "theme": "puzzle",
+  "root": {
+    "stem": "uni",
+    "origin": "拉丁 unus＝一",
+    "sense": "把许多变成一个"
+  },
+  "family": [
+    { "pos": "v.", "w": "unify", "p": "/ˈjuːnɪfaɪ/", "m": "统一；使一致" },
+    { "pos": "n.", "w": "unity", "p": "/ˈjuːnəti/", "m": "团结；整体" },
+    { "pos": "n.", "w": "union", "p": "/ˈjuːniən/", "m": "联合；工会" },
+    { "pos": "v.", "w": "unite", "p": "/juˈnaɪt/", "m": "联合；团结" },
+    { "pos": "n.", "w": "uniform", "p": "/ˈjuːnɪfɔːm/", "m": "制服；统一的" },
+    { "pos": "n.", "w": "unification", "p": "/ˌjuːnɪfɪˈkeɪʃn/", "m": "统一；一体化" },
+    { "pos": "adj.", "w": "unilateral", "p": "/ˌjuːnɪˈlætərəl/", "m": "单方面的；单边的" },
+    { "pos": "adj.", "w": "unanimous", "p": "/juˈnænɪməs/", "m": "一致同意的" }
+  ],
+  "scene": {
+    "main": "许多散落的齿轮被一根轴串起来，朝同一个方向同时转动",
+    "sub": "uni（一）+ -fy（使…）→ 使多成为一：统一、使一致。",
+    "template": "gears",
+    "labels": ["统一", "同转"]
+  },
+  "collocations": [
+    { "pattern": "unify the country", "meaning": "统一国家" },
+    { "pattern": "unify standards", "meaning": "统一标准" },
+    { "pattern": "unify efforts", "meaning": "统一行动" },
+    { "pattern": "a unified market", "meaning": "统一市场" },
+    { "pattern": "unify A with B", "meaning": "把 A 与 B 统一起来" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 翻译",
+      "en": "The reform aims to {{w}} the two separate systems into one.",
+      "cn": "这项改革旨在把两套分离的体系统一成一套。"
+    },
+    {
+      "src": "2019 六级 · 阅读",
+      "en": "A common language helped {{w}} the newly independent states.",
+      "cn": "共同的语言帮助这些新独立的国家实现了统一。"
+    },
+    {
+      "src": "2022 考研 · 写作",
+      "en": "Social media can {{w}} people around a single cause.",
+      "cn": "社交媒体能让人们围绕同一个目标团结起来。"
+    },
+    {
+      "src": "2017 雅思 · 口语",
+      "en": "The city plans to {{w}} its bus and subway tickets.",
+      "cn": "这座城市计划统一公交与地铁票。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "unify 的名词是 unification，不是 unifyment；重音落在 uni-。",
+      "wrong": "unifyment",
+      "right": "unification"
+    },
+    {
+      "tip": "搭配",
+      "text": "unify 是及物动词，后面必须带宾语，不能单独说 parts unify together。",
+      "wrong": "The parts unify together into one.",
+      "right": "The plan unifies the parts into one."
+    },
+    {
+      "tip": "词性",
+      "text": "名词“团结”是 unity，不是 unify；unify 只作动词。",
+      "wrong": "National unify is important.",
+      "right": "National unity is important."
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["unify", "使多成为一个整体，强调结果一致", "unify standards 统一标准"],
+      ["unite", "人／国家联合起来，强调携手", "unite against poverty"],
+      ["combine", "把两样东西合在一起，可拆开", "combine A with B"],
+      ["merge", "公司、机构合并，边界消失", "the two banks merged"],
+      ["integrate", "融入体系，强调协调运转", "integrate into society"],
+      ["standardize", "统一规格与标准", "standardize procedures"]
+    ],
+    "chant": "人心 unite，标准 unify；公司 merge，体系 integrate。"
+  },
+  "fills": [
+    { "sentence": "The new government tried to ___ the divided regions.", "answer": "unify", "hint": "不定式后接动词原形" },
+    { "sentence": "The two parties formed a ___ front against the bill.", "answer": "unified", "hint": "形容词：统一的" },
+    { "sentence": "National ___ depends on mutual trust.", "answer": "unity", "hint": "名词：团结" },
+    { "sentence": "The ___ of the two systems took ten years.", "answer": "unification", "hint": "名词：统一" },
+    { "sentence": "The board reached a ___ decision.", "answer": "unanimous", "hint": "形容词：一致同意的" }
+  ],
+  "review": [
+    "说出 unify 的 3 个搭配",
+    "区分 unify / unite / merge 各造 1 句",
+    "默写 uni 词族 8 个词",
+    "遮住释义，复述齿轮同轴的画面"
+  ],
+  "writeSample": "A shared goal can unify a team that speaks different languages."
+}

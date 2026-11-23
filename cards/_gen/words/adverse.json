@@ -1,0 +1,103 @@
+{
+  "word": "adverse",
+  "ipaUK": "ˈædvɜːs",
+  "ipaUS": "ædˈvɜːrs",
+  "pos": "adj.",
+  "gloss": "不利的 · 有害的 · 相反的",
+  "theme": "radio",
+  "root": {
+    "stem": "vers / vert",
+    "origin": "拉丁 vertere＝转",
+    "sense": "转过来挡在你面前"
+  },
+  "family": [
+    { "pos": "adj.", "w": "adverse", "p": "/ˈædvɜːs/", "m": "不利的；有害的" },
+    { "pos": "n.", "w": "adversity", "p": "/ədˈvɜːsəti/", "m": "逆境；不幸" },
+    { "pos": "n.", "w": "adversary", "p": "/ˈædvəsəri/", "m": "对手；敌手" },
+    { "pos": "v.", "w": "reverse", "p": "/rɪˈvɜːs/", "m": "颠倒；倒转" },
+    { "pos": "v.", "w": "convert", "p": "/kənˈvɜːt/", "m": "转变；改变信仰" },
+    { "pos": "v.", "w": "divert", "p": "/daɪˈvɜːt/", "m": "转移；使改道" },
+    { "pos": "adj.", "w": "versatile", "p": "/ˈvɜːsətaɪl/", "m": "多才多艺的；多用途的" },
+    { "pos": "n.", "w": "controversy", "p": "/ˈkɒntrəvɜːsi/", "m": "争议；争论" }
+  ],
+  "scene": {
+    "main": "顺风行驶的船突然被一阵逆风顶住帆，速度一下子掉了下来",
+    "sub": "ad-（朝向）+ vers（转）→ 风转过来对着你吹：不利的、有害的。",
+    "template": "headwind",
+    "labels": ["逆风", "受阻"]
+  },
+  "collocations": [
+    { "pattern": "adverse effects", "meaning": "不良影响（药物 · 政策）" },
+    { "pattern": "adverse weather", "meaning": "恶劣天气" },
+    { "pattern": "adverse circumstances", "meaning": "不利处境" },
+    { "pattern": "adverse reaction", "meaning": "不良反应" },
+    { "pattern": "be adverse to", "meaning": "对…不利；不利于" }
+  ],
+  "examples": [
+    {
+      "src": "2021 考研 · 阅读",
+      "en": "Patients who stopped taking the drug reported no {{w}} effects.",
+      "cn": "停药的患者报告没有出现不良反应。"
+    },
+    {
+      "src": "2019 六级 · 听力",
+      "en": "Farmers suffered heavy losses after weeks of {{w}} weather.",
+      "cn": "数周的恶劣天气之后，农民损失惨重。"
+    },
+    {
+      "src": "2020 考研 · 完形",
+      "en": "Children from {{w}} backgrounds are more likely to drop out of school.",
+      "cn": "来自不利背景的孩子更容易辍学。"
+    },
+    {
+      "src": "2018 雅思 · 写作",
+      "en": "The new policy may have {{w}} consequences for small businesses.",
+      "cn": "新政策可能给小企业带来不利后果。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "adverse 与 averse 只差一个字母：adverse 修饰事物，averse 表示人“厌恶的”。",
+      "wrong": "He is adverse to risk.",
+      "right": "He is averse to risk."
+    },
+    {
+      "tip": "搭配",
+      "text": "表示“对…不利”时用 be adverse to + 事物，不用 adverse for。",
+      "wrong": "Smoking is adverse for health.",
+      "right": "Smoking is adverse to health."
+    },
+    {
+      "tip": "词性",
+      "text": "adversity 是“逆境”，表示“对手”要用 adversary，别把两个名词混用。",
+      "wrong": "His main adversity is the champion.",
+      "right": "His main adversary is the champion."
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["adverse", "修饰事物：不利的、有害的", "药物 adverse effects"],
+      ["averse", "人做主语：厌恶的、反对的", "be averse to risk"],
+      ["reverse", "方向相反、颠倒", "reverse the order"],
+      ["contrary", "相反的（观点、证据）", "contrary to expectations"],
+      ["harmful", "直接有害，语气更直白", "harmful chemicals"],
+      ["unfavorable", "条件不利，偏中性", "unfavorable conditions"]
+    ],
+    "chant": "物 adverse，人 averse；影响 adverse，反感 averse。"
+  },
+  "fills": [
+    { "sentence": "The drug may cause ___ reactions in some patients.", "answer": "adverse", "hint": "形容词：不良反应" },
+    { "sentence": "Crops failed after a season of ___ weather.", "answer": "adverse", "hint": "形容词：恶劣天气" },
+    { "sentence": "She is not ___ to working late.", "answer": "averse", "hint": "人做主语用 averse" },
+    { "sentence": "He overcame ___ and finished his degree.", "answer": "adversity", "hint": "名词：逆境" },
+    { "sentence": "Export earnings were ___ affected by the tariffs.", "answer": "adversely", "hint": "副词：不利地" }
+  ],
+  "review": [
+    "说出 adverse 的 3 个搭配",
+    "区分 adverse / averse 各造 1 句",
+    "默写 vers 词族 8 个词",
+    "遮住释义，复述逆风顶帆的画面"
+  ],
+  "writeSample": "Lack of sleep has adverse effects on memory and mood."
+}

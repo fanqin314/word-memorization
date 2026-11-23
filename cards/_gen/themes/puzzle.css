@@ -1,0 +1,26 @@
+/* 主题：拼图工坊 —— 米色纸、青绿主色、字母弹跳入场、右下拼图块 */
+:root{
+  --paper:#F4EDDF;--paper-2:#E8DDC8;
+  --cb-accent:#2F6F73;--cb-accent-soft:#DCEBE9;
+  --cb-2:#C4763C;--cb-2-soft:#F3E2D3;
+  --cb-3:#7C8C58;--cb-3-soft:#E8EDDA;
+  --ink:#22201B;--deep:#2A3B34;--cb-deep:#2A3B34;
+  --hero-bg:linear-gradient(160deg,#F1E6D2 0%,#E9D8BC 100%);
+  --hero-ink:#22201B;--hero-word:#22201B;--word-shadow:#2F6F73;
+  --hero-pad:84px 54px 66px;
+  --word-size:110px;--word-size-sm:52px;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='74' height='74'%3E%3Crect x='7' y='7' width='60' height='60' rx='14' fill='none' stroke='%232F6F73' stroke-opacity='0.12' stroke-width='2'/%3E%3C/svg%3E");
+  background-size:74px 74px;
+}
+.hero::after{
+  content:"";position:absolute;right:-34px;bottom:-48px;width:190px;height:190px;
+  border-radius:26px;background:var(--cb-2-soft);
+  border:3px solid var(--ink);transform:rotate(14deg);
+}
+.word-anim .letter:nth-child(even){transform-origin:bottom;animation-name:mtLetterBounce;}
+.hero .ipa-anim{transform:rotate(-2deg);}
+.hero .pos-anim{transform:rotate(2deg);}
+.hero .spell-hint{transform:rotate(-1deg);}
