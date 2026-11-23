@@ -1,0 +1,211 @@
+/* 词根 · 手机版：按词族排版的卡片 + 单字词根折叠区 */
+
+/* ---------------- 顶部区 ---------------- */
+#view-roots{padding-bottom:.4rem;}
+.rt-hero{
+  position:relative;overflow:hidden;
+  margin:-.55rem -.8rem .55rem;
+  padding:1rem .95rem .85rem;
+  background:
+    radial-gradient(130% 150% at 92% -30%,color-mix(in srgb,var(--ac) 26%,transparent) 0%,transparent 62%),
+    linear-gradient(165deg,#FFFFFF 0%,var(--paper-2) 100%);
+  border-bottom:1px solid var(--rule);
+}
+.rt-hero::after{
+  content:"根";
+  position:absolute;right:-.35rem;bottom:-1.5rem;
+  font-family:var(--serif);font-size:5.4rem;font-weight:900;line-height:1;
+  color:color-mix(in srgb,var(--ink) 5%,transparent);
+  pointer-events:none;
+}
+.rt-eyebrow{
+  font-family:var(--mono);font-size:.5rem;font-weight:900;
+  letter-spacing:.26em;text-transform:uppercase;color:var(--ac);
+}
+.rt-hero h1{
+  margin:.22rem 0 .12rem;
+  font-family:var(--serif);font-size:1.58rem;font-weight:900;
+  letter-spacing:-.02em;line-height:1.08;color:var(--ink);
+}
+.rt-sub{
+  font-family:var(--mono);font-size:.55rem;font-weight:800;letter-spacing:.05em;
+  color:color-mix(in srgb,var(--ink) 50%,transparent);
+}
+.rt-sub b{color:var(--ink);}
+
+/* ---------------- 工具行 ---------------- */
+.rt-tools{display:flex;align-items:center;gap:.4rem;margin-bottom:.55rem;}
+.rt-tools .search-box{flex:1;min-width:0;}
+.rt-sort{display:flex;gap:.22rem;flex:none;}
+.rt-sort button{
+  appearance:none;cursor:pointer;
+  padding:.26rem .52rem;
+  border:1px solid var(--rule-2);border-radius:999px;
+  background:#fff;color:color-mix(in srgb,var(--ink) 52%,transparent);
+  font-family:var(--mono);font-size:.53rem;font-weight:900;letter-spacing:.02em;
+  transition:background .18s,color .18s,border-color .18s,transform .18s var(--spring);
+  white-space:nowrap;
+}
+.rt-sort button:active{transform:scale(.94);}
+.rt-sort button.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+
+/* ---------------- 词族卡 ---------------- */
+.rt-list{display:flex;flex-direction:column;}
+.rt-card{
+  position:relative;
+  margin-bottom:.55rem;
+  padding:.72rem .8rem .78rem .92rem;
+  background:var(--card);
+  border:1px solid var(--rule);
+  border-radius:15px;
+  box-shadow:var(--soft);
+  overflow:hidden;
+  animation:rtIn .42s var(--ease) both;
+}
+.rt-card::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--ac),color-mix(in srgb,var(--ac) 24%,transparent));
+}
+.rt-list.no-anim .rt-card,
+.rt-list.no-anim .rt-solo{animation:none;}
+
+/* 第一张（最大的词族）：墨底反白，做视觉主角 */
+.rt-card.lead{
+  background:linear-gradient(150deg,#20242A 0%,#2C333A 100%);
+  border-color:transparent;
+  box-shadow:0 16px 34px -18px rgba(20,24,30,.65);
+}
+.rt-card.lead::before{background:linear-gradient(180deg,var(--amber),#8E6F33);}
+
+.rt-head{
+  display:flex;align-items:center;gap:.42rem;width:100%;
+  background:none;border:0;padding:0;text-align:left;cursor:pointer;
+  font-family:inherit;
+}
+.rt-no{
+  flex:none;font-family:var(--mono);font-size:.48rem;font-weight:900;
+  letter-spacing:.08em;color:color-mix(in srgb,var(--ink) 32%,transparent);
+  min-width:1.05rem;
+}
+.rt-stem{
+  font-family:var(--serif);font-size:1.32rem;font-weight:900;line-height:1;
+  letter-spacing:-.02em;color:var(--ink);
+}
+.rt-mean{
+  flex:none;margin-left:.05rem;
+  font-size:.55rem;font-weight:900;
+  color:var(--ac);background:color-mix(in srgb,var(--ac) 13%,transparent);
+  padding:.1rem .38rem;border-radius:999px;
+}
+.rt-n{
+  margin-left:auto;flex:none;
+  font-family:var(--mono);font-size:.56rem;font-weight:900;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+  padding:.06rem .4rem;border-radius:999px;
+  border:1px solid var(--rule-2);
+}
+.rt-chev{
+  flex:none;width:13px;height:13px;
+  color:color-mix(in srgb,var(--ink) 38%,transparent);
+  transition:transform .24s var(--ease);
+}
+.rt-card.open .rt-chev{transform:rotate(180deg);}
+
+.rt-words{
+  display:none;
+  grid-template-columns:1fr 1fr;gap:.34rem;
+  margin-top:.58rem;
+}
+.rt-card.open .rt-words{display:grid;}
+.rt-w{
+  display:flex;flex-direction:column;gap:.06rem;min-width:0;
+  padding:.4rem .5rem;
+  background:#FCFCFA;
+  border:1px solid var(--rule);
+  border-radius:9px;
+  text-decoration:none;
+  transition:transform .16s var(--spring),border-color .16s;
+}
+.rt-w:active{transform:scale(.965);border-color:var(--ink);}
+.rt-w b{
+  font-family:var(--serif);font-size:.82rem;font-weight:900;letter-spacing:-.01em;
+  color:var(--ink);
+}
+.rt-w span{
+  font-size:.54rem;line-height:1.35;
+  color:color-mix(in srgb,var(--ink) 52%,transparent);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* lead 卡内的反白细节 */
+.rt-card.lead .rt-no{color:rgba(255,255,255,.42);}
+.rt-card.lead .rt-stem{color:#fff;}
+.rt-card.lead .rt-mean{color:#F3E3BE;background:rgba(243,227,190,.16);}
+.rt-card.lead .rt-n{color:rgba(255,255,255,.72);border-color:rgba(255,255,255,.26);}
+.rt-card.lead .rt-chev{color:rgba(255,255,255,.6);}
+.rt-card.lead .rt-w{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.13);}
+.rt-card.lead .rt-w b{color:#fff;}
+.rt-card.lead .rt-w span{color:rgba(255,255,255,.6);}
+.rt-card.lead .rt-w:active{border-color:rgba(255,255,255,.5);}
+
+/* 核心词根小徽标 */
+.rt-badge{
+  flex:none;margin-left:.06rem;
+  font-family:var(--mono);font-size:.46rem;font-weight:900;letter-spacing:.08em;
+  color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 40%,transparent);
+  border-radius:4px;padding:.04rem .24rem;
+}
+.rt-card.lead .rt-badge{color:#F3E3BE;border-color:rgba(243,227,190,.45);}
+
+/* ---------------- 单字词根区 ---------------- */
+.rt-solo{
+  margin-top:.2rem;
+  border:1px dashed var(--rule-2);
+  border-radius:14px;
+  background:color-mix(in srgb,var(--ink) 3.5%,transparent);
+  animation:rtIn .42s var(--ease) both;
+}
+.rt-solo-head{
+  display:flex;align-items:center;gap:.42rem;width:100%;
+  padding:.6rem .78rem;
+  background:none;border:0;cursor:pointer;text-align:left;
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.05em;
+  color:color-mix(in srgb,var(--ink) 62%,transparent);
+}
+.rt-solo-head b{color:var(--ink);font-family:var(--sans);font-size:.66rem;}
+.rt-solo-head .rt-n{margin-left:auto;}
+.rt-solo-head .rt-chev{transition:transform .24s var(--ease);}
+.rt-solo.open .rt-solo-head .rt-chev{transform:rotate(180deg);}
+
+.rt-solo-chips{display:none;flex-wrap:wrap;gap:.3rem;padding:0 .72rem .72rem;}
+.rt-solo.open .rt-solo-chips{display:flex;}
+.rt-chip{
+  display:inline-flex;align-items:baseline;gap:.24rem;
+  padding:.24rem .48rem;
+  background:#fff;border:1px solid var(--rule);border-radius:999px;
+  text-decoration:none;
+  transition:transform .16s var(--spring),border-color .16s;
+}
+.rt-chip:active{transform:scale(.95);border-color:var(--ink);}
+.rt-chip b{
+  font-family:var(--serif);font-size:.66rem;font-weight:900;color:var(--ink);
+}
+.rt-chip i{
+  font-style:normal;font-size:.55rem;
+  color:color-mix(in srgb,var(--ink) 48%,transparent);
+}
+
+/* ---------------- 空状态 ---------------- */
+.rt-empty{
+  padding:2.6rem 1rem;text-align:center;
+  color:color-mix(in srgb,var(--ink) 50%,transparent);
+  font-size:.72rem;line-height:1.7;
+}
+.rt-empty b{
+  display:block;font-family:var(--serif);font-size:.95rem;color:var(--ink);margin-bottom:.3rem;
+}
+
+@keyframes rtIn{
+  from{opacity:0;transform:translateY(10px) scale(.985);}
+  to{opacity:1;transform:none;}
+}

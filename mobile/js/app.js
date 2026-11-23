@@ -4,12 +4,15 @@
    导航与交互（每个容器只绑定一次）
    ============================================================ */
 function switchTab(name){
+  /* 自测改成顶栏抽屉：不再是一个独立 tab */
+  if(name === 'quiz'){ openQuiz(); return; }
   /* 答题到一半切走：底部导航恢复，顺手退掉那条历史记录 */
   if(name !== 'exam' && examInRun){
     examInRun = false;
     examChrome(false);
     if(history.state && history.state.examRun) history.back();
   }
+  closeQuiz();
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const view = document.getElementById('view-' + name);
@@ -20,7 +23,7 @@ function switchTab(name){
     const lg = document.getElementById('libGrid');
     if(lg) lg.scrollTop = 0;
   }
-  if(name === 'quiz') renderQuiz();
+  if(name === 'roots') renderRoots();
   if(name === 'exam') renderExam();
   if(name === 'stat') renderStat();
   if(name !== 'lib') hardCloseLib();
@@ -38,6 +41,14 @@ document.querySelectorAll('.tab').forEach(btn => {
     switchTab(btn.dataset.tab);
   });
 });
+
+/* 顶栏自测按钮：展开 / 收起抽屉 */
+const quizToggleBtn = document.getElementById('quizToggle');
+if(quizToggleBtn){
+  quizToggleBtn.addEventListener('click', () => {
+    if(quizOpen) closeQuiz(); else openQuiz();
+  });
+}
 
 /* 贡献墙：点一格看当天的刷词记录 */
 document.getElementById('view-stat').addEventListener('click', (e) => {
@@ -499,6 +510,10 @@ window.addEventListener('popstate', () => {
   /* 自己点遮罩/选牌组关闭时退记录，这一次 popstate 不处理，
      否则快速再点开会被它顺手关掉 */
   if(pickIgnorePop){ pickIgnorePop--; return; }
+  /* 自测抽屉自己收回时压下的历史记录，同样忽略 */
+  if(quizPopIgnore){ quizPopIgnore--; return; }
+  /* 自测抽屉开着时按返回键：先收起抽屉 */
+  if(quizOpen){ closeQuiz(); return; }
   if(!deckPickOpen){
     /* 翻卡中按手机返回键：退回原来的刷词队列，不退出页面 */
     if(deckExam) exitExamDeck();
@@ -510,7 +525,8 @@ window.addEventListener('popstate', () => {
 });
 
 /* 自测 */
-document.getElementById('view-quiz').addEventListener('click', (e) => {
+document.getElementById('quizSheet').addEventListener('click', (e) => {
+  if(e.target.closest('[data-quiz-close]')){ closeQuiz(); return; }
   if(e.target.closest('[data-hint]')){
     const hint = document.getElementById('qHint');
     if(hint) hint.hidden = false;

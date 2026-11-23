@@ -1,4 +1,65 @@
-/* 自测 */
+/* 自测：顶栏入口 + 从上方展开的抽屉 */
+
+/* ---------------- 顶栏自测按钮 ---------------- */
+.hero-quiz{
+  appearance:none;flex:none;cursor:pointer;align-self:center;
+  display:inline-flex;align-items:center;gap:.28rem;
+  padding:.26rem .52rem .28rem;border-radius:999px;
+  background:color-mix(in srgb,var(--ink) 7%,transparent);
+  border:1px solid var(--rule);
+  color:var(--ac-deep);
+  font-family:var(--mono);font-size:.6rem;font-weight:900;letter-spacing:.06em;
+  transition:transform .18s var(--spring),background .2s,color .2s,border-color .2s;
+}
+.hero-quiz svg{width:14px;height:14px;}
+.hero-quiz:active{transform:scale(.94);}
+.hero-quiz[aria-expanded="true"]{
+  background:var(--ink);color:#fff;border-color:transparent;
+}
+
+/* ---------------- 自测抽屉 ---------------- */
+.quiz-sheet{
+  position:absolute;left:0;right:0;top:60px;bottom:0;z-index:40;
+  pointer-events:none;
+}
+.quiz-sheet.open{pointer-events:auto;}
+.quiz-sheet-mask{
+  position:absolute;inset:0;z-index:1;
+  background:rgba(24,28,33,.28);
+  opacity:0;transition:opacity .26s var(--ease);
+}
+.quiz-sheet.open .quiz-sheet-mask{opacity:1;}
+.quiz-sheet-panel{
+  position:relative;z-index:2;
+  background:var(--paper-2);
+  border-bottom:1px solid var(--rule);
+  border-radius:0 0 20px 20px;
+  box-shadow:0 22px 40px -26px rgba(32,36,42,.5);
+  padding:.62rem .9rem calc(.8rem + env(safe-area-inset-bottom,0px));
+  max-height:min(72%,600px);overflow-y:auto;
+  overscroll-behavior:contain;
+  transform:translateY(-14px);opacity:0;
+  transition:transform .34s var(--bounce),opacity .18s var(--ease);
+}
+.quiz-sheet.open .quiz-sheet-panel{transform:none;opacity:1;}
+.quiz-sheet-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:.5rem;
+  margin-bottom:.5rem;padding-bottom:.42rem;
+  border-bottom:1px dashed var(--rule);
+}
+.quiz-sheet-t{
+  font-family:var(--mono);font-size:.58rem;font-weight:900;letter-spacing:.12em;
+  color:color-mix(in srgb,var(--ink) 55%,transparent);
+}
+.quiz-sheet-x{
+  appearance:none;cursor:pointer;
+  padding:.2rem .56rem .22rem;border-radius:999px;
+  background:color-mix(in srgb,var(--ink) 6%,transparent);
+  border:0;color:var(--ink);
+  font-family:var(--sans);font-size:.62rem;font-weight:900;
+  transition:transform .18s var(--spring),background .2s;
+}
+.quiz-sheet-x:active{transform:scale(.94);background:color-mix(in srgb,var(--ink) 12%,transparent);}
 
 /* ---------------- 自测 ---------------- */
 .quiz-wrap{display:flex;flex-direction:column;gap:.6rem;}

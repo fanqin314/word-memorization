@@ -2,7 +2,7 @@
 
 /* ---------------- 底部导航 ---------------- */
 .tabbar{
-  display:grid;grid-template-columns:repeat(5,1fr);gap:.24rem;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:.2rem;
   flex:none;position:relative;z-index:5;
   padding:.42rem .5rem calc(.42rem + env(safe-area-inset-bottom,0px));
   background:var(--paper-2);

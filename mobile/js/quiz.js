@@ -4,6 +4,8 @@
    自测：从 q 字段抽 10 题，判题规则与 index.html 完全一致
    ============================================================ */
 let quizBuilt = false;
+let quizOpen = false;
+let quizPopIgnore = 0;   /* 自己发起的 back() 触发的 popstate，不重复处理 */
 const quiz = {list:[], idx:0, right:0, wrong:0, answered:false};
 
 function quizStat(){
@@ -29,14 +31,51 @@ function startQuiz(){
 }
 
 function renderQuiz(){
-  const view = document.getElementById('view-quiz');
+  const wrap = document.getElementById('quizWrap');
+  if(!wrap) return;
   if(!quizBuilt){
     quizBuilt = true;
-    view.innerHTML = '<div class="quiz-wrap">' +
-        '<div class="quiz-head"><span id="quizProg">首字母填空</span><span>✓ <b id="quizRight">0</b>　✗ <b id="quizWrong">0</b></span></div>' +
-        '<div id="quizBody"></div></div>';
+    wrap.innerHTML = '<div class="quiz-head"><span id="quizProg">首字母填空</span><span>✓ <b id="quizRight">0</b>　✗ <b id="quizWrong">0</b></span></div>' +
+        '<div id="quizBody"></div>';
   }
   if(!quiz.list.length) startQuiz();
+}
+
+/* 顶栏按钮把自测抽屉从上方拉下来 */
+function openQuiz(){
+  renderQuiz();
+  const sheet = document.getElementById('quizSheet');
+  if(!sheet || quizOpen) return;
+  quizOpen = true;
+  /* 抽屉顶端对齐当前顶栏底边（顶栏会随安全区高度变化） */
+  const hero = document.querySelector('.hero');
+  if(hero) sheet.style.top = hero.offsetHeight + 'px';
+  sheet.classList.add('open');
+  sheet.setAttribute('aria-hidden', 'false');
+  const btn = document.getElementById('quizToggle');
+  if(btn) btn.setAttribute('aria-expanded', 'true');
+  /* 压一条历史记录：手机返回键先收抽屉，而不是直接退出页面 */
+  if(!history.state || !history.state.quizOpen){
+    try{ history.pushState({quizOpen:1}, ''); }catch(e){}
+  }
+  sfxPlay('panelOpen');
+}
+
+function closeQuiz(){
+  if(!quizOpen) return;
+  quizOpen = false;
+  const sheet = document.getElementById('quizSheet');
+  if(sheet){
+    sheet.classList.remove('open');
+    sheet.setAttribute('aria-hidden', 'true');
+  }
+  const btn = document.getElementById('quizToggle');
+  if(btn) btn.setAttribute('aria-expanded', 'false');
+  if(history.state && history.state.quizOpen){
+    quizPopIgnore++;
+    try{ history.back(); }catch(e){}
+  }
+  sfxPlay('panelClose');
 }
 
 function renderQuizQuestion(){
