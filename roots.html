@@ -387,37 +387,52 @@ footer{
 
   /* ---------------- 搜索 ---------------- */
   const q = document.getElementById('q');
+  const emptyEl = document.getElementById('empty');
+
   function applyFilter(){
     const kw = q.value.trim().toLowerCase();
-    let shownWords = 0, shownRoots = 0;
+
+    /* 清空搜索：恢复所有分组与原始计数 */
+    if(!kw){
+      document.querySelectorAll('.root').forEach(sec => {
+        sec.style.display = '';
+        sec.querySelectorAll('.w').forEach(a => a.style.display = '');
+        const g = groups.find(x => String(x.key) === sec.dataset.key);
+        const cnt = sec.querySelector('.cnt');
+        if(cnt && g) cnt.textContent = g.words.length + ' 个词';
+      });
+      document.querySelectorAll('.nav-item').forEach(a => a.style.display = '');
+      emptyEl.hidden = true;
+      updateStat();
+      spy();
+      return;
+    }
+
+    const matched = new Set();
+    let shownRoots = 0;
     document.querySelectorAll('.root').forEach(sec => {
       const g = groups.find(x => String(x.key) === sec.dataset.key);
       if(!g) return;
-      const rootHit = !kw || g.label.toLowerCase().includes(kw) || String(g.meaning || '').toLowerCase().includes(kw);
+      const rootHit = g.label.toLowerCase().includes(kw) || String(g.meaning || '').toLowerCase().includes(kw);
       let n = 0;
       sec.querySelectorAll('.w').forEach(a => {
         const w = a.querySelector('b').textContent.toLowerCase();
         const gl = a.querySelector('.g').textContent.toLowerCase();
         const ok = rootHit || w.includes(kw) || gl.includes(kw);
         a.style.display = ok ? '' : 'none';
-        if(ok) n++;
+        if(ok){ n++; matched.add(w); }
       });
       sec.style.display = n ? '' : 'none';
       const cnt = sec.querySelector('.cnt');
       if(cnt) cnt.textContent = n + ' 个词';
-      if(n){ shownRoots++; shownWords += n; }
+      if(n) shownRoots++;
     });
     document.querySelectorAll('.nav-item').forEach(a => {
-      const sec = document.getElementById('root-' + a.dataset.jump);
-      a.style.display = sec && sec.style.display !== 'none' ? '' : 'none';
+      const secEl = document.getElementById('root-' + a.dataset.jump);
+      a.style.display = secEl && secEl.style.display !== 'none' ? '' : 'none';
     });
-    if(!shownRoots){
-      groupsEl.innerHTML = `<div class="empty"><b>没有匹配的词根或单词</b>换个关键词试试，或清空搜索框。</div>`;
-      return;
-    }
-    if(shownWords){
-      statEl.innerHTML = `匹配 <b>${shownWords}</b> 词 · <b>${shownRoots}</b> 个词根`;
-    }
+    emptyEl.hidden = shownRoots > 0;
+    if(shownRoots) statEl.innerHTML = `匹配 <b>${matched.size}</b> 词 · <b>${shownRoots}</b> 个词根`;
     spy();
   }
   q.addEventListener('input', applyFilter);
