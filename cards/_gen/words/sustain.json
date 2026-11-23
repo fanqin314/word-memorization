@@ -6,7 +6,7 @@
   "gloss": "维持 · 支撑 · 遭受",
   "skin": {
     "name": "石桥承重", "hero": "paper", "font": "serif", "motif": "contour",
-    "align": "center", "watermark": "承",
+    "align": "center", "watermark": "承", "wordSize": 100,
     "palette": {
       "paper": "#F5F1E7", "paper2": "#E8E1D2",
       "accent": "#7A8B7E", "accentSoft": "#E3EADF",

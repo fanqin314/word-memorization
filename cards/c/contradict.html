@@ -175,15 +175,15 @@
   --font-display:"Arial Narrow","Impact","Helvetica Neue",sans-serif;
   --hero-align:center;
   --hero-justify:center;
-  --word-size:108px;
-  --word-size-sm:52px;
+  --word-size:96px;
+  --word-size-sm:46px;
   --hero-bg:#F4EEE4;
   --hero-ink:#191614;
   --hero-word:#191614;
   --word-shadow:#B3352C;
   --hero-pad:94px 56px 70px;
 }
-.hero::before{content:"";position:absolute;left:-5%;right:-5%;top:52%;height:116px;background:rgba(179,53,44,0.17);border-top:3px solid #191614;border-bottom:3px solid #191614;transform:rotate(-1.4deg);z-index:1;pointer-events:none;}.hero::after{content:"反";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(25,22,20,0.07);pointer-events:none;z-index:1;}
+.hero .word-anim{background:rgba(179,53,44,0.18);box-shadow:0 0 0 20px rgba(179,53,44,0.18);}.hero::after{content:"反";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(25,22,20,0.07);pointer-events:none;z-index:1;}
 .hero .ipa-anim,.hero .spell-hint{color:#191614;}
 .section-title,.image-card .ic-label{font-family:var(--font-display);}
 .image-card .ic-label,.image-card .ic-main .hl{color:#FBF5E9;}

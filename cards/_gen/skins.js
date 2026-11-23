@@ -88,14 +88,14 @@ function heroBlock(kind, p, skin) {
     vars.push('--hero-ink:#F7F0E4', '--hero-word:#FFF8EC', `--word-shadow:${rgba(accent, .85)}`);
     vars.push('--hero-pad:96px 56px 72px');
   } else if (kind === 'split') {
-    vars.push(`--hero-bg:linear-gradient(104deg,${paper} 0 58%,${rgba(accent, .20)} 58% 100%)`);
+    vars.push(`--hero-bg:linear-gradient(104deg,${paper} 0 62%,${rgba(accent, .20)} 62% 100%)`);
     vars.push(`--hero-ink:${ink}`, `--hero-word:${ink}`, `--word-shadow:${accent}`);
     vars.push('--hero-pad:88px 56px 68px');
-    css += `.hero::before{content:"";position:absolute;top:-6%;bottom:-6%;left:55%;width:12px;background:${accent};transform:skewX(-12deg);z-index:1;pointer-events:none;}`;
+    css += `.hero::before{content:"";position:absolute;top:-6%;bottom:-6%;left:59%;width:12px;background:${accent};transform:skewX(-12deg);z-index:1;pointer-events:none;}`;
   } else if (kind === 'band') {
     vars.push(`--hero-bg:${paper}`, `--hero-ink:${ink}`, `--hero-word:${ink}`, `--word-shadow:${accent}`);
     vars.push('--hero-pad:94px 56px 70px');
-    css += `.hero::before{content:"";position:absolute;left:-5%;right:-5%;top:52%;height:116px;background:${rgba(accent, .17)};border-top:3px solid ${ink};border-bottom:3px solid ${ink};transform:rotate(-1.4deg);z-index:1;pointer-events:none;}`;
+    css += `.hero .word-anim{background:${rgba(accent, .18)};box-shadow:0 0 0 20px ${rgba(accent, .18)};}`;
   } else {
     vars.push(`--hero-bg:${paper}`, `--hero-ink:${ink}`, `--hero-word:${ink}`, `--word-shadow:${accent}`);
     vars.push('--hero-pad:84px 56px 62px');

@@ -6,7 +6,7 @@
   "gloss": "坚持 · 持续存在",
   "skin": {
     "name": "苔绿循环", "hero": "band", "font": "serif", "motif": "dots",
-    "align": "center", "watermark": "续",
+    "align": "center", "watermark": "续", "wordSize": 100,
     "palette": {
       "paper": "#F3F1E6", "paper2": "#E5E2D2",
       "accent": "#6B8A4A", "accentSoft": "#E4EDD6",

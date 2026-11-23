@@ -6,7 +6,7 @@
   "gloss": "反驳 · 与…矛盾 · 否认",
   "skin": {
     "name": "红黑对撞", "hero": "band", "font": "condensed", "motif": "hazard",
-    "align": "center", "watermark": "反",
+    "align": "center", "watermark": "反", "wordSize": 96,
     "palette": {
       "paper": "#F4EEE4", "paper2": "#E6DCC9",
       "accent": "#B3352C", "accentSoft": "#F6DAD5",

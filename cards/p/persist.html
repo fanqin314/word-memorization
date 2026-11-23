@@ -175,15 +175,15 @@
   --font-display:"Songti SC","Noto Serif SC",Georgia,"Times New Roman",serif;
   --hero-align:center;
   --hero-justify:center;
-  --word-size:108px;
-  --word-size-sm:52px;
+  --word-size:100px;
+  --word-size-sm:48px;
   --hero-bg:#F3F1E6;
   --hero-ink:#1C211A;
   --hero-word:#1C211A;
   --word-shadow:#6B8A4A;
   --hero-pad:94px 56px 70px;
 }
-.hero::before{content:"";position:absolute;left:-5%;right:-5%;top:52%;height:116px;background:rgba(107,138,74,0.17);border-top:3px solid #1C211A;border-bottom:3px solid #1C211A;transform:rotate(-1.4deg);z-index:1;pointer-events:none;}.hero::after{content:"续";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(28,33,26,0.07);pointer-events:none;z-index:1;}
+.hero .word-anim{background:rgba(107,138,74,0.18);box-shadow:0 0 0 20px rgba(107,138,74,0.18);}.hero::after{content:"续";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(28,33,26,0.07);pointer-events:none;z-index:1;}
 .hero .ipa-anim,.hero .spell-hint{color:#1C211A;}
 .section-title,.image-card .ic-label{font-family:var(--font-display);}
 .image-card .ic-label,.image-card .ic-main .hl{color:#FBF5E9;}
