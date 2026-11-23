@@ -1,6 +1,6 @@
 /* 本文件由「更新单词数据.ps1 / .bat」自动生成，请勿手工编辑。 */
 window.WORDS_DATA = {
-    "generated":  "2026-11-23 14:28:23",
+    "generated":  "2026-11-23 14:33:52",
     "words":  [
                   {
                       "word":  "about",
@@ -2674,21 +2674,6 @@ window.WORDS_DATA = {
                                     "h":  "weave a story / tale，编故事"
                                 }
                             ]
-                  },
-                  {
-                      "word":  "词根图谱",
-                      "gloss":  "按词根查看单词",
-                      "ipa":  "",
-                      "pos":  "",
-                      "file":  "cards/other/词根图谱.html",
-                      "roots":  [
-                                    "other"
-                                ],
-                      "morph":  "",
-                      "scene":  "",
-                      "q":  [
-
-                            ]
                   }
               ],
     "art":  {
@@ -2902,7 +2887,6 @@ window.WORDS_DATA = {
                 "unite":  ".card.m1[data-word=\"unite\"]{--mst-ink:#2B1A15;--mst-accent:#E85D4A;--mst-paper:#FAF3E8;--mst-hero:radial-gradient(ellipse at 50% 100%, rgba(232,93,74,.25) 0%, #FCF5EA 60%);--mst-band:repeating-linear-gradient(90deg, #E85D4A 0 22px, transparent 22px 24px, #F5A623 24px 46px, transparent 46px 48px, #3DB88C 48px 70px, transparent 70px 72px, #4A6CF7 72px 94px, transparent 94px 96px);}",
                 "versatile":  ".card.m1[data-word=\"versatile\"]{--mst-ink:#1C1F1C;--mst-accent:#C0392B;--mst-paper:#F5F2EA;--mst-hero:#F5F2EA);}",
                 "watertight":  ".card.m1[data-word=\"watertight\"]{--mst-ink:#06101A;--mst-accent:#0A1626;--mst-paper:#EEF2F4;--mst-hero:#EEF2F4;--mst-band:repeating-linear-gradient(90deg, #F2B233 0 22px, transparent 22px 24px, #3CB8D4 24px 46px, transparent 46px 48px, #1B5C8A 48px 70px, transparent 70px 72px, #2AA85B 72px 94px, transparent 94px 96px);}",
-                "weave":  ".card.m1[data-word=\"weave\"]{--mst-ink:#2B2118;--mst-accent:#FAF2E0;--mst-hero:linear-gradient(180deg, #FFF8E8 0%, #FAF2E0 100%);--mst-band:repeating-linear-gradient(90deg, #B33A1F 0 24px, #E9A324 24px 48px, #1B3A5F 48px 72px, #2A7E6B 72px 96px);}",
-                "词根图谱":  ".card.m1[data-word=\"词根图谱\"]{--mst-ink:#1C1A17;--mst-accent:#2B2721;--mst-paper:#F6F1E7;}"
+                "weave":  ".card.m1[data-word=\"weave\"]{--mst-ink:#2B2118;--mst-accent:#FAF2E0;--mst-hero:linear-gradient(180deg, #FFF8E8 0%, #FAF2E0 100%);--mst-band:repeating-linear-gradient(90deg, #B33A1F 0 24px, #E9A324 24px 48px, #1B3A5F 48px 72px, #2A7E6B 72px 96px);}"
             }
 };
