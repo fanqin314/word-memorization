@@ -1,0 +1,113 @@
+{
+  "word": "gregarious",
+  "ipaUK": "ɡrɪˈɡeəriəs",
+  "ipaUS": "ɡrɪˈɡeriəs",
+  "pos": "adj.",
+  "gloss": "群居的 · 爱交际的",
+  "skin": {
+    "name": "篝火围坐", "hero": "split", "font": "rounded", "motif": "dots",
+    "align": "left", "watermark": "群", "wordSize": 92,
+    "palette": {
+      "paper": "#FAF3E7", "paper2": "#EFE2CC",
+      "accent": "#D2703A", "accentSoft": "#FBE2D2",
+      "c2": "#2E6E68", "c2Soft": "#D7E7E4",
+      "c3": "#C6A23C", "c3Soft": "#F3E8C8",
+      "ink": "#241C16", "deep": "#3A2218"
+    }
+  },
+  "root": {
+    "stem": "greg",
+    "origin": "拉丁 grex（属格 gregis）＝羊群、群体",
+    "sense": "跟着羊群待在一起"
+  },
+  "family": [
+    { "pos": "adj.", "w": "gregarious", "p": "/ɡrɪˈɡeəriəs/", "m": "群居的；爱交际的" },
+    { "pos": "adv.", "w": "gregariously", "p": "/ɡrɪˈɡeəriəsli/", "m": "成群地；爱交际地" },
+    { "pos": "n.", "w": "gregariousness", "p": "/ɡrɪˈɡeəriəsnəs/", "m": "群居性；合群" },
+    { "pos": "v.", "w": "congregate", "p": "/ˈkɒŋɡrɪɡeɪt/", "m": "聚集；集合" },
+    { "pos": "v.", "w": "segregate", "p": "/ˈseɡrɪɡeɪt/", "m": "隔离；分开" },
+    { "pos": "n. · v.", "w": "aggregate", "p": "/ˈæɡrɪɡət/", "m": "总量；合计" },
+    { "pos": "adj.", "w": "egregious", "p": "/ɪˈɡriːdʒiəs/", "m": "极其恶劣的；令人震惊的" },
+    { "pos": "n.", "w": "congregation", "p": "/ˌkɒŋɡrɪˈɡeɪʃn/", "m": "聚集的人群；会众" }
+  ],
+  "scene": {
+    "main": "草原上一群绵羊挤在一起吃草，彼此挨得很近，谁走开几步就又跟回群里",
+    "sub": "greg（羊群）+ -arious（有…性质的）→ 像羊群一样凑在一起：群居的、爱交际的。",
+    "template": "gears",
+    "labels": ["成群", "亲近"]
+  },
+  "collocations": [
+    { "pattern": "gregarious animals", "meaning": "群居动物" },
+    { "pattern": "a gregarious person", "meaning": "爱交际的人" },
+    { "pattern": "gregarious by nature", "meaning": "天生爱热闹" },
+    { "pattern": "highly gregarious", "meaning": "非常合群的" },
+    { "pattern": "gregarious species", "meaning": "群居物种" }
+  ],
+  "examples": [
+    {
+      "src": "2019 考研 · 阅读",
+      "en": "Wolves are {{w}} animals that hunt in packs.",
+      "cn": "狼是成群捕猎的群居动物。"
+    },
+    {
+      "src": "2021 六级 · 听力",
+      "en": "She is {{w}} and makes friends wherever she goes.",
+      "cn": "她爱交际，走到哪儿都能交到朋友。"
+    },
+    {
+      "src": "2020 雅思 · 写作",
+      "en": "Children who are {{w}} tend to adapt faster to group work.",
+      "cn": "爱交际的孩子往往能更快适应小组活动。"
+    },
+    {
+      "src": "2018 考研 · 翻译",
+      "en": "Many {{w}} species depend on the group for safety.",
+      "cn": "许多群居物种依靠群体获得安全。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "gregarious 中间是 -gar-，结尾是 -ious，不要写成 gregerious。",
+      "wrong": "gregerious",
+      "right": "gregarious"
+    },
+    {
+      "tip": "发音",
+      "text": "重音在第二个音节，读 /ɡrɪˈɡeəriəs/，不要把重音挪到第一音节。",
+      "wrong": "/ˌɡreɡəˈriːəs/",
+      "right": "/ɡrɪˈɡeəriəs/"
+    },
+    {
+      "tip": "搭配",
+      "text": "gregarious 直接描述人的性格，不说 gregarious with sb；与某人相处融洽用 sociable。",
+      "wrong": "He is gregarious with strangers.",
+      "right": "He is gregarious and talks to strangers easily."
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["gregarious", "喜欢成群、爱热闹", "gregarious animals"],
+      ["sociable", "善于与人相处、友好", "a sociable host"],
+      ["outgoing", "性格外向、主动", "an outgoing student"],
+      ["friendly", "对人友善", "a friendly neighbour"],
+      ["crowded", "空间拥挤（说物不说人）", "a crowded bus"],
+      ["solitary", "独居的、独自的", "a solitary hunter"]
+    ],
+    "chant": "爱凑一群 gregarious，善打交道 sociable，性格外向 outgoing，独自一个 solitary。"
+  },
+  "fills": [
+    { "sentence": "Wolves are ___ animals that hunt in packs.", "answer": "gregarious", "hint": "形容词：群居的" },
+    { "sentence": "She is ___ and makes friends easily.", "answer": "gregarious", "hint": "形容词：爱交际的" },
+    { "sentence": "These birds are highly ___ , nesting in large colonies.", "answer": "gregarious", "hint": "副词 highly 修饰形容词" },
+    { "sentence": "His ___ made him the centre of every party.", "answer": "gregariousness", "hint": "名词：合群、爱交际" },
+    { "sentence": "Dolphins often ___ in shallow bays at dusk.", "answer": "congregate", "hint": "同根动词：聚集" }
+  ],
+  "review": [
+    "说出 gregarious 的 3 个搭配",
+    "区分 gregarious / sociable / outgoing",
+    "默写 greg 词族 8 个词",
+    "遮住释义，复述草原羊群的画面"
+  ],
+  "writeSample": "A gregarious learner joins study groups and turns practice into conversation."
+}

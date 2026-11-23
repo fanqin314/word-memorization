@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gregarious · 群居的 · 爱交际的</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   gregarious —— 由 _gen/build.js 生成（theme: skin:篝火围坐）
+   改动请改 JSON / 主题，不要手改本文件。
+   ========================================================================== */
+/* ==========================================================================
+   _hero.css —— 生成卡公共骨架（hero / 意象 SVG / 组件纠偏 / 响应式）
+   主题文件只负责：:root 配色、body::before 底纹、.hero 背景、少量装饰。
+   ========================================================================== */
+
+.hero{
+  position:relative;overflow:hidden;
+  border-bottom:3px solid var(--ink);
+  background:var(--hero-bg,linear-gradient(180deg,#F4E3D4 0%,#E2C2A6 100%));
+  color:var(--hero-ink,var(--ink));
+}
+.hero-inner{
+  position:relative;z-index:2;
+  padding:var(--hero-pad,76px 64px 56px);
+  text-align:var(--hero-align,center);
+}
+.word-row{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.word-anim{
+  display:inline-block;
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:var(--word-size,100px);font-weight:900;line-height:1.02;letter-spacing:-.02em;
+  color:var(--hero-word,var(--hero-ink,var(--ink)));
+  filter:drop-shadow(6px 6px 0 var(--word-shadow,var(--cb-accent)));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:mtLetter .9s cubic-bezier(.4,1.4,.6,1) forwards;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+}
+.word-anim .letter:nth-child(1){animation-delay:.05s}
+.word-anim .letter:nth-child(2){animation-delay:.13s}
+.word-anim .letter:nth-child(3){animation-delay:.21s}
+.word-anim .letter:nth-child(4){animation-delay:.29s}
+.word-anim .letter:nth-child(5){animation-delay:.37s}
+.word-anim .letter:nth-child(6){animation-delay:.45s}
+.word-anim .letter:nth-child(7){animation-delay:.53s}
+.word-anim .letter:nth-child(8){animation-delay:.61s}
+.word-anim .letter:nth-child(9){animation-delay:.69s}
+.word-anim .letter:nth-child(10){animation-delay:.77s}
+.word-anim .letter:nth-child(11){animation-delay:.85s}
+.word-anim .letter:nth-child(12){animation-delay:.93s}
+.word-anim .letter:nth-child(13){animation-delay:1.01s}
+.word-anim .letter:nth-child(14){animation-delay:1.09s}
+.word-anim .letter:nth-child(15){animation-delay:1.17s}
+.word-anim .letter:nth-child(16){animation-delay:1.25s}
+@keyframes mtLetter{
+  0%{opacity:0;transform:translateY(-34px) scale(1.45) rotate(-7deg);filter:blur(7px);}
+  60%{opacity:1;filter:blur(0);transform:translateY(3px) scale(.95);}
+  100%{opacity:1;filter:blur(0);transform:translateY(0) scale(1);}
+}
+@keyframes mtLetterBounce{
+  0%{opacity:0;transform:translateY(-30px) scale(.6);}
+  62%{opacity:1;transform:translateY(6px) scale(1.08);}
+  100%{opacity:1;transform:translateY(0) scale(1);}
+}
+.word-anim .letter:hover{color:var(--cb-accent);transform:translateY(-7px) scale(1.08);}
+
+.hero-meta{
+  margin-top:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.ipa-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:14px;font-weight:700;letter-spacing:.05em;
+  background:var(--cb-2-soft);color:var(--hero-ink,var(--ink));
+  border:2.5px solid var(--ink);padding:5px 16px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-accent);cursor:pointer;transform:rotate(-1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .86s forwards;
+}
+.pos-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--deep);color:var(--paper);
+  padding:5px 14px;border-radius:999px;border:2px solid var(--ink);
+  transform:rotate(1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .98s forwards;
+}
+.spell-hint{
+  display:inline-block;margin-top:20px;padding:8px 18px;
+  font-size:12px;letter-spacing:.12em;
+  background:var(--cb-3-soft);border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-.8deg);
+  color:var(--hero-hint,var(--ink));
+  opacity:0;animation:mtUp .7s ease-out 1.12s forwards;
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;flex-shrink:0;
+  background:var(--cb-accent);border:3px solid var(--ink);border-radius:50%;
+  cursor:pointer;font-size:19px;
+  box-shadow:4px 4px 0 var(--cb-3);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(10deg);box-shadow:6px 6px 0 var(--cb-3);}
+.speak-btn.speaking{animation:mtPulse .6s ease-in-out infinite;}
+@keyframes mtPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14) rotate(-5deg);}}
+@keyframes mtUp{0%{opacity:0;transform:translateY(9px);}100%{opacity:1;transform:translateY(0);}}
+
+/* 意象卡 SVG 纠偏：避免继承尺寸把画面拉变形 */
+.image-card .ic-svg{width:100%!important;height:auto!important;}
+.image-card .ic-svg svg{width:100%!important;height:auto!important;max-width:340px;overflow:visible;}
+
+/* 搭配条：主题若要自绘装饰请用 ::after，base 的 ::before 色条保留 */
+.collo .pattern{white-space:normal!important;}
+
+/* 意象卡：暗底 + 主题辉光 + 点阵，给插画留出层次 */
+.image-card::before{
+  content:"";position:absolute;right:-80px;top:-90px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,var(--cb-accent),transparent 66%);
+  opacity:.2;pointer-events:none;z-index:0;
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,252,245,.18) 1px,transparent 1.4px);
+  background-size:18px 18px;opacity:.45;
+  -webkit-mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+  mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+}
+.image-card .ic-text,.image-card .ic-svg{position:relative;z-index:2;}
+
+/* 场景插画：浅色描边 + 标注芯片，保证深色卡上看得清 */
+.ic-svg{--sc-line:#FBF6EC;--sc-dim:rgba(251,246,236,.55);}
+.sc-pop{transform-origin:center;animation:scPop 5.6s cubic-bezier(.34,1.56,.64,1) infinite;}
+@keyframes scPop{
+  0%,8%{opacity:0;transform:translateY(14px) scale(.86) rotate(-3deg);}
+  24%,76%{opacity:1;transform:translateY(0) scale(1) rotate(0);}
+  92%,100%{opacity:0;transform:translateY(-6px) scale(.97);}
+}
+.sc-float{animation:scFloat 5.6s ease-in-out infinite;}
+@keyframes scFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.sc-link{fill:none;stroke:var(--sc-dim);stroke-width:1.5;stroke-dasharray:4 5;animation:scLink 5.6s linear infinite;}
+@keyframes scLink{to{stroke-dashoffset:-18;}}
+.sc-label text{font-family:"Songti SC","Noto Serif SC",serif;font-size:10px;font-weight:700;fill:var(--ink);}
+
+@media (max-width:640px){
+  .hero-inner{padding:46px 20px 34px;}
+  .word-anim{font-size:var(--word-size-sm,54px);}
+  .word-row{gap:8px;}
+  .speak-btn{width:38px;height:38px;font-size:16px;}
+  .hero-meta{gap:8px;}
+  .ipa-anim{font-size:12px;}
+  .image-card{grid-template-columns:1fr!important;padding:26px 20px;}
+}
+
+/* 皮肤：篝火围坐 —— hero:split / font:rounded / motif:dots */
+:root{
+  --paper:#FAF3E7;
+  --paper-2:#EFE2CC;
+  --cb-accent:#D2703A;
+  --cb-accent-soft:#FBE2D2;
+  --cb-2:#2E6E68;
+  --cb-2-soft:#D7E7E4;
+  --cb-3:#C6A23C;
+  --cb-3-soft:#F3E8C8;
+  --ink:#241C16;
+  --deep:#3A2218;
+  --cb-deep:#3A2218;
+  --font-display:"Trebuchet MS",Verdana,"Segoe UI",sans-serif;
+  --hero-align:left;
+  --hero-justify:flex-start;
+  --word-size:92px;
+  --word-size-sm:44px;
+  --hero-bg:linear-gradient(104deg,#FAF3E7 0 62%,rgba(210,112,58,0.2) 62% 100%);
+  --hero-ink:#241C16;
+  --hero-word:#241C16;
+  --word-shadow:#D2703A;
+  --hero-pad:88px 56px 68px;
+}
+.hero::before{content:"";position:absolute;top:-6%;bottom:-6%;left:59%;width:12px;background:#D2703A;transform:skewX(-12deg);z-index:1;pointer-events:none;}.hero::after{content:"群";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(36,28,22,0.07);pointer-events:none;z-index:1;}
+.hero .ipa-anim,.hero .spell-hint{color:#241C16;}
+.section-title,.image-card .ic-label{font-family:var(--font-display);}
+.image-card .ic-label,.image-card .ic-main .hl{color:#FBF5E9;}
+.word-anim{font-weight:800;letter-spacing:-.02em;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(36,28,22,0.13) 1.1px,transparent 1.6px);background-size:22px 22px;animation:skDrift 42s linear infinite;}
+@keyframes skDrift{to{background-position:64px 64px;}}
+@keyframes skDriftX{to{background-position:56px 0;}}
+
+</style>
+</head>
+
+<body data-word="gregarious">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="word-row">
+        <span class="word-anim" aria-label="gregarious"><span class="letter l1">g</span><span class="letter l2">r</span><span class="letter l3">e</span><span class="letter l4">g</span><span class="letter l5">a</span><span class="letter l6">r</span><span class="letter l7">i</span><span class="letter l8">o</span><span class="letter l9">u</span><span class="letter l10">s</span></span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      </div>
+      <div class="hero-meta">
+        <div class="ipa-anim" id="ipaBtn">英 /ɡrɪˈɡeəriəs/ &nbsp;·&nbsp; 美 /ɡrɪˈɡeriəs/</div>
+        <div class="pos-anim">adj.</div>
+      </div>
+      <div class="spell-hint">gregarious &nbsp; 群居的 · 爱交际的</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">greg</span>（拉丁 grex（属格 gregis）＝羊群、群体）&nbsp;→&nbsp; "跟着羊群待在一起" → <b>群居的</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">gregarious</div><div class="p">/ɡrɪˈɡeəriəs/</div><div class="m">群居的；爱交际的</div></div>
+          <div class="fam-card"><div class="pos">adv.</div><div class="w">gregariously</div><div class="p">/ɡrɪˈɡeəriəsli/</div><div class="m">成群地；爱交际地</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">gregariousness</div><div class="p">/ɡrɪˈɡeəriəsnəs/</div><div class="m">群居性；合群</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">congregate</div><div class="p">/ˈkɒŋɡrɪɡeɪt/</div><div class="m">聚集；集合</div></div>
+          <div class="fam-card"><div class="pos">v.</div><div class="w">segregate</div><div class="p">/ˈseɡrɪɡeɪt/</div><div class="m">隔离；分开</div></div>
+          <div class="fam-card"><div class="pos">n. · v.</div><div class="w">aggregate</div><div class="p">/ˈæɡrɪɡət/</div><div class="m">总量；合计</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">egregious</div><div class="p">/ɪˈɡriːdʒiəs/</div><div class="m">极其恶劣的；令人震惊的</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">congregation</div><div class="p">/ˌkɒŋɡrɪˈɡeɪʃn/</div><div class="m">聚集的人群；会众</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">gregarious</span> = 草原上一群绵羊挤在一起吃草，彼此挨得很近，谁走开几步就又跟回群里。</p>
+          <p class="ic-sub">greg（羊群）+ -arious（有…性质的）→ 像羊群一样凑在一起：群居的、爱交际的。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+      <svg viewBox="0 0 360 280" role="img" aria-hidden="true"><circle cx="180" cy="142" r="112" fill="var(--cb-accent)" opacity=".13"/><circle cx="180" cy="142" r="104" fill="none" stroke="var(--sc-dim)" stroke-width="1.5" stroke-dasharray="3 8"/>
+          <path class="sc-link" d="M180 104V58M142 140H120M218 140h22M180 196v34"/>
+          <g class="sc-pop" style="animation-delay:0s"><circle cx="180" cy="148" r="52" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="3"/><rect x="176" y="88" width="8" height="16" rx="2.5" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(0 180 148)"/><rect x="176" y="192" width="8" height="16" rx="2.5" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(0 180 148)"/><rect x="176" y="88" width="8" height="16" rx="2.5" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(45 180 148)"/><rect x="176" y="192" width="8" height="16" rx="2.5" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(45 180 148)"/><rect x="176" y="88" width="8" height="16" rx="2.5" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(90 180 148)"/><rect x="176" y="192" width="8" height="16" rx="2.5" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(90 180 148)"/><rect x="176" y="88" width="8" height="16" rx="2.5" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(135 180 148)"/><rect x="176" y="192" width="8" height="16" rx="2.5" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(135 180 148)"/><circle cx="180" cy="148" r="18.72" fill="var(--ink)" stroke="var(--sc-line)" stroke-width="2.5"/></g>
+          <g class="sc-pop" style="animation-delay:-0.4s"><circle cx="110" cy="92" r="26" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="3"/><rect x="106" y="58" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(0 110 92)"/><rect x="106" y="110" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(0 110 92)"/><rect x="106" y="58" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(45 110 92)"/><rect x="106" y="110" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(45 110 92)"/><rect x="106" y="58" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(90 110 92)"/><rect x="106" y="110" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(90 110 92)"/><rect x="106" y="58" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(135 110 92)"/><rect x="106" y="110" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(135 110 92)"/><circle cx="110" cy="92" r="9.36" fill="var(--ink)" stroke="var(--sc-line)" stroke-width="2.5"/></g>
+          <g class="sc-pop" style="animation-delay:-0.8s"><circle cx="250" cy="92" r="26" fill="var(--cb-3-soft)" stroke="var(--sc-line)" stroke-width="3"/><rect x="246" y="58" width="8" height="16" rx="2.5" fill="var(--cb-3-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(0 250 92)"/><rect x="246" y="110" width="8" height="16" rx="2.5" fill="var(--cb-3-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(0 250 92)"/><rect x="246" y="58" width="8" height="16" rx="2.5" fill="var(--cb-3-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(45 250 92)"/><rect x="246" y="110" width="8" height="16" rx="2.5" fill="var(--cb-3-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(45 250 92)"/><rect x="246" y="58" width="8" height="16" rx="2.5" fill="var(--cb-3-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(90 250 92)"/><rect x="246" y="110" width="8" height="16" rx="2.5" fill="var(--cb-3-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(90 250 92)"/><rect x="246" y="58" width="8" height="16" rx="2.5" fill="var(--cb-3-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(135 250 92)"/><rect x="246" y="110" width="8" height="16" rx="2.5" fill="var(--cb-3-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(135 250 92)"/><circle cx="250" cy="92" r="9.36" fill="var(--ink)" stroke="var(--sc-line)" stroke-width="2.5"/></g>
+          <g class="sc-pop" style="animation-delay:-1.2s"><circle cx="180" cy="230" r="22" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="3"/><rect x="176" y="200" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(0 180 230)"/><rect x="176" y="244" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(0 180 230)"/><rect x="176" y="200" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(45 180 230)"/><rect x="176" y="244" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(45 180 230)"/><rect x="176" y="200" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(90 180 230)"/><rect x="176" y="244" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(90 180 230)"/><rect x="176" y="200" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(135 180 230)"/><rect x="176" y="244" width="8" height="16" rx="2.5" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5" transform="rotate(135 180 230)"/><circle cx="180" cy="230" r="7.92" fill="var(--ink)" stroke="var(--sc-line)" stroke-width="2.5"/></g>
+          <g class="sc-label"><rect x="160" y="23" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="180" y="38" text-anchor="middle">成群</text></g>
+          <g class="sc-label"><rect x="54" y="189" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="74" y="204" text-anchor="middle">亲近</text></g></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">gregarious animals</div><div class="meaning">群居动物</div></div>
+        <div class="collo"><div class="pattern">a gregarious person</div><div class="meaning">爱交际的人</div></div>
+        <div class="collo"><div class="pattern">gregarious by nature</div><div class="meaning">天生爱热闹</div></div>
+        <div class="collo"><div class="pattern">highly gregarious</div><div class="meaning">非常合群的</div></div>
+        <div class="collo"><div class="pattern">gregarious species</div><div class="meaning">群居物种</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2019 考研 · 阅读</div>
+          <p class="en">Wolves are <em class="hl">gregarious</em> animals that hunt in packs.</p>
+          <p class="cn">狼是成群捕猎的群居动物。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 六级 · 听力</div>
+          <p class="en">She is <em class="hl">gregarious</em> and makes friends wherever she goes.</p>
+          <p class="cn">她爱交际，走到哪儿都能交到朋友。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 雅思 · 写作</div>
+          <p class="en">Children who are <em class="hl">gregarious</em> tend to adapt faster to group work.</p>
+          <p class="cn">爱交际的孩子往往能更快适应小组活动。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2018 考研 · 翻译</div>
+          <p class="en">Many <em class="hl">gregarious</em> species depend on the group for safety.</p>
+          <p class="cn">许多群居物种依靠群体获得安全。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          gregarious 中间是 -gar-，结尾是 -ious，不要写成 gregerious。<br>
+          <span class="wrong">gregerious</span> → <span class="right">gregarious</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">发音</span>
+          重音在第二个音节，读 /ɡrɪˈɡeəriəs/，不要把重音挪到第一音节。<br>
+          <span class="wrong">/ˌɡreɡəˈriːəs/</span> → <span class="right">/ɡrɪˈɡeəriəs/</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          gregarious 直接描述人的性格，不说 gregarious with sb；与某人相处融洽用 sociable。<br>
+          <span class="wrong">He is gregarious with strangers.</span> → <span class="right">He is gregarious and talks to strangers easily.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>gregarious</td><td>喜欢成群、爱热闹</td><td class="chant">gregarious animals</td></tr>
+          <tr><td>sociable</td><td>善于与人相处、友好</td><td class="chant">a sociable host</td></tr>
+          <tr><td>outgoing</td><td>性格外向、主动</td><td class="chant">an outgoing student</td></tr>
+          <tr><td>friendly</td><td>对人友善</td><td class="chant">a friendly neighbour</td></tr>
+          <tr><td>crowded</td><td>空间拥挤（说物不说人）</td><td class="chant">a crowded bus</td></tr>
+          <tr><td>solitary</td><td>独居的、独自的</td><td class="chant">a solitary hunter</td></tr>
+        </tbody>
+      </table>
+      <p class="review-tip">口诀：爱凑一群 gregarious，善打交道 sociable，性格外向 outgoing，独自一个 solitary。</p>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Wolves are <span class="first-letter">g</span><span class="blank" onclick="this.classList.toggle('revealed')">regarious</span> animals that hunt in packs.</p>
+          <p class="fill-hint">提示：<b>形容词：群居的</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She is <span class="first-letter">g</span><span class="blank" onclick="this.classList.toggle('revealed')">regarious</span> and makes friends easily.</p>
+          <p class="fill-hint">提示：<b>形容词：爱交际的</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">These birds are highly <span class="first-letter">g</span><span class="blank" onclick="this.classList.toggle('revealed')">regarious</span> , nesting in large colonies.</p>
+          <p class="fill-hint">提示：<b>副词 highly 修饰形容词</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">His <span class="first-letter">g</span><span class="blank" onclick="this.classList.toggle('revealed')">regariousness</span> made him the centre of every party.</p>
+          <p class="fill-hint">提示：<b>名词：合群、爱交际</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Dolphins often <span class="first-letter">c</span><span class="blank" onclick="this.classList.toggle('revealed')">ongregate</span> in shallow bays at dusk.</p>
+          <p class="fill-hint">提示：<b>同根动词：聚集</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>gregarious</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="A gregarious learner joins study groups and turns practice into conversation."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>说出 gregarious 的 3 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>区分 gregarious / sociable / outgoing</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>默写 greg 词族 8 个词</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>遮住释义，复述草原羊群的画面</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>

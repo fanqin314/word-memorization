@@ -1,0 +1,113 @@
+{
+  "word": "zeal",
+  "ipaUK": "ziːl",
+  "ipaUS": "ziːl",
+  "pos": "n.",
+  "gloss": "热情 · 热忱 · 狂热",
+  "skin": {
+    "name": "烈焰红", "hero": "dark", "font": "condensed", "motif": "confetti",
+    "align": "center", "watermark": "燃", "wordSize": 128,
+    "palette": {
+      "paper": "#F8EFE7", "paper2": "#EDDCCE",
+      "accent": "#D6402B", "accentSoft": "#F9D9D2",
+      "c2": "#E8A33A", "c2Soft": "#F9E4CB",
+      "c3": "#5C2E3A", "c3Soft": "#E8D8DE",
+      "ink": "#201311", "deep": "#3A1210"
+    }
+  },
+  "root": {
+    "stem": "zel",
+    "origin": "希腊语 zelos＝热忱、争胜心",
+    "sense": "胸口烧着一团不肯熄的火"
+  },
+  "family": [
+    { "pos": "n.", "w": "zeal", "p": "/ziːl/", "m": "热情；热忱；狂热" },
+    { "pos": "adj.", "w": "zealous", "p": "/ˈzeləs/", "m": "热心的；狂热的" },
+    { "pos": "adv.", "w": "zealously", "p": "/ˈzeləsli/", "m": "热心地；狂热地" },
+    { "pos": "n.", "w": "zealousness", "p": "/ˈzeləsnəs/", "m": "热忱；狂热" },
+    { "pos": "n.", "w": "zealot", "p": "/ˈzelət/", "m": "狂热者" },
+    { "pos": "n.", "w": "zealotry", "p": "/ˈzelətri/", "m": "狂热行为；偏执" },
+    { "pos": "adj.", "w": "jealous", "p": "/ˈdʒeləs/", "m": "嫉妒的（同源）" },
+    { "pos": "n.", "w": "jealousy", "p": "/ˈdʒeləsi/", "m": "嫉妒" }
+  ],
+  "scene": {
+    "main": "一个人举着火把冲在最前面，火苗一路向后蔓延，把身后的人也一个个点亮",
+    "sub": "zel（热忱）→ 心里烧着火一样的热度：热情、热忱，走到极处就成了狂热。",
+    "template": "ripple",
+    "labels": ["热情", "蔓延"]
+  },
+  "collocations": [
+    { "pattern": "with zeal", "meaning": "满腔热情地" },
+    { "pattern": "religious zeal", "meaning": "宗教狂热" },
+    { "pattern": "a zeal for", "meaning": "对…的热情" },
+    { "pattern": "reformist zeal", "meaning": "改革热情" },
+    { "pattern": "blind zeal", "meaning": "盲目的狂热" }
+  ],
+  "examples": [
+    {
+      "src": "2021 考研 · 阅读",
+      "en": "She tackled every task with {{w}} and never complained.",
+      "cn": "她满腔热情地对待每一项任务，从不抱怨。"
+    },
+    {
+      "src": "2019 六级 · 写作",
+      "en": "His {{w}} for teaching inspired a whole generation.",
+      "cn": "他对教学的热情激励了整整一代人。"
+    },
+    {
+      "src": "2020 雅思 · 口语",
+      "en": "Too much {{w}} can turn a good idea into a crusade.",
+      "cn": "过度的狂热会把好主意变成一场讨伐。"
+    },
+    {
+      "src": "2018 考研 · 翻译",
+      "en": "The young volunteers worked with the {{w}} of new believers.",
+      "cn": "年轻的志愿者们带着新信徒般的狂热工作。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "zeal 只有四个字母，z-e-a-l，词尾没有 e。",
+      "wrong": "zeale",
+      "right": "zeal"
+    },
+    {
+      "tip": "发音",
+      "text": "zeal 读 /ziːl/，中间是长音 /iː/，不要读成 /zel/。",
+      "wrong": "/zel/",
+      "right": "/ziːl/"
+    },
+    {
+      "tip": "搭配",
+      "text": "“对…的热情”用 zeal for，不用 zeal on 或 zeal to。",
+      "wrong": "zeal to study",
+      "right": "zeal for study"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["zeal", "强烈而持久的热情", "with zeal"],
+      ["enthusiasm", "兴奋投入，语气积极", "great enthusiasm"],
+      ["passion", "深沉热烈的感情或爱好", "a passion for music"],
+      ["fervour", "炽热的情感（英式）", "religious fervour"],
+      ["zealotry", "过头成狂热的偏执", "blind zealotry"],
+      ["devotion", "长期忠诚投入", "devotion to duty"]
+    ],
+    "chant": "热情 zeal，积极 enthusiasm，深爱 passion，过火 zealotry。"
+  },
+  "fills": [
+    { "sentence": "She tackled every task with ___ and never complained.", "answer": "zeal", "hint": "名词：热情" },
+    { "sentence": "His ___ for teaching inspired a whole generation.", "answer": "zeal", "hint": "搭配 zeal for：对…的热情" },
+    { "sentence": "The audience applauded the young singer's ___ performance.", "answer": "zealous", "hint": "形容词：热心的、狂热的" },
+    { "sentence": "Critics warn that religious ___ can divide a community.", "answer": "zealotry", "hint": "名词：狂热行为" },
+    { "sentence": "He worked ___ on the project for three months.", "answer": "zealously", "hint": "副词：热心地" }
+  ],
+  "review": [
+    "说出 zeal 的 3 个搭配",
+    "区分 zeal / enthusiasm / passion",
+    "默写 zel 词族 8 个词",
+    "遮住释义，复述火把蔓延的画面"
+  ],
+  "writeSample": "Keep your zeal for learning, but let patience carry it the last mile."
+}

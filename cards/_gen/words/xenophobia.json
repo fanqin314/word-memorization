@@ -1,0 +1,113 @@
+{
+  "word": "xenophobia",
+  "ipaUK": "ˌzenəˈfəʊbiə",
+  "ipaUS": "ˌzenəˈfoʊbiə",
+  "pos": "n.",
+  "gloss": "排外 · 仇外 · 恐外",
+  "skin": {
+    "name": "冷墙灰紫", "hero": "paper", "font": "sans", "motif": "vlines",
+    "align": "center", "watermark": "壁", "wordSize": 88,
+    "palette": {
+      "paper": "#EEEBEF", "paper2": "#DDD8E0",
+      "accent": "#6C5B7B", "accentSoft": "#E3DCE8",
+      "c2": "#4A5566", "c2Soft": "#DCE0E6",
+      "c3": "#8A8F98", "c3Soft": "#E4E6E9",
+      "ink": "#1B1920", "deep": "#2A2433"
+    }
+  },
+  "root": {
+    "stem": "xeno + phobia",
+    "origin": "希腊语 xenos＝外来者、陌生人，phobos＝恐惧",
+    "sense": "把外来的人当成威胁，先筑墙再害怕"
+  },
+  "family": [
+    { "pos": "n.", "w": "xenophobia", "p": "/ˌzenəˈfəʊbiə/", "m": "排外；仇外；恐外" },
+    { "pos": "adj.", "w": "xenophobic", "p": "/ˌzenəˈfəʊbɪk/", "m": "排外的；仇外的" },
+    { "pos": "n.", "w": "xenophobe", "p": "/ˈzenəfəʊb/", "m": "仇外者；排外的人" },
+    { "pos": "n.", "w": "xenophile", "p": "/ˈzenəfaɪl/", "m": "喜爱外国人者" },
+    { "pos": "n.", "w": "phobia", "p": "/ˈfəʊbiə/", "m": "恐惧症" },
+    { "pos": "n.", "w": "claustrophobia", "p": "/ˌklɔːstrəˈfəʊbiə/", "m": "幽闭恐惧症" },
+    { "pos": "n.", "w": "acrophobia", "p": "/ˌækrəˈfəʊbiə/", "m": "恐高症" },
+    { "pos": "n.", "w": "hydrophobia", "p": "/ˌhaɪdrəˈfəʊbiə/", "m": "恐水症；狂犬病" }
+  ],
+  "scene": {
+    "main": "一道高墙横在画面中央，墙内的人紧盯着墙外走来的陌生人，脚步不自觉后退",
+    "sub": "xeno（外来）+ phobia（恐惧）→ 对外来者和外国人的恐惧与排斥：排外、仇外。",
+    "template": "duel",
+    "labels": ["外来", "恐惧"]
+  },
+  "collocations": [
+    { "pattern": "rising xenophobia", "meaning": "日益高涨的排外情绪" },
+    { "pattern": "xenophobia towards", "meaning": "对…的仇外心理" },
+    { "pattern": "a wave of xenophobia", "meaning": "一波排外浪潮" },
+    { "pattern": "combat xenophobia", "meaning": "反对排外" },
+    { "pattern": "economic xenophobia", "meaning": "经济排外" }
+  ],
+  "examples": [
+    {
+      "src": "2021 考研 · 阅读",
+      "en": "The report warns that {{w}} is spreading in some border towns.",
+      "cn": "报告警告说，排外情绪正在一些边境城镇蔓延。"
+    },
+    {
+      "src": "2019 六级 · 写作",
+      "en": "Education is the best cure for {{w}}.",
+      "cn": "教育是治愈排外心理最好的良药。"
+    },
+    {
+      "src": "2020 雅思 · 阅读",
+      "en": "Economic downturns often fuel {{w}} against migrants.",
+      "cn": "经济下行常常助长针对移民的排外情绪。"
+    },
+    {
+      "src": "2018 考研 · 翻译",
+      "en": "Laws alone cannot remove {{w}} from daily life.",
+      "cn": "仅靠法律无法消除日常生活中的排外心理。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "xenophobia 以 xeno- 开头，不是 zeno-；-phobia 中间是 -pho-。",
+      "wrong": "zenophobia",
+      "right": "xenophobia"
+    },
+    {
+      "tip": "发音",
+      "text": "x 读 /z/，整体读 /ˌzenəˈfəʊbiə/，不要读成 /ksiːnə-/。",
+      "wrong": "/ˌksiːnəˈfəʊbiə/",
+      "right": "/ˌzenəˈfəʊbiə/"
+    },
+    {
+      "tip": "搭配",
+      "text": "“对某群体的排外”用 xenophobia towards / against，不用 xenophobia to。",
+      "wrong": "xenophobia to foreigners",
+      "right": "xenophobia towards foreigners"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["xenophobia", "对外来者、外国人的恐惧排斥", "xenophobia towards migrants"],
+      ["racism", "按种族区分的歧视", "fight racism"],
+      ["prejudice", "先入为主的偏见（范围更大）", "racial prejudice"],
+      ["nationalism", "民族自豪／民族主义", "rising nationalism"],
+      ["bigotry", "固执偏狭、不容异见", "blind bigotry"],
+      ["discrimination", "实际差别对待的行为", "job discrimination"]
+    ],
+    "chant": "怕外人 xenophobia，看种族 racism，存成见 prejudice，真歧视 discrimination。"
+  },
+  "fills": [
+    { "sentence": "The report warns that ___ is spreading in some border towns.", "answer": "xenophobia", "hint": "名词：排外情绪" },
+    { "sentence": "Education is the best cure for ___.", "answer": "xenophobia", "hint": "名词：排外心理" },
+    { "sentence": "Economic downturns often fuel ___ against migrants.", "answer": "xenophobia", "hint": "名词：仇外情绪" },
+    { "sentence": "His ___ remarks drew wide criticism.", "answer": "xenophobic", "hint": "形容词：排外的" },
+    { "sentence": "A ___ refuses to live near people from other countries.", "answer": "xenophobe", "hint": "名词：仇外者" }
+  ],
+  "review": [
+    "说出 xenophobia 的 3 个搭配",
+    "区分 xenophobia / racism / prejudice",
+    "默写 phobia 词族 8 个词",
+    "遮住释义，复述高墙内外的画面"
+  ],
+  "writeSample": "Travel is the quietest way to dissolve xenophobia, one conversation at a time."
+}

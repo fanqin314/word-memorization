@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>judicious · 明智的 · 审慎的</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   judicious —— 由 _gen/build.js 生成（theme: skin:天平冷蓝）
+   改动请改 JSON / 主题，不要手改本文件。
+   ========================================================================== */
+/* ==========================================================================
+   _hero.css —— 生成卡公共骨架（hero / 意象 SVG / 组件纠偏 / 响应式）
+   主题文件只负责：:root 配色、body::before 底纹、.hero 背景、少量装饰。
+   ========================================================================== */
+
+.hero{
+  position:relative;overflow:hidden;
+  border-bottom:3px solid var(--ink);
+  background:var(--hero-bg,linear-gradient(180deg,#F4E3D4 0%,#E2C2A6 100%));
+  color:var(--hero-ink,var(--ink));
+}
+.hero-inner{
+  position:relative;z-index:2;
+  padding:var(--hero-pad,76px 64px 56px);
+  text-align:var(--hero-align,center);
+}
+.word-row{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.word-anim{
+  display:inline-block;
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:var(--word-size,100px);font-weight:900;line-height:1.02;letter-spacing:-.02em;
+  color:var(--hero-word,var(--hero-ink,var(--ink)));
+  filter:drop-shadow(6px 6px 0 var(--word-shadow,var(--cb-accent)));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:mtLetter .9s cubic-bezier(.4,1.4,.6,1) forwards;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+}
+.word-anim .letter:nth-child(1){animation-delay:.05s}
+.word-anim .letter:nth-child(2){animation-delay:.13s}
+.word-anim .letter:nth-child(3){animation-delay:.21s}
+.word-anim .letter:nth-child(4){animation-delay:.29s}
+.word-anim .letter:nth-child(5){animation-delay:.37s}
+.word-anim .letter:nth-child(6){animation-delay:.45s}
+.word-anim .letter:nth-child(7){animation-delay:.53s}
+.word-anim .letter:nth-child(8){animation-delay:.61s}
+.word-anim .letter:nth-child(9){animation-delay:.69s}
+.word-anim .letter:nth-child(10){animation-delay:.77s}
+.word-anim .letter:nth-child(11){animation-delay:.85s}
+.word-anim .letter:nth-child(12){animation-delay:.93s}
+.word-anim .letter:nth-child(13){animation-delay:1.01s}
+.word-anim .letter:nth-child(14){animation-delay:1.09s}
+.word-anim .letter:nth-child(15){animation-delay:1.17s}
+.word-anim .letter:nth-child(16){animation-delay:1.25s}
+@keyframes mtLetter{
+  0%{opacity:0;transform:translateY(-34px) scale(1.45) rotate(-7deg);filter:blur(7px);}
+  60%{opacity:1;filter:blur(0);transform:translateY(3px) scale(.95);}
+  100%{opacity:1;filter:blur(0);transform:translateY(0) scale(1);}
+}
+@keyframes mtLetterBounce{
+  0%{opacity:0;transform:translateY(-30px) scale(.6);}
+  62%{opacity:1;transform:translateY(6px) scale(1.08);}
+  100%{opacity:1;transform:translateY(0) scale(1);}
+}
+.word-anim .letter:hover{color:var(--cb-accent);transform:translateY(-7px) scale(1.08);}
+
+.hero-meta{
+  margin-top:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.ipa-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:14px;font-weight:700;letter-spacing:.05em;
+  background:var(--cb-2-soft);color:var(--hero-ink,var(--ink));
+  border:2.5px solid var(--ink);padding:5px 16px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-accent);cursor:pointer;transform:rotate(-1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .86s forwards;
+}
+.pos-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--deep);color:var(--paper);
+  padding:5px 14px;border-radius:999px;border:2px solid var(--ink);
+  transform:rotate(1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .98s forwards;
+}
+.spell-hint{
+  display:inline-block;margin-top:20px;padding:8px 18px;
+  font-size:12px;letter-spacing:.12em;
+  background:var(--cb-3-soft);border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-.8deg);
+  color:var(--hero-hint,var(--ink));
+  opacity:0;animation:mtUp .7s ease-out 1.12s forwards;
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;flex-shrink:0;
+  background:var(--cb-accent);border:3px solid var(--ink);border-radius:50%;
+  cursor:pointer;font-size:19px;
+  box-shadow:4px 4px 0 var(--cb-3);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(10deg);box-shadow:6px 6px 0 var(--cb-3);}
+.speak-btn.speaking{animation:mtPulse .6s ease-in-out infinite;}
+@keyframes mtPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14) rotate(-5deg);}}
+@keyframes mtUp{0%{opacity:0;transform:translateY(9px);}100%{opacity:1;transform:translateY(0);}}
+
+/* 意象卡 SVG 纠偏：避免继承尺寸把画面拉变形 */
+.image-card .ic-svg{width:100%!important;height:auto!important;}
+.image-card .ic-svg svg{width:100%!important;height:auto!important;max-width:340px;overflow:visible;}
+
+/* 搭配条：主题若要自绘装饰请用 ::after，base 的 ::before 色条保留 */
+.collo .pattern{white-space:normal!important;}
+
+/* 意象卡：暗底 + 主题辉光 + 点阵，给插画留出层次 */
+.image-card::before{
+  content:"";position:absolute;right:-80px;top:-90px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,var(--cb-accent),transparent 66%);
+  opacity:.2;pointer-events:none;z-index:0;
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,252,245,.18) 1px,transparent 1.4px);
+  background-size:18px 18px;opacity:.45;
+  -webkit-mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+  mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+}
+.image-card .ic-text,.image-card .ic-svg{position:relative;z-index:2;}
+
+/* 场景插画：浅色描边 + 标注芯片，保证深色卡上看得清 */
+.ic-svg{--sc-line:#FBF6EC;--sc-dim:rgba(251,246,236,.55);}
+.sc-pop{transform-origin:center;animation:scPop 5.6s cubic-bezier(.34,1.56,.64,1) infinite;}
+@keyframes scPop{
+  0%,8%{opacity:0;transform:translateY(14px) scale(.86) rotate(-3deg);}
+  24%,76%{opacity:1;transform:translateY(0) scale(1) rotate(0);}
+  92%,100%{opacity:0;transform:translateY(-6px) scale(.97);}
+}
+.sc-float{animation:scFloat 5.6s ease-in-out infinite;}
+@keyframes scFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.sc-link{fill:none;stroke:var(--sc-dim);stroke-width:1.5;stroke-dasharray:4 5;animation:scLink 5.6s linear infinite;}
+@keyframes scLink{to{stroke-dashoffset:-18;}}
+.sc-label text{font-family:"Songti SC","Noto Serif SC",serif;font-size:10px;font-weight:700;fill:var(--ink);}
+
+@media (max-width:640px){
+  .hero-inner{padding:46px 20px 34px;}
+  .word-anim{font-size:var(--word-size-sm,54px);}
+  .word-row{gap:8px;}
+  .speak-btn{width:38px;height:38px;font-size:16px;}
+  .hero-meta{gap:8px;}
+  .ipa-anim{font-size:12px;}
+  .image-card{grid-template-columns:1fr!important;padding:26px 20px;}
+}
+
+/* 皮肤：天平冷蓝 —— hero:paper / font:serif / motif:grid */
+:root{
+  --paper:#F1F3F4;
+  --paper-2:#DFE4E7;
+  --cb-accent:#2F5D8A;
+  --cb-accent-soft:#D9E5F0;
+  --cb-2:#6B7F8C;
+  --cb-2-soft:#E0E7EC;
+  --cb-3:#9A6B3F;
+  --cb-3-soft:#EFE3D3;
+  --ink:#17202A;
+  --deep:#1B2C3A;
+  --cb-deep:#1B2C3A;
+  --font-display:"Songti SC","Noto Serif SC",Georgia,"Times New Roman",serif;
+  --hero-align:center;
+  --hero-justify:center;
+  --word-size:98px;
+  --word-size-sm:47px;
+  --hero-bg:#F1F3F4;
+  --hero-ink:#17202A;
+  --hero-word:#17202A;
+  --word-shadow:#2F5D8A;
+  --hero-pad:84px 56px 62px;
+}
+.hero::before{content:"";position:absolute;top:0;left:0;right:0;height:9px;background:#2F5D8A;z-index:3;pointer-events:none;}.hero::after{content:"断";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(23,32,42,0.07);pointer-events:none;z-index:1;}
+.hero .ipa-anim,.hero .spell-hint{color:#17202A;}
+.section-title,.image-card .ic-label{font-family:var(--font-display);}
+.image-card .ic-label,.image-card .ic-main .hl{color:#FBF5E9;}
+.word-anim{font-weight:900;letter-spacing:0;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(23,32,42,0.055) 1px,transparent 1px),linear-gradient(90deg,rgba(23,32,42,0.055) 1px,transparent 1px);background-size:54px 54px;}
+@keyframes skDrift{to{background-position:64px 64px;}}
+@keyframes skDriftX{to{background-position:56px 0;}}
+
+</style>
+</head>
+
+<body data-word="judicious">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="word-row">
+        <span class="word-anim" aria-label="judicious"><span class="letter l1">j</span><span class="letter l2">u</span><span class="letter l3">d</span><span class="letter l4">i</span><span class="letter l5">c</span><span class="letter l6">i</span><span class="letter l7">o</span><span class="letter l8">u</span><span class="letter l9">s</span></span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      </div>
+      <div class="hero-meta">
+        <div class="ipa-anim" id="ipaBtn">英 /dʒuˈdɪʃəs/ &nbsp;·&nbsp; 美 /dʒuˈdɪʃəs/</div>
+        <div class="pos-anim">adj.</div>
+      </div>
+      <div class="spell-hint">judicious &nbsp; 明智的 · 审慎的</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">jud / jur</span>（拉丁 judicare＝判断，jus（juris）＝法律、权利）&nbsp;→&nbsp; "照法律和道理掂量过再下判断" → <b>明智的</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">judicious</div><div class="p">/dʒuˈdɪʃəs/</div><div class="m">明智的；审慎的</div></div>
+          <div class="fam-card"><div class="pos">adv.</div><div class="w">judiciously</div><div class="p">/dʒuˈdɪʃəsli/</div><div class="m">明智地；审慎地</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">judicial</div><div class="p">/dʒuˈdɪʃl/</div><div class="m">司法的；法庭的</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">judiciary</div><div class="p">/dʒuˈdɪʃəri/</div><div class="m">司法部门；法官们</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">judgment</div><div class="p">/ˈdʒʌdʒmənt/</div><div class="m">判断力；判决</div></div>
+          <div class="fam-card"><div class="pos">n. · v.</div><div class="w">prejudice</div><div class="p">/ˈpredʒudɪs/</div><div class="m">偏见；使有偏见</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">jurisdiction</div><div class="p">/ˌdʒʊərɪsˈdɪkʃn/</div><div class="m">司法管辖权；管辖范围</div></div>
+          <div class="fam-card"><div class="pos">n. · v.</div><div class="w">judge</div><div class="p">/dʒʌdʒ/</div><div class="m">法官；判断</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">judicious</span> = 法官面前摊着两摞证据，他先称一称两边的分量，再慢慢落笔写下判决。</p>
+          <p class="ic-sub">jud（判断）+ -icious（充满…的）→ 凡事都先掂量、再下判断：明智的、审慎的。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+      <svg viewBox="0 0 360 280" role="img" aria-hidden="true"><circle cx="180" cy="142" r="112" fill="var(--cb-accent)" opacity=".13"/><circle cx="180" cy="142" r="104" fill="none" stroke="var(--sc-dim)" stroke-width="1.5" stroke-dasharray="3 8"/>
+          <rect x="100" y="66" width="46" height="150" rx="23" fill="rgba(251,246,236,.08)" stroke="var(--sc-line)" stroke-width="3"/>
+          <rect class="sc-float" x="106" y="152" width="34" height="58" rx="17" fill="var(--cb-accent)"/>
+          <rect x="214" y="66" width="46" height="150" rx="23" fill="rgba(251,246,236,.08)" stroke="var(--sc-line)" stroke-width="3"/>
+          <rect class="sc-float" style="animation-delay:-1.4s" x="220" y="118" width="34" height="92" rx="17" fill="var(--cb-2)"/>
+          <path class="sc-link" d="M132 146L232 112"/>
+          <circle cx="132" cy="146" r="4" fill="var(--cb-accent)"/><circle cx="232" cy="112" r="4" fill="var(--cb-2)"/>
+          <g class="sc-label"><rect x="108" y="33" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="128" y="48" text-anchor="middle">权衡</text></g><path class="sc-link" d="M128 54L128 66"/>
+          <g class="sc-label"><rect x="208" y="235" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="228" y="250" text-anchor="middle">慎断</text></g><path class="sc-link" d="M228 236L228 216"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">a judicious choice</div><div class="meaning">明智的选择</div></div>
+        <div class="collo"><div class="pattern">judicious use of</div><div class="meaning">对…的审慎使用</div></div>
+        <div class="collo"><div class="pattern">a judicious decision</div><div class="meaning">审慎的决定</div></div>
+        <div class="collo"><div class="pattern">judicious about spending</div><div class="meaning">花钱很谨慎</div></div>
+        <div class="collo"><div class="pattern">a judicious balance</div><div class="meaning">明智的平衡</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2020 考研 · 阅读</div>
+          <p class="en">The report calls for <em class="hl">judicious</em> use of limited resources.</p>
+          <p class="cn">报告呼吁审慎使用有限的资源。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 六级 · 写作</div>
+          <p class="en">A <em class="hl">judicious</em> manager listens carefully before making a decision.</p>
+          <p class="cn">明智的管理者会先仔细倾听再做决定。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2021 雅思 · 阅读</div>
+          <p class="en"><em class="hl">judicious</em> spending helped the family survive the recession.</p>
+          <p class="cn">审慎的开支让这个家庭熬过了经济衰退。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2018 考研 · 翻译</div>
+          <p class="en">It would be more <em class="hl">judicious</em> to wait for further evidence.</p>
+          <p class="cn">等更多证据再行动会更明智。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          judicious 结尾是 -cious，不要写成 -tious（那是 cautious）。<br>
+          <span class="wrong">juditous</span> → <span class="right">judicious</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">发音</span>
+          开头 j 读 /dʒ/，重音在第二个音节，读 /dʒuˈdɪʃəs/。<br>
+          <span class="wrong">/juːˈdɪʃəs/</span> → <span class="right">/dʒuˈdɪʃəs/</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          表示在某方面审慎用 judicious about / in，不用 judicious to do。<br>
+          <span class="wrong">judicious to spend</span> → <span class="right">judicious in spending</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>judicious</td><td>按理性权衡后作决定</td><td class="chant">a judicious choice</td></tr>
+          <tr><td>wise</td><td>有智慧、经验老到</td><td class="chant">a wise teacher</td></tr>
+          <tr><td>prudent</td><td>谨慎，主动避开风险</td><td class="chant">prudent saving</td></tr>
+          <tr><td>cautious</td><td>小心，怕出错</td><td class="chant">a cautious driver</td></tr>
+          <tr><td>sensible</td><td>合乎常理、实用</td><td class="chant">a sensible plan</td></tr>
+          <tr><td>rational</td><td>符合逻辑推理</td><td class="chant">a rational argument</td></tr>
+        </tbody>
+      </table>
+      <p class="review-tip">口诀：权衡后选 judicious，有智慧叫 wise，防风险叫 prudent，太小心叫 cautious。</p>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The report calls for <span class="first-letter">j</span><span class="blank" onclick="this.classList.toggle('revealed')">udicious</span> use of limited resources.</p>
+          <p class="fill-hint">提示：<b>形容词：审慎的</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The family survived thanks to <span class="first-letter">j</span><span class="blank" onclick="this.classList.toggle('revealed')">udicious</span> spending.</p>
+          <p class="fill-hint">提示：<b>形容词修饰 spending</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">She <span class="first-letter">j</span><span class="blank" onclick="this.classList.toggle('revealed')">udiciously</span> weighed the risks before saying yes.</p>
+          <p class="fill-hint">提示：<b>副词：审慎地</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The court is part of the <span class="first-letter">j</span><span class="blank" onclick="this.classList.toggle('revealed')">udicial</span> system.</p>
+          <p class="fill-hint">提示：<b>形容词：司法的</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Local courts have <span class="first-letter">j</span><span class="blank" onclick="this.classList.toggle('revealed')">urisdiction</span> over the case.</p>
+          <p class="fill-hint">提示：<b>名词：司法管辖权</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>judicious</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="A judicious answer is often slower, but it is rarely regretted."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>说出 judicious 的 3 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>区分 judicious / prudent / cautious</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>默写 jud 词族 8 个词</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>遮住释义，复述法官称证据的画面</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>

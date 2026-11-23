@@ -1,0 +1,112 @@
+{
+  "word": "quota",
+  "ipaUK": "ˈkwəʊtə",
+  "ipaUS": "ˈkwoʊtə",
+  "pos": "n.",
+  "gloss": "配额 · 定额 · 限额",
+  "skin": {
+    "name": "票券烙印", "hero": "band", "font": "mono", "motif": "blueprint",
+    "align": "center", "watermark": "额", "wordSize": 112,
+    "palette": {
+      "paper": "#F1EEE9", "paper2": "#E0DAD1",
+      "accent": "#A33B32", "accentSoft": "#F2DAD6",
+      "c2": "#3F5A6B", "c2Soft": "#D9E2E8",
+      "c3": "#7D7F5E", "c3Soft": "#E6E6D6",
+      "ink": "#1E1B19", "deep": "#2B2320"
+    }
+  },
+  "root": {
+    "stem": "quot",
+    "origin": "拉丁 quot＝多少，quotus＝第几个、占多少",
+    "sense": "事先算好该分到多少"
+  },
+  "family": [
+    { "pos": "n.", "w": "quota", "p": "/ˈkwəʊtə/", "m": "配额；定额；限额" },
+    { "pos": "v. · n.", "w": "quote", "p": "/kwəʊt/", "m": "引用；报价" },
+    { "pos": "n.", "w": "quotation", "p": "/kwəʊˈteɪʃn/", "m": "引文；报价单" },
+    { "pos": "n.", "w": "quotient", "p": "/ˈkwəʊʃnt/", "m": "商；比率" },
+    { "pos": "adj.", "w": "quotable", "p": "/ˈkwəʊtəbl/", "m": "值得引用的" },
+    { "pos": "v.", "w": "misquote", "p": "/ˌmɪsˈkwəʊt/", "m": "错误引用" },
+    { "pos": "v.", "w": "unquote", "p": "/ˌʌnˈkwəʊt/", "m": "结束引文" }
+  ],
+  "scene": {
+    "main": "一只木箱内壁刻着一条刻度线，往里装粮只能装到这条线，多一粒也不行",
+    "sub": "quot（多少）→ 事先算好的那一份数量：配额、定额、限额。",
+    "template": "shield",
+    "labels": ["定额", "限量"]
+  },
+  "collocations": [
+    { "pattern": "meet the quota", "meaning": "完成定额" },
+    { "pattern": "an import quota", "meaning": "进口配额" },
+    { "pattern": "a quota system", "meaning": "配额制度" },
+    { "pattern": "exceed the quota", "meaning": "超出限额" },
+    { "pattern": "a quota of", "meaning": "…的配额" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 阅读",
+      "en": "The company failed to meet its sales {{w}} last quarter.",
+      "cn": "公司上季度未能完成销售定额。"
+    },
+    {
+      "src": "2019 六级 · 听力",
+      "en": "Each country has an import {{w}} on steel.",
+      "cn": "每个国家都有钢铁进口配额。"
+    },
+    {
+      "src": "2021 雅思 · 写作",
+      "en": "Some argue that gender {{w}}s make hiring fairer.",
+      "cn": "有人认为性别配额让招聘更公平。"
+    },
+    {
+      "src": "2018 考研 · 翻译",
+      "en": "The fishing {{w}} was cut to protect the stock.",
+      "cn": "为保护鱼群资源，捕捞限额被下调。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "quota 结尾是 -a，表示配额；quote 结尾是 -e，表示引用，别混。",
+      "wrong": "import quote",
+      "right": "import quota"
+    },
+    {
+      "tip": "发音",
+      "text": "quo- 读 /kwəʊ/，不是 /kəʊ/，quota 读 /ˈkwəʊtə/。",
+      "wrong": "/ˈkəʊtə/",
+      "right": "/ˈkwəʊtə/"
+    },
+    {
+      "tip": "搭配",
+      "text": "表示“完成定额”用 meet the quota，“超过”用 exceed，不用 pass the quota。",
+      "wrong": "pass the quota",
+      "right": "meet the quota"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["quota", "规定好的份额或上限", "an import quota"],
+      ["quotation", "引文；报价单", "a price quotation"],
+      ["share", "分到的一份（可大可小）", "a share of profit"],
+      ["allowance", "允许的量；补贴", "a monthly allowance"],
+      ["limit", "上限，泛指", "a speed limit"],
+      ["ration", "按人配给的一份", "a daily ration"]
+    ],
+    "chant": "先说数量 quota，引用原话 quote，分到一份 share，按量配给 ration。"
+  },
+  "fills": [
+    { "sentence": "The company failed to meet its sales ___ last quarter.", "answer": "quota", "hint": "名词：定额" },
+    { "sentence": "Each country has an import ___ on steel.", "answer": "quota", "hint": "名词：配额" },
+    { "sentence": "Some argue that gender ___ make hiring fairer.", "answer": "quotas", "hint": "复数：配额，注意加 s" },
+    { "sentence": "Please ___ the exact words of the author.", "answer": "quote", "hint": "同根动词：引用" },
+    { "sentence": "He was accused of ___ the minister out of context.", "answer": "misquoting", "hint": "介词 of 后用 -ing：错误引用" }
+  ],
+  "review": [
+    "说出 quota 的 3 个搭配",
+    "区分 quota / share / allowance",
+    "默写 quot 词族 7 个词",
+    "遮住释义，复述木箱刻度线的画面"
+  ],
+  "writeSample": "A fair quota gives everyone a clear share without rewarding those who shout loudest."
+}

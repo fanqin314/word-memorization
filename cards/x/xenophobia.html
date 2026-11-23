@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>xenophobia · 排外 · 仇外 · 恐外</title>
+
+<link rel="stylesheet" href="../../card-base.css">
+
+<style>
+/* ==========================================================================
+   xenophobia —— 由 _gen/build.js 生成（theme: skin:冷墙灰紫）
+   改动请改 JSON / 主题，不要手改本文件。
+   ========================================================================== */
+/* ==========================================================================
+   _hero.css —— 生成卡公共骨架（hero / 意象 SVG / 组件纠偏 / 响应式）
+   主题文件只负责：:root 配色、body::before 底纹、.hero 背景、少量装饰。
+   ========================================================================== */
+
+.hero{
+  position:relative;overflow:hidden;
+  border-bottom:3px solid var(--ink);
+  background:var(--hero-bg,linear-gradient(180deg,#F4E3D4 0%,#E2C2A6 100%));
+  color:var(--hero-ink,var(--ink));
+}
+.hero-inner{
+  position:relative;z-index:2;
+  padding:var(--hero-pad,76px 64px 56px);
+  text-align:var(--hero-align,center);
+}
+.word-row{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.word-anim{
+  display:inline-block;
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:var(--word-size,100px);font-weight:900;line-height:1.02;letter-spacing:-.02em;
+  color:var(--hero-word,var(--hero-ink,var(--ink)));
+  filter:drop-shadow(6px 6px 0 var(--word-shadow,var(--cb-accent)));
+}
+.word-anim .letter{
+  display:inline-block;opacity:0;
+  animation:mtLetter .9s cubic-bezier(.4,1.4,.6,1) forwards;
+  transition:transform .25s cubic-bezier(.2,.7,.3,1),color .25s;
+}
+.word-anim .letter:nth-child(1){animation-delay:.05s}
+.word-anim .letter:nth-child(2){animation-delay:.13s}
+.word-anim .letter:nth-child(3){animation-delay:.21s}
+.word-anim .letter:nth-child(4){animation-delay:.29s}
+.word-anim .letter:nth-child(5){animation-delay:.37s}
+.word-anim .letter:nth-child(6){animation-delay:.45s}
+.word-anim .letter:nth-child(7){animation-delay:.53s}
+.word-anim .letter:nth-child(8){animation-delay:.61s}
+.word-anim .letter:nth-child(9){animation-delay:.69s}
+.word-anim .letter:nth-child(10){animation-delay:.77s}
+.word-anim .letter:nth-child(11){animation-delay:.85s}
+.word-anim .letter:nth-child(12){animation-delay:.93s}
+.word-anim .letter:nth-child(13){animation-delay:1.01s}
+.word-anim .letter:nth-child(14){animation-delay:1.09s}
+.word-anim .letter:nth-child(15){animation-delay:1.17s}
+.word-anim .letter:nth-child(16){animation-delay:1.25s}
+@keyframes mtLetter{
+  0%{opacity:0;transform:translateY(-34px) scale(1.45) rotate(-7deg);filter:blur(7px);}
+  60%{opacity:1;filter:blur(0);transform:translateY(3px) scale(.95);}
+  100%{opacity:1;filter:blur(0);transform:translateY(0) scale(1);}
+}
+@keyframes mtLetterBounce{
+  0%{opacity:0;transform:translateY(-30px) scale(.6);}
+  62%{opacity:1;transform:translateY(6px) scale(1.08);}
+  100%{opacity:1;transform:translateY(0) scale(1);}
+}
+.word-anim .letter:hover{color:var(--cb-accent);transform:translateY(-7px) scale(1.08);}
+
+.hero-meta{
+  margin-top:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  justify-content:var(--hero-justify,center);
+}
+.ipa-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:14px;font-weight:700;letter-spacing:.05em;
+  background:var(--cb-2-soft);color:var(--hero-ink,var(--ink));
+  border:2.5px solid var(--ink);padding:5px 16px;border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-accent);cursor:pointer;transform:rotate(-1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .86s forwards;
+}
+.pos-anim{
+  font-family:var(--font-display,"Helvetica Neue",Arial,sans-serif);
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--deep);color:var(--paper);
+  padding:5px 14px;border-radius:999px;border:2px solid var(--ink);
+  transform:rotate(1.2deg);
+  opacity:0;animation:mtUp .7s ease-out .98s forwards;
+}
+.spell-hint{
+  display:inline-block;margin-top:20px;padding:8px 18px;
+  font-size:12px;letter-spacing:.12em;
+  background:var(--cb-3-soft);border:2.5px solid var(--ink);border-radius:999px;
+  box-shadow:3px 3px 0 var(--cb-3);transform:rotate(-.8deg);
+  color:var(--hero-hint,var(--ink));
+  opacity:0;animation:mtUp .7s ease-out 1.12s forwards;
+}
+.speak-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;flex-shrink:0;
+  background:var(--cb-accent);border:3px solid var(--ink);border-radius:50%;
+  cursor:pointer;font-size:19px;
+  box-shadow:4px 4px 0 var(--cb-3);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+}
+.speak-btn:hover{transform:translate(-2px,-2px) rotate(10deg);box-shadow:6px 6px 0 var(--cb-3);}
+.speak-btn.speaking{animation:mtPulse .6s ease-in-out infinite;}
+@keyframes mtPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14) rotate(-5deg);}}
+@keyframes mtUp{0%{opacity:0;transform:translateY(9px);}100%{opacity:1;transform:translateY(0);}}
+
+/* 意象卡 SVG 纠偏：避免继承尺寸把画面拉变形 */
+.image-card .ic-svg{width:100%!important;height:auto!important;}
+.image-card .ic-svg svg{width:100%!important;height:auto!important;max-width:340px;overflow:visible;}
+
+/* 搭配条：主题若要自绘装饰请用 ::after，base 的 ::before 色条保留 */
+.collo .pattern{white-space:normal!important;}
+
+/* 意象卡：暗底 + 主题辉光 + 点阵，给插画留出层次 */
+.image-card::before{
+  content:"";position:absolute;right:-80px;top:-90px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,var(--cb-accent),transparent 66%);
+  opacity:.2;pointer-events:none;z-index:0;
+}
+.image-card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,252,245,.18) 1px,transparent 1.4px);
+  background-size:18px 18px;opacity:.45;
+  -webkit-mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+  mask-image:radial-gradient(62% 62% at 78% 48%,#000 26%,transparent 78%);
+}
+.image-card .ic-text,.image-card .ic-svg{position:relative;z-index:2;}
+
+/* 场景插画：浅色描边 + 标注芯片，保证深色卡上看得清 */
+.ic-svg{--sc-line:#FBF6EC;--sc-dim:rgba(251,246,236,.55);}
+.sc-pop{transform-origin:center;animation:scPop 5.6s cubic-bezier(.34,1.56,.64,1) infinite;}
+@keyframes scPop{
+  0%,8%{opacity:0;transform:translateY(14px) scale(.86) rotate(-3deg);}
+  24%,76%{opacity:1;transform:translateY(0) scale(1) rotate(0);}
+  92%,100%{opacity:0;transform:translateY(-6px) scale(.97);}
+}
+.sc-float{animation:scFloat 5.6s ease-in-out infinite;}
+@keyframes scFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.sc-link{fill:none;stroke:var(--sc-dim);stroke-width:1.5;stroke-dasharray:4 5;animation:scLink 5.6s linear infinite;}
+@keyframes scLink{to{stroke-dashoffset:-18;}}
+.sc-label text{font-family:"Songti SC","Noto Serif SC",serif;font-size:10px;font-weight:700;fill:var(--ink);}
+
+@media (max-width:640px){
+  .hero-inner{padding:46px 20px 34px;}
+  .word-anim{font-size:var(--word-size-sm,54px);}
+  .word-row{gap:8px;}
+  .speak-btn{width:38px;height:38px;font-size:16px;}
+  .hero-meta{gap:8px;}
+  .ipa-anim{font-size:12px;}
+  .image-card{grid-template-columns:1fr!important;padding:26px 20px;}
+}
+
+/* 皮肤：冷墙灰紫 —— hero:paper / font:sans / motif:vlines */
+:root{
+  --paper:#EEEBEF;
+  --paper-2:#DDD8E0;
+  --cb-accent:#6C5B7B;
+  --cb-accent-soft:#E3DCE8;
+  --cb-2:#4A5566;
+  --cb-2-soft:#DCE0E6;
+  --cb-3:#8A8F98;
+  --cb-3-soft:#E4E6E9;
+  --ink:#1B1920;
+  --deep:#2A2433;
+  --cb-deep:#2A2433;
+  --font-display:"Helvetica Neue",Arial,"PingFang SC",sans-serif;
+  --hero-align:center;
+  --hero-justify:center;
+  --word-size:88px;
+  --word-size-sm:42px;
+  --hero-bg:#EEEBEF;
+  --hero-ink:#1B1920;
+  --hero-word:#1B1920;
+  --word-shadow:#6C5B7B;
+  --hero-pad:84px 56px 62px;
+}
+.hero::before{content:"";position:absolute;top:0;left:0;right:0;height:9px;background:#6C5B7B;z-index:3;pointer-events:none;}.hero::after{content:"壁";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(27,25,32,0.07);pointer-events:none;z-index:1;}
+.hero .ipa-anim,.hero .spell-hint{color:#1B1920;}
+.section-title,.image-card .ic-label{font-family:var(--font-display);}
+.image-card .ic-label,.image-card .ic-main .hl{color:#FBF5E9;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:repeating-linear-gradient(90deg,transparent 0 54px,rgba(108,91,123,0.1) 54px 56px);animation:skDriftX 28s linear infinite;}
+@keyframes skDrift{to{background-position:64px 64px;}}
+@keyframes skDriftX{to{background-position:56px 0;}}
+
+</style>
+</head>
+
+<body data-word="xenophobia">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<article class="page">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="word-row">
+        <span class="word-anim" aria-label="xenophobia"><span class="letter l1">x</span><span class="letter l2">e</span><span class="letter l3">n</span><span class="letter l4">o</span><span class="letter l5">p</span><span class="letter l6">h</span><span class="letter l7">o</span><span class="letter l8">b</span><span class="letter l9">i</span><span class="letter l10">a</span></span>
+        <button class="speak-btn" id="speakBtn" title="点击听发音" aria-label="朗读">🔊</button>
+      </div>
+      <div class="hero-meta">
+        <div class="ipa-anim" id="ipaBtn">英 /ˌzenəˈfəʊbiə/ &nbsp;·&nbsp; 美 /ˌzenəˈfoʊbiə/</div>
+        <div class="pos-anim">n.</div>
+      </div>
+      <div class="spell-hint">xenophobia &nbsp; 排外 · 仇外 · 恐外</div>
+    </div>
+  </section>
+
+  <div class="body-wrap">
+
+    <!-- 1 词根 · 词族 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">1</span><span>词根 · 词族</span></h2>
+      <div class="root-family">
+        <div class="root-line">
+          <span class="stem">xeno + phobia</span>（希腊语 xenos＝外来者、陌生人，phobos＝恐惧）&nbsp;→&nbsp; "把外来的人当成威胁，先筑墙再害怕" → <b>排外</b>
+        </div>
+        <div class="fam-grid">
+          <div class="fam-card"><div class="pos">n.</div><div class="w">xenophobia</div><div class="p">/ˌzenəˈfəʊbiə/</div><div class="m">排外；仇外；恐外</div></div>
+          <div class="fam-card"><div class="pos">adj.</div><div class="w">xenophobic</div><div class="p">/ˌzenəˈfəʊbɪk/</div><div class="m">排外的；仇外的</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">xenophobe</div><div class="p">/ˈzenəfəʊb/</div><div class="m">仇外者；排外的人</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">xenophile</div><div class="p">/ˈzenəfaɪl/</div><div class="m">喜爱外国人者</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">phobia</div><div class="p">/ˈfəʊbiə/</div><div class="m">恐惧症</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">claustrophobia</div><div class="p">/ˌklɔːstrəˈfəʊbiə/</div><div class="m">幽闭恐惧症</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">acrophobia</div><div class="p">/ˌækrəˈfəʊbiə/</div><div class="m">恐高症</div></div>
+          <div class="fam-card"><div class="pos">n.</div><div class="w">hydrophobia</div><div class="p">/ˌhaɪdrəˈfəʊbiə/</div><div class="m">恐水症；狂犬病</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 意象卡 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">2</span><span>意象卡 · 一句话记住</span></h2>
+      <div class="image-card">
+        <div class="ic-text">
+          <div class="ic-label">核心画面</div>
+          <p class="ic-main"><span class="hl">xenophobia</span> = 一道高墙横在画面中央，墙内的人紧盯着墙外走来的陌生人，脚步不自觉后退。</p>
+          <p class="ic-sub">xeno（外来）+ phobia（恐惧）→ 对外来者和外国人的恐惧与排斥：排外、仇外。</p>
+        </div>
+        <div class="ic-svg" aria-hidden="true">
+      <svg viewBox="0 0 360 280" role="img" aria-hidden="true"><circle cx="180" cy="142" r="112" fill="var(--cb-accent)" opacity=".13"/><circle cx="180" cy="142" r="104" fill="none" stroke="var(--sc-dim)" stroke-width="1.5" stroke-dasharray="3 8"/>
+          <g class="sc-pop">
+            <rect x="30" y="70" width="118" height="64" rx="18" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="3"/>
+            <path d="M148 118l24 18-9-26z" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="3" stroke-linejoin="round"/>
+            <text x="89" y="115" text-anchor="middle" font-size="30" font-weight="900" fill="var(--ink)">东</text>
+          </g>
+          <g class="sc-pop" style="animation-delay:-.5s">
+            <rect x="212" y="70" width="118" height="64" rx="18" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="3"/>
+            <path d="M212 118l-24 18 9-26z" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="3" stroke-linejoin="round"/>
+            <text x="271" y="115" text-anchor="middle" font-size="30" font-weight="900" fill="var(--ink)">西</text>
+          </g>
+          <g class="sc-float" stroke="var(--cb-accent)" stroke-width="3" stroke-linecap="round" fill="none">
+            <path d="M126 178h62M126 178l11-6M126 178l11 6"/>
+            <path d="M234 178h-62M234 178l-11-6M234 178l-11 6"/>
+          </g>
+          <g class="sc-label"><rect x="69" y="217" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="89" y="232" text-anchor="middle">外来</text></g><path class="sc-link" d="M89 217L89 138"/>
+          <g class="sc-label"><rect x="251" y="217" width="40" height="22" rx="11" fill="#FBF6EC" stroke="rgba(20,15,12,.18)"/><text x="271" y="232" text-anchor="middle">恐惧</text></g><path class="sc-link" d="M271 217L271 138"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 核心搭配 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">3</span><span>核心搭配 · 语块记忆</span></h2>
+      <div class="collocations">
+        <div class="collo"><div class="pattern">rising xenophobia</div><div class="meaning">日益高涨的排外情绪</div></div>
+        <div class="collo"><div class="pattern">xenophobia towards</div><div class="meaning">对…的仇外心理</div></div>
+        <div class="collo"><div class="pattern">a wave of xenophobia</div><div class="meaning">一波排外浪潮</div></div>
+        <div class="collo"><div class="pattern">combat xenophobia</div><div class="meaning">反对排外</div></div>
+        <div class="collo"><div class="pattern">economic xenophobia</div><div class="meaning">经济排外</div></div>
+      </div>
+    </section>
+
+    <!-- 4 真题例句 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">4</span><span>真题例句 · 语境记忆</span></h2>
+      <div class="real-exs">
+        <div class="real-ex">
+          <div class="src">2021 考研 · 阅读</div>
+          <p class="en">The report warns that <em class="hl">xenophobia</em> is spreading in some border towns.</p>
+          <p class="cn">报告警告说，排外情绪正在一些边境城镇蔓延。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2019 六级 · 写作</div>
+          <p class="en">Education is the best cure for <em class="hl">xenophobia</em>.</p>
+          <p class="cn">教育是治愈排外心理最好的良药。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2020 雅思 · 阅读</div>
+          <p class="en">Economic downturns often fuel <em class="hl">xenophobia</em> against migrants.</p>
+          <p class="cn">经济下行常常助长针对移民的排外情绪。</p>
+        </div>
+        <div class="real-ex">
+          <div class="src">2018 考研 · 翻译</div>
+          <p class="en">Laws alone cannot remove <em class="hl">xenophobia</em> from daily life.</p>
+          <p class="cn">仅靠法律无法消除日常生活中的排外心理。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 易错提醒 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">5</span><span>易错提醒 · 先防错</span></h2>
+      <div class="pitfall">
+        <div class="pitfall-item">
+          <span class="tip">拼写</span>
+          xenophobia 以 xeno- 开头，不是 zeno-；-phobia 中间是 -pho-。<br>
+          <span class="wrong">zenophobia</span> → <span class="right">xenophobia</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">发音</span>
+          x 读 /z/，整体读 /ˌzenəˈfəʊbiə/，不要读成 /ksiːnə-/。<br>
+          <span class="wrong">/ˌksiːnəˈfəʊbiə/</span> → <span class="right">/ˌzenəˈfəʊbiə/</span>
+        </div>
+        <div class="pitfall-item">
+          <span class="tip">搭配</span>
+          “对某群体的排外”用 xenophobia towards / against，不用 xenophobia to。<br>
+          <span class="wrong">xenophobia to foreigners</span> → <span class="right">xenophobia towards foreigners</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 易混辨析 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">6</span><span>易混辨析 · 一句话区分</span></h2>
+      <table class="compare-table">
+        <tbody>
+          <tr class="highlight"><td>xenophobia</td><td>对外来者、外国人的恐惧排斥</td><td class="chant">xenophobia towards migrants</td></tr>
+          <tr><td>racism</td><td>按种族区分的歧视</td><td class="chant">fight racism</td></tr>
+          <tr><td>prejudice</td><td>先入为主的偏见（范围更大）</td><td class="chant">racial prejudice</td></tr>
+          <tr><td>nationalism</td><td>民族自豪／民族主义</td><td class="chant">rising nationalism</td></tr>
+          <tr><td>bigotry</td><td>固执偏狭、不容异见</td><td class="chant">blind bigotry</td></tr>
+          <tr><td>discrimination</td><td>实际差别对待的行为</td><td class="chant">job discrimination</td></tr>
+        </tbody>
+      </table>
+      <p class="review-tip">口诀：怕外人 xenophobia，看种族 racism，存成见 prejudice，真歧视 discrimination。</p>
+    </section>
+
+    <!-- 7 首字母填空 -->
+    <section class="section self-test">
+      <h2 class="section-title"><span class="num">7</span><span>首字母填空 · 提取练习</span></h2>
+      <p class="hint">先自己想完整单词，再点空格看答案。<b>想不出来的，在纸上写一遍。</b></p>
+      <div class="fill-list">
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">The report warns that <span class="first-letter">x</span><span class="blank" onclick="this.classList.toggle('revealed')">enophobia</span> is spreading in some border towns.</p>
+          <p class="fill-hint">提示：<b>名词：排外情绪</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Education is the best cure for <span class="first-letter">x</span><span class="blank" onclick="this.classList.toggle('revealed')">enophobia</span>.</p>
+          <p class="fill-hint">提示：<b>名词：排外心理</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">Economic downturns often fuel <span class="first-letter">x</span><span class="blank" onclick="this.classList.toggle('revealed')">enophobia</span> against migrants.</p>
+          <p class="fill-hint">提示：<b>名词：仇外情绪</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">His <span class="first-letter">x</span><span class="blank" onclick="this.classList.toggle('revealed')">enophobic</span> remarks drew wide criticism.</p>
+          <p class="fill-hint">提示：<b>形容词：排外的</b></p>
+        </div>
+        <div class="fill-item reveal-left">
+          <p class="fill-sentence">A <span class="first-letter">x</span><span class="blank" onclick="this.classList.toggle('revealed')">enophobe</span> refuses to live near people from other countries.</p>
+          <p class="fill-hint">提示：<b>名词：仇外者</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 造句练习 -->
+    <section class="section reveal-scale">
+      <h2 class="section-title"><span class="num">8</span><span>造句练习 · 产出</span></h2>
+      <div class="write-practice">
+        <p class="wp-hint">用 <b>xenophobia</b> 造一句自己的句子，刻意用上今天学的一个搭配。</p>
+        <textarea id="mySentence" placeholder="Travel is the quietest way to dissolve xenophobia, one conversation at a time."></textarea>
+        <div class="wp-actions">
+          <button class="wp-btn" id="saveBtn">💾 保存到本地</button>
+          <button class="wp-btn ghost" id="clearBtn">清空</button>
+          <span class="wp-saved" id="savedMsg">✓ 已保存</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 复习打卡 -->
+    <section class="section reveal">
+      <h2 class="section-title"><span class="num">9</span><span>复习打卡 · 点击标记</span></h2>
+      <div class="review-grid" id="reviewGrid">
+        <div class="review-day" data-day="d1"><div class="day">D1</div><div class="task">今天<br>说出 xenophobia 的 3 个搭配</div></div>
+        <div class="review-day" data-day="d3"><div class="day">D3</div><div class="task">三天后<br>区分 xenophobia / racism / prejudice</div></div>
+        <div class="review-day" data-day="d7"><div class="day">D7</div><div class="task">一周后<br>默写 phobia 词族 8 个词</div></div>
+        <div class="review-day" data-day="d15"><div class="day">D15</div><div class="task">半月后<br>遮住释义，复述高墙内外的画面</div></div>
+      </div>
+      <p class="review-tip">💡 打卡状态保存在本地浏览器，刷新不丢</p>
+    </section>
+
+  </div>
+
+</article>
+
+<script src="../../card-base.js"></script>
+
+</body>
+</html>

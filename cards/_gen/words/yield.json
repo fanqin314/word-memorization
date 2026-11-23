@@ -1,0 +1,113 @@
+{
+  "word": "yield",
+  "ipaUK": "jiːld",
+  "ipaUS": "jiːld",
+  "pos": "v. · n.",
+  "gloss": "产出 · 屈服 · 让路 · 产量",
+  "skin": {
+    "name": "麦田让路", "hero": "split", "font": "serif", "motif": "contour",
+    "align": "left", "watermark": "收", "wordSize": 108,
+    "palette": {
+      "paper": "#F6EFE0", "paper2": "#E9DCC2",
+      "accent": "#B98A3C", "accentSoft": "#F4E5C8",
+      "c2": "#5B6B4A", "c2Soft": "#DFE6D5",
+      "c3": "#8C5A3C", "c3Soft": "#EEDDD1",
+      "ink": "#221A12", "deep": "#33281A"
+    }
+  },
+  "root": {
+    "stem": "yield（古英语 gieldan）",
+    "origin": "古英语 gieldan＝支付、回报",
+    "sense": "先付出，再收回回报；扛不住时也让出一步"
+  },
+  "family": [
+    { "pos": "v. · n.", "w": "yield", "p": "/jiːld/", "m": "产出；屈服；让路；产量" },
+    { "pos": "adj.", "w": "yielding", "p": "/ˈjiːldɪŋ/", "m": "柔软的；顺从的" },
+    { "pos": "adj.", "w": "unyielding", "p": "/ʌnˈjiːldɪŋ/", "m": "不屈的；坚硬的" },
+    { "pos": "adv.", "w": "yieldingly", "p": "/ˈjiːldɪŋli/", "m": "顺从地；柔软地" },
+    { "pos": "n.", "w": "yielder", "p": "/ˈjiːldə/", "m": "让步者；产出者" },
+    { "pos": "v.", "w": "outyield", "p": "/ˌaʊtˈjiːld/", "m": "产量超过" },
+    { "pos": "adj.", "w": "yieldable", "p": "/ˈjiːldəbl/", "m": "可让出的；可屈服的" },
+    { "pos": "n.", "w": "guild", "p": "/ɡɪld/", "m": "行会；协会（同源：缴纳会费的组织）" }
+  ],
+  "scene": {
+    "main": "一块麦田在风里弯下腰，麦穗越沉垂得越低；旁边小路上，行人侧身让出通道",
+    "sub": "yield 来自古英语 gieldan（支付、回报）→ 付出后收回产量，也在压力前让出一步：产出、屈服、让路。",
+    "template": "headwind",
+    "labels": ["产出", "让路"]
+  },
+  "collocations": [
+    { "pattern": "yield results", "meaning": "产生结果" },
+    { "pattern": "yield to pressure", "meaning": "屈服于压力" },
+    { "pattern": "crop yields", "meaning": "农作物产量" },
+    { "pattern": "yield to temptation", "meaning": "抵挡不住诱惑" },
+    { "pattern": "high-yield", "meaning": "高产的；高收益的" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 阅读",
+      "en": "The new farming method {{w}}s twice as much grain per hectare.",
+      "cn": "这种新耕作法每公顷产出的粮食是原来的两倍。"
+    },
+    {
+      "src": "2019 六级 · 写作",
+      "en": "She refused to {{w}} to pressure from her peers.",
+      "cn": "她拒绝向同伴的压力屈服。"
+    },
+    {
+      "src": "2021 雅思 · 写作",
+      "en": "Rising temperatures have cut crop {{w}}s in the region.",
+      "cn": "气温上升使该地区的农作物产量下降。"
+    },
+    {
+      "src": "2018 考研 · 翻译",
+      "en": "The driver {{w}}ed to the oncoming truck and pulled over.",
+      "cn": "司机给迎面驶来的卡车让路，把车停到一边。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "yield 是 y-i-e-l-d，i 在 e 前，不要写成 yeild。",
+      "wrong": "yeild",
+      "right": "yield"
+    },
+    {
+      "tip": "发音",
+      "text": "yield 读 /jiːld/，与 shield 押韵，不要读成 /jeld/。",
+      "wrong": "/jeld/",
+      "right": "/jiːld/"
+    },
+    {
+      "tip": "搭配",
+      "text": "“屈服于”用 yield to，“产生结果”直接 yield results，不加 out。",
+      "wrong": "yield out results",
+      "right": "yield results"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["yield", "产出；屈服；让路", "yield results"],
+      ["surrender", "彻底投降、交出", "surrender to the enemy"],
+      ["submit", "服从权威；提交", "submit to the rules"],
+      ["produce", "生产、制造（中性）", "produce steel"],
+      ["output", "产量（名词，偏工业）", "factory output"],
+      ["give in", "让步（口语）", "give in at last"]
+    ],
+    "chant": "农产说 yield，彻底投降 surrender，服从规则 submit，口头让步 give in。"
+  },
+  "fills": [
+    { "sentence": "The new method ___ twice as much grain per hectare.", "answer": "yields", "hint": "第三人称单数：产出" },
+    { "sentence": "She refused to ___ to pressure from her peers.", "answer": "yield", "hint": "refuse to 后接动词原形" },
+    { "sentence": "Rising temperatures have cut crop ___ in the region.", "answer": "yields", "hint": "名词复数：产量" },
+    { "sentence": "The driver ___ to the oncoming truck and pulled over.", "answer": "yielded", "hint": "过去式：让路" },
+    { "sentence": "His ___ attitude made him easy to push around.", "answer": "yielding", "hint": "形容词：顺从的" }
+  ],
+  "review": [
+    "说出 yield 的 3 个搭配",
+    "区分 yield / surrender / submit",
+    "默写 yield 词族 8 个词",
+    "遮住释义，复述麦田弯腰的画面"
+  ],
+  "writeSample": "Good questions yield better answers than confident guesses."
+}

@@ -1,0 +1,113 @@
+{
+  "word": "kinetic",
+  "ipaUK": "kɪˈnetɪk",
+  "ipaUS": "kɪˈnetɪk",
+  "pos": "adj.",
+  "gloss": "运动的 · 动能的",
+  "skin": {
+    "name": "电弧蓝", "hero": "dark", "font": "condensed", "motif": "hazard",
+    "align": "left", "watermark": "动", "wordSize": 104,
+    "palette": {
+      "paper": "#EDF1F2", "paper2": "#D8E2E4",
+      "accent": "#F2C230", "accentSoft": "#FBF0C6",
+      "c2": "#1FA6A0", "c2Soft": "#CFEAE7",
+      "c3": "#E4572E", "c3Soft": "#F9DCD3",
+      "ink": "#10171A", "deep": "#0C1B22"
+    }
+  },
+  "root": {
+    "stem": "kinet / kine",
+    "origin": "希腊语 kinesis＝运动，kinein＝使…动",
+    "sense": "身体一动，能量就跟着走"
+  },
+  "family": [
+    { "pos": "adj.", "w": "kinetic", "p": "/kɪˈnetɪk/", "m": "运动的；动能的" },
+    { "pos": "n.", "w": "kinetics", "p": "/kɪˈnetɪks/", "m": "动力学" },
+    { "pos": "n.", "w": "kinematics", "p": "/ˌkɪnɪˈmætɪks/", "m": "运动学" },
+    { "pos": "n.", "w": "kinesiology", "p": "/kɪˌniːsiˈɒlədʒi/", "m": "人体运动学" },
+    { "pos": "n.", "w": "cinema", "p": "/ˈsɪnəmə/", "m": "电影院；电影" },
+    { "pos": "n.", "w": "cinematography", "p": "/ˌsɪnəməˈtɒɡrəfi/", "m": "电影摄影" },
+    { "pos": "adj.", "w": "kinesthetic", "p": "/ˌkɪnɪsˈθetɪk/", "m": "动觉的" },
+    { "pos": "adj.", "w": "hyperkinetic", "p": "/ˌhaɪpəkɪˈnetɪk/", "m": "运动过度的；极度好动的" }
+  ],
+  "scene": {
+    "main": "一颗小球被弹簧弹出，在轨道上越滚越快，一排箭头一路向前推着它",
+    "sub": "kinet（运动）+ -ic（…的）→ 和运动、动能有关的：运动的、动能的。",
+    "template": "loop",
+    "labels": ["运动", "加速"]
+  },
+  "collocations": [
+    { "pattern": "kinetic energy", "meaning": "动能" },
+    { "pattern": "kinetic art", "meaning": "动态艺术" },
+    { "pattern": "kinetic force", "meaning": "动力；运动的力" },
+    { "pattern": "a kinetic sculpture", "meaning": "动态雕塑" },
+    { "pattern": "kinetic movement", "meaning": "运动感；动态" }
+  ],
+  "examples": [
+    {
+      "src": "2021 考研 · 阅读",
+      "en": "A moving object carries {{w}} energy.",
+      "cn": "运动中的物体携带动能。"
+    },
+    {
+      "src": "2019 六级 · 听力",
+      "en": "The {{w}} sculpture spins slowly in the wind.",
+      "cn": "那座动态雕塑在风中缓缓旋转。"
+    },
+    {
+      "src": "2020 雅思 · 写作",
+      "en": "The engineer measured the {{w}} force of the falling hammer.",
+      "cn": "工程师测量了落锤的运动力。"
+    },
+    {
+      "src": "2018 考研 · 完形",
+      "en": "The dancers filled the stage with {{w}} movement.",
+      "cn": "舞者让舞台充满动感。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "kinetic 中间是 -net-，只有一个 n，不要写成 kinnetic 或 kinetik。",
+      "wrong": "kinnetic",
+      "right": "kinetic"
+    },
+    {
+      "tip": "发音",
+      "text": "重音在第二个音节，k 后是短音 /ɪ/，读 /kɪˈnetɪk/。",
+      "wrong": "/ˈkaɪnətɪk/",
+      "right": "/kɪˈnetɪk/"
+    },
+    {
+      "tip": "搭配",
+      "text": "kinetic 作定语直接修饰 energy / art / force，不能说 kinetic of。",
+      "wrong": "the kinetic of the ball",
+      "right": "the kinetic energy of the ball"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["kinetic", "与运动、动能有关（术语）", "kinetic energy"],
+      ["dynamic", "有活力、不断变化", "a dynamic market"],
+      ["moving", "正在移动的（日常）", "a moving train"],
+      ["active", "积极的、活跃的", "an active member"],
+      ["mobile", "可移动的、走动方便的", "a mobile phone"],
+      ["energetic", "精力充沛的（多指人）", "an energetic child"]
+    ],
+    "chant": "物理说 kinetic，市场说 dynamic，车在动 moving，人有劲 energetic。"
+  },
+  "fills": [
+    { "sentence": "A moving object carries ___ energy.", "answer": "kinetic", "hint": "形容词：动能的" },
+    { "sentence": "The ___ sculpture spins slowly in the wind.", "answer": "kinetic", "hint": "形容词：动态的" },
+    { "sentence": "His research focuses on the ___ of chemical reactions.", "answer": "kinetics", "hint": "名词：动力学" },
+    { "sentence": "Dancers rely on ___ awareness to keep their balance.", "answer": "kinesthetic", "hint": "形容词：动觉的" },
+    { "sentence": "Friction turns ___ energy into heat.", "answer": "kinetic", "hint": "形容词：运动的" }
+  ],
+  "review": [
+    "说出 kinetic 的 3 个搭配",
+    "区分 kinetic / dynamic / energetic",
+    "默写 kinet 词族 8 个词",
+    "遮住释义，复述小球加速的画面"
+  ],
+  "writeSample": "A kinetic classroom keeps students moving, thinking and testing ideas."
+}

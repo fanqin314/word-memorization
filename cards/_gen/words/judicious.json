@@ -1,0 +1,113 @@
+{
+  "word": "judicious",
+  "ipaUK": "dʒuˈdɪʃəs",
+  "ipaUS": "dʒuˈdɪʃəs",
+  "pos": "adj.",
+  "gloss": "明智的 · 审慎的",
+  "skin": {
+    "name": "天平冷蓝", "hero": "paper", "font": "serif", "motif": "grid",
+    "align": "center", "watermark": "断", "wordSize": 98,
+    "palette": {
+      "paper": "#F1F3F4", "paper2": "#DFE4E7",
+      "accent": "#2F5D8A", "accentSoft": "#D9E5F0",
+      "c2": "#6B7F8C", "c2Soft": "#E0E7EC",
+      "c3": "#9A6B3F", "c3Soft": "#EFE3D3",
+      "ink": "#17202A", "deep": "#1B2C3A"
+    }
+  },
+  "root": {
+    "stem": "jud / jur",
+    "origin": "拉丁 judicare＝判断，jus（juris）＝法律、权利",
+    "sense": "照法律和道理掂量过再下判断"
+  },
+  "family": [
+    { "pos": "adj.", "w": "judicious", "p": "/dʒuˈdɪʃəs/", "m": "明智的；审慎的" },
+    { "pos": "adv.", "w": "judiciously", "p": "/dʒuˈdɪʃəsli/", "m": "明智地；审慎地" },
+    { "pos": "adj.", "w": "judicial", "p": "/dʒuˈdɪʃl/", "m": "司法的；法庭的" },
+    { "pos": "n.", "w": "judiciary", "p": "/dʒuˈdɪʃəri/", "m": "司法部门；法官们" },
+    { "pos": "n.", "w": "judgment", "p": "/ˈdʒʌdʒmənt/", "m": "判断力；判决" },
+    { "pos": "n. · v.", "w": "prejudice", "p": "/ˈpredʒudɪs/", "m": "偏见；使有偏见" },
+    { "pos": "n.", "w": "jurisdiction", "p": "/ˌdʒʊərɪsˈdɪkʃn/", "m": "司法管辖权；管辖范围" },
+    { "pos": "n. · v.", "w": "judge", "p": "/dʒʌdʒ/", "m": "法官；判断" }
+  ],
+  "scene": {
+    "main": "法官面前摊着两摞证据，他先称一称两边的分量，再慢慢落笔写下判决",
+    "sub": "jud（判断）+ -icious（充满…的）→ 凡事都先掂量、再下判断：明智的、审慎的。",
+    "template": "gauges",
+    "labels": ["权衡", "慎断"]
+  },
+  "collocations": [
+    { "pattern": "a judicious choice", "meaning": "明智的选择" },
+    { "pattern": "judicious use of", "meaning": "对…的审慎使用" },
+    { "pattern": "a judicious decision", "meaning": "审慎的决定" },
+    { "pattern": "judicious about spending", "meaning": "花钱很谨慎" },
+    { "pattern": "a judicious balance", "meaning": "明智的平衡" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 阅读",
+      "en": "The report calls for {{w}} use of limited resources.",
+      "cn": "报告呼吁审慎使用有限的资源。"
+    },
+    {
+      "src": "2019 六级 · 写作",
+      "en": "A {{w}} manager listens carefully before making a decision.",
+      "cn": "明智的管理者会先仔细倾听再做决定。"
+    },
+    {
+      "src": "2021 雅思 · 阅读",
+      "en": "{{w}} spending helped the family survive the recession.",
+      "cn": "审慎的开支让这个家庭熬过了经济衰退。"
+    },
+    {
+      "src": "2018 考研 · 翻译",
+      "en": "It would be more {{w}} to wait for further evidence.",
+      "cn": "等更多证据再行动会更明智。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "judicious 结尾是 -cious，不要写成 -tious（那是 cautious）。",
+      "wrong": "juditous",
+      "right": "judicious"
+    },
+    {
+      "tip": "发音",
+      "text": "开头 j 读 /dʒ/，重音在第二个音节，读 /dʒuˈdɪʃəs/。",
+      "wrong": "/juːˈdɪʃəs/",
+      "right": "/dʒuˈdɪʃəs/"
+    },
+    {
+      "tip": "搭配",
+      "text": "表示在某方面审慎用 judicious about / in，不用 judicious to do。",
+      "wrong": "judicious to spend",
+      "right": "judicious in spending"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["judicious", "按理性权衡后作决定", "a judicious choice"],
+      ["wise", "有智慧、经验老到", "a wise teacher"],
+      ["prudent", "谨慎，主动避开风险", "prudent saving"],
+      ["cautious", "小心，怕出错", "a cautious driver"],
+      ["sensible", "合乎常理、实用", "a sensible plan"],
+      ["rational", "符合逻辑推理", "a rational argument"]
+    ],
+    "chant": "权衡后选 judicious，有智慧叫 wise，防风险叫 prudent，太小心叫 cautious。"
+  },
+  "fills": [
+    { "sentence": "The report calls for ___ use of limited resources.", "answer": "judicious", "hint": "形容词：审慎的" },
+    { "sentence": "The family survived thanks to ___ spending.", "answer": "judicious", "hint": "形容词修饰 spending" },
+    { "sentence": "She ___ weighed the risks before saying yes.", "answer": "judiciously", "hint": "副词：审慎地" },
+    { "sentence": "The court is part of the ___ system.", "answer": "judicial", "hint": "形容词：司法的" },
+    { "sentence": "Local courts have ___ over the case.", "answer": "jurisdiction", "hint": "名词：司法管辖权" }
+  ],
+  "review": [
+    "说出 judicious 的 3 个搭配",
+    "区分 judicious / prudent / cautious",
+    "默写 jud 词族 8 个词",
+    "遮住释义，复述法官称证据的画面"
+  ],
+  "writeSample": "A judicious answer is often slower, but it is rarely regretted."
+}

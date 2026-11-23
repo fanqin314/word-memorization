@@ -174,25 +174,25 @@
 
 @keyframes specIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
 
-/* 17 种字体：每个字母一副面孔。用 data-style 统一编排，字母墙 / 详情徽章 / 飞行动画共用一套 */
-[data-style="a"] .gl{transform:scaleX(.88);}
-[data-style="c"] .gl{transform:scaleX(.94);}
-[data-style="d"] .gl path{fill:none;stroke:currentColor;stroke-width:4.4;}
-[data-style="e"] .gl{transform:scaleX(1.28);}
-[data-style="f"] .gl{transform:rotate(-4deg);}
+/* 19 副面孔：同一堵墙，每块字都是一种独立的呈现方式 */
+[data-style="a"] .gl{transform:scaleX(.9);}
+[data-style="c"] .gl{transform:scaleX(.96);}
+[data-style="d"] .gl path{fill:none;stroke:currentColor;stroke-width:4.2;}
+[data-style="e"] .gl{transform:scaleX(1.22);}
+[data-style="f"] .gl{transform:rotate(-5deg) scale(1.03);}
 [data-style="h"] .gl{
   filter:drop-shadow(3px 3px 0 color-mix(in srgb,currentColor 32%,transparent))
          drop-shadow(6px 6px 0 color-mix(in srgb,currentColor 14%,transparent));
 }
-[data-style="i"] .gl{transform:scaleX(.5);}
-[data-style="l"] .gl{transform:skewX(-14deg);}
 [data-style="p"] .gl{border-bottom:5px solid currentColor;padding-bottom:2px;}
 [data-style="r"] .gl{transform:scaleX(-1);}
 [data-style="s"] .gl{background:currentColor;padding:0 3px;}
 [data-style="s"] .gl path{fill:#FFFFFF;}
 [data-style="t"] .gl{border:2px solid currentColor;padding:1px 4px;}
 [data-style="u"] .gl{border-bottom:4px double currentColor;padding-bottom:2px;}
-[data-style="w"] .gl{transform:scaleX(1.5);}
+[data-style="v"] .gl{transform:scale(1.1);}
+[data-style="w"] .gl{transform:scaleX(1.15);}
+
 .wempty{padding:1.6rem .8rem;text-align:center;color:color-mix(in srgb,var(--ink) 45%,transparent);font-size:.76rem;font-weight:700;}
 
 /* 详情层：与字母墙同一张白纸的内页。
@@ -249,6 +249,11 @@
 .badge::before{top:4px;left:4px;border-top:1px solid rgba(32,36,42,.3);border-left:1px solid rgba(32,36,42,.3);}
 .badge::after{bottom:4px;right:4px;border-bottom:1px solid rgba(32,36,42,.3);border-right:1px solid rgba(32,36,42,.3);}
 .badge .gl{height:43px;}
+/* 反白字(S)：整个徽章就是那块墨底，字形不再自己铺底 */
+.lib-detail[data-style="s"] .badge{
+  background:var(--ink);color:#FFFFFF;box-shadow:none;
+}
+.lib-detail[data-style="s"] .gl{background:transparent;padding:0;}
 .badge-meta{
   flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;justify-content:center;
   padding-left:8px;border-left:2px solid var(--ink);
@@ -264,14 +269,6 @@
 }
 .bm-bar{margin-top:4px;height:2px;background:var(--rule-2);position:relative;}
 .bm-bar i{position:absolute;left:0;top:0;bottom:0;display:block;}
-
-/* 反白字(S)：整个徽章就是那块墨底，字形不再自己铺底 */
-.lib-detail[data-style="s"] .badge{
-  background:var(--ink);color:#FFFFFF;box-shadow:none;
-}
-.lib-detail[data-style="s"] .badge::before{border-color:rgba(255,255,255,.55);}
-.lib-detail[data-style="s"] .badge::after{border-color:rgba(255,255,255,.55);}
-.lib-detail[data-style="s"] .gl{background:transparent;padding:0;}
 
 /* 词卡：统一的编辑版式 */
 .detail-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:22px;scrollbar-width:none;}
