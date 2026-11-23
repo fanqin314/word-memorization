@@ -9,7 +9,7 @@
 
 <style>
 /* ==========================================================================
-   correlate —— 由 _gen/build.js 生成（theme: swiss）
+   correlate —— 由 _gen/build.js 生成（theme: skin:仪表联读）
    改动请改 JSON / 主题，不要手改本文件。
    ========================================================================== */
 /* ==========================================================================
@@ -159,39 +159,39 @@
   .image-card{grid-template-columns:1fr!important;padding:26px 20px;}
 }
 
-/* 主题：瑞士浅色 —— 纯浅底、无投影、左对齐、网格与红色顶线 */
+/* 皮肤：仪表联读 —— hero:dark / font:mono / motif:grid */
 :root{
-  --paper:#F7F7F5;--paper-2:#EDEDEA;
-  --cb-accent:#D93B2B;--cb-accent-soft:#FBE3DF;
-  --cb-2:#1F2933;--cb-2-soft:#E4E7EA;
-  --cb-3:#5C6B73;--cb-3-soft:#EDF0F1;
-  --ink:#16191C;--deep:#16191C;--cb-deep:#16191C;
-  --hero-bg:#F7F7F5;--hero-ink:#16191C;--hero-word:#16191C;--word-shadow:transparent;
-  --hero-align:left;--hero-justify:flex-start;
-  --hero-pad:80px 56px 52px;
-  --word-size:124px;--word-size-sm:58px;
-  --shadow-hard:0 0 0 transparent;--shadow-hard-sm:0 0 0 transparent;
-  --radius-lg:14px;--radius-md:10px;
+  --paper:#F0F2EF;
+  --paper-2:#E1E5E0;
+  --cb-accent:#2A8FB0;
+  --cb-accent-soft:#D6EAF1;
+  --cb-2:#C9762F;
+  --cb-2-soft:#F4E2D3;
+  --cb-3:#4E6B57;
+  --cb-3-soft:#DFE8DD;
+  --ink:#14191C;
+  --deep:#0E1F28;
+  --cb-deep:#0E1F28;
+  --font-display:"Courier New",Consolas,monospace;
+  --hero-align:left;
+  --hero-justify:flex-start;
+  --word-size:108px;
+  --word-size-sm:52px;
+  --hero-bg:radial-gradient(125% 125% at 82% 4%,rgba(42,143,176,0.58) 0%,#0E1F28 48%,rgb(10,22,28) 100%);
+  --hero-ink:#F7F0E4;
+  --hero-word:#FFF8EC;
+  --word-shadow:rgba(42,143,176,0.85);
+  --hero-pad:96px 56px 72px;
 }
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    linear-gradient(90deg,rgba(22,25,28,.05) 1px,transparent 1px),
-    linear-gradient(rgba(22,25,28,.04) 1px,transparent 1px);
-  background-size:56px 56px;
-}
-.hero{border-bottom:4px solid var(--ink);}
-.hero::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:var(--cb-accent);}
-.hero::after{
-  content:"SWISS GRID";position:absolute;right:44px;bottom:22px;
-  font-family:"Helvetica Neue",Arial,sans-serif;font-size:10px;font-weight:700;
-  letter-spacing:.34em;color:#9AA0A6;
-}
-.word-anim{font-weight:800;letter-spacing:-.045em;filter:none;}
-.ipa-anim{transform:none;box-shadow:none;border-width:2px;}
-.pos-anim{transform:none;background:var(--ink);}
-.spell-hint{transform:none;box-shadow:none;border-width:2px;}
-.section-title{box-shadow:none!important;border-width:2px!important;transform:none!important;}
+.hero::after{content:"关";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(255,250,242,.07);pointer-events:none;z-index:1;}
+.hero .ipa-anim,.hero .spell-hint{color:#14191C;}
+.section-title,.image-card .ic-label{font-family:var(--font-display);}
+.image-card .ic-label,.image-card .ic-main .hl{color:#FBF5E9;}
+.word-anim{font-weight:800;letter-spacing:-.01em;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(20,25,28,0.055) 1px,transparent 1px),linear-gradient(90deg,rgba(20,25,28,0.055) 1px,transparent 1px);background-size:54px 54px;}
+@keyframes skDrift{to{background-position:64px 64px;}}
+@keyframes skDriftX{to{background-position:56px 0;}}
+
 </style>
 </head>
 

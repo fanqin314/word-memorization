@@ -4,7 +4,17 @@
   "ipaUS": "ˈvɜːrsətl",
   "pos": "adj.",
   "gloss": "多才多艺的 · 多用途的 · 适应性强的",
-  "theme": "neon",
+  "skin": {
+    "name": "军刀红", "hero": "paper", "font": "condensed", "motif": "confetti",
+    "align": "left", "watermark": "多",
+    "palette": {
+      "paper": "#F5F2EA", "paper2": "#E8E3D6",
+      "accent": "#C0392B", "accentSoft": "#F7DAD5",
+      "c2": "#4E6B4E", "c2Soft": "#DDE7DA",
+      "c3": "#3D4A52", "c3Soft": "#DCE1E4",
+      "ink": "#1C1F1C", "deep": "#2A322A"
+    }
+  },
   "root": {
     "stem": "vers / vert",
     "origin": "拉丁 vertere＝转",

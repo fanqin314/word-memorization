@@ -4,7 +4,17 @@
   "ipaUS": "ædˈvɜːrs",
   "pos": "adj.",
   "gloss": "不利的 · 有害的 · 相反的",
-  "theme": "radio",
+  "skin": {
+    "name": "逆风海面", "hero": "dark", "font": "condensed", "motif": "waves",
+    "align": "left", "watermark": "逆",
+    "palette": {
+      "paper": "#EFF1EC", "paper2": "#DFE4DE",
+      "accent": "#3D8CA0", "accentSoft": "#D9E8EC",
+      "c2": "#C25B3C", "c2Soft": "#F3DED5",
+      "c3": "#7E7C60", "c3Soft": "#E8E6D6",
+      "ink": "#17242A", "deep": "#10212A"
+    }
+  },
   "root": {
     "stem": "vers / vert",
     "origin": "拉丁 vertere＝转",

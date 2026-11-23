@@ -4,7 +4,17 @@
   "ipaUS": "trænsˈfɜːr",
   "pos": "v. · n.",
   "gloss": "转移 · 转让 · 换乘",
-  "theme": "wine",
+  "skin": {
+    "name": "夜桥换乘", "hero": "split", "font": "sans", "motif": "vlines",
+    "align": "left", "watermark": "移",
+    "palette": {
+      "paper": "#F2F1EC", "paper2": "#E3E2DA",
+      "accent": "#C8763E", "accentSoft": "#F6E3D2",
+      "c2": "#2F5A6B", "c2Soft": "#D8E4E8",
+      "c3": "#7A7F6A", "c3Soft": "#E7E8DD",
+      "ink": "#1A1E20", "deep": "#1C2A31"
+    }
+  },
   "root": {
     "stem": "trans- + fer",
     "origin": "trans-＝越过，ferre＝携带",

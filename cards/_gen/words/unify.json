@@ -4,7 +4,17 @@
   "ipaUS": "ˈjuːnɪfaɪ",
   "pos": "v.",
   "gloss": "统一 · 使成一体 · 使一致",
-  "theme": "puzzle",
+  "skin": {
+    "name": "铜绿齿轮", "hero": "split", "font": "sans", "motif": "dots",
+    "align": "left", "watermark": "合",
+    "palette": {
+      "paper": "#F4F1E7", "paper2": "#E7E1D2",
+      "accent": "#A8792C", "accentSoft": "#F2E4C8",
+      "c2": "#2F5D62", "c2Soft": "#D9E6E5",
+      "c3": "#6E5340", "c3Soft": "#E9DCD0",
+      "ink": "#1C1F1B", "deep": "#24302A"
+    }
+  },
   "root": {
     "stem": "uni",
     "origin": "拉丁 unus＝一",

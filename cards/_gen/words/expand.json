@@ -4,7 +4,17 @@
   "ipaUS": "ɪkˈspænd",
   "pos": "v.",
   "gloss": "扩大 · 扩张 · 展开",
-  "theme": "neon",
+  "skin": {
+    "name": "湖面涟漪", "hero": "paper", "font": "sans", "motif": "ripple",
+    "align": "left", "watermark": "扩",
+    "palette": {
+      "paper": "#F2F4F2", "paper2": "#E2E7E4",
+      "accent": "#2A7FA6", "accentSoft": "#D8EAF3",
+      "c2": "#E08A3C", "c2Soft": "#F6E3D0",
+      "c3": "#4E8A6B", "c3Soft": "#DCEDE4",
+      "ink": "#161B1E", "deep": "#10303F"
+    }
+  },
   "root": {
     "stem": "ex- + pand",
     "origin": "ex-＝向外，pandere＝展开",

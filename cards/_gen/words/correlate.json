@@ -4,7 +4,17 @@
   "ipaUS": "ˈkɔːrəleɪt",
   "pos": "v.",
   "gloss": "相互关联 · 使相关 · 有相关性",
-  "theme": "swiss",
+  "skin": {
+    "name": "仪表联读", "hero": "dark", "font": "mono", "motif": "grid",
+    "align": "left", "watermark": "关",
+    "palette": {
+      "paper": "#F0F2EF", "paper2": "#E1E5E0",
+      "accent": "#2A8FB0", "accentSoft": "#D6EAF1",
+      "c2": "#C9762F", "c2Soft": "#F4E2D3",
+      "c3": "#4E6B57", "c3Soft": "#DFE8DD",
+      "ink": "#14191C", "deep": "#0E1F28"
+    }
+  },
   "root": {
     "stem": "cor- + relat",
     "origin": "cor-＝共同，relat＝联系",

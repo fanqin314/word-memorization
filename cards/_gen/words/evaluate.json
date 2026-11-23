@@ -4,7 +4,17 @@
   "ipaUS": "ɪˈvæljueɪt",
   "pos": "v.",
   "gloss": "评估 · 评价 · 估算",
-  "theme": "radio",
+  "skin": {
+    "name": "荧光仪表", "hero": "dark", "font": "mono", "motif": "blueprint",
+    "align": "left", "watermark": "评",
+    "palette": {
+      "paper": "#EFF2F0", "paper2": "#DFE5E1",
+      "accent": "#3DBE7E", "accentSoft": "#D7F2E4",
+      "c2": "#E0A03C", "c2Soft": "#F6E6CC",
+      "c3": "#5B7A8C", "c3Soft": "#DDE5EA",
+      "ink": "#12181A", "deep": "#14201F"
+    }
+  },
   "root": {
     "stem": "e- + valu + -ate",
     "origin": "valere＝有价值",

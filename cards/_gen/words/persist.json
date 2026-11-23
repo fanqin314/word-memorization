@@ -4,7 +4,17 @@
   "ipaUS": "pərˈsɪst",
   "pos": "v.",
   "gloss": "坚持 · 持续存在",
-  "theme": "puzzle",
+  "skin": {
+    "name": "苔绿循环", "hero": "band", "font": "serif", "motif": "dots",
+    "align": "center", "watermark": "续",
+    "palette": {
+      "paper": "#F3F1E6", "paper2": "#E5E2D2",
+      "accent": "#6B8A4A", "accentSoft": "#E4EDD6",
+      "c2": "#B07C3E", "c2Soft": "#F2E4CE",
+      "c3": "#47636B", "c3Soft": "#DAE3E6",
+      "ink": "#1C211A", "deep": "#26301F"
+    }
+  },
   "root": {
     "stem": "per- + sist",
     "origin": "per-＝始终，sistere＝站立",

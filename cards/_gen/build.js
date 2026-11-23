@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { renderScene } = require('./scenes');
+const { renderSkin } = require('./skins');
 
 const GEN = __dirname;
 const ROOT = path.resolve(GEN, '..', '..');
@@ -58,9 +59,16 @@ function renderSVG(scene) {
 function render(data) {
   const w = must(data, 'word');
   const gloss = must(data, 'gloss');
-  const theme = data.theme || 'wine';
-  const themeFile = path.join(THEMES, theme + '.css');
-  if (!fs.existsSync(themeFile)) die(`主题不存在：${theme}（可选 ${fs.readdirSync(THEMES).filter(f => !f.startsWith('_')).map(f => f.replace('.css', '')).join(' / ')}）`);
+  let theme, skinCss;
+  if (data.skin) {
+    theme = 'skin:' + (data.skin.name || 'custom');
+    skinCss = renderSkin(data.skin);
+  } else {
+    theme = data.theme || 'wine';
+    const themeFile = path.join(THEMES, theme + '.css');
+    if (!fs.existsSync(themeFile)) die(`主题不存在：${theme}（可选 ${fs.readdirSync(THEMES).filter(f => !f.startsWith('_')).map(f => f.replace('.css', '')).join(' / ')}）`);
+    skinCss = fs.readFileSync(themeFile, 'utf8').trim();
+  }
 
   const ipaUK = must(data, 'ipaUK');
   const ipaUS = data.ipaUS || ipaUK;
@@ -78,7 +86,7 @@ function render(data) {
 
   const css = fs.readFileSync(path.join(THEMES, '_hero.css'), 'utf8').trim()
     + '\n\n'
-    + fs.readFileSync(themeFile, 'utf8').trim();
+    + skinCss;
 
   const famCards = family.map(f => `          <div class="fam-card"><div class="pos">${esc(f.pos)}</div><div class="w">${esc(f.w)}</div><div class="p">${esc(f.p || '')}</div><div class="m">${esc(f.m)}</div></div>`).join('\n');
 

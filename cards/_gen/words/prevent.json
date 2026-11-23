@@ -4,7 +4,17 @@
   "ipaUS": "prɪˈvent",
   "pos": "v.",
   "gloss": "阻止 · 预防 · 妨碍",
-  "theme": "seal",
+  "skin": {
+    "name": "警戒盾线", "hero": "dark", "font": "condensed", "motif": "hazard",
+    "align": "left", "watermark": "止",
+    "palette": {
+      "paper": "#F4F1E6", "paper2": "#E6E0CF",
+      "accent": "#D3A61F", "accentSoft": "#F7EBC6",
+      "c2": "#3A4A56", "c2Soft": "#DDE4E9",
+      "c3": "#7A6650", "c3Soft": "#EBE2D3",
+      "ink": "#161A1E", "deep": "#1B242B"
+    }
+  },
   "root": {
     "stem": "pre- + vent",
     "origin": "pre-＝在前，venire＝来",

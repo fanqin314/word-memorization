@@ -9,7 +9,7 @@
 
 <style>
 /* ==========================================================================
-   persist —— 由 _gen/build.js 生成（theme: puzzle）
+   persist —— 由 _gen/build.js 生成（theme: skin:苔绿循环）
    改动请改 JSON / 主题，不要手改本文件。
    ========================================================================== */
 /* ==========================================================================
@@ -159,32 +159,39 @@
   .image-card{grid-template-columns:1fr!important;padding:26px 20px;}
 }
 
-/* 主题：拼图工坊 —— 米色纸、青绿主色、字母弹跳入场、右下拼图块 */
+/* 皮肤：苔绿循环 —— hero:band / font:serif / motif:dots */
 :root{
-  --paper:#F4EDDF;--paper-2:#E8DDC8;
-  --cb-accent:#2F6F73;--cb-accent-soft:#DCEBE9;
-  --cb-2:#C4763C;--cb-2-soft:#F3E2D3;
-  --cb-3:#7C8C58;--cb-3-soft:#E8EDDA;
-  --ink:#22201B;--deep:#2A3B34;--cb-deep:#2A3B34;
-  --hero-bg:linear-gradient(160deg,#F1E6D2 0%,#E9D8BC 100%);
-  --hero-ink:#22201B;--hero-word:#22201B;--word-shadow:#2F6F73;
-  --hero-pad:84px 54px 66px;
-  --word-size:110px;--word-size-sm:52px;
+  --paper:#F3F1E6;
+  --paper-2:#E5E2D2;
+  --cb-accent:#6B8A4A;
+  --cb-accent-soft:#E4EDD6;
+  --cb-2:#B07C3E;
+  --cb-2-soft:#F2E4CE;
+  --cb-3:#47636B;
+  --cb-3-soft:#DAE3E6;
+  --ink:#1C211A;
+  --deep:#26301F;
+  --cb-deep:#26301F;
+  --font-display:"Songti SC","Noto Serif SC",Georgia,"Times New Roman",serif;
+  --hero-align:center;
+  --hero-justify:center;
+  --word-size:108px;
+  --word-size-sm:52px;
+  --hero-bg:#F3F1E6;
+  --hero-ink:#1C211A;
+  --hero-word:#1C211A;
+  --word-shadow:#6B8A4A;
+  --hero-pad:94px 56px 70px;
 }
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='74' height='74'%3E%3Crect x='7' y='7' width='60' height='60' rx='14' fill='none' stroke='%232F6F73' stroke-opacity='0.12' stroke-width='2'/%3E%3C/svg%3E");
-  background-size:74px 74px;
-}
-.hero::after{
-  content:"";position:absolute;right:-34px;bottom:-48px;width:190px;height:190px;
-  border-radius:26px;background:var(--cb-2-soft);
-  border:3px solid var(--ink);transform:rotate(14deg);
-}
-.word-anim .letter:nth-child(even){transform-origin:bottom;animation-name:mtLetterBounce;}
-.hero .ipa-anim{transform:rotate(-2deg);}
-.hero .pos-anim{transform:rotate(2deg);}
-.hero .spell-hint{transform:rotate(-1deg);}
+.hero::before{content:"";position:absolute;left:-5%;right:-5%;top:52%;height:116px;background:rgba(107,138,74,0.17);border-top:3px solid #1C211A;border-bottom:3px solid #1C211A;transform:rotate(-1.4deg);z-index:1;pointer-events:none;}.hero::after{content:"续";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(28,33,26,0.07);pointer-events:none;z-index:1;}
+.hero .ipa-anim,.hero .spell-hint{color:#1C211A;}
+.section-title,.image-card .ic-label{font-family:var(--font-display);}
+.image-card .ic-label,.image-card .ic-main .hl{color:#FBF5E9;}
+.word-anim{font-weight:900;letter-spacing:0;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(28,33,26,0.13) 1.1px,transparent 1.6px);background-size:22px 22px;animation:skDrift 42s linear infinite;}
+@keyframes skDrift{to{background-position:64px 64px;}}
+@keyframes skDriftX{to{background-position:56px 0;}}
+
 </style>
 </head>
 

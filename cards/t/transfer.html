@@ -9,7 +9,7 @@
 
 <style>
 /* ==========================================================================
-   transfer —— 由 _gen/build.js 生成（theme: wine）
+   transfer —— 由 _gen/build.js 生成（theme: skin:夜桥换乘）
    改动请改 JSON / 主题，不要手改本文件。
    ========================================================================== */
 /* ==========================================================================
@@ -159,36 +159,38 @@
   .image-card{grid-template-columns:1fr!important;padding:26px 20px;}
 }
 
-/* 主题：酒红典籍 —— 深红渐变 hero + 双线装饰 + 竖向细纹 */
+/* 皮肤：夜桥换乘 —— hero:split / font:sans / motif:vlines */
 :root{
-  --paper:#F6F0E7;--paper-2:#EADFD2;
-  --cb-accent:#8C2F39;--cb-accent-soft:#F1DEE1;
-  --cb-2:#3D5661;--cb-2-soft:#DFE7E9;
-  --cb-3:#8A7446;--cb-3-soft:#EEE6D3;
-  --ink:#251A18;--deep:#3C1F25;--cb-deep:#3C1F25;
-  --hero-bg:radial-gradient(130% 130% at 80% 8%,#A94A52 0%,#8C2F39 50%,#651E27 100%);
-  --hero-ink:#F8EFE5;--hero-word:#FCF5EB;--word-shadow:#3C1F25;
-  --hero-pad:88px 58px 66px;
-  --word-size:118px;--word-size-sm:56px;
+  --paper:#F2F1EC;
+  --paper-2:#E3E2DA;
+  --cb-accent:#C8763E;
+  --cb-accent-soft:#F6E3D2;
+  --cb-2:#2F5A6B;
+  --cb-2-soft:#D8E4E8;
+  --cb-3:#7A7F6A;
+  --cb-3-soft:#E7E8DD;
+  --ink:#1A1E20;
+  --deep:#1C2A31;
+  --cb-deep:#1C2A31;
+  --font-display:"Helvetica Neue",Arial,"PingFang SC",sans-serif;
+  --hero-align:left;
+  --hero-justify:flex-start;
+  --word-size:98px;
+  --word-size-sm:47px;
+  --hero-bg:linear-gradient(104deg,#F2F1EC 0 58%,rgba(200,118,62,0.2) 58% 100%);
+  --hero-ink:#1A1E20;
+  --hero-word:#1A1E20;
+  --word-shadow:#C8763E;
+  --hero-pad:88px 56px 68px;
 }
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:repeating-linear-gradient(90deg,transparent 0 58px,rgba(140,47,57,.055) 58px 60px);
-  animation:mtDrift 26s linear infinite;
-}
-@keyframes mtDrift{to{background-position:60px 0;}}
-.hero::after{
-  content:"";position:absolute;left:0;right:0;bottom:0;height:14px;
-  background:repeating-linear-gradient(45deg,var(--cb-accent) 0 12px,transparent 12px 26px);
-  opacity:.45;
-}
-.hero::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:6px;
-  background:linear-gradient(90deg,transparent,var(--cb-3),transparent);
-}
-.word-anim{filter:drop-shadow(8px 8px 0 #3C1F25);}
-.spell-hint{color:#3C1F25;box-shadow:3px 3px 0 #3C1F25;}
-.ipa-anim{color:#3C1F25;box-shadow:3px 3px 0 #3C1F25;}
+.hero::before{content:"";position:absolute;top:-6%;bottom:-6%;left:55%;width:12px;background:#C8763E;transform:skewX(-12deg);z-index:1;pointer-events:none;}.hero::after{content:"移";position:absolute;right:26px;top:50%;transform:translateY(-50%) rotate(-8deg);font-family:var(--font-display);font-size:180px;font-weight:900;line-height:1;letter-spacing:0;color:rgba(26,30,32,0.07);pointer-events:none;z-index:1;}
+.hero .ipa-anim,.hero .spell-hint{color:#1A1E20;}
+.section-title,.image-card .ic-label{font-family:var(--font-display);}
+.image-card .ic-label,.image-card .ic-main .hl{color:#FBF5E9;}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:repeating-linear-gradient(90deg,transparent 0 54px,rgba(200,118,62,0.1) 54px 56px);animation:skDriftX 28s linear infinite;}
+@keyframes skDrift{to{background-position:64px 64px;}}
+@keyframes skDriftX{to{background-position:56px 0;}}
+
 </style>
 </head>
 

@@ -4,7 +4,17 @@
   "ipaUS": "səˈsteɪn",
   "pos": "v.",
   "gloss": "维持 · 支撑 · 遭受",
-  "theme": "wine",
+  "skin": {
+    "name": "石桥承重", "hero": "paper", "font": "serif", "motif": "contour",
+    "align": "center", "watermark": "承",
+    "palette": {
+      "paper": "#F5F1E7", "paper2": "#E8E1D2",
+      "accent": "#7A8B7E", "accentSoft": "#E3EADF",
+      "c2": "#A9743F", "c2Soft": "#F1E1CE",
+      "c3": "#4A5D6B", "c3Soft": "#DCE3E8",
+      "ink": "#1F1D18", "deep": "#2A3630"
+    }
+  },
   "root": {
     "stem": "tain / ten",
     "origin": "拉丁 tenere＝握住",
