@@ -31,10 +31,10 @@
     { "pos": "n.", "w": "hydrophobia", "p": "/ˌhaɪdrəˈfəʊbiə/", "m": "恐水症；狂犬病" }
   ],
   "scene": {
-    "main": "一道高墙横在画面中央，墙内的人紧盯着墙外走来的陌生人，脚步不自觉后退",
+    "main": "东边一堵墙，西边来了一群陌生人，两边隔空喊话，谁也不敢先跨过中间那条线",
     "sub": "xeno（外来）+ phobia（恐惧）→ 对外来者和外国人的恐惧与排斥：排外、仇外。",
     "template": "duel",
-    "labels": ["外来", "恐惧"]
+    "labels": ["外来", "排斥"]
   },
   "collocations": [
     { "pattern": "rising xenophobia", "meaning": "日益高涨的排外情绪" },

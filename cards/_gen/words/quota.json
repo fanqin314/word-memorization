@@ -30,10 +30,10 @@
     { "pos": "v.", "w": "unquote", "p": "/ˌʌnˈkwəʊt/", "m": "结束引文" }
   ],
   "scene": {
-    "main": "一只木箱内壁刻着一条刻度线，往里装粮只能装到这条线，多一粒也不行",
+    "main": "一道盾牌立在限额线上，箭一支支飞来都被挡住，怎么也越不过这条线",
     "sub": "quot（多少）→ 事先算好的那一份数量：配额、定额、限额。",
     "template": "shield",
-    "labels": ["定额", "限量"]
+    "labels": ["上限", "定额"]
   },
   "collocations": [
     { "pattern": "meet the quota", "meaning": "完成定额" },
