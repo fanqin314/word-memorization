@@ -1,0 +1,112 @@
+{
+  "word": "mitigate",
+  "ipaUK": "ˈmɪtɪɡeɪt",
+  "ipaUS": "ˈmɪtɪɡeɪt",
+  "pos": "v.",
+  "gloss": "减轻 · 缓和",
+  "skin": {
+    "name": "暖灰缓冲", "hero": "paper", "font": "rounded", "motif": "dots",
+    "align": "center", "watermark": "缓", "wordSize": 108,
+    "palette": {
+      "paper": "#F5F0E9", "paper2": "#E7DED2",
+      "accent": "#B5714F", "accentSoft": "#F2DFD4",
+      "c2": "#7C8A78", "c2Soft": "#E4E9DF",
+      "c3": "#9A8C7A", "c3Soft": "#ECE6DD",
+      "ink": "#221C17", "deep": "#332A24"
+    }
+  },
+  "root": {
+    "stem": "mitis + agere",
+    "origin": "拉丁 mitis＝温和的，agere＝做、驱使",
+    "sense": "把猛烈的东西做得温和，让力道变小"
+  },
+  "family": [
+    { "pos": "v.", "w": "mitigate", "p": "/ˈmɪtɪɡeɪt/", "m": "减轻；缓和" },
+    { "pos": "n.", "w": "mitigation", "p": "/ˌmɪtɪˈɡeɪʃn/", "m": "减轻；缓解措施" },
+    { "pos": "adj.", "w": "mitigative", "p": "/ˈmɪtɪɡətɪv/", "m": "起减轻作用的" },
+    { "pos": "n.", "w": "mitigator", "p": "/ˈmɪtɪɡeɪtə/", "m": "缓和者；缓解物" },
+    { "pos": "adj.", "w": "mitigable", "p": "/ˈmɪtɪɡəbl/", "m": "可减轻的" },
+    { "pos": "adj.", "w": "mitigated", "p": "/ˈmɪtɪɡeɪtɪd/", "m": "被减轻的" },
+    { "pos": "adj.", "w": "unmitigated", "p": "/ʌnˈmɪtɪɡeɪtɪd/", "m": "未减轻的；十足的" }
+  ],
+  "scene": {
+    "main": "三支箭从右边飞来，一支支撞在盾面上弹开，飞到跟前已经没什么劲了",
+    "sub": "mitis（温和）+ agere（做）→ 把猛烈的东西做得温和：减轻、缓和。",
+    "template": "shield",
+    "labels": ["卸力", "缓冲"]
+  },
+  "collocations": [
+    { "pattern": "mitigate the risk", "meaning": "降低风险" },
+    { "pattern": "mitigate the impact", "meaning": "减轻影响" },
+    { "pattern": "mitigate climate change", "meaning": "减缓气候变化" },
+    { "pattern": "mitigate the effects of", "meaning": "减轻…的影响" },
+    { "pattern": "help mitigate", "meaning": "有助于缓解" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 阅读",
+      "en": "Planting trees can help {{w}} the effects of flooding.",
+      "cn": "植树有助于减轻洪水的影响。"
+    },
+    {
+      "src": "2019 六级 · 听力",
+      "en": "The company took steps to {{w}} the damage to its reputation.",
+      "cn": "公司采取措施以减轻对声誉的损害。"
+    },
+    {
+      "src": "2021 雅思 · 写作",
+      "en": "Governments must {{w}} the impact of rising fuel prices.",
+      "cn": "政府必须减轻燃料价格上涨带来的影响。"
+    },
+    {
+      "src": "2018 考研 · 完形",
+      "en": "Early warnings {{w}}d the loss of life in the storm.",
+      "cn": "早期预警减轻了风暴中的生命损失。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "mitigate 第二个音节是 -i-，中间不能漏掉，别写成 mitgate。",
+      "wrong": "mitgate",
+      "right": "mitigate"
+    },
+    {
+      "tip": "形近",
+      "text": "mitigate 是“减轻”，militate 是“起作用、妨碍”，militate against 不能写成 mitigate against。",
+      "wrong": "mitigate against reform",
+      "right": "militate against reform"
+    },
+    {
+      "tip": "搭配",
+      "text": "mitigate 是及物动词，后面直接接宾语，不能说 mitigate of the risk。",
+      "wrong": "mitigate of the risk",
+      "right": "mitigate the risk"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["mitigate", "减轻不利影响或风险，较正式", "mitigate the risk"],
+      ["alleviate", "减轻痛苦、症状", "alleviate the pain"],
+      ["relieve", "缓解压力、负担，也指换班", "relieve the pressure"],
+      ["reduce", "数量、程度变少，最通用", "reduce costs"],
+      ["ease", "使缓和、放松，偏口语", "ease the tension"],
+      ["lessen", "使变小、变弱", "lessen the damage"]
+    ],
+    "chant": "风险 mitigate，痛苦 alleviate，负担 relieve，数量 reduce。"
+  },
+  "fills": [
+    { "sentence": "Planting trees can help ___ the effects of flooding.", "answer": "mitigate", "hint": "动词：减轻" },
+    { "sentence": "The company took steps to ___ the damage.", "answer": "mitigate", "hint": "动词：缓和" },
+    { "sentence": "Early warnings ___ the loss of life in the storm.", "answer": "mitigated", "hint": "过去式：减轻了" },
+    { "sentence": "The ___ of climate change requires global effort.", "answer": "mitigation", "hint": "名词：减缓" },
+    { "sentence": "Simple changes can ___ the risk of injury.", "answer": "mitigate", "hint": "动词：降低" }
+  ],
+  "review": [
+    "说出 mitigate 的 3 个搭配",
+    "区分 mitigate / alleviate / reduce",
+    "默写 mitis 词族 7 个词",
+    "遮住释义，复述盾牌挡箭的画面"
+  ],
+  "writeSample": "Small daily habits can mitigate the stress of a busy term."
+}

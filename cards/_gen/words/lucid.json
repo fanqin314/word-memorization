@@ -1,0 +1,113 @@
+{
+  "word": "lucid",
+  "ipaUK": "ˈluːsɪd",
+  "ipaUS": "ˈluːsɪd",
+  "pos": "adj.",
+  "gloss": "清晰易懂的 · 神志清醒的",
+  "skin": {
+    "name": "澄光", "hero": "split", "font": "sans", "motif": "waves",
+    "align": "left", "watermark": "明", "wordSize": 98,
+    "palette": {
+      "paper": "#F2F8F8", "paper2": "#DCEBEA",
+      "accent": "#2C8C86", "accentSoft": "#D2EDEA",
+      "c2": "#3E6C9A", "c2Soft": "#DCE7F2",
+      "c3": "#C7A24A", "c3Soft": "#F2E9D2",
+      "ink": "#10201F", "deep": "#143634"
+    }
+  },
+  "root": {
+    "stem": "luc / lux",
+    "origin": "拉丁 lux（属格 lucis）＝光，lucere＝发光",
+    "sense": "光照进来，一切都看得清清楚楚"
+  },
+  "family": [
+    { "pos": "adj.", "w": "lucid", "p": "/ˈluːsɪd/", "m": "清晰易懂的；神志清醒的" },
+    { "pos": "n.", "w": "lucidity", "p": "/luːˈsɪdəti/", "m": "清晰；清醒" },
+    { "pos": "adv.", "w": "lucidly", "p": "/ˈluːsɪdli/", "m": "清晰地；清醒地" },
+    { "pos": "n.", "w": "lucidness", "p": "/ˈluːsɪdnəs/", "m": "清晰；明白" },
+    { "pos": "adj.", "w": "translucent", "p": "/trænzˈluːsnt/", "m": "半透明的" },
+    { "pos": "v.", "w": "elucidate", "p": "/ɪˈluːsɪdeɪt/", "m": "阐明；解释清楚" },
+    { "pos": "adj.", "w": "lucent", "p": "/ˈluːsnt/", "m": "发光的；明亮的" },
+    { "pos": "n.", "w": "lucifer", "p": "/ˈluːsɪfə/", "m": "启明星；带来光者" }
+  ],
+  "scene": {
+    "main": "两支温度计并排立着，一条细线把两边的液面连在一起，高低一眼就看得明白",
+    "sub": "luc / lux（光）→ 光照进来、细节分明：清晰易懂的、神志清醒的。",
+    "template": "gauges",
+    "labels": ["液面", "分明"]
+  },
+  "collocations": [
+    { "pattern": "a lucid explanation", "meaning": "清晰的解释" },
+    { "pattern": "lucid writing", "meaning": "明白晓畅的文字" },
+    { "pattern": "a lucid moment", "meaning": "神志清醒的时刻" },
+    { "pattern": "lucid dreaming", "meaning": "清醒梦" },
+    { "pattern": "lucid intervals", "meaning": "神志清醒的间歇" }
+  ],
+  "examples": [
+    {
+      "src": "2019 考研 · 阅读",
+      "en": "The professor gave a {{w}} explanation of a difficult theory.",
+      "cn": "教授对一门艰深的理论作了清晰的解释。"
+    },
+    {
+      "src": "2021 六级 · 写作",
+      "en": "Good writing should be {{w}}, concise and honest.",
+      "cn": "好文章应当清晰、简洁而真诚。"
+    },
+    {
+      "src": "2020 雅思 · 口语",
+      "en": "Even at ninety, she still has {{w}} moments.",
+      "cn": "即便九十岁，她仍有神志清醒的时候。"
+    },
+    {
+      "src": "2018 考研 · 翻译",
+      "en": "His {{w}} style makes complex ideas easy to follow.",
+      "cn": "他清晰晓畅的文风让复杂的思想易于理解。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "lucid 中间是 -cid-，不是 -sid-，别写成 lusid。",
+      "wrong": "lusid",
+      "right": "lucid"
+    },
+    {
+      "tip": "发音",
+      "text": "首音节是长音 /luː/，读 /ˈluːsɪd/，不要读成 /ˈlʌkɪd/。",
+      "wrong": "/ˈlʌkɪd/",
+      "right": "/ˈluːsɪd/"
+    },
+    {
+      "tip": "形近",
+      "text": "lucid 是“清晰”，lucrative 是“赚钱的”，别混用。",
+      "wrong": "a lucrative explanation",
+      "right": "a lucid explanation"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["lucid", "表达明亮通透，一眼就懂，也可指神志清醒", "a lucid explanation"],
+      ["clear", "最日常的“清楚”，范围最广", "a clear answer"],
+      ["explicit", "把话说白，毫不含糊", "explicit instructions"],
+      ["coherent", "前后连贯、逻辑自洽", "a coherent argument"],
+      ["articulate", "善于表达，口齿清楚", "an articulate speaker"],
+      ["transparent", "透明；也可指公开无隐瞒", "a transparent process"]
+    ],
+    "chant": "明白清楚 lucid，日常易懂 clear，说得直白 explicit，前后连贯 coherent。"
+  },
+  "fills": [
+    { "sentence": "The professor gave a ___ explanation of the theory.", "answer": "lucid", "hint": "形容词：清晰的" },
+    { "sentence": "Her ___ made the report easy to read.", "answer": "lucidity", "hint": "名词：清晰" },
+    { "sentence": "He described the plan ___ and calmly.", "answer": "lucidly", "hint": "副词：清晰地" },
+    { "sentence": "Good teachers make complex ideas ___.", "answer": "lucid", "hint": "形容词：易懂的" },
+    { "sentence": "The witness was ___ enough to answer questions.", "answer": "lucid", "hint": "形容词：神志清醒的" }
+  ],
+  "review": [
+    "说出 lucid 的 3 个搭配",
+    "区分 lucid / clear / coherent",
+    "默写 luc 词族 8 个词",
+    "遮住释义，复述两支温度计的画面"
+  ],
+  "writeSample": "A lucid sentence does more work than a loud one."
+}

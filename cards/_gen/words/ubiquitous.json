@@ -1,0 +1,112 @@
+{
+  "word": "ubiquitous",
+  "ipaUK": "juːˈbɪkwɪtəs",
+  "ipaUS": "juːˈbɪkwɪtəs",
+  "pos": "adj.",
+  "gloss": "无处不在的 · 普遍存在的",
+  "skin": {
+    "name": "网格青金", "hero": "dark", "font": "mono", "motif": "grid",
+    "align": "left", "watermark": "遍", "wordSize": 100,
+    "palette": {
+      "paper": "#EEF1F2", "paper2": "#D9E0E2",
+      "accent": "#55A9A3", "accentSoft": "#CFEAE7",
+      "c2": "#E0A458", "c2Soft": "#FAEBD2",
+      "c3": "#8A9AA6", "c3Soft": "#E2E8EB",
+      "ink": "#0F181C", "deep": "#13232A"
+    }
+  },
+  "root": {
+    "stem": "ubique",
+    "origin": "拉丁 ubique＝到处、处处",
+    "sense": "每个角落都能碰到，走哪儿都在"
+  },
+  "family": [
+    { "pos": "adj.", "w": "ubiquitous", "p": "/juːˈbɪkwɪtəs/", "m": "无处不在的；普遍存在的" },
+    { "pos": "n.", "w": "ubiquity", "p": "/juːˈbɪkwəti/", "m": "普遍存在；无处不在" },
+    { "pos": "adv.", "w": "ubiquitously", "p": "/juːˈbɪkwɪtəsli/", "m": "无处不在地" },
+    { "pos": "n.", "w": "ubiquitousness", "p": "/juːˈbɪkwɪtəsnəs/", "m": "无处不在；普遍性" },
+    { "pos": "n.", "w": "ubiquitin", "p": "/juːˈbɪkwɪtɪn/", "m": "泛素（一种小蛋白）" },
+    { "pos": "v.", "w": "ubiquitinate", "p": "/juːˈbɪkwɪtɪneɪt/", "m": "使泛素化" },
+    { "pos": "n.", "w": "ubiquitination", "p": "/juːˌbɪkwɪtɪˈneɪʃn/", "m": "泛素化（生物化学）" }
+  ],
+  "scene": {
+    "main": "中间一个大齿轮，左上、右上、正下方各咬住一个小齿轮，一起转个不停",
+    "sub": "ubique（到处）→ 每个角落都能遇到：无处不在的、普遍存在的。",
+    "template": "gears",
+    "labels": ["处处", "同转"]
+  },
+  "collocations": [
+    { "pattern": "a ubiquitous presence", "meaning": "无处不在的存在" },
+    { "pattern": "ubiquitous technology", "meaning": "无处不在的技术" },
+    { "pattern": "become ubiquitous", "meaning": "变得无处不在" },
+    { "pattern": "a ubiquitous symbol", "meaning": "随处可见的标志" },
+    { "pattern": "ubiquitous in modern life", "meaning": "在现代生活中无处不在" }
+  ],
+  "examples": [
+    {
+      "src": "2020 考研 · 阅读",
+      "en": "Smartphones have become {{w}} in daily life.",
+      "cn": "智能手机在日常生活中已无处不在。"
+    },
+    {
+      "src": "2021 六级 · 听力",
+      "en": "Plastic waste is now {{w}}, even in remote oceans.",
+      "cn": "塑料垃圾如今无处不在，连偏远海域也有。"
+    },
+    {
+      "src": "2019 雅思 · 写作",
+      "en": "Advertising is so {{w}} that we barely notice it.",
+      "cn": "广告无处不在，我们几乎注意不到。"
+    },
+    {
+      "src": "2018 考研 · 完形",
+      "en": "The {{w}} of social media has changed how news spreads.",
+      "cn": "社交媒体的无处不在改变了新闻传播的方式。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "ubiquitous 中间是 -quit-，结尾是 -ous，别写成 ubiquitos。",
+      "wrong": "ubiquitos",
+      "right": "ubiquitous"
+    },
+    {
+      "tip": "发音",
+      "text": "重音在第二个音节，读 /juːˈbɪkwɪtəs/，不要读成 /ˌjuːbɪˈkwiːtəs/。",
+      "wrong": "/ˌjuːbɪˈkwiːtəs/",
+      "right": "/juːˈbɪkwɪtəs/"
+    },
+    {
+      "tip": "搭配",
+      "text": "ubiquitous 本身已含“到处”，不要再加 everywhere，语义重复。",
+      "wrong": "ubiquitous everywhere",
+      "right": "ubiquitous in cities"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["ubiquitous", "到处都在，强调普遍到无法回避", "ubiquitous smartphones"],
+      ["widespread", "分布范围广", "widespread use of cars"],
+      ["universal", "人人适用、普遍一致", "a universal truth"],
+      ["omnipresent", "同时存在于一切地方，多用于神性", "an omnipresent god"],
+      ["common", "常见、不稀奇", "a common mistake"],
+      ["prevalent", "某种现象流行、盛行", "a prevalent view"]
+    ],
+    "chant": "到处都有 ubiquitous，范围很广 widespread，人人皆备 universal，无所不在 omnipresent。"
+  },
+  "fills": [
+    { "sentence": "Smartphones have become ___ in daily life.", "answer": "ubiquitous", "hint": "形容词：无处不在的" },
+    { "sentence": "The ___ of plastic waste worries scientists.", "answer": "ubiquity", "hint": "名词：无处不在" },
+    { "sentence": "Coffee shops are ___ in this city.", "answer": "ubiquitous", "hint": "形容词：随处可见的" },
+    { "sentence": "Social media is ___ among teenagers.", "answer": "ubiquitous", "hint": "形容词：普遍存在的" },
+    { "sentence": "The internet's ___ changed education forever.", "answer": "ubiquity", "hint": "名词：普遍存在" }
+  ],
+  "review": [
+    "说出 ubiquitous 的 3 个搭配",
+    "区分 ubiquitous / widespread / universal",
+    "默写 ubique 词族 7 个词",
+    "遮住释义，复述齿轮同转的画面"
+  ],
+  "writeSample": "Screens are so ubiquitous that silence now feels like a luxury."
+}

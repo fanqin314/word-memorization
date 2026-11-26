@@ -1,0 +1,112 @@
+{
+  "word": "ephemeral",
+  "ipaUK": "ɪˈfemərəl",
+  "ipaUS": "ɪˈfemərəl",
+  "pos": "adj.",
+  "gloss": "短暂的 · 转瞬即逝的",
+  "skin": {
+    "name": "晨雾浅青", "hero": "paper", "font": "serif", "motif": "contour",
+    "align": "center", "watermark": "瞬", "wordSize": 108,
+    "palette": {
+      "paper": "#F5F7F6", "paper2": "#E4EAE7",
+      "accent": "#7FA99B", "accentSoft": "#DDEAE5",
+      "c2": "#9BB3BF", "c2Soft": "#E1E9EC",
+      "c3": "#C9B79C", "c3Soft": "#EFE9DE",
+      "ink": "#1C2420", "deep": "#2C3A34"
+    }
+  },
+  "root": {
+    "stem": "epi + hemera",
+    "origin": "希腊语 epi＝在…上，hēmera＝日、一天",
+    "sense": "只存在于一天之内，天亮出现、日落即散"
+  },
+  "family": [
+    { "pos": "adj.", "w": "ephemeral", "p": "/ɪˈfemərəl/", "m": "短暂的；转瞬即逝的" },
+    { "pos": "n.", "w": "ephemera", "p": "/ɪˈfemərə/", "m": "短暂存在的事物；短命之物" },
+    { "pos": "n.", "w": "ephemerality", "p": "/ɪˌfeməˈræləti/", "m": "短暂性；转瞬即逝" },
+    { "pos": "adv.", "w": "ephemerally", "p": "/ɪˈfemərəli/", "m": "短暂地；转瞬即逝地" },
+    { "pos": "n.", "w": "ephemerid", "p": "/ɪˈfemərɪd/", "m": "蜉蝣（朝生暮死）" },
+    { "pos": "n.", "w": "ephemeris", "p": "/ɪˈfemərɪs/", "m": "星历表；天文历书" },
+    { "pos": "n.", "w": "ephemeron", "p": "/ɪˈfemərɒn/", "m": "短命之物（复数 ephemera）" }
+  ],
+  "scene": {
+    "main": "一滴露水落进池塘，涟漪刚荡开三圈，太阳一晒就散了",
+    "sub": "epi（在…上）+ hemera（日）→ 只存在于一天之内：短暂的、转瞬即逝的。",
+    "template": "ripple",
+    "labels": ["漾开", "即逝"]
+  },
+  "collocations": [
+    { "pattern": "ephemeral beauty", "meaning": "短暂的美" },
+    { "pattern": "ephemeral fame", "meaning": "转瞬即逝的名声" },
+    { "pattern": "an ephemeral trend", "meaning": "昙花一现的潮流" },
+    { "pattern": "ephemeral pleasure", "meaning": "短暂的快乐" },
+    { "pattern": "the ephemeral nature of", "meaning": "…的短暂本质" }
+  ],
+  "examples": [
+    {
+      "src": "2021 考研 · 阅读",
+      "en": "The beauty of cherry blossoms lies in their {{w}} nature.",
+      "cn": "樱花之美，正在于其短暂的本质。"
+    },
+    {
+      "src": "2019 六级 · 写作",
+      "en": "Online trends are {{w}}, rising and fading within weeks.",
+      "cn": "网络潮流转瞬即逝，几周内兴起又消退。"
+    },
+    {
+      "src": "2020 雅思 · 阅读",
+      "en": "For many artists, {{w}} fame is worse than no fame at all.",
+      "cn": "对许多艺术家来说，昙花一现的名声比没有名声更糟。"
+    },
+    {
+      "src": "2018 考研 · 翻译",
+      "en": "The joy of victory proved {{w}}: by morning it was gone.",
+      "cn": "胜利的喜悦证明是短暂的：到第二天早晨就已消失。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "ephemeral 结尾是 -al，不是 -el；中间是 -mer-，别写成 -mor-。",
+      "wrong": "ephemerel",
+      "right": "ephemeral"
+    },
+    {
+      "tip": "词性",
+      "text": "名词用 ephemerality 或 ephemera，不用自造的 ephemeralness。",
+      "wrong": "ephemeralness",
+      "right": "ephemerality"
+    },
+    {
+      "tip": "搭配",
+      "text": "ephemeral 直接修饰名词，说 ephemeral nature of，不说 the ephemeral of。",
+      "wrong": "the ephemeral of fame",
+      "right": "the ephemeral nature of fame"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["ephemeral", "只美一瞬、很快消失，常带诗意", "ephemeral beauty"],
+      ["fleeting", "一闪而过，多指时间或感觉", "a fleeting glance"],
+      ["transient", "持续一小段就结束，较正式", "transient effects"],
+      ["temporary", "暂时的，到期就结束，强调可恢复", "a temporary job"],
+      ["momentary", "只持续一瞬间", "a momentary pause"],
+      ["short-lived", "存在时间短，口语且常指事物", "a short-lived trend"]
+    ],
+    "chant": "花开一瞬 ephemeral，瞥眼即过 fleeting，稍纵即逝 transient，到期就撤 temporary。"
+  },
+  "fills": [
+    { "sentence": "Cherry blossoms are beautiful but ___.", "answer": "ephemeral", "hint": "形容词：短暂的" },
+    { "sentence": "The ___ of online fame surprises many creators.", "answer": "ephemerality", "hint": "名词：短暂性" },
+    { "sentence": "Fashions in music are often ___.", "answer": "ephemeral", "hint": "形容词：转瞬即逝的" },
+    { "sentence": "The museum keeps posters and other ___ from the 1960s.", "answer": "ephemera", "hint": "名词：短暂存在的印刷品" },
+    { "sentence": "Poets often write about the ___ of youth.", "answer": "ephemerality", "hint": "名词：短暂" }
+  ],
+  "review": [
+    "说出 ephemeral 的 3 个搭配",
+    "区分 ephemeral / transient / temporary",
+    "默写 hemera 词族 7 个词",
+    "遮住释义，复述露珠涟漪的画面"
+  ],
+  "writeSample": "Ephemeral joys are still worth catching carefully."
+}

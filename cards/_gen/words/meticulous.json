@@ -1,0 +1,111 @@
+{
+  "word": "meticulous",
+  "ipaUK": "məˈtɪkjələs",
+  "ipaUS": "məˈtɪkjələs",
+  "pos": "adj.",
+  "gloss": "一丝不苟的 · 极其细致的",
+  "skin": {
+    "name": "钢尺蓝图", "hero": "band", "font": "condensed", "motif": "blueprint",
+    "align": "left", "watermark": "精", "wordSize": 104,
+    "palette": {
+      "paper": "#F3F1E9", "paper2": "#E5E1D4",
+      "accent": "#2F4F6F", "accentSoft": "#D9E2EA",
+      "c2": "#8B6B4A", "c2Soft": "#EDE3D6",
+      "c3": "#6B705C", "c3Soft": "#E5E8DE",
+      "ink": "#161A1C", "deep": "#24303A"
+    }
+  },
+  "root": {
+    "stem": "metus → meticulosus",
+    "origin": "拉丁 metus＝恐惧，meticulosus＝提心吊胆的",
+    "sense": "因为怕出错，所以每个细节都反复核对"
+  },
+  "family": [
+    { "pos": "adj.", "w": "meticulous", "p": "/məˈtɪkjələs/", "m": "一丝不苟的；极其细致的" },
+    { "pos": "adv.", "w": "meticulously", "p": "/məˈtɪkjələsli/", "m": "一丝不苟地；细致地" },
+    { "pos": "n.", "w": "meticulousness", "p": "/məˈtɪkjələsnəs/", "m": "一丝不苟；细致" },
+    { "pos": "n.", "w": "meticulosity", "p": "/məˌtɪkjəˈlɒsəti/", "m": "过分精细（罕用）" },
+    { "pos": "adj.", "w": "meticulose", "p": "/məˈtɪkjələʊs/", "m": "过分细致的（罕用）" },
+    { "pos": "adj.", "w": "overmeticulous", "p": "/ˌəʊvəməˈtɪkjələs/", "m": "过分一丝不苟的" }
+  ],
+  "scene": {
+    "main": "钳子、螺丝刀、开瓶器三件工具并排摆着，手柄齐齐朝下，一件也不歪",
+    "sub": "metus（恐惧）→ 因怕出错而过分小心：一丝不苟的、极其细致的。",
+    "template": "toolkit",
+    "labels": ["钳子", "螺丝刀", "开瓶器"]
+  },
+  "collocations": [
+    { "pattern": "meticulous attention to detail", "meaning": "对细节一丝不苟" },
+    { "pattern": "meticulous planning", "meaning": "周密的计划" },
+    { "pattern": "meticulous records", "meaning": "详尽的记录" },
+    { "pattern": "meticulous research", "meaning": "严谨的研究" },
+    { "pattern": "be meticulous about", "meaning": "对…一丝不苟" }
+  ],
+  "examples": [
+    {
+      "src": "2021 考研 · 阅读",
+      "en": "The historian kept {{w}} records of every interview.",
+      "cn": "这位历史学家对每次访谈都做了详尽的记录。"
+    },
+    {
+      "src": "2019 六级 · 写作",
+      "en": "Success in science depends on {{w}} attention to detail.",
+      "cn": "科学上的成功取决于对细节的一丝不苟。"
+    },
+    {
+      "src": "2020 雅思 · 阅读",
+      "en": "She is {{w}} about the wording of every contract.",
+      "cn": "她对每份合同的措辞都极其细致。"
+    },
+    {
+      "src": "2018 考研 · 翻译",
+      "en": "The restoration required {{w}} work over many months.",
+      "cn": "这次修复需要历时数月、一丝不苟的工作。"
+    }
+  ],
+  "pitfalls": [
+    {
+      "tip": "拼写",
+      "text": "meticulous 中间是 -culous，结尾不是 -culus，别写成 meticulus。",
+      "wrong": "meticulus",
+      "right": "meticulous"
+    },
+    {
+      "tip": "词性",
+      "text": "修饰动词要用副词 meticulously，不能说 meticulous careful。",
+      "wrong": "meticulous careful",
+      "right": "meticulously careful"
+    },
+    {
+      "tip": "搭配",
+      "text": "“对…一丝不苟”用 be meticulous about，不用 meticulous on。",
+      "wrong": "meticulous on details",
+      "right": "meticulous about details"
+    }
+  ],
+  "compare": {
+    "rows": [
+      ["meticulous", "怕出错而反复检查，细致到每个环节", "meticulous records"],
+      ["careful", "小心谨慎，不出差错", "a careful driver"],
+      ["thorough", "从头到尾查得彻底，不留死角", "a thorough check"],
+      ["precise", "数据、表达精确，分毫不差", "precise measurements"],
+      ["scrupulous", "讲原则、守规矩，不敢越线", "scrupulous honesty"],
+      ["detailed", "内容详尽、条目多", "a detailed report"]
+    ],
+    "chant": "怕错到极致 meticulous，稳当不出错 careful，从头查到尾 thorough，分毫不差 precise。"
+  },
+  "fills": [
+    { "sentence": "The project needs ___ planning.", "answer": "meticulous", "hint": "形容词：周密的" },
+    { "sentence": "She checked every figure ___.", "answer": "meticulously", "hint": "副词：一丝不苟地" },
+    { "sentence": "His ___ impressed even his rivals.", "answer": "meticulousness", "hint": "名词：一丝不苟" },
+    { "sentence": "He is ___ about keeping the lab clean.", "answer": "meticulous", "hint": "形容词：极其细致的" },
+    { "sentence": "The ___ of her notes made revision easy.", "answer": "meticulousness", "hint": "名词：细致" }
+  ],
+  "review": [
+    "说出 meticulous 的 3 个搭配",
+    "区分 meticulous / careful / thorough",
+    "默写 metus 词族 6 个词",
+    "遮住释义，复述三件工具的画面"
+  ],
+  "writeSample": "Meticulous habits turn ordinary work into something people can trust."
+}
