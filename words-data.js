@@ -1,6 +1,6 @@
 /* 本文件由「更新单词数据.ps1 / .bat」自动生成，请勿手工编辑。 */
 window.WORDS_DATA = {
-    "generated":  "2026-11-26 20:51:46",
+    "generated":  "2026-11-26 20:52:15",
     "words":  [
                   {
                       "word":  "about",
@@ -1179,7 +1179,7 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "epi + hemera（希腊语 epi＝在…上，hēmera＝日、一天） → \"只存在于一天之内，天亮出现、日落即散\" → 短暂的",
-                      "scene":  "ephemeral = 一滴露水落进池塘，涟漪刚荡开三圈，太阳一晒就散了。",
+                      "scene":  "ephemeral = 一滴露水落进池塘，涟漪只荡开三圈，最外一圈就淡得看不见了。",
                       "q":  [
                                 {
                                     "q":  "Cherry blossoms are beautiful but \u003cspan class=\"first-letter\"\u003ee\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e.",
@@ -1949,7 +1949,7 @@ window.WORDS_DATA = {
                                     "other"
                                 ],
                       "morph":  "metus → meticulosus（拉丁 metus＝恐惧，meticulosus＝提心吊胆的） → \"因为怕出错，所以每个细节都反复核对\" → 一丝不苟的",
-                      "scene":  "meticulous = 钳子、螺丝刀、开瓶器三件工具并排摆着，手柄齐齐朝下，一件也不歪。",
+                      "scene":  "meticulous = 钳子、螺丝刀、开瓶器三件工具并排摆好，各占各的位置，一件也不歪。",
                       "q":  [
                                 {
                                     "q":  "The project needs \u003cspan class=\"first-letter\"\u003em\u003c/span\u003e\u003cspan class=\"qz-blank\"\u003e\u003c/span\u003e planning.",
