@@ -162,7 +162,110 @@ const SCENES = {
     <rect class="sc-pop" style="animation-delay:-.5s" x="148" y="150" width="28" height="22" rx="4" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="2.5"/>
     ${chip(288, 76, L1(L, 0, '转移'))}
     ${chip(66, 88, L1(L, 1, '过渡'))}
-    ${link(74, 100, 104, 122)}`
+    ${link(74, 100, 104, 122)}`,
+
+  /* 朝露：叶上水珠被日头一点点晒散 */
+  dew: L => `
+    <path d="M104 192Q128 146 190 148Q206 176 176 198Q136 214 104 192Z" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M112 196Q146 176 190 152" fill="none" stroke="var(--sc-line)" stroke-width="2" opacity=".6"/>
+    <path d="M100 196q-8 8-6 18" fill="none" stroke="var(--sc-line)" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="sc-float">
+      <circle cx="154" cy="176" r="12" fill="#FBF6EC" stroke="var(--sc-line)" stroke-width="2.5"/>
+      <circle cx="149" cy="171" r="3.5" fill="#FFFFFF" opacity=".9"/>
+    </g>
+    <circle cx="284" cy="64" r="19" fill="var(--cb-accent)" stroke="var(--sc-line)" stroke-width="3"/>
+    <g stroke="var(--cb-accent)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".85">
+      <path d="M284 34v-8M284 102v-8M254 64h-8M314 64h8M263 43l-6-6M305 85l6 6M305 43l6-6M263 85l-6 6"/>
+    </g>
+    <g fill="var(--sc-line)">
+      <circle cx="236" cy="152" r="5" opacity=".55"/>
+      <circle cx="256" cy="140" r="4" opacity=".4"/>
+      <circle cx="274" cy="131" r="3" opacity=".26"/>
+      <circle cx="290" cy="124" r="2.2" opacity=".16"/>
+    </g>
+    <path d="M52 224h256" stroke="var(--sc-dim)" stroke-width="2.5" stroke-linecap="round"/>
+    ${chip(84, 92, L1(L, 0, '朝露'))}
+    ${chip(300, 186, L1(L, 1, '即逝'))}
+    ${link(104, 104, 128, 152)}`,
+
+  /* 无处不在：同一记号铺满每个格子 */
+  everywhere: L => `
+    <rect x="52" y="56" width="256" height="170" rx="16" fill="rgba(251,246,236,.06)" stroke="var(--sc-dim)" stroke-width="2" stroke-dasharray="5 7"/>
+    <g stroke="var(--sc-dim)" stroke-width="1.8">
+      <path d="M52 112h256M52 170h256M124 56v170M196 56v170M268 56v170"/>
+    </g>
+    <g fill="var(--cb-accent)">
+      <circle cx="88" cy="86" r="5" opacity=".5"/>
+      <circle cx="160" cy="86" r="5" opacity=".65"/>
+      <circle cx="232" cy="86" r="5" opacity=".45"/>
+      <circle cx="88" cy="140" r="5" opacity=".6"/>
+      <circle cx="232" cy="140" r="5" opacity=".7"/>
+      <circle cx="88" cy="196" r="5" opacity=".45"/>
+      <circle cx="160" cy="196" r="5" opacity=".6"/>
+      <circle cx="232" cy="196" r="5" opacity=".5"/>
+    </g>
+    <g class="sc-float">
+      <circle cx="160" cy="140" r="15" fill="none" stroke="var(--cb-2)" stroke-width="3"/>
+      <circle cx="160" cy="140" r="7" fill="var(--cb-accent)" stroke="var(--sc-line)" stroke-width="2"/>
+    </g>
+    ${chip(86, 36, L1(L, 0, '处处'))}
+    ${chip(300, 248, L1(L, 1, '皆在'))}
+    ${link(104, 44, 140, 118)}`,
+
+  /* 一丝不苟：放大镜压着小螺丝，钢尺核对分毫 */
+  magnify: L => `
+    <rect x="58" y="132" width="244" height="92" rx="10" fill="rgba(251,246,236,.07)" stroke="var(--sc-line)" stroke-width="3"/>
+    <g stroke="var(--sc-line)" stroke-width="2.5" stroke-linecap="round">
+      <path d="M78 132v18M110 132v12M142 132v18M174 132v12M206 132v18M238 132v12M270 132v18"/>
+    </g>
+    <g class="sc-pop">
+      <path d="M196 146l15 9v18l-15 9l-15-9v-18z" fill="var(--cb-accent)" stroke="var(--sc-line)" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M187 164h18M196 155v18" stroke="var(--sc-line)" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <circle cx="190" cy="112" r="46" fill="rgba(251,246,236,.10)" stroke="var(--sc-line)" stroke-width="5"/>
+    <path d="M222 144l34 34" stroke="var(--sc-line)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M246 168l12 12" stroke="var(--cb-accent)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M164 112h52M190 84v56" stroke="var(--cb-accent)" stroke-width="2" opacity=".75"/>
+    <path d="M276 74l10 10 18-22" fill="none" stroke="var(--cb-accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    ${chip(76, 64, L1(L, 0, '分毫'))}
+    ${chip(298, 244, L1(L, 1, '核对'))}
+    ${link(96, 76, 146, 104)}`,
+
+  /* 清晰：白光穿过三棱镜，散成分明色带 */
+  prism: L => `
+    <path d="M150 200L198 104L246 200z" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M38 156h132" stroke="#FBF6EC" stroke-width="9" stroke-linecap="round" opacity=".85"/>
+    <g stroke-width="5" stroke-linecap="round" fill="none">
+      <path d="M214 166l90-46" stroke="var(--cb-accent)"/>
+      <path d="M211 178l99-20" stroke="var(--cb-2)"/>
+      <path d="M205 190l103 8" stroke="var(--cb-3)"/>
+    </g>
+    <g fill="#FBF6EC" opacity=".85">
+      <circle cx="306" cy="118" r="3"/><circle cx="312" cy="158" r="3"/><circle cx="310" cy="200" r="3"/>
+    </g>
+    <g class="sc-float" stroke="var(--sc-line)" stroke-width="2.5" fill="none" opacity=".7" stroke-linecap="round">
+      <path d="M124 82l12 14M108 100l14 8M148 70l8 14"/>
+    </g>
+    ${chip(76, 72, L1(L, 0, '透光'))}
+    ${chip(300, 66, L1(L, 1, '分明'))}
+    ${link(94, 84, 122, 122)}`,
+
+  /* 缓和：重物压下弹簧，冲击被一点点化开 */
+  spring: L => `
+    <rect x="118" y="196" width="124" height="14" rx="6" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="3"/>
+    <path d="M136 196L150 132L172 196L194 132L216 196L238 132L252 196" fill="none" stroke="var(--sc-line)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <rect x="124" y="116" width="112" height="16" rx="6" fill="var(--cb-2-soft)" stroke="var(--sc-line)" stroke-width="3"/>
+    <rect x="140" y="54" width="80" height="44" rx="9" fill="var(--cb-accent-soft)" stroke="var(--sc-line)" stroke-width="3"/>
+    <path d="M180 102v10M180 112l-6-8M180 112l6-8" stroke="var(--cb-accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <g class="sc-float" stroke="var(--cb-accent)" stroke-width="3" fill="none" stroke-linecap="round">
+      <path d="M104 74q-13 24 0 48"/><path d="M256 74q13 24 0 48"/>
+    </g>
+    <g stroke="var(--sc-line)" stroke-width="2" opacity=".5" stroke-linecap="round">
+      <path d="M164 36v10M180 32v14M196 36v10"/>
+    </g>
+    ${chip(300, 72, L1(L, 0, '卸力'))}
+    ${chip(70, 240, L1(L, 1, '缓冲'))}
+    ${link(70, 230, 112, 208)}`
 };
 
 /* 旧主题名兼容：motif → template */

@@ -31,10 +31,10 @@
     { "pos": "n.", "w": "lucifer", "p": "/ˈluːsɪfə/", "m": "启明星；带来光者" }
   ],
   "scene": {
-    "main": "两支温度计并排立着，一条细线把两边的液面连在一起，高低一眼就看得明白",
+    "main": "一束白光穿过三棱镜，出来时散成几条干净的色带，每一道都看得分明",
     "sub": "luc / lux（光）→ 光照进来、细节分明：清晰易懂的、神志清醒的。",
-    "template": "gauges",
-    "labels": ["液面", "分明"]
+    "template": "prism",
+    "labels": ["透光", "分明"]
   },
   "collocations": [
     { "pattern": "a lucid explanation", "meaning": "清晰的解释" },

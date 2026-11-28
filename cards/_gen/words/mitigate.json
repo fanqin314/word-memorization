@@ -30,9 +30,9 @@
     { "pos": "adj.", "w": "unmitigated", "p": "/ʌnˈmɪtɪɡeɪtɪd/", "m": "未减轻的；十足的" }
   ],
   "scene": {
-    "main": "三支箭从右边飞来，一支支撞在盾面上弹开，飞到跟前已经没什么劲了",
+    "main": "重物压下来，弹簧一点点缩紧，冲击被化开，落到地面的力道已经小了很多",
     "sub": "mitis（温和）+ agere（做）→ 把猛烈的东西做得温和：减轻、缓和。",
-    "template": "shield",
+    "template": "spring",
     "labels": ["卸力", "缓冲"]
   },
   "collocations": [

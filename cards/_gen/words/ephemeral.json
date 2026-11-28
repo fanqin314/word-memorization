@@ -30,10 +30,10 @@
     { "pos": "n.", "w": "ephemeron", "p": "/ɪˈfemərɒn/", "m": "短命之物（复数 ephemera）" }
   ],
   "scene": {
-    "main": "一滴露水落进池塘，涟漪只荡开三圈，最外一圈就淡得看不见了",
+    "main": "清晨的草叶上挂着一滴水珠，太阳刚爬出地平线，水珠一边发亮一边慢慢散成几点水汽",
     "sub": "epi（在…上）+ hemera（日）→ 只存在于一天之内：短暂的、转瞬即逝的。",
-    "template": "ripple",
-    "labels": ["漾开", "即逝"]
+    "template": "dew",
+    "labels": ["朝露", "即逝"]
   },
   "collocations": [
     { "pattern": "ephemeral beauty", "meaning": "短暂的美" },

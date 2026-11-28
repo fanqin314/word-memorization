@@ -29,10 +29,10 @@
     { "pos": "adj.", "w": "overmeticulous", "p": "/ˌəʊvəməˈtɪkjələs/", "m": "过分一丝不苟的" }
   ],
   "scene": {
-    "main": "钳子、螺丝刀、开瓶器三件工具并排摆好，各占各的位置，一件也不歪",
+    "main": "放大镜下压着一颗小螺丝，钢尺的刻度细到毫米，尺寸被一遍遍核对",
     "sub": "metus（恐惧）→ 因怕出错而过分小心：一丝不苟的、极其细致的。",
-    "template": "toolkit",
-    "labels": ["钳子", "螺丝刀", "开瓶器"]
+    "template": "magnify",
+    "labels": ["分毫", "核对"]
   },
   "collocations": [
     { "pattern": "meticulous attention to detail", "meaning": "对细节一丝不苟" },

@@ -30,10 +30,10 @@
     { "pos": "n.", "w": "ubiquitination", "p": "/juːˌbɪkwɪtɪˈneɪʃn/", "m": "泛素化（生物化学）" }
   ],
   "scene": {
-    "main": "中间一个大齿轮，左上、右上、正下方各咬住一个小齿轮，一起转个不停",
+    "main": "一张铺满格子的地图，每个格里都站着同一个记号，走到哪个角落都能碰见它",
     "sub": "ubique（到处）→ 每个角落都能遇到：无处不在的、普遍存在的。",
-    "template": "gears",
-    "labels": ["处处", "同转"]
+    "template": "everywhere",
+    "labels": ["处处", "皆在"]
   },
   "collocations": [
     { "pattern": "a ubiquitous presence", "meaning": "无处不在的存在" },
